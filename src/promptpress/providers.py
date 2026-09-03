@@ -11,6 +11,53 @@ from typing import Any, Protocol
 
 from promptpress.artifact import ArtifactError, FidelityProfile, Provenance
 
+RESPONSE_SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "properties": {
+        "summary": {"type": "string", "maxLength": 600},
+        "generation_prompt": {"type": "string", "maxLength": 3000},
+        "critical_text": {
+            "type": "array",
+            "items": {"type": "string", "maxLength": 600},
+            "maxItems": 16,
+        },
+        "composition": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "region": {"type": "string", "maxLength": 80},
+                    "description": {"type": "string", "maxLength": 500},
+                },
+                "required": ["region", "description"],
+                "additionalProperties": False,
+            },
+            "maxItems": 12,
+        },
+        "palette": {
+            "type": "array",
+            "items": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+            "maxItems": 8,
+        },
+        "style": {"type": "string", "maxLength": 500},
+        "avoid": {
+            "type": "array",
+            "items": {"type": "string", "maxLength": 200},
+            "maxItems": 12,
+        },
+    },
+    "required": [
+        "summary",
+        "generation_prompt",
+        "critical_text",
+        "composition",
+        "palette",
+        "style",
+        "avoid",
+    ],
+    "additionalProperties": False,
+}
+
 
 class VisionProvider(Protocol):
     """Anything capable of turning image bytes into structured scene data."""
@@ -44,6 +91,8 @@ class OllamaVisionProvider:
         payload = {
             "model": self.model,
             "stream": False,
+            "think": False,
+            "format": RESPONSE_SCHEMA,
             "keep_alive": "30m",
             "options": {
                 "temperature": self.temperature,
@@ -70,7 +119,12 @@ class OllamaVisionProvider:
             raise ArtifactError(f"vision provider request failed: {error}") from error
         if raw.get("error"):
             raise ArtifactError(f"vision provider error: {raw['error']}")
-        content = (raw.get("message") or {}).get("content", "").strip()
+        message = raw.get("message") or {}
+        content = message.get("content", "").strip()
+        if not content:
+            # Ollama 0.32/Qwen3-VL may ignore think:false and place schema-constrained JSON here.
+            # It is accepted only if the normal JSON validation below succeeds.
+            content = message.get("thinking", "").strip()
         if not content:
             reason = raw.get("done_reason", "unknown")
             raise ArtifactError(f"vision provider returned empty content (done_reason={reason})")

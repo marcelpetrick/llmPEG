@@ -34,6 +34,8 @@ def test_ollama_provider_request_and_fenced_json(description: dict[str, Any]) ->
     assert request.full_url == "http://vision.test/api/chat"
     assert body["messages"][0]["images"] == ["aW1hZ2U="]
     assert "/no_think" in body["messages"][0]["content"]
+    assert body["think"] is False
+    assert body["format"]["properties"]["palette"]["maxItems"] == 8
     assert provider.provenance.model == "qwen3-vl:32b-ctx49k"
 
 
@@ -70,3 +72,14 @@ def test_profile_instructions_differ() -> None:
     assert "subjects" in _vision_instruction(FidelityProfile.GIST)
     assert "spatial" in _vision_instruction(FidelityProfile.BALANCED)
     assert "verbatim" in _vision_instruction(FidelityProfile.DETAILED)
+
+
+def test_ollama_accepts_valid_json_from_thinking_field(description: dict[str, Any]) -> None:
+    response = Response({"message": {"content": "", "thinking": json.dumps(description)}})
+    with patch("urllib.request.urlopen", return_value=response):
+        assert (
+            OllamaVisionProvider("http://vision.test").describe(
+                b"image", "image/png", FidelityProfile.DETAILED
+            )
+            == description
+        )
