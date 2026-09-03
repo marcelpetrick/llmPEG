@@ -77,7 +77,7 @@ uv run pytest --cov=llmpeg --cov-report=term-missing --cov-fail-under=90
 uv run python -m build
 ```
 
-Current baseline: **46 tests, 93.5% branch coverage**. Update this line when it changes — a stale
+Current baseline: **46 tests, 93.3% branch coverage**. Update this line when it changes — a stale
 self-measurement is the most embarrassing possible bug in a project about honest measurement.
 
 ## Testing

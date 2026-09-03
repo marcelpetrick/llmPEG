@@ -147,7 +147,8 @@ def _load_rgb(path: Path) -> Image.Image:
 
 def _dhash(image: Image.Image) -> tuple[bool, ...]:
     gray = image.convert("L").resize((9, 8), Image.Resampling.LANCZOS)
-    values = list(gray.getdata())
+    # "L" mode is one byte per pixel; getdata() is deprecated from Pillow 12.
+    values = list(gray.tobytes())
     return tuple(
         values[row * 9 + column] > values[row * 9 + column + 1]
         for row in range(8)
@@ -170,7 +171,8 @@ def _histogram_similarity(left: Image.Image, right: Image.Image) -> float:
 
 def _edge_density(image: Image.Image) -> float:
     edge = image.convert("L").resize((128, 128)).filter(ImageFilter.FIND_EDGES)
-    count = sum(1 for value in edge.getdata() if isinstance(value, int) and value >= 32)
+    # "L" mode is one byte per pixel, so tobytes() yields the pixel values directly.
+    count = sum(1 for value in edge.tobytes() if value >= 32)
     return count / (128 * 128)
 
 
@@ -185,7 +187,15 @@ def _dominant_colors(image: Image.Image, count: int = 5) -> list[tuple[int, int,
     colors = quantized.getcolors() or []
     if palette is None:
         return []
-    return [tuple(palette[index * 3 : index * 3 + 3]) for _, index in sorted(colors, reverse=True)]  # type: ignore[misc]
+    dominant: list[tuple[int, int, int]] = []
+    for _, index in sorted(colors, reverse=True):
+        # A quantized ("P" mode) image always reports integer palette indices;
+        # the wider return type only exists for other modes.
+        if not isinstance(index, int):
+            continue
+        red, green, blue = palette[index * 3 : index * 3 + 3]
+        dominant.append((red, green, blue))
+    return dominant
 
 
 def _palette_distance(left: Image.Image, right: Image.Image) -> float:
