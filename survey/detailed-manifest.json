@@ -1,0 +1,58 @@
+{
+  "title": "PromptPress Detailed Identity Survey",
+  "date": "2026-09-03",
+  "profile": "detailed",
+  "cases": [
+    {
+      "id": "cat-on-grass-detailed",
+      "name": "Cat stretched on grass · refined",
+      "source": "sources/cat-on-grass.jpg",
+      "reconstruction": "reconstructions/cat-on-grass-detailed.png",
+      "artifact": "artifacts/cat-on-grass-detailed.ppress.json",
+      "prompt": "prompts/cat-on-grass-detailed.txt",
+      "result": "results/cat-on-grass-detailed.json",
+      "baseline_reconstruction": "reconstructions/cat-on-grass.png",
+      "baseline_result": "results/cat-on-grass.json",
+      "credit": {
+        "author": "Clavecin",
+        "license": "Public domain dedication",
+        "license_url": "https://commons.wikimedia.org/wiki/File:Cat_full_length.jpg#Licensing",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Cat_full_length.jpg"
+      }
+    },
+    {
+      "id": "cat-on-keyboard-detailed",
+      "name": "Kitten sleeping on a keyboard · refined",
+      "source": "sources/cat-on-keyboard.jpg",
+      "reconstruction": "reconstructions/cat-on-keyboard-detailed.png",
+      "artifact": "artifacts/cat-on-keyboard-detailed.ppress.json",
+      "prompt": "prompts/cat-on-keyboard-detailed.txt",
+      "result": "results/cat-on-keyboard-detailed.json",
+      "baseline_reconstruction": "reconstructions/cat-on-keyboard.png",
+      "baseline_result": "results/cat-on-keyboard.json",
+      "credit": {
+        "author": "Remedios44",
+        "license": "Public domain dedication",
+        "license_url": "https://commons.wikimedia.org/wiki/File:Wikipedians_cat.jpg#Licensing",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Wikipedians_cat.jpg"
+      }
+    },
+    {
+      "id": "cat-monochrome-detailed",
+      "name": "Monochrome cat portrait · refined",
+      "source": "sources/cat-monochrome.jpg",
+      "reconstruction": "reconstructions/cat-monochrome-detailed.png",
+      "artifact": "artifacts/cat-monochrome-detailed.ppress.json",
+      "prompt": "prompts/cat-monochrome-detailed.txt",
+      "result": "results/cat-monochrome-detailed.json",
+      "baseline_reconstruction": "reconstructions/cat-monochrome.png",
+      "baseline_result": "results/cat-monochrome.json",
+      "credit": {
+        "author": "Barmanru",
+        "license": "Public domain dedication",
+        "license_url": "https://commons.wikimedia.org/wiki/File:Cat_bw-photo.jpg#Licensing",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Cat_bw-photo.jpg"
+      }
+    }
+  ]
+}

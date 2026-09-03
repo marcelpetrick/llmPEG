@@ -29,10 +29,26 @@ their SHA-256 hashes are also embedded in the corresponding `.ppress.json` artif
    palette distance.
 5. Generate `index.html` from the manifest, artifacts, prompts, and evaluation JSON.
 
+The refined run uses the `detailed` profile and identity-oriented extraction instructions. It
+records normalized subject geometry, distinctive markings, pose landmarks, camera treatment, and
+specific drift constraints. It is versioned alongside the baseline instead of replacing it.
+
+| Case | Balanced visual proxy | Detailed visual proxy | Change |
+| --- | ---: | ---: | ---: |
+| Grass | 0.595 | 0.579 | -0.016 |
+| Keyboard | 0.699 | 0.751 | +0.051 |
+| Monochrome | 0.706 | 0.725 | +0.019 |
+
+The detailed run improves two of three structural scores, but only the keyboard result changes
+materially. Its text check fails because exact keyboard legends were not reproduced. Treat the
+HTML's human identity rating as the deciding signal; the deterministic proxies mostly measure
+layout, tone, and texture rather than whether this is recognizably the same cat.
+
 Run step 5 with:
 
 ```bash
 uv run promptpress survey survey/manifest.json --output survey/index.html --overwrite
+uv run promptpress survey survey/detailed-manifest.json --output survey/detailed.html --overwrite
 ```
 
 The checked-in outputs are evidence for this run. Regeneration may differ because the image model

@@ -1,0 +1,34 @@
+Create a new image from this semantic description.
+
+Primary request: A tabby kitten with brown and black striped fur and white markings on chest, paws, and nose rests its head on a white computer keyboard, eyes closed, one paw on the keyboard, tail curled, on a wooden desk with a white computer monitor and a pen in the background, slightly out of focus, close-up view, soft lighting.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: photographic, soft focus, natural lighting, close-up, shallow depth of field
+Canvas: 2048x1536 (1.333:1)
+Composition:
+- [0, 65, 910, 997]: white computer keyboard with visible keys including '1', '2', '3', 'Q', 'W', 'E', 'A', 'S', 'D', 'Z', 'X', 'C', 'V', 'N', 'M', 'K', 'F9', 'F10', 'F11', 'F12', and function keys, positioned diagonally from top-left to bottom-right, with a kitten lying on it
+- [45, 0, 965, 895]: tabby kitten with brown and black striped fur, white markings on chest, paws, and nose, eyes closed, head resting on keyboard, one paw on keyboard, tail curled, body curved, ears visible, nose and mouth closed, lying on wooden desk
+- [0, 0, 998, 998]: wooden desk surface with visible grain, light brown color, under keyboard and kitten, extending to edges of image
+- [750, 0, 998, 220]: white computer monitor base with black edge, partially visible in top-right corner, slightly out of focus
+- [865, 175, 998, 305]: black and yellow pen with white stripe, lying on desk near monitor, partially out of focus
+Palette: #F5F5F5, #D4B483, #8B5A2B, #A0522D, #E0E0E0, #C0C0C0, #000000, #FFD700
+Text to render verbatim when possible:
+- "1"
+- "2"
+- "3"
+- "Q"
+- "W"
+- "E"
+- "A"
+- "S"
+- "D"
+- "Z"
+- "X"
+- "C"
+- "V"
+- "N"
+- "M"
+- "K\", "
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: kitten breed, kitten name, kitten age, kitten gender, kitten expression interpretation, kitten activity beyond sleeping, kitten's internal state, kitten's emotional state, kitten's health status, kitten's background story; extra logos; watermarks; invented claims.

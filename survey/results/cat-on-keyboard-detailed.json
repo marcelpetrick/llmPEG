@@ -1,0 +1,20 @@
+{
+  "checks": {
+    "critical_text_recall": false,
+    "layout_score": true,
+    "palette_distance": true,
+    "visual_proxy_score": true
+  },
+  "metrics": {
+    "aspect_similarity": 1.0,
+    "critical_text_recall": 0.0,
+    "dhash_similarity": 0.5625,
+    "edge_similarity": 0.900085,
+    "histogram_similarity": 0.745687,
+    "layout_score": 0.729401,
+    "palette_distance": 0.084686,
+    "visual_proxy_score": 0.750598
+  },
+  "profile": "detailed",
+  "status": "fail"
+}

@@ -1,0 +1,18 @@
+Create a new image from this semantic description.
+
+Primary request: A black and white photograph of a cat with a white face, chest, and paws, and dark tabby markings on its back and head, sitting on a textured ground with foliage in the background, viewed from a slightly elevated angle with soft lighting and a shallow depth of field.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: black and white photograph with soft lighting, shallow depth of field, and visible grain texture
+Canvas: 1491x1510 (0.987:1)
+Composition:
+- 0 0 998 998: The cat is positioned slightly left of center, with its head turned to the left, eyes partially closed, ears upright, and body facing forward. The cat's white face has a distinct boundary with the dark tabby markings on its head, which extend down the back. The white chest and paws contrast sharply with the dark fur. The cat's tail is not visible. The ground beneath the cat is textured with small pebbles and grass. The background consists of dense foliage with leaves and stems, slightly out of 1
+- 25 10 440 200: Ears are upright, with the left ear (from viewer's perspective) slightly more forward. The top of the head has dark tabby stripes, and the white fur on the face extends from the nose up to the forehead, with a small dark stripe between the eyes. The eyes are partially closed, with the left eye (from viewer's perspective) more open than the right. The nose is small and dark, and the mouth is closed. The whiskers are visible on both sides of the face.
+- 150 400 560 950: The chest and front legs are white, with the front paws positioned close together. The right front paw (from viewer's perspective) is slightly forward. The dark tabby markings on the back have distinct stripes, with the left side (from viewer's perspective) showing a more pronounced stripe pattern. The body is slightly angled, with the right side (from viewer's perspective) more visible.
+- 400 240 970 900: The back and side of the cat are covered in dark tabby markings with visible stripes. The fur texture is slightly blurred, indicating a shallow depth of field. The background foliage is dense, with leaves and stems visible, and the ground has a mix of small pebbles and grass. The lighting is soft, with no harsh shadows, suggesting an overcast day or diffused light source.
+Palette: #000000, #808080, #FFFFFF
+Text to render verbatim when possible:
+- none
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: inference of breed, name, or backstory, describing the cat as 'cute' or 'sleepy' without visible evidence, assuming the cat is a specific age or gender; extra logos; watermarks; invented claims.

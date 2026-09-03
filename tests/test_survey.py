@@ -67,6 +67,23 @@ def test_render_survey_is_interactive_and_escaped(tmp_path: Path, artifact: Arti
     assert "A &lt;cat&gt; &amp; a keyboard" in output
     assert "Export my ratings" in output
     assert "localStorage" in output
+    assert "1/1 cases meet" in output
+    assert "<code>balanced</code> profile" in output
+
+
+def test_render_survey_compares_baseline(tmp_path: Path, artifact: Artifact) -> None:
+    manifest = _manifest(tmp_path, artifact)
+    data = json.loads(manifest.read_text(encoding="utf-8"))
+    case = data["cases"][0]
+    case["baseline_reconstruction"] = "baseline.png"
+    case["baseline_result"] = "result.json"
+    manifest.write_text(json.dumps(data), encoding="utf-8")
+
+    output = render_survey(manifest)
+
+    assert "Baseline → refined" in output
+    assert "Balanced baseline" in output
+    assert "(+0.000)" in output
 
 
 def test_write_survey_and_cli(tmp_path: Path, artifact: Artifact) -> None:
