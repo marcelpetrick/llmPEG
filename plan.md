@@ -3,6 +3,14 @@
 This plan follows the product contract in `vision.md`. Each phase ends in a small conventional
 commit, and the final phase includes a clean-room self-review of the complete diff.
 
+> **Status: all five phases are delivered.** The MVP shipped under the project's original name,
+> PromptPress; the package, CLI, and artifact extension are now `llmpeg`. Phase 5's CI workflow
+> landed later than the rest and lives in `.github/workflows/ci.yml`.
+>
+> Work that continues past this plan is tracked in [`survey/EXPANDED.md`](survey/EXPANDED.md):
+> the expanded scene benchmark is measured at `n=6` of a planned `n=10`, because image generation
+> is a manual adapter step.
+
 ## 1. Establish the project and contracts
 
 - Add a Python 3.11+ `src/` package with a `llmpeg` console command.
