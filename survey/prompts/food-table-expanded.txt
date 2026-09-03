@@ -1,0 +1,15 @@
+Create a new image from this semantic description.
+
+Primary request: A long wooden table with a rustic appearance holds multiple dishes: a white oval bowl filled with white beans mixed with red and green vegetables, a three-section white dish containing different dips, a large wooden bowl with a green salad, a white bowl with a dark green salad and lemon wedges, a basket of pita chips, and numerous skewers of dark brown meat in the foreground. Two dark blue glass containers are placed between the dishes. The background shows a blurred kitchen with a refrigerator covered in magnets and a window. The image has a shallow depth of field with the foreground in focus and the background blurred, warm lighting, and a slightly vintage color tone.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: photographic, shallow depth of field, warm lighting, vintage color grading
+Canvas: 1280x1920 (0.667:1)
+Composition:
+- 0/0 to 999/999: The entire image shows a wooden table with various dishes. The foreground features numerous skewers of dark brown meat (50-70% width, 60-90% height) with thin wooden sticks. A white oval bowl filled with white beans mixed with red and green vegetables (230-660 width, 480-705 height) is centered, with a metal spoon inside. To the left of the bean bowl, a three-section white dish (195-545 width, 410-530 height) contains light beige, orange, and white dips. To the right, another three-section white
+Palette: #8B4513, #F5DEB3, #2E8B57, #800000, #000080, #FFD700, #4B0082, #006400
+Text to render verbatim when possible:
+- none
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: inventing text, describing non-visible subjects, specifying non-observable details; extra logos; watermarks; invented claims.

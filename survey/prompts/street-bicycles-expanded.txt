@@ -1,0 +1,28 @@
+Create a new image from this semantic description.
+
+Primary request: Five identical orange public bicycles with black handlebars, black front baskets featuring blue 'ВТБ' logos, and black seats are parked in a neat row on a light gray paved surface. The bicycles have black tires with silver hub gears, and each has a small yellow reflector on the front wheel. The background consists of dense green foliage and a partial view of a yellow bicycle on the far left. The scene is brightly lit by sunlight, casting distinct shadows of the bicycles on the pavement.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: Photorealistic, high-resolution outdoor photograph with sharp focus on the bicycles and a shallow depth of field for the background foliage. The lighting is bright and natural, with clear shadows indicating direct sunlight.
+Canvas: 1920x1280 (1.500:1)
+Composition:
+- 0 0 999 557: Dense green foliage forms a continuous background behind the bicycles, with leaves visible at the top and sides of the image. The foliage is slightly out of focus, creating a soft backdrop.
+- 0 440 999 998: Light gray paved surface with visible rectangular stone tiles. The pavement shows distinct shadows of the bicycles, with the shadow of the rightmost bicycle extending toward the bottom right corner. The pavement has a slightly textured appearance with small cracks and variations in tone.
+- 47 37 259 671: Leftmost bicycle in the row, with an orange frame, black handlebars, and a black front basket with blue 'ВТБ' logo. The front wheel is positioned at the left edge of the image, and the bicycle has a black kickstand. The number '2299' is visible on the frame near the rear wheel.
+- 179 42 411 732: Second bicycle from the left, with an orange frame, black handlebars, and a black front basket with blue 'ВТБ' logo. The front wheel is slightly turned inward, and the bicycle has a black kickstand. The number '22624' is visible on the frame near the rear wheel.
+- 305 40 588 747: Middle bicycle in the row, with an orange frame, black handlebars, and a black front basket with blue 'ВТБ' logo. The front wheel is straight, and the bicycle has a black kickstand. The number '22624' is visible on the frame near the rear wheel.
+- 444 35 705 826: Second bicycle from the right, with an orange frame, black handlebars, and a black front basket with blue 'ВТБ' logo. The front wheel is straight, and the bicycle has a black kickstand. The number '22624' is visible on the frame near the rear wheel.
+- 579 52 895 930: Rightmost bicycle in the row, with an orange frame, black handlebars, and a black front basket with blue 'ВТБ' logo. The front wheel is slightly turned inward, and the bicycle has a black kickstand. The number '22624' is visible on the frame near the rear wheel.
+- 0 229 95 465: Partial view of a yellow bicycle on the far left, with a yellow frame and black handlebars. Only the front wheel and part of the frame are visible, with the wheel showing a yellow rim and black tire.
+Palette: #FF7A00, #000000, #004B9C, #C0C0C0, #008000, #FFFF00, #F0F0F0, #808080
+Text to render verbatim when possible:
+- "ВТБ"
+- "2299"
+- "22624"
+- "22624"
+- "22624"
+- "22624"
+- "22624"
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: inference of brand name beyond 'ВТБ', assumptions about the purpose of the bicycles, descriptions of non-visible elements such as the ground beneath the bicycles, general terms like 'bikes' or 'cycling' without specific details; extra logos; watermarks; invented claims.

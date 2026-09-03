@@ -1,0 +1,17 @@
+Create a new image from this semantic description.
+
+Primary request: Rustic wooden table with visible grain and scratches, holding a clear glass jar with metal lid containing white eggs, a small container covered by white lace doily with fringed edges, a dark metal container holding wooden and metal utensils, two dark wooden egg cups, a round wooden board with a loaf of bread, a silver spoon, a dark metal bucket with handle, a stack of folded cloths and a brown leather item on a dark plate, all under soft natural lighting with shallow depth of field focusing on the center objects.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: Photorealistic, shallow depth of field, warm natural lighting, vintage kitchen still life
+Canvas: 1920x1153 (1.665:1)
+Composition:
+- 0 0 999 998: Rustic wooden table surface with visible grain and dark scratches, occupying lower 70% of frame; clear glass jar with metal lid (17% w x 25% h) at 20% left, 25% up, containing white eggs with 'MASON' embossed on glass; small container covered by white lace doily (15% w x 15% h) at 35% left, 35% up, with fringed edges; dark metal container (20% w x 25% h) at 50% left, 20% up holding wooden and metal utensils; two dark wooden egg cups (5% w x 8% h each) at 10% left, 45% up; round wooden board (30%
+- 0 0 999 998: Rustic wooden table surface with visible grain and dark scratches, occupying lower 70% of frame; clear glass jar with metal lid (17% w x 25% h) at 20% left, 25% up, containing white eggs with 'MASON' embossed on glass; small container covered by white lace doily (15% w x 15% h) at 35% left, 35% up, with fringed edges; dark metal container (20% w x 25% h) at 50% left, 20% up holding wooden and metal utensils; two dark wooden egg cups (5% w x 8% h each) at 10% left, 45% up; round wooden board (30%
+- 0 0 999 998: Rustic wooden table surface with visible grain and dark scratches, occupying lower 70% of frame; clear glass jar with metal lid (17% w x 25% h) at 20% left, 25% up, containing white eggs with 'MASON' embossed on glass; small container covered by white lace doily (15% w x 15% h) at 35% left, 35% up, with fringed edges; dark metal container (20% w x 25% h) at 50% left, 20% up holding wooden and metal utensils; two dark wooden egg cups (5% w x 8% h each) at 10% left, 45% up; round wooden board (30%
+Palette: #8B5A2B, #D4B483, #2E2E2E, #F5F5F5, #C0C0C0, #A0522D, #654321
+Text to render verbatim when possible:
+- "MASON"
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: inventing text not visible, describing non-existent people or animals, specifying brand names beyond visible text, adding inferred context or backstory; extra logos; watermarks; invented claims.

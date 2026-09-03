@@ -1,0 +1,26 @@
+Create a new image from this semantic description.
+
+Primary request: Nighttime photograph of a Japanese train station platform with three men: one man in a dark overcoat, white shirt, blue tie, and dark pants walking toward the camera carrying a bag, two men standing to the right, one wearing a white mask and dark coat, the other in a dark coat, all on a platform with a sign reading '1 Yamanote Line Tokyo Ueno Komagome' above, dark background with train tracks and station infrastructure, shallow depth of field with blurred foreground element on the right, dim lighting with focused illumination on the platform and sign, visible text on the sign and platform edge, concrete platform surface with tactile paving, metal railings, and overhead station lights.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: photographic, high-contrast, shallow depth of field, nighttime urban scene with focused lighting on subjects and sign, grainy texture, documentary style
+Canvas: 1920x1080 (1.778:1)
+Composition:
+- 0 0 999 998: Full scene: dark nighttime station environment with platform on right, train tracks on left, overhead sign at top center, blurred foreground element on right edge, three men on platform, station infrastructure in background.
+- 492 95 623 198: Sign: rectangular, black background, white text '1' on left, green vertical bar, '山手線' in white, 'Yamanote Line' in white below, '東京・上野・駒込方面' in white, 'for Tokyo Ueno & Komagome' in white below, mounted on pole above platform.
+- 453 462 537 859: Man walking: center of platform, dark overcoat, white shirt, blue tie, dark pants, black shoes, carrying dark bag in left hand, head slightly bowed, face visible, short dark hair, standing on platform with tactile paving, positioned between tracks and standing men.
+- 555 400 649 845: Man standing: right of walking man, dark coat, white mask covering nose and mouth, holding phone in right hand, short dark hair, facing left, standing near metal railing, partially obscured by foreground blur.
+- 610 319 682 750: Man standing: right of masked man, dark coat, short dark hair, facing left, right hand visible, partially obscured by foreground blur, standing near metal railing.
+- 575 715 685 998: Blurred foreground element: right edge of image, out-of-focus, light gray, indistinct shape, partially obscures standing men.
+- 0 720 455 998: Train tracks: left side of image, dark, metal rails, gravel ballast, extending into darkness, platform edge visible on right side of tracks.
+- 340 735 600 998: Platform surface: right side of image, concrete with tactile paving, light and dark stripes, metal railings along edge, illuminated by station lights.
+Palette: #000000, #1a1a1a, #2d2d2d, #4a4a4a, #666666, #8c8c8c, #b3b3b3, #d9d9d9
+Text to render verbatim when possible:
+- "1"
+- "山手線"
+- "Yamanote Line"
+- "東京・上野・駒込方面"
+- "for Tokyo Ueno & Komagome"
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: inventing names or identities for people, inferring emotions beyond visible expressions, describing non-visible text or objects, using generic terms like 'a man' without distinguishing features, speculating about the time of day beyond 'nighttime'; extra logos; watermarks; invented claims.

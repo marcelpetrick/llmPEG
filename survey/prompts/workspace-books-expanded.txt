@@ -1,0 +1,25 @@
+Create a new image from this semantic description.
+
+Primary request: Top-down photograph of a light wooden desk surface featuring a white laptop with a white keyboard, a stack of hardcover books with visible spines, an open magazine displaying various company logos including 'Quark' and 'conEdison', a spiral-bound notebook with grid paper, three colored pencils (orange, green, yellow), a single orange pencil, a white eraser, a blue and white iPod brochure showing 'iPod' and 'iPod mini', and a black smartphone with app icons on its screen, all arranged in a flat lay composition with soft lighting and a shallow depth of field.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: Photorealistic flat lay with soft, warm lighting, shallow depth of field, and a vintage filter effect.
+Canvas: 1920x1288 (1.491:1)
+Composition:
+- 0 0 437 432: White laptop with white keyboard, partially covered by a blue and white brochure showing 'iPod' and 'iPod mini' with a green iPod image; brochure positioned at top-left corner of laptop.
+- 434 0 857 297: Row of hardcover books with visible spines in various colors (teal, red, white, purple, green, blue, orange, black) arranged vertically along the top edge of the desk; books have different thicknesses and some show text on spines.
+- 142 515 330 915: Spiral-bound notebook with grid paper, featuring a simple geometric sketch; positioned below the laptop, with a single orange pencil, a white eraser, and three colored pencils (orange, green, yellow) placed on top of it.
+- 378 451 863 917: Open magazine with left page showing logos: 'Quark' (green circle), 'C' (yellow), 'a' (teal), 'conEdison' (blue 'C' with text), 'I' (green with leaf), 'C' (red), and 'L' (red circle); a black smartphone with app icons is placed on the left page; right page shows three circular patterns and text 'University Science Park' with '100%' below it.
+- 0 545 115 825: Brown circular object with a decorative, textured edge (resembling a coaster or small tray) positioned at bottom-left corner of the desk.
+- 907 458 996 770: Black rectangular object (possibly a tablet or another device) partially visible at bottom-right corner of the desk.
+Palette: #F5E6D0, #FFFFFF, #000000, #00B4D8, #FF5A5A, #008080, #FFD700, #FF0000
+Text to render verbatim when possible:
+- "iPod"
+- "iPod mini"
+- "Quark"
+- "conEdison"
+- "University Science Park"
+- "100%"
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: inventing text not visible, describing non-existent people or animals, inferring hidden objects or context beyond visible elements; extra logos; watermarks; invented claims.

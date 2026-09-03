@@ -1,0 +1,18 @@
+Create a new image from this semantic description.
+
+Primary request: Two dogs, one with a brindle coat and the other solid dark gray, running side by side on a sandy beach; the brindle dog has its mouth open showing teeth, the dark gray dog is nipping at the brindle dog's rear; both dogs have long legs, slender bodies, and long tails; the background is a blurred expanse of water and distant shoreline with sand flying up around their paws; the scene is captured in mid-action with a shallow depth of field focusing on the dogs.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: Photographic, dynamic action shot with shallow depth of field, natural lighting, and fine detail on the subjects with a blurred background.
+Canvas: 1920x1159 (1.657:1)
+Composition:
+- 0 0 999 545: Blurred background of water with light blue and white tones, showing no distinct features; distant shoreline with indistinct brown and green patches at the bottom edge of the water area.
+- 0 500 999 998: Sandy beach surface with light tan color, showing texture of loose sand and small clumps; sand is being kicked up around the dogs' paws, creating a dynamic effect with visible particles in the air.
+- 78 198 409 812: Brindle-coated dog with a mix of light gray and dark gray fur patterns; body is elongated with a slender build; head is turned to the right, mouth open showing teeth and pink tongue; ears are small and folded back; eyes are light blue; tail is long and curved, with a dark tip; front legs are extended forward, back legs are pushing off the sand; paws are light-colored with visible claws; the dog's body is positioned at an angle, showing its side and rear.
+- 347 368 862 800: Solid dark gray dog with a smooth, short coat; body is elongated with a slender build; head is turned to the left, mouth closed; ears are small and folded back; eyes are dark; tail is long and curved, with a dark tip; front legs are extended forward, back legs are pushing off the sand; paws are dark-colored; the dog's body is positioned at an angle, showing its side and rear; the dog appears to be nipping at the brindle dog's rear.
+Palette: #D4C8B0, #A0A0A0, #4A4A4A, #B0B0B0, #E0E0E0, #808080
+Text to render verbatim when possible:
+- none
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: breed identification, inference of emotion beyond visible expression, assumptions about the dogs' relationship, speculation about the location beyond visible elements; extra logos; watermarks; invented claims.

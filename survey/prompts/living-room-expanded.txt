@@ -1,0 +1,19 @@
+Create a new image from this semantic description.
+
+Primary request: A minimalist interior scene featuring a white wall-mounted adjustable lamp with a conical shade, positioned above a round wooden stool with black hairpin legs. The stool holds a white hardcover book with visible text on the spine. The background consists of a plain white wall and a wooden floor, with the lamp's black power cord trailing down the wall. The lamp is mounted on a circular silver base, and the stool's top surface shows natural wood grain and a rough edge. The book's spine text reads 'THE BEST INTERFACE IS NO INTERFACE' and 'The Simple Path to Brilliant Technology' with a small publisher logo at the bottom right of the spine.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: Photorealistic, high-resolution, minimalistic interior photography with a shallow depth of field, emphasizing the lamp and stool while softly blurring the background walls.
+Canvas: 1280x1920 (0.667:1)
+Composition:
+- 0 0 998 998: The entire image shows a corner of a room with two white walls meeting at a right angle. The left wall is slightly out of focus, while the right wall is in focus. The floor is wooden with visible planks. A wall-mounted lamp is attached to the right wall, with its arm extending downward and to the left. The lamp has a conical white shade and a silver metal arm. The lamp's base is circular and silver, mounted on the wall. A black power cord extends from the lamp base down the wall and off the edge
+- 420 655 937 785: A round wooden stool with a natural, rough edge and visible wood grain. The stool's top surface is light brown with darker brown streaks. The stool has four thin black hairpin legs. A white hardcover book rests on the stool, positioned slightly to the right. The book's spine is visible, showing text. The book's cover is plain white with no visible design.
+- 451 632 942 728: A white hardcover book with a plain cover. The spine displays the text 'THE BEST INTERFACE IS NO INTERFACE' in uppercase letters, followed by 'The Simple Path to Brilliant Technology' in smaller text. At the bottom right of the spine, there is a small publisher logo. The book is closed and lies flat on the stool.
+- 487 33 862 482: A wall-mounted lamp with a white conical shade. The lamp has a silver metal arm with two adjustable joints. The arm extends from a circular silver base mounted on the wall. A black power cord is attached to the base and trails down the wall. The lamp shade is positioned above the stool, with a small metal hook visible beneath the shade. The lamp's arm is angled downward and to the left.
+Palette: #FFFFFF, #F5F5F5, #D4B483, #000000, #C0C0C0, #8B4513, #E0E0E0
+Text to render verbatim when possible:
+- "THE BEST INTERFACE IS NO INTERFACE"
+- "The Simple Path to Brilliant Technology"
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: inventing text not visible on the book, describing the lamp as 'modern' or 'industrial' without specific visual evidence, inferring the room's purpose or the book's content beyond the visible text; extra logos; watermarks; invented claims.
