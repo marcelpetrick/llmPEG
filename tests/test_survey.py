@@ -5,9 +5,9 @@ from pathlib import Path
 
 import pytest
 
-from promptpress.artifact import Artifact, ArtifactError
-from promptpress.cli import main
-from promptpress.survey import render_survey, write_survey
+from llmpeg.artifact import Artifact, ArtifactError
+from llmpeg.cli import main
+from llmpeg.survey import render_survey, write_survey
 
 
 def _manifest(tmp_path: Path, artifact: Artifact) -> Path:

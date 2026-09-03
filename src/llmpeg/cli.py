@@ -1,4 +1,4 @@
-"""Command-line interface for PromptPress."""
+"""Command-line interface for llmPEG."""
 
 from __future__ import annotations
 
@@ -8,22 +8,22 @@ import sys
 from collections.abc import Sequence
 from pathlib import Path
 
-from promptpress.artifact import Artifact, ArtifactError, FidelityProfile
-from promptpress.encoder import (
+from llmpeg.artifact import Artifact, ArtifactError, FidelityProfile
+from llmpeg.encoder import (
     DEFAULT_MAX_IMAGE_BYTES,
     DEFAULT_MAX_IMAGE_PIXELS,
     encode_image,
     render_generation_prompt,
 )
-from promptpress.evaluation import evaluate_with_artifact
-from promptpress.providers import OllamaVisionProvider
-from promptpress.survey import write_survey
+from llmpeg.evaluation import evaluate_with_artifact
+from llmpeg.providers import OllamaVisionProvider
+from llmpeg.survey import write_survey
 
 
 def build_parser() -> argparse.ArgumentParser:
     """Build the public CLI parser."""
     parser = argparse.ArgumentParser(
-        prog="promptpress",
+        prog="llmpeg",
         description="Lossy semantic image encoding with explicit fidelity limits.",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -122,7 +122,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         else:  # pragma: no cover - argparse enforces a known command
             raise AssertionError(f"unknown command: {args.command}")
     except (ArtifactError, OSError, UnicodeError) as error:
-        print(f"promptpress: error: {error}", file=sys.stderr)
+        print(f"llmpeg: error: {error}", file=sys.stderr)
         return 2
     return 0
 

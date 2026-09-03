@@ -6,7 +6,7 @@ from typing import Any
 import pytest
 from PIL import Image, ImageDraw
 
-from promptpress.artifact import (
+from llmpeg.artifact import (
     SCHEMA_VERSION,
     Artifact,
     FidelityProfile,

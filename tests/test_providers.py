@@ -6,8 +6,8 @@ from unittest.mock import patch
 
 import pytest
 
-from promptpress.artifact import ArtifactError, FidelityProfile
-from promptpress.providers import OllamaVisionProvider, _vision_instruction
+from llmpeg.artifact import ArtifactError, FidelityProfile
+from llmpeg.providers import OllamaVisionProvider, _vision_instruction
 
 
 class Response:

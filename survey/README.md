@@ -1,6 +1,6 @@
 # Cat reconstruction survey
 
-This is a reproducible, exploratory `n=3` PromptPress quality survey. Open `index.html` directly in
+This is a reproducible, exploratory `n=3` llmPEG quality survey. Open `index.html` directly in
 a browser. Human ratings are stored only in that browser's `localStorage` until the reviewer uses
 **Export my ratings**.
 
@@ -16,7 +16,7 @@ domain by their copyright holders:
 | `cat-monochrome.jpg` | *Cat bw-photo.jpg* | Barmanru | [source and license](https://commons.wikimedia.org/wiki/File:Cat_bw-photo.jpg) |
 
 `manifest.json` is the machine-readable provenance record. Source files are preserved unmodified;
-their SHA-256 hashes are also embedded in the corresponding `.ppress.json` artifacts.
+their SHA-256 hashes are also embedded in the corresponding `.llmpeg.json` artifacts.
 
 ## Method
 
@@ -48,8 +48,8 @@ layout, tone, and texture rather than whether this is recognizably the same cat.
 Run step 5 with:
 
 ```bash
-uv run promptpress survey survey/manifest.json --output survey/index.html --overwrite
-uv run promptpress survey survey/detailed-manifest.json --output survey/detailed.html --overwrite
+uv run llmpeg survey survey/manifest.json --output survey/index.html --overwrite
+uv run llmpeg survey survey/detailed-manifest.json --output survey/detailed.html --overwrite
 ```
 
 The checked-in outputs are evidence for this run. Regeneration may differ because the image model

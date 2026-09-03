@@ -6,8 +6,8 @@ from pathlib import Path
 import pytest
 from PIL import Image, ImageDraw
 
-from promptpress.artifact import Artifact, ArtifactError, FidelityProfile, SourceInfo, source_digest
-from promptpress.evaluation import evaluate_images, evaluate_with_artifact
+from llmpeg.artifact import Artifact, ArtifactError, FidelityProfile, SourceInfo, source_digest
+from llmpeg.evaluation import evaluate_images, evaluate_with_artifact
 
 
 def test_identical_images_pass_gist_and_score_above_changed(

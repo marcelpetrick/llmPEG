@@ -154,6 +154,36 @@ wheels = [
 ]
 
 [[package]]
+name = "llmpeg"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "pillow" },
+]
+
+[package.optional-dependencies]
+dev = [
+    { name = "build" },
+    { name = "mypy" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "ruff" },
+    { name = "types-pillow" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "build", marker = "extra == 'dev'", specifier = "==1.3.0" },
+    { name = "mypy", marker = "extra == 'dev'", specifier = "==1.17.1" },
+    { name = "pillow", specifier = "==11.3.0" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = "==8.4.2" },
+    { name = "pytest-cov", marker = "extra == 'dev'", specifier = "==6.2.1" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = "==0.12.12" },
+    { name = "types-pillow", marker = "extra == 'dev'", specifier = "==10.2.0.20240822" },
+]
+provides-extras = ["dev"]
+
+[[package]]
 name = "mypy"
 version = "1.17.1"
 source = { registry = "https://pypi.org/simple" }
@@ -310,36 +340,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/f9/e2/3e91f31a7d2b083fe
 wheels = [
     { url = "https://files.pythonhosted.org/packages/54/20/4d324d65cc6d9205fabedc306948156824eb9f0ee1633355a8f7ec5c66bf/pluggy-1.6.0-py3-none-any.whl", hash = "sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746", size = 20538, upload-time = "2025-05-15T12:30:06.134Z" },
 ]
-
-[[package]]
-name = "promptpress"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "pillow" },
-]
-
-[package.optional-dependencies]
-dev = [
-    { name = "build" },
-    { name = "mypy" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "ruff" },
-    { name = "types-pillow" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "build", marker = "extra == 'dev'", specifier = "==1.3.0" },
-    { name = "mypy", marker = "extra == 'dev'", specifier = "==1.17.1" },
-    { name = "pillow", specifier = "==11.3.0" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = "==8.4.2" },
-    { name = "pytest-cov", marker = "extra == 'dev'", specifier = "==6.2.1" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = "==0.12.12" },
-    { name = "types-pillow", marker = "extra == 'dev'", specifier = "==10.2.0.20240822" },
-]
-provides-extras = ["dev"]
 
 [[package]]
 name = "pygments"

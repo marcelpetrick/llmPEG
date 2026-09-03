@@ -10,7 +10,7 @@ from typing import Any
 
 from PIL import Image, UnidentifiedImageError
 
-from promptpress.artifact import (
+from llmpeg.artifact import (
     SCHEMA_VERSION,
     Artifact,
     ArtifactError,
@@ -18,7 +18,7 @@ from promptpress.artifact import (
     SourceInfo,
     source_digest,
 )
-from promptpress.providers import VisionProvider
+from llmpeg.providers import VisionProvider
 
 MEDIA_TYPES = {"JPEG": "image/jpeg", "PNG": "image/png", "WEBP": "image/webp"}
 DEFAULT_MAX_IMAGE_BYTES = 25 * 1024 * 1024

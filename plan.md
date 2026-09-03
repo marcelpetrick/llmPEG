@@ -1,11 +1,11 @@
-# PromptPress MVP plan
+# llmPEG MVP plan
 
 This plan follows the product contract in `vision.md`. Each phase ends in a small conventional
 commit, and the final phase includes a clean-room self-review of the complete diff.
 
 ## 1. Establish the project and contracts
 
-- Add a Python 3.11+ `src/` package with a `promptpress` console command.
+- Add a Python 3.11+ `src/` package with a `llmpeg` console command.
 - Pin runtime and development dependencies in `pyproject.toml`.
 - Define a versioned artifact model with strict validation and canonical compact JSON.
 - Encode the three fidelity profiles and their prompt-byte budgets as executable policy.
@@ -22,7 +22,7 @@ messages, and profile budgets have unit tests.
   default; strip Markdown fences and validate the response.
 - Treat image bytes as untrusted input: enforce supported formats and a configurable size limit.
 - Write artifacts atomically and never remove or modify the source image.
-- Render a provider-neutral generation prompt from an artifact. `promptpress reconstruct` writes
+- Render a provider-neutral generation prompt from an artifact. `llmpeg reconstruct` writes
   that prompt to a file/stdout for an external generator; generation is intentionally an adapter
   boundary because the Codex built-in image tool is not a distributable Python API.
 - Add `inspect` to report measured source/artifact bytes, ratio, savings, profile, and provenance.
@@ -74,7 +74,7 @@ Final gate:
 ruff format --check .
 ruff check .
 mypy src tests
-pytest --cov=promptpress --cov-report=term-missing --cov-fail-under=90
+pytest --cov=llmpeg --cov-report=term-missing --cov-fail-under=90
 python -m build
 ```
 

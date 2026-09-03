@@ -1,4 +1,4 @@
-"""Versioned, deterministic PromptPress artifact format."""
+"""Versioned, deterministic llmPEG artifact format."""
 
 from __future__ import annotations
 

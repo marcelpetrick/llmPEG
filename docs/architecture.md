@@ -1,10 +1,10 @@
-# PromptPress architecture
+# llmPEG architecture
 
 > **Architecture goal:** exchange exact pixels for a compact, inspectable semantic artifact while
 > making that irreversible loss explicit and measurable.
 
 The diagrams use the [C4 model](https://c4model.com/) from system context down to components. Blue
-elements are PromptPress, purple elements are models outside its deterministic core, and amber
+elements are llmPEG, purple elements are models outside its deterministic core, and amber
 elements are durable evidence.
 
 ## 1. System context
@@ -12,19 +12,19 @@ elements are durable evidence.
 ```mermaid
 %%{init: {"theme":"base","themeVariables":{"fontFamily":"Inter, ui-sans-serif, system-ui","primaryColor":"#E8F1FF","primaryBorderColor":"#2563EB","primaryTextColor":"#102A43","lineColor":"#64748B","secondaryColor":"#F3E8FF","tertiaryColor":"#FFF7D6"}}}%%
 C4Context
-  title PromptPress — semantic image reconstruction
+  title llmPEG — semantic image reconstruction
   Person(reviewer, "Reviewer", "Encodes images and judges whether regenerated meaning is sufficient")
-  System(promptpress, "PromptPress", "Produces portable semantic artifacts, prompts, metrics, and surveys")
+  System(llmpeg, "llmPEG", "Produces portable semantic artifacts, prompts, metrics, and surveys")
   System_Ext(vision, "Vision model", "Qwen3-VL behind the local claude-vision/Ollama setup")
   System_Ext(generator, "Image generator", "Creates a new image from rendered text only")
 
-  Rel(reviewer, promptpress, "Encodes, reconstructs, inspects, evaluates", "CLI / HTML")
-  Rel(promptpress, vision, "Sends source image and strict extraction schema", "Ollama /api/chat")
-  Rel(promptpress, generator, "Supplies generator-neutral prompt", "Text")
-  Rel(generator, promptpress, "Returns a novel reconstruction", "PNG")
-  Rel(promptpress, reviewer, "Shows provenance, compression ratio, comparisons, and ratings")
+  Rel(reviewer, llmpeg, "Encodes, reconstructs, inspects, evaluates", "CLI / HTML")
+  Rel(llmpeg, vision, "Sends source image and strict extraction schema", "Ollama /api/chat")
+  Rel(llmpeg, generator, "Supplies generator-neutral prompt", "Text")
+  Rel(generator, llmpeg, "Returns a novel reconstruction", "PNG")
+  Rel(llmpeg, reviewer, "Shows provenance, compression ratio, comparisons, and ratings")
 
-  UpdateElementStyle(promptpress, $bgColor="#DBEAFE", $fontColor="#102A43", $borderColor="#2563EB")
+  UpdateElementStyle(llmpeg, $bgColor="#DBEAFE", $fontColor="#102A43", $borderColor="#2563EB")
   UpdateElementStyle(vision, $bgColor="#F3E8FF", $fontColor="#3B0764", $borderColor="#9333EA")
   UpdateElementStyle(generator, $bgColor="#F3E8FF", $fontColor="#3B0764", $borderColor="#9333EA")
 ```
@@ -34,10 +34,10 @@ C4Context
 ```mermaid
 %%{init: {"theme":"base","themeVariables":{"fontFamily":"Inter, ui-sans-serif, system-ui","lineColor":"#64748B"}}}%%
 C4Container
-  title PromptPress — containers and evidence flow
+  title llmPEG — containers and evidence flow
   Person(user, "Experimenter", "Runs a deliberately lossy reconstruction experiment")
 
-  System_Boundary(pp, "PromptPress") {
+  System_Boundary(pp, "llmPEG") {
     Container(cli, "CLI", "Python / argparse", "Coordinates encode, reconstruct, inspect, evaluate, and survey commands")
     Container(core, "Codec core", "Python", "Validates images and creates canonical semantic artifacts")
     Container(eval, "Evaluation harness", "Python / Pillow", "Computes deterministic structural proxy metrics")
@@ -52,7 +52,7 @@ C4Container
   Rel(user, cli, "Runs")
   Rel(cli, core, "Invokes")
   Rel(core, ollama, "Image + extraction contract", "HTTP/JSON")
-  Rel(core, files, "Writes canonical .ppress.json and prompt")
+  Rel(core, files, "Writes canonical .llmpeg.json and prompt")
   Rel(files, imagegen, "Prompt only — never source pixels")
   Rel(imagegen, files, "Writes reconstruction PNG")
   Rel(cli, eval, "Invokes")
@@ -67,7 +67,7 @@ C4Container
   UpdateElementStyle(imagegen, $bgColor="#F3E8FF", $fontColor="#3B0764", $borderColor="#9333EA")
 ```
 
-The model calls are trust boundaries: provenance records their configuration, but PromptPress
+The model calls are trust boundaries: provenance records their configuration, but llmPEG
 cannot make their outputs deterministic. Everything after extraction—validation, canonical JSON,
 budgets, prompt rendering, proxy evaluation, and HTML rendering—is local and testable.
 
@@ -77,7 +77,7 @@ budgets, prompt rendering, proxy evaluation, and HTML rendering—is local and t
 %%{init: {"theme":"base","themeVariables":{"fontFamily":"Inter, ui-sans-serif, system-ui","lineColor":"#64748B"}}}%%
 C4Component
   title Codec core — Python components
-  Container_Boundary(core, "promptpress") {
+  Container_Boundary(core, "llmpeg") {
     Component(cli, "Command dispatcher", "cli.py", "Parses commands and maps failures to exit codes")
     Component(guard, "Image guard", "encoder.py + Pillow", "Checks type, byte/pixel limits, dimensions, and source digest")
     Component(adapter, "Vision adapter", "providers.py", "Calls Ollama with a strict JSON schema and fidelity-specific instructions")
@@ -116,9 +116,9 @@ C4Component
 sequenceDiagram
   autonumber
   actor U as Experimenter
-  participant C as PromptPress CLI
+  participant C as llmPEG CLI
   participant V as Qwen3-VL
-  participant A as .ppress.json
+  participant A as .llmpeg.json
   participant G as Image generator
   participant E as Evaluator
   participant H as HTML survey
@@ -150,6 +150,6 @@ sequenceDiagram
 | Evaluation | Deterministic metrics expose coarse structural drift; HTML collects human judgment | Proxy scores equal perceptual or identity similarity |
 | Compression | Stored artifacts remain far smaller than source photographs | Regenerated PNGs, model weights, and compute are free |
 
-The central design choice is intentional: **the `.ppress.json` artifact is a semantic memory, not a
+The central design choice is intentional: **the `.llmpeg.json` artifact is a semantic memory, not a
 compressed photograph**. The detailed profile spends more bytes on identity landmarks, but any
 feature absent from that artifact is irrecoverably replaced by the generator's prior.

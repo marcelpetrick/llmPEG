@@ -1,11 +1,11 @@
-# PromptPress vision
+# llmPEG vision
 
-PromptPress is an experimental **semantic image codec**. It replaces an image with a compact,
+llmPEG is an experimental **semantic image codec**. It replaces an image with a compact,
 portable description and later asks an image generator to render that description. The result
 should preserve what a person remembers about the image, not its pixels.
 
 That distinction is the product. A JPEG/PNG codec answers “how can I reproduce these pixels?”
-PromptPress answers “what must a new image communicate to count as the same scene?” It can save a
+llmPEG answers “what must a new image communicate to count as the same scene?” It can save a
 great deal of storage when exact reproduction does not matter, but it is intentionally lossy,
 non-deterministic, and unsuitable for evidence, archival masters, medical imagery, identity
 records, diagrams with exact geometry, or text that must remain readable.
@@ -34,7 +34,7 @@ A generated reconstruction may plausibly recover the newspaper look, hierarchy, 
 family, and overall story. Today’s generators should not be expected to reproduce the exact copy,
 font metrics, faces, photograph details, or layout. For text-heavy images, the compact artifact
 must therefore carry important text verbatim and the evaluator must score OCR separately from
-visual similarity. PromptPress must never imply that plausible invented text is preserved data.
+visual similarity. llmPEG must never imply that plausible invented text is preserved data.
 
 The supplied JPEG is 123,585 bytes—not 6 MB—so all compression claims in this repository use
 measured file sizes rather than the motivating article’s hypothetical numbers.
@@ -76,7 +76,7 @@ article concept,” not a readable duplicate.
 
 ## Artifact and size budget
 
-The encoded `.ppress.json` file contains a schema version, fidelity profile, source dimensions,
+The encoded `.llmpeg.json` file contains a schema version, fidelity profile, source dimensions,
 generation prompt, critical verbatim text, normalized composition regions, palette, and model
 provenance. It does not embed the source image. Canonical compact JSON makes byte counts stable.
 

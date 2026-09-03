@@ -1,5 +1,5 @@
 {
-  "title": "PromptPress Cat Reconstruction Survey",
+  "title": "llmPEG Cat Reconstruction Survey",
   "date": "2026-09-03",
   "profile": "balanced",
   "cases": [
@@ -8,7 +8,7 @@
       "name": "Cat stretched on grass",
       "source": "sources/cat-on-grass.jpg",
       "reconstruction": "reconstructions/cat-on-grass.png",
-      "artifact": "artifacts/cat-on-grass.ppress.json",
+      "artifact": "artifacts/cat-on-grass.llmpeg.json",
       "prompt": "prompts/cat-on-grass.txt",
       "result": "results/cat-on-grass.json",
       "credit": {
@@ -23,7 +23,7 @@
       "name": "Kitten sleeping on a keyboard",
       "source": "sources/cat-on-keyboard.jpg",
       "reconstruction": "reconstructions/cat-on-keyboard.png",
-      "artifact": "artifacts/cat-on-keyboard.ppress.json",
+      "artifact": "artifacts/cat-on-keyboard.llmpeg.json",
       "prompt": "prompts/cat-on-keyboard.txt",
       "result": "results/cat-on-keyboard.json",
       "credit": {
@@ -38,7 +38,7 @@
       "name": "Monochrome cat portrait",
       "source": "sources/cat-monochrome.jpg",
       "reconstruction": "reconstructions/cat-monochrome.png",
-      "artifact": "artifacts/cat-monochrome.ppress.json",
+      "artifact": "artifacts/cat-monochrome.llmpeg.json",
       "prompt": "prompts/cat-monochrome.txt",
       "result": "results/cat-monochrome.json",
       "credit": {

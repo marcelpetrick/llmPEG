@@ -5,8 +5,8 @@ from typing import Any
 
 import pytest
 
-from promptpress.artifact import ArtifactError, FidelityProfile, Provenance
-from promptpress.encoder import encode_image, render_generation_prompt
+from llmpeg.artifact import ArtifactError, FidelityProfile, Provenance
+from llmpeg.encoder import encode_image, render_generation_prompt
 
 
 class FakeProvider:

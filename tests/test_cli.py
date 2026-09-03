@@ -4,8 +4,8 @@ from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
 
-from promptpress.artifact import Artifact, SourceInfo, source_digest
-from promptpress.cli import main
+from llmpeg.artifact import Artifact, SourceInfo, source_digest
+from llmpeg.cli import main
 
 
 def test_reconstruct_inspect_and_evaluate_cli(
@@ -62,7 +62,7 @@ def test_cli_refuses_overwrite_and_reports_errors(
 
 def test_encode_cli(artifact: Artifact, sample_image: Path, tmp_path: Path) -> None:
     output = tmp_path / "encoded.json"
-    with patch("promptpress.cli.encode_image", return_value=artifact) as encode:
+    with patch("llmpeg.cli.encode_image", return_value=artifact) as encode:
         assert (
             main(
                 [

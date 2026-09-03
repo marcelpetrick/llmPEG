@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Working agreement for AI agents contributing to llmPEG (package name: `promptpress`).
+Working agreement for AI agents contributing to llmPEG (package name: `llmpeg`).
 
 ## What this project is
 
@@ -34,12 +34,12 @@ Concretely:
 
 | Path | What lives there |
 | --- | --- |
-| `src/promptpress/artifact.py` | Versioned artifact model, canonical JSON, profile byte budgets |
-| `src/promptpress/encoder.py` | Image → artifact encoding |
-| `src/promptpress/providers.py` | Ollama vision client and provider protocols |
-| `src/promptpress/evaluation.py` | Deterministic visual proxy metrics |
-| `src/promptpress/survey.py` | HTML survey report generation (embedded CSS/JS, `E501` exempt) |
-| `src/promptpress/cli.py` | `promptpress` console entry point |
+| `src/llmpeg/artifact.py` | Versioned artifact model, canonical JSON, profile byte budgets |
+| `src/llmpeg/encoder.py` | Image → artifact encoding |
+| `src/llmpeg/providers.py` | Ollama vision client and provider protocols |
+| `src/llmpeg/evaluation.py` | Deterministic visual proxy metrics |
+| `src/llmpeg/survey.py` | HTML survey report generation (embedded CSS/JS, `E501` exempt) |
+| `src/llmpeg/cli.py` | `llmpeg` console entry point |
 | `examples/` | The flagship news-article demo: artifact, prompt, reconstruction, evaluation |
 | `survey/` | Reproduction surveys, sources, prompts, artifacts, results |
 | `docs/architecture.md` | C4 diagrams, system context down to components |
@@ -48,7 +48,7 @@ Concretely:
 
 ```bash
 uv sync --extra dev
-uv run promptpress --help
+uv run llmpeg --help
 ```
 
 Gates — all five must pass before a commit:
@@ -57,7 +57,7 @@ Gates — all five must pass before a commit:
 uv run ruff format --check .
 uv run ruff check .
 uv run mypy src tests
-uv run pytest --cov=promptpress --cov-report=term-missing --cov-fail-under=90
+uv run pytest --cov=llmpeg --cov-report=term-missing --cov-fail-under=90
 uv run python -m build
 ```
 
@@ -97,8 +97,8 @@ type(scope): imperative subject
 Established scopes: `codec` (encoder/artifact/providers), `survey`, `architecture`, `docs`.
 
 > Note: the first eight commits use `promptpress` as a scope for what later commits call `codec`.
-> Both refer to the core package. Prefer `codec` going forward; the old commits are left as-is
-> rather than rewritten for cosmetics.
+> That was the project's original name, kept verbatim in history. Prefer `codec` going forward;
+> the old commits are left as-is rather than rewritten for cosmetics.
 
 ## Git etiquette
 
@@ -110,10 +110,6 @@ Established scopes: `codec` (encoder/artifact/providers), `survey`, `architectur
 
 ## Known issues
 
-- `survey_expannded.html` has a typo in its filename (double `n`) and sits at the repository root
-  while every other survey asset lives under `survey/`. Its internal paths are root-relative, so it
-  renders correctly; `survey/EXPANDED.md` links to it by the misspelled name. Renaming touches both
-  files.
 - There is no CI. `plan.md` phase 5 calls for a GitHub Actions workflow running the five gates;
   nothing enforces them automatically yet.
 - The expanded scene benchmark is a checkpoint, not a finished study: six of ten cases have

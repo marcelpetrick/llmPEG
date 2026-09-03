@@ -1,5 +1,5 @@
 {
-  "title": "PromptPress Detailed Identity Survey",
+  "title": "llmPEG Detailed Identity Survey",
   "date": "2026-09-03",
   "profile": "detailed",
   "cases": [
@@ -8,7 +8,7 @@
       "name": "Cat stretched on grass · refined",
       "source": "sources/cat-on-grass.jpg",
       "reconstruction": "reconstructions/cat-on-grass-detailed.png",
-      "artifact": "artifacts/cat-on-grass-detailed.ppress.json",
+      "artifact": "artifacts/cat-on-grass-detailed.llmpeg.json",
       "prompt": "prompts/cat-on-grass-detailed.imagegen.txt",
       "result": "results/cat-on-grass-detailed.json",
       "baseline_reconstruction": "reconstructions/cat-on-grass.png",
@@ -25,7 +25,7 @@
       "name": "Kitten sleeping on a keyboard · refined",
       "source": "sources/cat-on-keyboard.jpg",
       "reconstruction": "reconstructions/cat-on-keyboard-detailed.png",
-      "artifact": "artifacts/cat-on-keyboard-detailed.ppress.json",
+      "artifact": "artifacts/cat-on-keyboard-detailed.llmpeg.json",
       "prompt": "prompts/cat-on-keyboard-detailed.imagegen.txt",
       "result": "results/cat-on-keyboard-detailed.json",
       "baseline_reconstruction": "reconstructions/cat-on-keyboard.png",
@@ -42,7 +42,7 @@
       "name": "Monochrome cat portrait · refined",
       "source": "sources/cat-monochrome.jpg",
       "reconstruction": "reconstructions/cat-monochrome-detailed.png",
-      "artifact": "artifacts/cat-monochrome-detailed.ppress.json",
+      "artifact": "artifacts/cat-monochrome-detailed.llmpeg.json",
       "prompt": "prompts/cat-monochrome-detailed.imagegen.txt",
       "result": "results/cat-monochrome-detailed.json",
       "baseline_reconstruction": "reconstructions/cat-monochrome.png",

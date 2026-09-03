@@ -9,7 +9,7 @@ import urllib.request
 from dataclasses import dataclass
 from typing import Any, Protocol
 
-from promptpress.artifact import ArtifactError, FidelityProfile, Provenance
+from llmpeg.artifact import ArtifactError, FidelityProfile, Provenance
 
 RESPONSE_SCHEMA: dict[str, Any] = {
     "type": "object",

@@ -10,8 +10,8 @@ from typing import Any, Literal
 
 from PIL import Image, ImageFilter
 
-from promptpress.artifact import Artifact, ArtifactError, FidelityProfile, source_digest
-from promptpress.encoder import DEFAULT_MAX_IMAGE_PIXELS
+from llmpeg.artifact import Artifact, ArtifactError, FidelityProfile, source_digest
+from llmpeg.encoder import DEFAULT_MAX_IMAGE_PIXELS
 
 
 @dataclass(frozen=True)

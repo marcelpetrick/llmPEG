@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from promptpress.artifact import Artifact, ArtifactError, FidelityProfile, source_digest
+from llmpeg.artifact import Artifact, ArtifactError, FidelityProfile, source_digest
 
 
 def test_profile_budgets_and_invalid_source() -> None:
@@ -20,7 +20,7 @@ def test_artifact_round_trip_is_canonical(artifact: Artifact, tmp_path: Path) ->
     encoded = artifact.to_bytes()
     assert b"\n" not in encoded
     assert encoded == Artifact.from_dict(json.loads(encoded)).to_bytes()
-    path = tmp_path / "result.ppress.json"
+    path = tmp_path / "result.llmpeg.json"
     artifact.write(path)
     assert Artifact.read(path) == artifact
     with pytest.raises(ArtifactError, match="overwrite"):
