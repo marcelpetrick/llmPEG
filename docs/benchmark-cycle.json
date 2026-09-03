@@ -1,0 +1,88 @@
+{
+  "aggregate": {
+    "mean_encode_seconds": 77.994,
+    "mean_evaluate_seconds": 0.1205,
+    "mean_render_prompt_seconds": 0.0
+  },
+  "cases": [
+    {
+      "artifact_bytes": 1275,
+      "case": "cat-on-grass",
+      "encode": {
+        "max_seconds": 65.043,
+        "mean_seconds": 64.2661,
+        "min_seconds": 63.4893,
+        "runs": 2
+      },
+      "evaluate": {
+        "max_seconds": 0.1262,
+        "mean_seconds": 0.119,
+        "min_seconds": 0.1119,
+        "runs": 2
+      },
+      "profile": "balanced",
+      "ratio": 627.4,
+      "render_prompt": {
+        "max_seconds": 0.0,
+        "mean_seconds": 0.0,
+        "min_seconds": 0.0,
+        "runs": 2
+      },
+      "source_bytes": 799983
+    },
+    {
+      "artifact_bytes": 2171,
+      "case": "workspace-books",
+      "encode": {
+        "max_seconds": 104.7485,
+        "mean_seconds": 94.9957,
+        "min_seconds": 85.2429,
+        "runs": 2
+      },
+      "evaluate": {
+        "max_seconds": 0.1217,
+        "mean_seconds": 0.1215,
+        "min_seconds": 0.1212,
+        "runs": 2
+      },
+      "profile": "balanced",
+      "ratio": 249.3,
+      "render_prompt": {
+        "max_seconds": 0.0001,
+        "mean_seconds": 0.0,
+        "min_seconds": 0.0,
+        "runs": 2
+      },
+      "source_bytes": 541310
+    },
+    {
+      "artifact_bytes": 1722,
+      "case": "amsterdam-market",
+      "encode": {
+        "max_seconds": 76.6364,
+        "mean_seconds": 74.7202,
+        "min_seconds": 72.804,
+        "runs": 2
+      },
+      "evaluate": {
+        "max_seconds": 0.1217,
+        "mean_seconds": 0.1211,
+        "min_seconds": 0.1204,
+        "runs": 2
+      },
+      "profile": "balanced",
+      "ratio": 430.9,
+      "render_prompt": {
+        "max_seconds": 0.0,
+        "mean_seconds": 0.0,
+        "min_seconds": 0.0,
+        "runs": 2
+      },
+      "source_bytes": 742058
+    }
+  ],
+  "model": "qwen3-vl:32b-ctx49k",
+  "note": "Image generation is excluded: llmPEG ships no generator, so that stage's cost depends on the external tool the operator chooses.",
+  "profile": "balanced",
+  "repeats": 2
+}

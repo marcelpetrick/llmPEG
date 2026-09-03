@@ -157,6 +157,31 @@ in the repository. A six-person astronaut crew portrait **failed**, recalling ha
 text and inventing the rest — six specific people became six plausible people. Difficulty tracks
 scene busyness, not file size.
 
+### What a full cycle costs
+
+Measured by [`scripts/benchmark_cycle.py`](scripts/benchmark_cycle.py) against a local
+`qwen3-vl:32b-ctx49k` endpoint — three images, two runs each, `balanced` profile. Raw data in
+[`docs/benchmark-cycle.json`](docs/benchmark-cycle.json).
+
+| Stage | Mean | Range |
+| --- | ---: | ---: |
+| **Compress** (image → artifact) | 78.0 s | 63.5 – 104.7 s |
+| **Render prompt** (artifact → generator prompt) | < 1 ms | — |
+| **Evaluate** (source vs reconstruction) | 0.12 s | 0.11 – 0.13 s |
+| **Decompress** (prompt → new image) | not measured | external generator |
+
+The cost is wildly asymmetric. Compressing one photograph costs over a minute of GPU time;
+everything llmPEG itself does afterwards is effectively free. And the expensive half —
+regenerating the picture — is not even in this codebase, because llmPEG ships no generator. A
+codec whose decompressor is "rent a diffusion model" has an honesty problem with the word
+*compression*, which is the joke.
+
+**Reproducibility is worse than the ratio suggests.** Re-encoding `cat-on-grass` for this
+benchmark produced a **1,275-byte** artifact where the checked-in run produced **997 bytes** —
+627:1 instead of 802:1, from the same image, the same model name, the same seed `42` and
+temperature `0`. The compression ratio is not a property of your photo. It is a property of one
+particular run of one particular model, and it moves by 28% between runs.
+
 Regenerate any survey page after changing a manifest or result:
 
 ```bash
