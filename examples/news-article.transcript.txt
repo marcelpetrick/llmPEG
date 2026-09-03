@@ -1,0 +1,20 @@
+DAILY NEWS
+TECH
+
+Computer prodigy discovers a way to compress photos to mere bytes
+
+13-year-old Eugene Hogwoof figured out a way to compress photos to unimaginably small sizes. A typical 20MB JPG file can now be converted to a mere 600 bytes.
+
+The system works in two steps. First, it uses AI to generate a few words describing the picture and saving it on a file. Later, when the user wants to see the picture, the software uses AI to regenerate the image based on the description of it.
+
+“The file is essentially a prompt, thats why its so small”
+
+Eugene, who taught himself machine learning using online resources, says the idea came to him while trying to backup family photos on an old laptop with limited storage. He hopes his invention will make it easier for everyone to store a lifetime of memories.
+
+SEE EUGENE’S SETUP
+Photos of his room and whiteboard
+
+WATCH THE INTERVIEW
+Eugene explains how it works
+
+Tears of joy: parents sob after seeing all their photos converted to the new format.
