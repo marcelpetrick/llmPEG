@@ -39,7 +39,7 @@ jobs:
         run: uv run ruff check .
 
       - name: Type-check
-        run: uv run mypy src tests scripts
+        run: uv run mypy src tests scripts prototypeWebUI
 
       - name: Test with coverage
         run: uv run pytest --cov=llmpeg --cov-report=term-missing --cov-fail-under=90

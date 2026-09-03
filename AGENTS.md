@@ -61,6 +61,7 @@ README, and is not part of the benchmark set. Do not add a second exception.
 | `docs/metrics.md` | Whether the metrics track a human eye (they do not) |
 | `docs/adversarial.md` | The GAN-shaped refinement loop and why it failed |
 | `scripts/` | Measurement tools: cycle timing, perceptual judge, adversarial loop |
+| `prototypeWebUI/` | Local drag-and-drop demo UI (prototype, untested, not product surface) |
 
 ## Commands
 
@@ -75,7 +76,7 @@ Python 3.14 for every push and pull request:
 ```bash
 uv run ruff format --check .
 uv run ruff check .
-uv run mypy src tests scripts
+uv run mypy src tests scripts prototypeWebUI
 uv run pytest --cov=llmpeg --cov-report=term-missing --cov-fail-under=90
 uv run python -m build
 ```

@@ -81,7 +81,7 @@ Final gate:
 ```text
 ruff format --check .
 ruff check .
-mypy src tests scripts
+mypy src tests scripts prototypeWebUI
 pytest --cov=llmpeg --cov-report=term-missing --cov-fail-under=90
 python -m build
 ```

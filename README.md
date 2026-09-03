@@ -58,6 +58,24 @@ painting. You do not get *your* painting.
 There is no decompressor. "Decompression" here means an image generator inventing a new picture
 from text — which is why everything below is scored rather than trusted.
 
+## Try it on your own photo
+
+[`prototypeWebUI/`](prototypeWebUI/README.md) is a small local web page: drop an image, watch the
+vision model describe it, read the description, then have a **free** image generator paint a new
+picture from those words alone.
+
+```bash
+export OLLAMA_VISION_HOST=http://your-ollama-host:11434
+uv run python prototypeWebUI/server.py     # then open http://127.0.0.1:8000
+```
+
+Generation defaults to [Pollinations](https://pollinations.ai/) — no API key, no account, no
+credits — and an Automatic1111-compatible local Stable Diffusion path is available for keeping
+prompts on your own hardware. The prompt is editable before you generate, which is the one real
+perk of a codec whose compressed form is readable.
+
+Doing this to a photo you took yourself makes the point faster than any table below.
+
 ## The cat, the ratio, and the catch
 
 | Source photo | Prompt-only reconstruction |
@@ -350,7 +368,7 @@ data. llmPEG consumes OCR text; it does not ship an OCR engine.
 ```bash
 uv run ruff format --check .
 uv run ruff check .
-uv run mypy src tests scripts
+uv run mypy src tests scripts prototypeWebUI
 uv run pytest --cov=llmpeg --cov-report=term-missing --cov-fail-under=90
 uv run python -m build
 ```
