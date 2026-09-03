@@ -280,7 +280,7 @@ def _require_list(value: Any, name: str) -> list[Any]:
 def _require_string(value: Any, name: str) -> str:
     if not isinstance(value, str):
         raise ArtifactError(f"{name} must be a string")
-    return value
+    return value.strip()
 
 
 def _require_integer(value: Any, name: str) -> int:

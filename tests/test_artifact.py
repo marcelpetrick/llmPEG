@@ -28,6 +28,17 @@ def test_artifact_round_trip_is_canonical(artifact: Artifact, tmp_path: Path) ->
     artifact.write(path, overwrite=True)
 
 
+def test_artifact_normalizes_surrounding_model_whitespace(artifact: Artifact) -> None:
+    data = artifact.to_dict()
+    data["generation_prompt"] = "  specific cat  "
+    data["composition"][0]["description"] = "  white rectangle  "
+
+    normalized = Artifact.from_dict(data)
+
+    assert normalized.generation_prompt == "specific cat"
+    assert normalized.composition[0].description == "white rectangle"
+
+
 @pytest.mark.parametrize(
     ("mutation", "message"),
     [
