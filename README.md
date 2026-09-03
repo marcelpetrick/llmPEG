@@ -68,7 +68,7 @@ from text — which is why everything below is scored rather than trusted.
 | dHash similarity | 0.500 |
 
 **802:1.** That is the whole seduction of the idea, and it is real — 997 bytes of text stood in
-for a 780 KB photograph, and what comes back is unmistakably a cat stretched out on grass.
+for an 800 KB photograph, and what comes back is unmistakably a cat stretched out on grass.
 
 Now the catch: it is **not the same cat**. The markings are invented, the pose is approximate, the
 fur is a different fur. And this is the *lowest* visual-proxy score of the three cats tested — the
