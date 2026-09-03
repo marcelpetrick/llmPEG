@@ -1,0 +1,53 @@
+{
+  "title": "PromptPress Cat Reconstruction Survey",
+  "date": "2026-09-03",
+  "profile": "balanced",
+  "cases": [
+    {
+      "id": "cat-on-grass",
+      "name": "Cat stretched on grass",
+      "source": "sources/cat-on-grass.jpg",
+      "reconstruction": "reconstructions/cat-on-grass.png",
+      "artifact": "artifacts/cat-on-grass.ppress.json",
+      "prompt": "prompts/cat-on-grass.txt",
+      "result": "results/cat-on-grass.json",
+      "credit": {
+        "author": "Clavecin",
+        "license": "Public domain dedication",
+        "license_url": "https://commons.wikimedia.org/wiki/File:Cat_full_length.jpg#Licensing",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Cat_full_length.jpg"
+      }
+    },
+    {
+      "id": "cat-on-keyboard",
+      "name": "Kitten sleeping on a keyboard",
+      "source": "sources/cat-on-keyboard.jpg",
+      "reconstruction": "reconstructions/cat-on-keyboard.png",
+      "artifact": "artifacts/cat-on-keyboard.ppress.json",
+      "prompt": "prompts/cat-on-keyboard.txt",
+      "result": "results/cat-on-keyboard.json",
+      "credit": {
+        "author": "Remedios44",
+        "license": "Public domain dedication",
+        "license_url": "https://commons.wikimedia.org/wiki/File:Wikipedians_cat.jpg#Licensing",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Wikipedians_cat.jpg"
+      }
+    },
+    {
+      "id": "cat-monochrome",
+      "name": "Monochrome cat portrait",
+      "source": "sources/cat-monochrome.jpg",
+      "reconstruction": "reconstructions/cat-monochrome.png",
+      "artifact": "artifacts/cat-monochrome.ppress.json",
+      "prompt": "prompts/cat-monochrome.txt",
+      "result": "results/cat-monochrome.json",
+      "credit": {
+        "author": "Barmanru",
+        "license": "Public domain dedication",
+        "license_url": "https://commons.wikimedia.org/wiki/File:Cat_bw-photo.jpg#Licensing",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Cat_bw-photo.jpg"
+      }
+    }
+  ]
+}
+
