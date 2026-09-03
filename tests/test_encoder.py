@@ -33,6 +33,8 @@ def test_encode_and_render(sample_image: Path, description: dict[str, Any]) -> N
     assert "160x120" in prompt
     assert '"EXAMPLE"' in prompt
     assert "left: white rectangle" in prompt
+    assert "Maximize resemblance" in prompt
+    assert "add no" in prompt
 
 
 def test_encode_rejects_input_errors(

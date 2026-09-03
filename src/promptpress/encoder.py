@@ -119,9 +119,21 @@ def render_generation_prompt(artifact: Artifact) -> str:
         f"{artifact.source.width}x{artifact.source.height} "
         f"({artifact.source.width / artifact.source.height:.3f}:1)"
     )
+    fidelity = {
+        FidelityProfile.GIST: "Preserve the recognizable scene and broad arrangement.",
+        FidelityProfile.BALANCED: (
+            "Preserve the subject, action, palette, lighting, and spatial relationships."
+        ),
+        FidelityProfile.DETAILED: (
+            "Maximize resemblance to this specifically described subject. Prioritize distinctive "
+            "markings, proportions, pose landmarks, crop, and object geometry over generic beauty "
+            "or creative interpretation."
+        ),
+    }[artifact.profile]
     return f"""Create a new image from this semantic description.
 
 Primary request: {artifact.generation_prompt}
+Fidelity goal: {fidelity}
 Style/medium: {artifact.style}
 Canvas: {canvas}
 Composition:
@@ -129,7 +141,8 @@ Composition:
 Palette: {palette}
 Text to render verbatim when possible:
 {text}
-Constraints: preserve the described hierarchy and spatial relationships.
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
 This is a semantic reconstruction, not the original.
 Avoid: {avoid}; extra logos; watermarks; invented claims.
 """

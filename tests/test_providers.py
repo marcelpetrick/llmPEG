@@ -76,6 +76,8 @@ def test_profile_instructions_differ() -> None:
     assert "subjects" in _vision_instruction(FidelityProfile.GIST)
     assert "spatial" in _vision_instruction(FidelityProfile.BALANCED)
     assert "verbatim" in _vision_instruction(FidelityProfile.DETAILED)
+    assert "visual identity" in _vision_instruction(FidelityProfile.DETAILED)
+    assert "percentages" in _vision_instruction(FidelityProfile.DETAILED)
 
 
 def test_ollama_accepts_valid_json_from_thinking_field(description: dict[str, Any]) -> None:

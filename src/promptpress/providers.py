@@ -160,8 +160,16 @@ def _vision_instruction(profile: FidelityProfile) -> str:
             "Also preserve spatial relations, lighting, style, major objects, and critical text."
         ),
         FidelityProfile.DETAILED: (
-            "Preserve all readable text verbatim, object attributes, approximate geometry, "
-            "typography intent, and fine visual details."
+            "Preserve all readable text verbatim, object attributes, geometry, typography, and "
+            "fine visual details. Treat visual identity as the priority: describe each subject's "
+            "body and face proportions, distinctive color or fur-marking boundaries, eyes, ears, "
+            "muzzle, limbs, paws, tail, pose, gaze, and expression when visible. Record the "
+            "subject bounding box and important landmarks as approximate percentages of canvas "
+            "width and height. Describe camera viewpoint, crop, depth of field, lighting "
+            "direction, texture, "
+            "and the shape and position of background objects. Use concrete observable language, "
+            "not generic labels. Spend the available detail budget on features that distinguish "
+            "this particular image from another image of the same scene category."
         ),
     }[profile]
     return f"""/no_think
@@ -169,14 +177,16 @@ Analyze the attached image for lossy semantic reconstruction. {detail}
 Return ONLY one valid JSON object with exactly these fields:
 {{
   "summary": "one factual sentence",
-  "generation_prompt": "standalone generator-ready visual description",
+  "generation_prompt": "standalone generator-ready description with identity landmarks",
   "critical_text": ["exact visible strings worth preserving"],
   "composition": [{{
-    "region": "normalized area such as top or lower-right",
-    "description": "visible content"
+    "region": "normalized area or approximate x/y/w/h percentages",
+    "description": "visible content, geometry, landmark positions, and relationships"
   }}],
   "palette": ["#RRGGBB"],
   "style": "medium and visual treatment",
-  "avoid": ["likely reconstruction errors to avoid"]
+  "avoid": ["specific identity, geometry, or content errors to avoid"]
 }}
-Describe only what is visible. Do not wrap the JSON in Markdown."""
+Describe only what is visible; never infer a name, breed, backstory, or hidden feature. Make the
+generation_prompt self-contained rather than referring to this image or the analysis. Do not wrap
+the JSON in Markdown."""
