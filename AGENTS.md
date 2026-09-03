@@ -4,6 +4,10 @@ Working agreement for AI agents contributing to llmPEG (package name: `llmpeg`).
 
 ## What this project is
 
+llmPEG — the *LLM Photo Expert Group*, punning on JPEG's Joint Photographic Experts Group. The
+package, CLI, and artifact extension are all `llmpeg` (`.llmpeg.json`); the project was originally
+called PromptPress, and early commits still carry that name.
+
 A satirical meme — "compress your photos into an AI prompt and delete the originals" — built as a
 real, measured prototype. A vision model encodes an image into a compact versioned JSON artifact;
 an image generator later renders a **new** image from that text alone. The generator never sees the
@@ -29,6 +33,17 @@ Concretely:
   `"status": "fail"` on critical-text recall and that stays visible in the README.
 - Never let the encoder silently drop content to make a ratio look better. Over-budget output must
   fail closed. This is enforced in `artifact.py`, not just documented.
+
+## Media rule
+
+Every benchmark, survey, and demo image added to this repository must be **freely licensed**
+(CC0, public domain, or an explicit free licence). Before adding one, record its author, licence,
+and source URL in the relevant manifest `credit` block — read from the source record, never
+guessed. An image whose provenance you cannot verify does not go in.
+
+The single existing exception is `media/newsArticle.jpg`, the third-party satirical image that
+motivated the project. It is reproduced for commentary, is labelled as not free-licensed in the
+README, and is not part of the benchmark set. Do not add a second exception.
 
 ## Repository layout
 
@@ -112,5 +127,10 @@ Established scopes: `codec` (encoder/artifact/providers), `survey`, `architectur
 
 - There is no CI. `plan.md` phase 5 calls for a GitHub Actions workflow running the five gates;
   nothing enforces them automatically yet.
-- The expanded scene benchmark is a checkpoint, not a finished study: six of ten cases have
-  reconstructions, four are encoded but not generated. See `survey/EXPANDED.md`.
+- The expanded scene benchmark is measured at `n=6`, not the planned `n=10`. Four cases
+  (`kitchen-table`, `living-room`, `mountain-hikers`, `street-bicycles`) are encoded and have
+  rendered prompts but no reconstruction, because generation is a manual adapter step.
+- Those same four sources have no recorded Commons URL. They must be traced before publication —
+  see the media rule above.
+- Two measured cases (`train-platform`, `workspace-books`) have no OCR transcript, so they report
+  `incomplete` rather than pass or fail.

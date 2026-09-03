@@ -1,5 +1,10 @@
 # llmPEG vision
 
+The name is the thesis in miniature. JPEG comes from the **J**oint **P**hotographic **E**xperts
+**G**roup; llmPEG is the **LLM P**hoto **E**xpert **G**roup — a codec whose "expert" is a language
+model, which is exactly as reassuring as it sounds. The pun is deliberate, and so is the warning
+inside it: this format is authored by something that guesses.
+
 llmPEG is an experimental **semantic image codec**. It replaces an image with a compact,
 portable description and later asks an image generator to render that description. The result
 should preserve what a person remembers about the image, not its pixels.
