@@ -64,8 +64,10 @@ The starkest cases:
 
 ## What humans actually judge: identity
 
-The judge's `same_identity` axis predicts its overall verdict almost perfectly. Across all twelve
-cases the two differ by more than one point exactly once:
+The judge's `same_identity` axis predicts its overall verdict almost perfectly. The two agree
+exactly on ten of twelve cases, and never differ by more than one point — the two exceptions are
+`cat-monochrome-detailed` (identity 2, overall 3) and `workspace-books-expanded` (identity 5,
+overall 4):
 
 ```
 (identity, overall): (1,1) (1,1) (2,3) (2,2) (5,5) (5,5) (5,5) (5,5) (4,4) (5,5) (1,1) (5,4)

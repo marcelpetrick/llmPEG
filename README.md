@@ -202,7 +202,8 @@ the *lowest* proxy in the set (0.595) and the judge's *top* mark (5/5). The astr
 0.732 and gets 1/5.
 
 What a reviewer actually judges is **identity** — the judge's identity axis predicts its overall
-verdict on eleven of twelve cases. Edges, hashes and histograms are blind to it.
+verdict exactly on ten of twelve cases, and never differs from it by more than one point. Edges,
+hashes and histograms are blind to it.
 
 The score has not been reweighted: no blend of those signals can recover subject identity, and
 re-tuning on twelve points would be curve-fitting. `visual_proxy_score` is instead documented for
@@ -349,7 +350,7 @@ data. llmPEG consumes OCR text; it does not ship an OCR engine.
 ```bash
 uv run ruff format --check .
 uv run ruff check .
-uv run mypy src tests
+uv run mypy src tests scripts
 uv run pytest --cov=llmpeg --cov-report=term-missing --cov-fail-under=90
 uv run python -m build
 ```

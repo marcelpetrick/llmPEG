@@ -75,7 +75,7 @@ Python 3.14 for every push and pull request:
 ```bash
 uv run ruff format --check .
 uv run ruff check .
-uv run mypy src tests
+uv run mypy src tests scripts
 uv run pytest --cov=llmpeg --cov-report=term-missing --cov-fail-under=90
 uv run python -m build
 ```
