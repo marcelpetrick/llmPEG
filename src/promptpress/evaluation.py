@@ -10,7 +10,8 @@ from typing import Any, Literal
 
 from PIL import Image, ImageFilter
 
-from promptpress.artifact import Artifact, ArtifactError, FidelityProfile
+from promptpress.artifact import Artifact, ArtifactError, FidelityProfile, source_digest
+from promptpress.encoder import DEFAULT_MAX_IMAGE_PIXELS
 
 
 @dataclass(frozen=True)
@@ -73,11 +74,9 @@ def evaluate_images(
 ) -> Evaluation:
     """Compare two images with reproducible, non-semantic proxy metrics."""
     try:
-        with Image.open(source_path) as opened:
-            source = opened.convert("RGB")
-        with Image.open(reconstruction_path) as opened:
-            reconstruction = opened.convert("RGB")
-    except OSError as error:
+        source = _load_rgb(source_path)
+        reconstruction = _load_rgb(reconstruction_path)
+    except (Image.DecompressionBombError, OSError) as error:
         raise ArtifactError(f"cannot evaluate image: {error}") from error
 
     aspect = _aspect_similarity(source, reconstruction)
@@ -115,6 +114,12 @@ def evaluate_with_artifact(
     ocr_text: str | None = None,
 ) -> Evaluation:
     """Evaluate using profile and critical text stored in an artifact."""
+    try:
+        source = source_path.read_bytes()
+    except OSError as error:
+        raise ArtifactError(f"cannot verify source image: {error}") from error
+    if len(source) != artifact.source.byte_size or source_digest(source) != artifact.source.sha256:
+        raise ArtifactError("source image does not match the artifact byte size and SHA-256")
     return evaluate_images(
         source_path,
         reconstruction_path,
@@ -128,6 +133,16 @@ def _aspect_similarity(left: Image.Image, right: Image.Image) -> float:
     left_ratio = left.width / left.height
     right_ratio = right.width / right.height
     return _bounded(min(left_ratio, right_ratio) / max(left_ratio, right_ratio))
+
+
+def _load_rgb(path: Path) -> Image.Image:
+    with Image.open(path) as opened:
+        if opened.width * opened.height > DEFAULT_MAX_IMAGE_PIXELS:
+            raise ArtifactError(
+                f"image has {opened.width * opened.height} pixels; evaluation limit is "
+                f"{DEFAULT_MAX_IMAGE_PIXELS} pixels"
+            )
+        return opened.convert("RGB")
 
 
 def _dhash(image: Image.Image) -> tuple[bool, ...]:
@@ -179,15 +194,21 @@ def _palette_distance(left: Image.Image, right: Image.Image) -> float:
     if not left_colors or not right_colors:
         return 1.0
     maximum = math.sqrt(3 * 255**2)
-    distances = []
-    for color in left_colors:
-        nearest = min(math.dist(color, candidate) for candidate in right_colors)
-        distances.append(nearest / maximum)
+    distances = [
+        min(math.dist(color, candidate) for candidate in right_colors) / maximum
+        for color in left_colors
+    ]
+    distances.extend(
+        min(math.dist(color, candidate) for candidate in left_colors) / maximum
+        for color in right_colors
+    )
     return _bounded(sum(distances) / len(distances))
 
 
 def _critical_text_recall(expected: tuple[str, ...], actual: str | None) -> float | None:
-    if actual is None or not expected:
+    if not expected:
+        return 1.0
+    if actual is None:
         return None
     folded = actual.casefold()
     return sum(item.casefold() in folded for item in expected) / len(expected)

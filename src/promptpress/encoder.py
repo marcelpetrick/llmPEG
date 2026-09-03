@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import io
+import json
+from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
@@ -13,7 +15,6 @@ from promptpress.artifact import (
     Artifact,
     ArtifactError,
     FidelityProfile,
-    Region,
     SourceInfo,
     source_digest,
 )
@@ -21,6 +22,7 @@ from promptpress.providers import VisionProvider
 
 MEDIA_TYPES = {"JPEG": "image/jpeg", "PNG": "image/png", "WEBP": "image/webp"}
 DEFAULT_MAX_IMAGE_BYTES = 25 * 1024 * 1024
+DEFAULT_MAX_IMAGE_PIXELS = 50_000_000
 
 
 def encode_image(
@@ -29,6 +31,7 @@ def encode_image(
     profile: FidelityProfile = FidelityProfile.BALANCED,
     *,
     max_image_bytes: int = DEFAULT_MAX_IMAGE_BYTES,
+    max_image_pixels: int = DEFAULT_MAX_IMAGE_PIXELS,
 ) -> Artifact:
     """Encode an image with a vision provider without mutating the input."""
     try:
@@ -43,11 +46,17 @@ def encode_image(
         raise ArtifactError("image is empty")
     try:
         with Image.open(io.BytesIO(content)) as image:
+            width, height = image.size
+            if width * height > max_image_pixels:
+                raise ArtifactError(
+                    f"image has {width * height} pixels; configured limit is "
+                    f"{max_image_pixels} pixels"
+                )
             image.verify()
         with Image.open(io.BytesIO(content)) as image:
             width, height = image.size
             media_type = MEDIA_TYPES.get(image.format or "")
-    except (UnidentifiedImageError, OSError) as error:
+    except (Image.DecompressionBombError, UnidentifiedImageError, OSError) as error:
         raise ArtifactError(f"unsupported or corrupt image: {error}") from error
     if media_type is None:
         raise ArtifactError("supported image formats are JPEG, PNG, and WebP")
@@ -84,24 +93,15 @@ def _artifact_from_description(
         raise ArtifactError(
             f"vision response keys mismatch; missing={sorted(missing)}, extra={sorted(extra)}"
         )
-    try:
-        artifact = Artifact(
-            schema_version=SCHEMA_VERSION,
-            profile=profile,
-            source=source,
-            summary=str(data["summary"]),
-            generation_prompt=str(data["generation_prompt"]),
-            critical_text=tuple(str(item) for item in data["critical_text"]),
-            composition=tuple(Region(**item) for item in data["composition"]),
-            palette=tuple(str(item) for item in data["palette"]),
-            style=str(data["style"]),
-            avoid=tuple(str(item) for item in data["avoid"]),
-            provenance=provider.provenance,
-        )
-    except (TypeError, ValueError) as error:
-        raise ArtifactError(f"invalid vision response structure: {error}") from error
-    artifact.validate()
-    return artifact
+    return Artifact.from_dict(
+        {
+            "schema_version": SCHEMA_VERSION,
+            "profile": profile.value,
+            "source": asdict(source),
+            **data,
+            "provenance": asdict(provider.provenance),
+        }
+    )
 
 
 def render_generation_prompt(artifact: Artifact) -> str:
@@ -109,7 +109,10 @@ def render_generation_prompt(artifact: Artifact) -> str:
     regions = "\n".join(
         f"- {region.region}: {region.description}" for region in artifact.composition
     )
-    text = "\n".join(f'- "{item}"' for item in artifact.critical_text) or "- none"
+    text = (
+        "\n".join(f"- {json.dumps(item, ensure_ascii=False)}" for item in artifact.critical_text)
+        or "- none"
+    )
     avoid = ", ".join(artifact.avoid) or "none"
     palette = ", ".join(artifact.palette) or "unspecified"
     canvas = (

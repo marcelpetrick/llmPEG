@@ -87,8 +87,15 @@ class Artifact:
 
     def validate(self) -> None:
         """Validate all invariants of the current schema."""
+        if type(self.schema_version) is not int:
+            raise ArtifactError("schema_version must be an integer")
         if self.schema_version != SCHEMA_VERSION:
             raise ArtifactError(f"unsupported schema_version: {self.schema_version}")
+        if any(
+            type(value) is not int
+            for value in (self.source.width, self.source.height, self.source.byte_size)
+        ):
+            raise ArtifactError("source dimensions and byte_size must be integers")
         if self.source.width < 1 or self.source.height < 1 or self.source.byte_size < 1:
             raise ArtifactError("source dimensions and byte_size must be positive")
         if self.source.media_type not in {"image/jpeg", "image/png", "image/webp"}:
@@ -119,6 +126,10 @@ class Artifact:
         self.validate()
         data = asdict(self)
         data["profile"] = self.profile.value
+        data["critical_text"] = list(self.critical_text)
+        data["composition"] = [asdict(region) for region in self.composition]
+        data["palette"] = list(self.palette)
+        data["avoid"] = list(self.avoid)
         return data
 
     def to_bytes(self) -> bytes:
@@ -151,7 +162,14 @@ class Artifact:
                 os.fsync(stream.fileno())
             if path.exists() and not overwrite:
                 raise ArtifactError(f"refusing to overwrite existing file: {path}")
-            os.replace(temporary, path)
+            if overwrite:
+                os.replace(temporary, path)
+            else:
+                try:
+                    os.link(temporary, path)
+                except FileExistsError as error:
+                    raise ArtifactError(f"refusing to overwrite existing file: {path}") from error
+                os.unlink(temporary)
         finally:
             if os.path.exists(temporary):
                 os.unlink(temporary)
@@ -173,24 +191,47 @@ class Artifact:
                 "avoid",
                 "provenance",
             }
-            extra = set(data) - required
-            missing = required - set(data)
-            if missing or extra:
-                raise ArtifactError(
-                    f"artifact keys mismatch; missing={sorted(missing)}, extra={sorted(extra)}"
+            _require_keys(data, required, "artifact")
+            source = _require_mapping(data["source"], "source")
+            _require_keys(
+                source, {"width", "height", "byte_size", "media_type", "sha256"}, "source"
+            )
+            provenance = _require_mapping(data["provenance"], "provenance")
+            _require_keys(provenance, {"provider", "model", "seed", "temperature"}, "provenance")
+            composition_data = _require_list(data["composition"], "composition")
+            composition: list[Region] = []
+            for index, item in enumerate(composition_data):
+                region = _require_mapping(item, f"composition[{index}]")
+                _require_keys(region, {"region", "description"}, f"composition[{index}]")
+                composition.append(
+                    Region(
+                        _require_string(region["region"], f"composition[{index}].region"),
+                        _require_string(region["description"], f"composition[{index}].description"),
+                    )
                 )
             artifact = cls(
-                schema_version=int(data["schema_version"]),
-                profile=FidelityProfile(data["profile"]),
-                source=SourceInfo(**data["source"]),
-                summary=str(data["summary"]),
-                generation_prompt=str(data["generation_prompt"]),
-                critical_text=tuple(str(item) for item in data["critical_text"]),
-                composition=tuple(Region(**item) for item in data["composition"]),
-                palette=tuple(str(item) for item in data["palette"]),
-                style=str(data["style"]),
-                avoid=tuple(str(item) for item in data["avoid"]),
-                provenance=Provenance(**data["provenance"]),
+                schema_version=_require_integer(data["schema_version"], "schema_version"),
+                profile=FidelityProfile(_require_string(data["profile"], "profile")),
+                source=SourceInfo(
+                    _require_integer(source["width"], "source.width"),
+                    _require_integer(source["height"], "source.height"),
+                    _require_integer(source["byte_size"], "source.byte_size"),
+                    _require_string(source["media_type"], "source.media_type"),
+                    _require_string(source["sha256"], "source.sha256"),
+                ),
+                summary=_require_string(data["summary"], "summary"),
+                generation_prompt=_require_string(data["generation_prompt"], "generation_prompt"),
+                critical_text=_string_tuple(data["critical_text"], "critical_text"),
+                composition=tuple(composition),
+                palette=_string_tuple(data["palette"], "palette"),
+                style=_require_string(data["style"], "style"),
+                avoid=_string_tuple(data["avoid"], "avoid"),
+                provenance=Provenance(
+                    _require_string(provenance["provider"], "provenance.provider"),
+                    _require_string(provenance["model"], "provenance.model"),
+                    _optional_integer(provenance["seed"], "provenance.seed"),
+                    _optional_number(provenance["temperature"], "provenance.temperature"),
+                ),
             )
         except (KeyError, TypeError, ValueError) as error:
             if isinstance(error, ArtifactError):
@@ -214,3 +255,54 @@ class Artifact:
 def source_digest(content: bytes) -> str:
     """Return a lowercase SHA-256 digest for source bytes."""
     return hashlib.sha256(content).hexdigest()
+
+
+def _require_keys(data: dict[str, Any], expected: set[str], context: str) -> None:
+    extra, missing = set(data) - expected, expected - set(data)
+    if missing or extra:
+        raise ArtifactError(
+            f"{context} keys mismatch; missing={sorted(missing)}, extra={sorted(extra)}"
+        )
+
+
+def _require_mapping(value: Any, name: str) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        raise ArtifactError(f"{name} must be an object")
+    return value
+
+
+def _require_list(value: Any, name: str) -> list[Any]:
+    if not isinstance(value, list):
+        raise ArtifactError(f"{name} must be an array")
+    return value
+
+
+def _require_string(value: Any, name: str) -> str:
+    if not isinstance(value, str):
+        raise ArtifactError(f"{name} must be a string")
+    return value
+
+
+def _require_integer(value: Any, name: str) -> int:
+    if type(value) is not int:
+        raise ArtifactError(f"{name} must be an integer")
+    return value
+
+
+def _optional_integer(value: Any, name: str) -> int | None:
+    return None if value is None else _require_integer(value, name)
+
+
+def _optional_number(value: Any, name: str) -> float | None:
+    if value is None:
+        return None
+    if isinstance(value, bool) or not isinstance(value, int | float):
+        raise ArtifactError(f"{name} must be a number or null")
+    return float(value)
+
+
+def _string_tuple(value: Any, name: str) -> tuple[str, ...]:
+    return tuple(
+        _require_string(item, f"{name}[{index}]")
+        for index, item in enumerate(_require_list(value, name))
+    )

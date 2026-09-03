@@ -1,15 +1,21 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
 
-from promptpress.artifact import Artifact
+from promptpress.artifact import Artifact, SourceInfo, source_digest
 from promptpress.cli import main
 
 
 def test_reconstruct_inspect_and_evaluate_cli(
     artifact: Artifact, sample_image: Path, tmp_path: Path, capsys: object
 ) -> None:
+    content = sample_image.read_bytes()
+    artifact = replace(
+        artifact,
+        source=SourceInfo(160, 120, len(content), "image/png", source_digest(content)),
+    )
     artifact_path = tmp_path / "artifact.json"
     artifact.write(artifact_path)
     prompt_path = tmp_path / "prompt.txt"
@@ -74,3 +80,26 @@ def test_encode_cli(artifact: Artifact, sample_image: Path, tmp_path: Path) -> N
         )
     assert output.exists()
     assert encode.call_args.args[2].value == "detailed"
+
+
+def test_evaluate_cli_returns_status_exit_code(
+    artifact: Artifact, sample_image: Path, tmp_path: Path
+) -> None:
+    content = sample_image.read_bytes()
+    artifact = replace(
+        artifact,
+        source=SourceInfo(160, 120, len(content), "image/png", source_digest(content)),
+    )
+    artifact_path = tmp_path / "artifact.json"
+    artifact.write(artifact_path)
+    base = [
+        "evaluate",
+        str(sample_image),
+        str(sample_image),
+        "--artifact",
+        str(artifact_path),
+    ]
+    assert main(base) == 3
+    wrong = tmp_path / "wrong.txt"
+    wrong.write_text("wrong")
+    assert main([*base, "--ocr-text", str(wrong)]) == 1

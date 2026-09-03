@@ -117,14 +117,24 @@ class OllamaVisionProvider:
                 raw = json.load(response)
         except (OSError, urllib.error.URLError, json.JSONDecodeError) as error:
             raise ArtifactError(f"vision provider request failed: {error}") from error
+        if not isinstance(raw, dict):
+            raise ArtifactError("vision provider response root must be a JSON object")
         if raw.get("error"):
             raise ArtifactError(f"vision provider error: {raw['error']}")
         message = raw.get("message") or {}
-        content = message.get("content", "").strip()
+        if not isinstance(message, dict):
+            raise ArtifactError("vision provider message must be a JSON object")
+        content_value = message.get("content", "")
+        if not isinstance(content_value, str):
+            raise ArtifactError("vision provider content must be a string")
+        content = content_value.strip()
         if not content:
             # Ollama 0.32/Qwen3-VL may ignore think:false and place schema-constrained JSON here.
             # It is accepted only if the normal JSON validation below succeeds.
-            content = message.get("thinking", "").strip()
+            thinking = message.get("thinking", "")
+            if not isinstance(thinking, str):
+                raise ArtifactError("vision provider thinking must be a string")
+            content = thinking.strip()
         if not content:
             reason = raw.get("done_reason", "unknown")
             raise ArtifactError(f"vision provider returned empty content (done_reason={reason})")

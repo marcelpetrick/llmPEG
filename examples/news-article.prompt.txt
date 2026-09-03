@@ -17,7 +17,7 @@ Text to render verbatim when possible:
 - "Computer prodigy discovers a way to compress photos to mere bytes"
 - "13-year-old Eugene Hogwoof figured out a way to compress photos to unimaginably small sizes. A typical 20MB JPG file can now be converted to a mere 600 bytes."
 - "The system works in two steps. First, it uses AI to generate a few words describing the picture and saving it on a file. Later, when the user wants to see the picture, the software uses AI to regenerate the image based on the description of it."
-- ""The file is essentially a prompt, thats why its so small", said the Gen AI boy."
+- "\"The file is essentially a prompt, thats why its so small\", said the Gen AI boy."
 - "After converting all their family photos, the boy erased the files and destroyed the print pictures, saving precious space at their home. When questioned about the software never generating the same picture, Eugene stated that our brain memories are fuzzed anyway, so the pictures mimic how our brain regenerates images."
 - "My app can even create photos from moments you had no camera at the moment."
 - "His next step is to create a new compression method for video files, as he seems eager to destroy his dad's VHS memories."

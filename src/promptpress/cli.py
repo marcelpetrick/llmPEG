@@ -9,7 +9,12 @@ from collections.abc import Sequence
 from pathlib import Path
 
 from promptpress.artifact import Artifact, ArtifactError, FidelityProfile
-from promptpress.encoder import DEFAULT_MAX_IMAGE_BYTES, encode_image, render_generation_prompt
+from promptpress.encoder import (
+    DEFAULT_MAX_IMAGE_BYTES,
+    DEFAULT_MAX_IMAGE_PIXELS,
+    encode_image,
+    render_generation_prompt,
+)
 from promptpress.evaluation import evaluate_with_artifact
 from promptpress.providers import OllamaVisionProvider
 
@@ -33,6 +38,7 @@ def build_parser() -> argparse.ArgumentParser:
     encode.add_argument("--model", default="qwen3-vl:32b-ctx49k")
     encode.add_argument("--timeout", type=float, default=600.0)
     encode.add_argument("--max-image-bytes", type=int, default=DEFAULT_MAX_IMAGE_BYTES)
+    encode.add_argument("--max-image-pixels", type=int, default=DEFAULT_MAX_IMAGE_PIXELS)
     encode.add_argument("--overwrite", action="store_true")
 
     reconstruct = subparsers.add_parser(
@@ -66,6 +72,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 provider,
                 FidelityProfile(args.profile),
                 max_image_bytes=args.max_image_bytes,
+                max_image_pixels=args.max_image_pixels,
             )
             artifact.write(args.output, overwrite=args.overwrite)
             print(f"wrote {args.output} ({len(artifact.to_bytes())} bytes)")
@@ -99,6 +106,10 @@ def main(argv: Sequence[str] | None = None) -> int:
                 print(f"wrote {args.output} ({report.status})")
             else:
                 print(output, end="")
+            if report.status == "fail":
+                return 1
+            if report.status == "incomplete":
+                return 3
         else:  # pragma: no cover - argparse enforces a known command
             raise AssertionError(f"unknown command: {args.command}")
     except (ArtifactError, OSError, UnicodeError) as error:

@@ -11,7 +11,7 @@ from promptpress.providers import OllamaVisionProvider, _vision_instruction
 
 
 class Response:
-    def __init__(self, payload: dict[str, Any]) -> None:
+    def __init__(self, payload: Any) -> None:
         self.payload = payload
 
     def __enter__(self) -> Response:
@@ -46,9 +46,13 @@ def test_ollama_provider_request_and_fenced_json(description: dict[str, Any]) ->
         ({"done_reason": "length", "message": {"content": ""}}, "empty content"),
         ({"message": {"content": "not json"}}, "invalid JSON"),
         ({"message": {"content": "[]"}}, "JSON object"),
+        ({"message": "wrong"}, "message must"),
+        ({"message": {"content": 12}}, "content must"),
+        ({"message": {"content": "", "thinking": 12}}, "thinking must"),
+        ([], "response root"),
     ],
 )
-def test_ollama_provider_rejects_bad_responses(payload: dict[str, Any], message: str) -> None:
+def test_ollama_provider_rejects_bad_responses(payload: Any, message: str) -> None:
     with (
         patch("urllib.request.urlopen", return_value=Response(payload)),
         pytest.raises(ArtifactError, match=message),

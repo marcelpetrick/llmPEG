@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
 from PIL import Image, ImageDraw
 
-from promptpress.artifact import ArtifactError, FidelityProfile
+from promptpress.artifact import Artifact, ArtifactError, FidelityProfile, SourceInfo, source_digest
 from promptpress.evaluation import evaluate_images, evaluate_with_artifact
 
 
@@ -23,14 +24,20 @@ def test_identical_images_pass_gist_and_score_above_changed(
     assert same.metrics.aspect_similarity > changed.metrics.aspect_similarity
 
 
-def test_detailed_text_is_incomplete_failed_or_passed(sample_image: Path, artifact: object) -> None:
-    # Fixture is annotated as Artifact by pytest at runtime; keeping import noise out of this test.
-    report = evaluate_with_artifact(sample_image, sample_image, artifact)  # type: ignore[arg-type]
+def test_detailed_text_is_incomplete_failed_or_passed(
+    sample_image: Path, artifact: Artifact
+) -> None:
+    content = sample_image.read_bytes()
+    artifact = replace(
+        artifact,
+        source=SourceInfo(160, 120, len(content), "image/png", source_digest(content)),
+    )
+    report = evaluate_with_artifact(sample_image, sample_image, artifact)
     assert report.status == "incomplete"
     assert report.checks["critical_text_recall"] is None
-    failed = evaluate_with_artifact(sample_image, sample_image, artifact, ocr_text="wrong")  # type: ignore[arg-type]
+    failed = evaluate_with_artifact(sample_image, sample_image, artifact, ocr_text="wrong")
     assert failed.status == "fail"
-    passed = evaluate_with_artifact(sample_image, sample_image, artifact, ocr_text="EXAMPLE")  # type: ignore[arg-type]
+    passed = evaluate_with_artifact(sample_image, sample_image, artifact, ocr_text="EXAMPLE")
     assert passed.status == "pass"
     assert '"status": "pass"' in passed.to_json()
 
@@ -59,3 +66,24 @@ def test_evaluation_rejects_bad_image(sample_image: Path, tmp_path: Path) -> Non
     bad.write_text("bad")
     with pytest.raises(ArtifactError, match="cannot evaluate"):
         evaluate_images(sample_image, bad, FidelityProfile.GIST)
+
+
+def test_evaluation_rejects_source_that_does_not_match_artifact(
+    sample_image: Path, artifact: Artifact
+) -> None:
+    with pytest.raises(ArtifactError, match="does not match"):
+        evaluate_with_artifact(sample_image, sample_image, artifact)
+
+
+def test_detailed_image_without_text_does_not_require_ocr(
+    sample_image: Path, artifact: Artifact
+) -> None:
+    content = sample_image.read_bytes()
+    artifact = replace(
+        artifact,
+        critical_text=(),
+        source=SourceInfo(160, 120, len(content), "image/png", source_digest(content)),
+    )
+    report = evaluate_with_artifact(sample_image, sample_image, artifact)
+    assert report.status == "pass"
+    assert report.metrics.critical_text_recall == 1.0

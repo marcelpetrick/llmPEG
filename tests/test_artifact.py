@@ -66,6 +66,24 @@ def test_artifact_rejects_key_mismatch_and_bad_files(artifact: Artifact, tmp_pat
         Artifact.read(path)
 
 
+@pytest.mark.parametrize(
+    ("field", "value", "message"),
+    [
+        ("schema_version", "1", "integer"),
+        ("critical_text", "not an array", "array"),
+        ("summary", 123, "string"),
+        ("provenance", {"provider": "x"}, "keys mismatch"),
+    ],
+)
+def test_artifact_rejects_wrong_json_types(
+    artifact: Artifact, field: str, value: object, message: str
+) -> None:
+    data = artifact.to_dict()
+    data[field] = value
+    with pytest.raises(ArtifactError, match=message):
+        Artifact.from_dict(data)
+
+
 def test_budget_enforcement_and_digest(artifact: Artifact) -> None:
     data = artifact.to_dict()
     data["profile"] = "gist"

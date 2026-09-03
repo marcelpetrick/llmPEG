@@ -51,6 +51,8 @@ def test_encode_rejects_input_errors(
         encode_image(bad, provider)
     with pytest.raises(ArtifactError, match="configured limit"):
         encode_image(sample_image, provider, max_image_bytes=1)
+    with pytest.raises(ArtifactError, match="pixel"):
+        encode_image(sample_image, provider, max_image_pixels=1)
 
 
 def test_encode_rejects_provider_shape(sample_image: Path, description: dict[str, Any]) -> None:
@@ -59,5 +61,8 @@ def test_encode_rejects_provider_shape(sample_image: Path, description: dict[str
     with pytest.raises(ArtifactError, match="keys mismatch"):
         encode_image(sample_image, FakeProvider(malformed), FidelityProfile.DETAILED)
     malformed = dict(description, composition=[{"wrong": "shape"}])
-    with pytest.raises(ArtifactError, match="structure"):
+    with pytest.raises(ArtifactError, match="keys mismatch"):
+        encode_image(sample_image, FakeProvider(malformed), FidelityProfile.DETAILED)
+    malformed = dict(description, critical_text="not an array")
+    with pytest.raises(ArtifactError, match="must be an array"):
         encode_image(sample_image, FakeProvider(malformed), FidelityProfile.DETAILED)

@@ -34,7 +34,7 @@ behind the machine’s `claude-vision` setup.
 | Size reduction | 97.30% (37.07:1) |
 | Visual proxy score | 0.770 (pass) |
 | Layout score | 0.812 (pass) |
-| Palette distance | 0.047 (pass; lower is better) |
+| Palette distance | 0.059 (pass; lower is better) |
 | Critical-text recall | 0.600 (**fail**) |
 | Detailed-profile verdict | **fail** |
 
@@ -113,6 +113,9 @@ uv run promptpress evaluate photo.jpg regenerated.png \
 Output files are never overwritten unless `--overwrite` is supplied. Encoding sends the full image
 to the configured Ollama endpoint, so only use a server you trust.
 
+`evaluate` exits `0` for pass, `1` for threshold failure, `2` for usage/data errors, and `3` when
+a required check (normally detailed-profile OCR) was not evaluated.
+
 ## Fidelity profiles
 
 | Profile | Intended preservation | Artifact budget |
@@ -147,7 +150,7 @@ uv run python -m build
 ```
 
 The suite is offline and injects fake providers. Live Ollama and image-generation runs are demo
-steps, not flaky CI dependencies. The current suite has 30 tests and 96%+ branch-aware coverage.
+steps, not flaky CI dependencies. The current suite has 41 tests and 95%+ branch-aware coverage.
 
 ## Limitations
 
@@ -161,4 +164,3 @@ steps, not flaky CI dependencies. The current suite has 30 tests and 96%+ branch
   claim about total-system efficiency.
 
 Licensed under the [MIT License](LICENSE).
-
