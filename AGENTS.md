@@ -66,7 +66,8 @@ uv sync --extra dev
 uv run llmpeg --help
 ```
 
-Gates — all five must pass before a commit:
+Gates — all five must pass before a commit, and `.github/workflows/ci.yml` runs them on
+Python 3.11, 3.12, and 3.13 for every push and pull request:
 
 ```bash
 uv run ruff format --check .
@@ -125,8 +126,6 @@ Established scopes: `codec` (encoder/artifact/providers), `survey`, `architectur
 
 ## Known issues
 
-- There is no CI. `plan.md` phase 5 calls for a GitHub Actions workflow running the five gates;
-  nothing enforces them automatically yet.
 - The expanded scene benchmark is measured at `n=6`, not the planned `n=10`. Four cases
   (`kitchen-table`, `living-room`, `mountain-hikers`, `street-bicycles`) are encoded and have
   rendered prompts but no reconstruction, because generation is a manual adapter step.
