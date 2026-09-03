@@ -1,0 +1,19 @@
+{
+  "checks": {
+    "layout_score": true,
+    "palette_distance": true,
+    "visual_proxy_score": true
+  },
+  "metrics": {
+    "aspect_similarity": 1.0,
+    "critical_text_recall": null,
+    "dhash_similarity": 0.4375,
+    "edge_similarity": 0.949768,
+    "histogram_similarity": 0.68752,
+    "layout_score": 0.675555,
+    "palette_distance": 0.088494,
+    "visual_proxy_score": 0.699335
+  },
+  "profile": "balanced",
+  "status": "pass"
+}

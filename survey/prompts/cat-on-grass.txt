@@ -1,0 +1,14 @@
+Create a new image from this semantic description.
+
+Primary request: A tabby cat with brown and black stripes is lying on its back on a grassy lawn, viewed from above, with its legs and tail spread out.
+Style/medium: photographic, natural lighting, outdoor scene
+Canvas: 1536x1024 (1.500:1)
+Composition:
+- center: tabby cat lying on back with legs and tail spread
+- entire image: grassy lawn with patches of green and brown grass
+Palette: #8BC34A, #D4A017, #4E342E, #A67B5B
+Text to render verbatim when possible:
+- none
+Constraints: preserve the described hierarchy and spatial relationships.
+This is a semantic reconstruction, not the original.
+Avoid: adding text or objects not present, altering cat's position or color pattern, changing grass texture or color variations; extra logos; watermarks; invented claims.

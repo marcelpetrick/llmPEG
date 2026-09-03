@@ -1,0 +1,31 @@
+Create a new image from this semantic description.
+
+Primary request: A close-up photo of a tabby kitten with white paws sleeping on a white computer keyboard on a wooden desk, with a computer monitor and pen visible in the background.
+Style/medium: photographic, slightly blurry, natural lighting
+Canvas: 2048x1536 (1.333:1)
+Composition:
+- left: white computer keyboard with visible keys and text
+- center: tabby kitten with white paws sleeping on keyboard
+- right: wooden desk surface with a computer monitor and pen in the background
+- top: part of a computer monitor and a pen on the desk
+Palette: #D4B483, #F5F5F5, #8B7355, #A0A0A0, #E0E0E0
+Text to render verbatim when possible:
+- "1"
+- "2"
+- "3"
+- "Q"
+- "W"
+- "E"
+- "A"
+- "S"
+- "D"
+- "Z"
+- "X"
+- "C"
+- "F9"
+- "F10"
+- "F11"
+- "F12"
+Constraints: preserve the described hierarchy and spatial relationships.
+This is a semantic reconstruction, not the original.
+Avoid: reconstructing the kitten as awake, adding text not visible on keys, changing the keyboard color to black or other colors; extra logos; watermarks; invented claims.

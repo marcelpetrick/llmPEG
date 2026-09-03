@@ -1,0 +1,15 @@
+Create a new image from this semantic description.
+
+Primary request: A vintage black and white photo of a tabby and white cat sitting on a grassy and leafy ground, with visible film grain and slight wear on the photo edges.
+Style/medium: vintage black and white photograph with film grain and slight physical wear
+Canvas: 1491x1510 (0.987:1)
+Composition:
+- center: a tabby and white cat with dark stripes on its back and white paws, chest, and face markings
+- top: dark grass and leaves in the background
+- bottom: lighter ground with small patches of grass and debris
+Palette: #000000, #FFFFFF, #808080
+Text to render verbatim when possible:
+- none
+Constraints: preserve the described hierarchy and spatial relationships.
+This is a semantic reconstruction, not the original.
+Avoid: color reconstruction, adding text or details not visible, altering the cat's posture or expression; extra logos; watermarks; invented claims.
