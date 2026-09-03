@@ -1,5 +1,12 @@
 # llmPEG
 
+[![CI](https://github.com/marcelpetrick/llmPEG/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/marcelpetrick/llmPEG/actions/workflows/ci.yml)
+[![License: GPL v3 or later](https://img.shields.io/badge/license-GPLv3%20or%20later-blue.svg)](LICENSE)
+[![Python 3.14](https://img.shields.io/badge/Python-3.14-3776ab.svg)](https://www.python.org/)
+[![Ruff](https://img.shields.io/badge/lint-ruff-261230.svg)](https://docs.astral.sh/ruff/)
+[![mypy strict](https://img.shields.io/badge/types-mypy%20strict-2a6db2.svg)](https://mypy-lang.org/)
+[![Coverage 93.3%](https://img.shields.io/badge/coverage-93.3%25-brightgreen.svg)](#development)
+
 **llmPEG** — the *LLM Photo Expert Group*. JPEG was built by the **J**oint **P**hotographic
 **E**xperts **G**roup. This one was built by a language model, so the joke writes itself.
 
