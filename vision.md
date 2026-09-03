@@ -14,7 +14,12 @@ records, diagrams with exact geometry, or text that must remain readable.
 
 The spark for this experiment is [this LinkedIn post](https://lnkd.in/p/eSqXmyvw), together with
 the article image saved in this repository. The short link may require LinkedIn access; the local
-image keeps the motivating artifact available to the project and its tests.
+image keeps the motivating artifact available to the project and its tests. The same image is
+presented as satire in ProgrammerHumor.io’s
+[“New Compression Technique”](https://programmerhumor.io/ai-memes/new-compression-technique-9yp7),
+whose joke is precisely that deletion has been renamed compression. No verifiable publication,
+research result, or real “Eugene Hogwood” project is asserted here; the mock article is a prompt,
+not evidence.
 
 The reference image in `media/newsArticle.jpg` is the joke made concrete: a mock Daily News Tech
 page claims that a 13-year-old compresses family photos into tiny prompts and destroys the
@@ -90,6 +95,8 @@ choose what to drop. It must not silently discard facts to manufacture an impres
 - **Keep the original by default:** encoding never deletes or modifies source images.
 - **Measure every claim:** store byte counts, provider/model provenance, and evaluation results.
 - **Portable artifacts:** JSON is readable and generator-neutral; schemas are versioned.
+- **Decoder provenance matters:** model, version, seed, and settings affect the output; a retired
+  model or unavailable service can make later reconstruction drift or fail.
 - **Reproducible plumbing:** deterministic serialization, seeded provider requests where possible,
   dependency injection, fixtures, and offline tests.
 - **Privacy is explicit:** remote encoding or generation may disclose image contents; local
