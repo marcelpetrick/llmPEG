@@ -1,0 +1,97 @@
+{
+  "title": "llmPEG Expanded Scene Benchmark",
+  "date": "2026-09-03",
+  "profile": "detailed",
+  "cases": [
+    {
+      "id": "astronaut-crew-expanded",
+      "name": "Expedition 53 crew portrait",
+      "source": "sources/astronaut-crew.jpg",
+      "reconstruction": "reconstructions/astronaut-crew-expanded.png",
+      "artifact": "artifacts/astronaut-crew-expanded.llmpeg.json",
+      "prompt": "prompts/astronaut-crew-expanded.txt",
+      "result": "results/astronaut-crew-expanded.json",
+      "credit": {
+        "author": "Robert Markowitz",
+        "license": "Public domain (NASA)",
+        "license_url": "https://commons.wikimedia.org/wiki/Commons:Licensing",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Expedition_53_crew_portrait.jpg"
+      }
+    },
+    {
+      "id": "food-table-expanded",
+      "name": "Table laid with food",
+      "source": "sources/food-table.jpg",
+      "reconstruction": "reconstructions/food-table-expanded.png",
+      "artifact": "artifacts/food-table-expanded.llmpeg.json",
+      "prompt": "prompts/food-table-expanded.txt",
+      "result": "results/food-table-expanded.json",
+      "credit": {
+        "author": "www.Pixel.la Free Stock Photos",
+        "license": "CC0 1.0 Universal (public domain dedication)",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Table_with_food.jpg"
+      }
+    },
+    {
+      "id": "amsterdam-market-expanded",
+      "name": "Albert Cuyp fruit market stall",
+      "source": "sources/amsterdam-market.jpg",
+      "reconstruction": "reconstructions/amsterdam-market-expanded.png",
+      "artifact": "artifacts/amsterdam-market-expanded.llmpeg.json",
+      "prompt": "prompts/amsterdam-market-expanded.txt",
+      "result": "results/amsterdam-market-expanded.json",
+      "credit": {
+        "author": "Fons Heijnsbroek",
+        "license": "CC0 1.0 Universal (public domain dedication)",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "source_url": "https://commons.wikimedia.org/wiki/File:2023_Amsterdam_-_a_fruit_market_stall_at_the_Albert_Cuyp_market_in_the_sunlight_with_a_lot_of_city_people_walking_and_shopping_-_free_download_photo_in_Dutch_street_photography_by_Fons_Heijnsbroek,_Netherlands.tif"
+      }
+    },
+    {
+      "id": "train-platform-expanded",
+      "name": "Passengers waiting on a train platform",
+      "source": "sources/train-platform.jpg",
+      "reconstruction": "reconstructions/train-platform-expanded.png",
+      "artifact": "artifacts/train-platform-expanded.llmpeg.json",
+      "prompt": "prompts/train-platform-expanded.txt",
+      "result": "results/train-platform-expanded.json",
+      "credit": {
+        "author": "Redd Angelo",
+        "license": "CC0 1.0 Universal (public domain dedication)",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "source_url": "https://commons.wikimedia.org/wiki/File:People_waiting_for_the_train_(Unsplash).jpg"
+      }
+    },
+    {
+      "id": "workspace-books-expanded",
+      "name": "Desk with books, laptop and phone",
+      "source": "sources/workspace-books.jpg",
+      "reconstruction": "reconstructions/workspace-books-expanded.png",
+      "artifact": "artifacts/workspace-books-expanded.llmpeg.json",
+      "prompt": "prompts/workspace-books-expanded.txt",
+      "result": "results/workspace-books-expanded.json",
+      "credit": {
+        "author": "Aleks Dorohovich",
+        "license": "CC0 1.0 Universal (public domain dedication)",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Books,_pencils,_laptop,_and_iphone_on_a_desk_(Unsplash).jpg"
+      }
+    },
+    {
+      "id": "dogs-beach-expanded",
+      "name": "Two dogs playing on a beach",
+      "source": "sources/dogs-beach.jpg",
+      "reconstruction": "reconstructions/dogs-beach-expanded.png",
+      "artifact": "artifacts/dogs-beach-expanded.llmpeg.json",
+      "prompt": "prompts/dogs-beach-expanded.txt",
+      "result": "results/dogs-beach-expanded.json",
+      "credit": {
+        "author": "Mark Galer",
+        "license": "CC0 1.0 Universal (public domain dedication)",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Two_dogs_playing_on_the_beach_(Unsplash).jpg"
+      }
+    }
+  ]
+}

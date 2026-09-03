@@ -1,11 +1,311 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>llmPEG expanded checkpoint</title><style>
-body{margin:0;background:#101827;color:#eaf2ff;font:16px/1.5 system-ui}header,main{max-width:1200px;margin:auto;padding:32px}header{padding-bottom:8px}h1{font-size:clamp(2.4rem,7vw,5rem);line-height:1;margin-bottom:12px}.note{background:#25324a;border-left:5px solid #65a9ff;padding:16px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:20px}.case{background:#182338;border:1px solid #35445f;border-radius:18px;padding:18px}.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}.pair img{width:100%;height:290px;object-fit:contain;background:#0b1220;border-radius:10px}a{color:#80bdff}small{color:#aebbd0}@media(max-width:600px){.pair{grid-template-columns:1fr}.grid{grid-template-columns:1fr}}
-</style></head><body><header><small>EXPANDED BENCHMARK · CHECKPOINT</small><h1>Complex scenes</h1><p class="note">Six of ten planned multi-object reconstructions completed before the requested stop. Left is the CC0/public-domain source; right is a reconstruction generated from the saved text prompt only.</p></header><main><div class="grid">
-<section class="case"><h2>Astronaut crew</h2><div class="pair"><img src="survey/sources/astronaut-crew.jpg" alt="Source astronaut crew"><img src="survey/reconstructions/astronaut-crew-expanded.png" alt="Reconstructed astronaut crew"></div><a href="survey/prompts/astronaut-crew-expanded.txt">Exact prompt</a> · <a href="https://commons.wikimedia.org/wiki/File:Expedition_53_crew_portrait.jpg">NASA public-domain source</a></section>
-<section class="case"><h2>Food table</h2><div class="pair"><img src="survey/sources/food-table.jpg" alt="Source food table"><img src="survey/reconstructions/food-table-expanded.png" alt="Reconstructed food table"></div><a href="survey/prompts/food-table-expanded.txt">Exact prompt</a> · <a href="https://commons.wikimedia.org/wiki/File:Table_with_food.jpg">CC0 source</a></section>
-<section class="case"><h2>Amsterdam market</h2><div class="pair"><img src="survey/sources/amsterdam-market.jpg" alt="Source market"><img src="survey/reconstructions/amsterdam-market-expanded.png" alt="Reconstructed market"></div><a href="survey/prompts/amsterdam-market-expanded.txt">Exact prompt</a> · <a href="https://commons.wikimedia.org/wiki/File:2023_Amsterdam_-_a_fruit_market_stall_at_the_Albert_Cuyp_market_in_the_sunlight_with_a_lot_of_city_people_walking_and_shopping_-_free_download_photo_in_Dutch_street_photography_by_Fons_Heijnsbroek,_Netherlands.tif">CC0 source</a></section>
-<section class="case"><h2>Train platform</h2><div class="pair"><img src="survey/sources/train-platform.jpg" alt="Source train platform"><img src="survey/reconstructions/train-platform-expanded.png" alt="Reconstructed train platform"></div><a href="survey/prompts/train-platform-expanded.txt">Exact prompt</a> · <a href="https://commons.wikimedia.org/wiki/File:People_waiting_for_the_train_(Unsplash).jpg">CC0 source</a></section>
-<section class="case"><h2>Workspace</h2><div class="pair"><img src="survey/sources/workspace-books.jpg" alt="Source workspace"><img src="survey/reconstructions/workspace-books-expanded.png" alt="Reconstructed workspace"></div><a href="survey/prompts/workspace-books-expanded.txt">Exact prompt</a> · <a href="https://commons.wikimedia.org/wiki/File:Books,_pencils,_laptop,_and_iphone_on_a_desk_(Unsplash).jpg">CC0 source</a></section>
-<section class="case"><h2>Dogs on a beach</h2><div class="pair"><img src="survey/sources/dogs-beach.jpg" alt="Source dogs"><img src="survey/reconstructions/dogs-beach-expanded.png" alt="Reconstructed dogs"></div><a href="survey/prompts/dogs-beach-expanded.txt">Exact prompt</a> · <a href="https://commons.wikimedia.org/wiki/File:Two_dogs_playing_on_the_beach_(Unsplash).jpg">CC0 source</a></section>
-</div><p><a href="survey/EXPANDED.md">Checkpoint notes and self-review</a></p></main></body></html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>llmPEG Expanded Scene Benchmark</title><style>
+:root{--ink:#17202a;--muted:#667085;--paper:#f6f4ef;--card:#fff;--navy:#102a43;--blue:#2878b5;--mint:#32a071;--line:#ddd8ce}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 ui-sans-serif,system-ui,sans-serif}header{background:var(--navy);color:white;padding:64px max(24px,calc((100% - 1180px)/2)) 54px}header p{max-width:760px;color:#d9e7f2;font-size:1.08rem}h1{font-size:clamp(2.4rem,6vw,5rem);line-height:.98;margin:.2em 0}main{max-width:1180px;margin:auto;padding:36px 24px 72px}.summary{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:-65px;margin-bottom:36px}.summary div{background:var(--card);padding:18px;border-radius:14px;box-shadow:0 8px 25px #102a4315}.summary span,.eyebrow{display:block;color:var(--muted);font-size:.73rem;font-weight:750;letter-spacing:.08em;text-transform:uppercase}.summary strong{font-size:1.65rem}.finding{border-left:5px solid var(--blue);padding:14px 20px;background:#eaf3f9;border-radius:0 10px 10px 0;margin:0 0 16px}.comparison{padding:14px 20px;background:#fff7d6;border-radius:10px;margin:0 0 36px}.case{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;margin:24px 0;box-shadow:0 12px 35px #243b5310}.case-head{display:flex;justify-content:space-between;gap:20px;align-items:start}h2{margin:.15em 0 .7em;font-size:1.7rem}.status{background:#dff5e9;color:#17663f;border-radius:999px;padding:6px 12px;font-weight:800;font-size:.78rem}.status.fail{background:#fee2e2;color:#991b1b}.status.incomplete{background:#fff7d6;color:#854d0e}.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}figure{margin:0}.image-frame{background:#e8e6e0;aspect-ratio:4/3;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center}img{width:100%;height:100%;object-fit:contain}figcaption{font-weight:750;padding:7px 2px}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.metric{font-size:.82rem}.metric strong{float:right}.bar{height:7px;background:#e8e9eb;border-radius:9px;clear:both;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:var(--mint)}.compression,.delta{color:var(--muted)}details{border-top:1px solid var(--line);padding-top:13px}summary{cursor:pointer;font-weight:700}pre{white-space:pre-wrap;background:#101b26;color:#e7edf2;padding:16px;border-radius:10px;max-height:340px;overflow:auto}a{color:#176b9c}.questions{margin-top:20px;background:#f8fafb;border-radius:14px;padding:18px}h3{margin-top:0}fieldset{border:0;padding:0;margin:15px 0}legend{font-weight:650}.scale{display:flex;gap:7px;margin-top:7px}.scale input{position:absolute;opacity:0}.scale span{display:grid;place-items:center;width:38px;height:34px;border:1px solid #b9c2ca;border-radius:8px;cursor:pointer;background:white}.scale input:checked+span{background:var(--blue);color:white;border-color:var(--blue)}small{color:var(--muted)}.comment{display:grid;gap:6px;font-weight:650}textarea{font:inherit;padding:9px;border:1px solid #b9c2ca;border-radius:8px}.credit{font-size:.78rem;color:var(--muted);margin-bottom:0}.actions{position:sticky;bottom:12px;display:flex;gap:10px;justify-content:center;margin-top:30px}button{border:0;border-radius:999px;padding:12px 20px;font-weight:750;cursor:pointer;background:var(--navy);color:white}button.secondary{background:white;color:var(--navy);border:1px solid var(--line)}footer{color:var(--muted);font-size:.85rem;margin-top:36px}@media(max-width:800px){.summary{grid-template-columns:repeat(2,1fr);margin-top:-45px}.pair,.metrics{grid-template-columns:1fr}header{padding-top:42px}}
+</style></head><body><header><span class="eyebrow">EXPLORATORY BENCHMARK · 2026-09-03</span><h1>llmPEG Expanded Scene Benchmark</h1><p>Can a compact semantic description preserve what matters in a photograph? 6 public-domain cat images were encoded with the same vision model and <code>detailed</code> profile, then reconstructed by Codex image generation from text alone.</p></header><main>
+<section class="summary"><div><span>Cases passed</span><strong>3/6</strong></div><div><span>Mean visual proxy</span><strong>0.741</strong></div><div><span>Mean layout</span><strong>0.752</strong></div><div><span>Mean palette distance</span><strong>0.070</strong></div><div><span>Mean dHash</span><strong>0.557</strong></div></section>
+<p class="finding"><strong>Finding: moderate semantic quality.</strong> 3/6 cases meet the <code>detailed</code> proxy thresholds; mean dHash is 0.557. These structural metrics do not prove identity preservation, so inspect and rate each pair below. With n=6, this is a product probe—not a population estimate.</p>
+
+
+<article class="case" id="astronaut-crew-expanded">
+  <div class="case-head">
+    <div><span class="eyebrow">CASE astronaut-crew-expanded</span><h2>Expedition 53 crew portrait</h2></div>
+    <span class="status fail">FAIL</span>
+  </div>
+  <div class="pair"><figure><div class="image-frame"><img src="sources/astronaut-crew.jpg" alt="Source: Expedition 53 crew portrait"></div><figcaption>Source</figcaption></figure><figure><div class="image-frame"><img src="reconstructions/astronaut-crew-expanded.png" alt="Prompt-only reconstruction: Expedition 53 crew portrait"></div><figcaption>Refined prompt-only reconstruction</figcaption></figure></div>
+  <div class="metrics">
+    <div class="metric"><span>Visual proxy</span><strong>0.732</strong><div class="bar"><i style="width:73.2%"></i></div></div>
+    <div class="metric"><span>Layout</span><strong>0.770</strong><div class="bar"><i style="width:77.0%"></i></div></div>
+    <div class="metric"><span>dHash</span><strong>0.594</strong><div class="bar"><i style="width:59.4%"></i></div></div>
+    <div class="metric"><span>Palette distance</span><strong>0.054</strong><div class="bar"><i style="width:94.6%"></i></div></div>
+  </div>
+  <p class="compression"><strong>195.4:1</strong> artifact ratio · 640,005 → 3,276 bytes</p>
+  <details><summary>Prompt and machine-readable result</summary><pre>Create a new image from this semantic description.
+
+Primary request: Six astronauts in blue flight suits with various mission patches, standing and seated in front of a space scene featuring Earth, Moon, Mars, and a mission patch with the text &#x27;ACABA BRESNIK PRZACHKOV NESPOLI VANDE HEI MASYUKIN&#x27; and a space station graphic, with a row of international flags at the bottom.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: Photorealistic digital composite with sharp focus, even lighting, and detailed textures on flight suits and celestial bodies.
+Canvas: 1920x1536 (1.250:1)
+Composition:
+- 0 0 999 999: Full image: six astronauts in blue flight suits, Earth on left, Moon behind center, Mars top right, mission patch center, international flags bottom row, starry space background.
+- 0 585 289 935: Earth: blue and green planet with visible continents and clouds, positioned left side, partially cropped.
+- 450 295 525 425: Moon: gray, cratered surface, partially visible behind center astronauts.
+- 835 45 880 105: Mars: orange-red planet, top right corner.
+- 350 500 640 900: Mission patch: diamond-shaped with red border, &#x27;53&#x27; in white, space station graphic, text &#x27;ACABA BRESNIK PRZACHKOV NESPOLI VANDE HEI MASYUKIN&#x27; around edges, Earth graphic, and star.
+- 3 935 995 989: Row of international flags: 16 flags including US, Canada, Japan, Russia, Denmark, Norway, Germany, Italy, Netherlands, Spain, Sweden, Switzerland, UK, and others, bottom edge.
+- 93 155 279 600: Astronaut 1: standing left, blue suit with NASA and other patches, short dark hair, smiling, facing forward.
+- 170 285 455 935: Astronaut 2: seated left, blue suit with &#x27;ROSCOSMOS&#x27; patch, short light hair, smiling, facing forward.
+- 345 155 500 600: Astronaut 3: standing center-left, blue suit with patches, short gray hair, smiling, facing forward.
+- 475 295 860 935: Astronaut 4: seated right, blue suit with NASA and &#x27;25&#x27; patch, short light hair, smiling, facing forward.
+- 500 150 655 675: Astronaut 5: standing center-right, blue suit with &#x27;ROSCOSMOS&#x27; patch, short dark hair, neutral expression, facing forward.
+- 700 105 915 935: Astronaut 6: standing right, blue suit with Italian flag patch, short gray hair, smiling, facing forward.
+Palette: #0066CC, #000000, #0099FF, #FF6600, #FF0000, #00FF00, #FFFFFF, #808080
+Text to render verbatim when possible:
+- &quot;ACABA BRESNIK PRZACHKOV NESPOLI VANDE HEI MASYUKIN&quot;
+- &quot;ROSCOSMOS&quot;
+- &quot;NASA&quot;
+- &quot;25&quot;
+- &quot;20&quot;
+- &quot;23&quot;
+- &quot;24&quot;
+- &quot;26&quot;
+- &quot;27&quot;
+- &quot;28&quot;
+- &quot;29&quot;
+- &quot;30&quot;
+- &quot;31&quot;
+- &quot;32&quot;
+- &quot;33&quot;
+- &quot;34&quot;
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: inventing names for astronauts, describing non-visible text, inferring mission details beyond visible text, using generic terms like &#x27;space&#x27; without specific objects; extra logos; watermarks; invented claims.
+</pre><p><a href="prompts/astronaut-crew-expanded.txt">Prompt</a> · <a href="results/astronaut-crew-expanded.json">Evaluation JSON</a></p></details>
+  <section class="questions" data-case="astronaut-crew-expanded">
+    <h3>Your assessment</h3>
+    <fieldset><legend>Subject and action preserved</legend><div class="scale"><label><input type="radio" name="astronaut-crew-expanded-subject" value="1"><span>1</span></label><label><input type="radio" name="astronaut-crew-expanded-subject" value="2"><span>2</span></label><label><input type="radio" name="astronaut-crew-expanded-subject" value="3"><span>3</span></label><label><input type="radio" name="astronaut-crew-expanded-subject" value="4"><span>4</span></label><label><input type="radio" name="astronaut-crew-expanded-subject" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Composition preserved</legend><div class="scale"><label><input type="radio" name="astronaut-crew-expanded-composition" value="1"><span>1</span></label><label><input type="radio" name="astronaut-crew-expanded-composition" value="2"><span>2</span></label><label><input type="radio" name="astronaut-crew-expanded-composition" value="3"><span>3</span></label><label><input type="radio" name="astronaut-crew-expanded-composition" value="4"><span>4</span></label><label><input type="radio" name="astronaut-crew-expanded-composition" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Color, lighting, and style preserved</legend><div class="scale"><label><input type="radio" name="astronaut-crew-expanded-appearance" value="1"><span>1</span></label><label><input type="radio" name="astronaut-crew-expanded-appearance" value="2"><span>2</span></label><label><input type="radio" name="astronaut-crew-expanded-appearance" value="3"><span>3</span></label><label><input type="radio" name="astronaut-crew-expanded-appearance" value="4"><span>4</span></label><label><input type="radio" name="astronaut-crew-expanded-appearance" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Overall semantic similarity</legend><div class="scale"><label><input type="radio" name="astronaut-crew-expanded-overall" value="1"><span>1</span></label><label><input type="radio" name="astronaut-crew-expanded-overall" value="2"><span>2</span></label><label><input type="radio" name="astronaut-crew-expanded-overall" value="3"><span>3</span></label><label><input type="radio" name="astronaut-crew-expanded-overall" value="4"><span>4</span></label><label><input type="radio" name="astronaut-crew-expanded-overall" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <label class="comment">Optional note<textarea name="astronaut-crew-expanded-comment" rows="2" placeholder="What survived? What changed?"></textarea></label>
+  </section>
+  <p class="credit">Source: <a href="https://commons.wikimedia.org/wiki/File:Expedition_53_crew_portrait.jpg">Robert Markowitz</a> · <a href="https://commons.wikimedia.org/wiki/Commons:Licensing">Public domain (NASA)</a> · reconstruction generated from text only</p>
+</article>
+
+<article class="case" id="food-table-expanded">
+  <div class="case-head">
+    <div><span class="eyebrow">CASE food-table-expanded</span><h2>Table laid with food</h2></div>
+    <span class="status pass">PASS</span>
+  </div>
+  <div class="pair"><figure><div class="image-frame"><img src="sources/food-table.jpg" alt="Source: Table laid with food"></div><figcaption>Source</figcaption></figure><figure><div class="image-frame"><img src="reconstructions/food-table-expanded.png" alt="Prompt-only reconstruction: Table laid with food"></div><figcaption>Refined prompt-only reconstruction</figcaption></figure></div>
+  <div class="metrics">
+    <div class="metric"><span>Visual proxy</span><strong>0.639</strong><div class="bar"><i style="width:63.9%"></i></div></div>
+    <div class="metric"><span>Layout</span><strong>0.681</strong><div class="bar"><i style="width:68.1%"></i></div></div>
+    <div class="metric"><span>dHash</span><strong>0.438</strong><div class="bar"><i style="width:43.8%"></i></div></div>
+    <div class="metric"><span>Palette distance</span><strong>0.162</strong><div class="bar"><i style="width:83.8%"></i></div></div>
+  </div>
+  <p class="compression"><strong>187.4:1</strong> artifact ratio · 379,957 → 2,028 bytes</p>
+  <details><summary>Prompt and machine-readable result</summary><pre>Create a new image from this semantic description.
+
+Primary request: A long wooden table with a rustic appearance holds multiple dishes: a white oval bowl filled with white beans mixed with red and green vegetables, a three-section white dish containing different dips, a large wooden bowl with a green salad, a white bowl with a dark green salad and lemon wedges, a basket of pita chips, and numerous skewers of dark brown meat in the foreground. Two dark blue glass containers are placed between the dishes. The background shows a blurred kitchen with a refrigerator covered in magnets and a window. The image has a shallow depth of field with the foreground in focus and the background blurred, warm lighting, and a slightly vintage color tone.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: photographic, shallow depth of field, warm lighting, vintage color grading
+Canvas: 1280x1920 (0.667:1)
+Composition:
+- 0/0 to 999/999: The entire image shows a wooden table with various dishes. The foreground features numerous skewers of dark brown meat (50-70% width, 60-90% height) with thin wooden sticks. A white oval bowl filled with white beans mixed with red and green vegetables (230-660 width, 480-705 height) is centered, with a metal spoon inside. To the left of the bean bowl, a three-section white dish (195-545 width, 410-530 height) contains light beige, orange, and white dips. To the right, another three-section white
+Palette: #8B4513, #F5DEB3, #2E8B57, #800000, #000080, #FFD700, #4B0082, #006400
+Text to render verbatim when possible:
+- none
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: inventing text, describing non-visible subjects, specifying non-observable details; extra logos; watermarks; invented claims.
+</pre><p><a href="prompts/food-table-expanded.txt">Prompt</a> · <a href="results/food-table-expanded.json">Evaluation JSON</a></p></details>
+  <section class="questions" data-case="food-table-expanded">
+    <h3>Your assessment</h3>
+    <fieldset><legend>Subject and action preserved</legend><div class="scale"><label><input type="radio" name="food-table-expanded-subject" value="1"><span>1</span></label><label><input type="radio" name="food-table-expanded-subject" value="2"><span>2</span></label><label><input type="radio" name="food-table-expanded-subject" value="3"><span>3</span></label><label><input type="radio" name="food-table-expanded-subject" value="4"><span>4</span></label><label><input type="radio" name="food-table-expanded-subject" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Composition preserved</legend><div class="scale"><label><input type="radio" name="food-table-expanded-composition" value="1"><span>1</span></label><label><input type="radio" name="food-table-expanded-composition" value="2"><span>2</span></label><label><input type="radio" name="food-table-expanded-composition" value="3"><span>3</span></label><label><input type="radio" name="food-table-expanded-composition" value="4"><span>4</span></label><label><input type="radio" name="food-table-expanded-composition" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Color, lighting, and style preserved</legend><div class="scale"><label><input type="radio" name="food-table-expanded-appearance" value="1"><span>1</span></label><label><input type="radio" name="food-table-expanded-appearance" value="2"><span>2</span></label><label><input type="radio" name="food-table-expanded-appearance" value="3"><span>3</span></label><label><input type="radio" name="food-table-expanded-appearance" value="4"><span>4</span></label><label><input type="radio" name="food-table-expanded-appearance" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Overall semantic similarity</legend><div class="scale"><label><input type="radio" name="food-table-expanded-overall" value="1"><span>1</span></label><label><input type="radio" name="food-table-expanded-overall" value="2"><span>2</span></label><label><input type="radio" name="food-table-expanded-overall" value="3"><span>3</span></label><label><input type="radio" name="food-table-expanded-overall" value="4"><span>4</span></label><label><input type="radio" name="food-table-expanded-overall" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <label class="comment">Optional note<textarea name="food-table-expanded-comment" rows="2" placeholder="What survived? What changed?"></textarea></label>
+  </section>
+  <p class="credit">Source: <a href="https://commons.wikimedia.org/wiki/File:Table_with_food.jpg">www.Pixel.la Free Stock Photos</a> · <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0 Universal (public domain dedication)</a> · reconstruction generated from text only</p>
+</article>
+
+<article class="case" id="amsterdam-market-expanded">
+  <div class="case-head">
+    <div><span class="eyebrow">CASE amsterdam-market-expanded</span><h2>Albert Cuyp fruit market stall</h2></div>
+    <span class="status pass">PASS</span>
+  </div>
+  <div class="pair"><figure><div class="image-frame"><img src="sources/amsterdam-market.jpg" alt="Source: Albert Cuyp fruit market stall"></div><figcaption>Source</figcaption></figure><figure><div class="image-frame"><img src="reconstructions/amsterdam-market-expanded.png" alt="Prompt-only reconstruction: Albert Cuyp fruit market stall"></div><figcaption>Refined prompt-only reconstruction</figcaption></figure></div>
+  <div class="metrics">
+    <div class="metric"><span>Visual proxy</span><strong>0.718</strong><div class="bar"><i style="width:71.8%"></i></div></div>
+    <div class="metric"><span>Layout</span><strong>0.661</strong><div class="bar"><i style="width:66.1%"></i></div></div>
+    <div class="metric"><span>dHash</span><strong>0.391</strong><div class="bar"><i style="width:39.1%"></i></div></div>
+    <div class="metric"><span>Palette distance</span><strong>0.069</strong><div class="bar"><i style="width:93.1%"></i></div></div>
+  </div>
+  <p class="compression"><strong>254.1:1</strong> artifact ratio · 742,058 → 2,920 bytes</p>
+  <details><summary>Prompt and machine-readable result</summary><pre>Create a new image from this semantic description.
+
+Primary request: A sunlit street market with red and brown canopies, green and yellow crates stacked with oranges and limes, people in winter coats walking and shopping, multi-story buildings with colorful facades in the background, clear blue sky, and visible text on signs including &#x27;GOWTU CENTRE JUWELIER&#x27; and &#x27;GOTU&#x27;.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: Photorealistic, outdoor street photography with natural lighting and shallow depth of field emphasizing foreground market activity.
+Canvas: 1920x1440 (1.333:1)
+Composition:
+- 0 0 640 310: Row of multi-story buildings with varied facades: white, red brick, blue, green, and beige, featuring windows with white trim; &#x27;GOWTU CENTRE JUWELIER&#x27; sign on left building, &#x27;GOTU&#x27; sign on a building further right.
+- 0 190 680 650: Red and brown market canopies extending along the street; people walking and shopping under canopies; a large banner with &#x27;Zoo&#x27; visible on the left canopy; a Dutch flag on the ground near the left edge.
+- 415 520 890 865: Stacked crates: yellow on left, green and black in center, holding oranges and limes; a person in a dark jacket and blue cap handling produce; a woman in a dark coat with fur collar on the right holding a red bag with &#x27;K&#x27; visible.
+- 35 330 135 695: Woman in dark green puffer coat, blue jeans, carrying a brown shoulder bag, walking left; her face visible with short dark hair.
+- 129 320 220 685: Man in green jacket over plaid shirt, beige pants, carrying a brown paper bag, walking left; glasses on face, short dark hair.
+- 210 330 295 695: Woman in dark gray coat, gray pants, white sneakers, carrying a light gray shoulder bag, walking left; short dark hair, face visible.
+- 615 355 735 550: Man in dark jacket, blue cap, standing behind produce crates, facing left; short hair visible under cap.
+- 865 340 999 965: Woman in dark coat with fur collar, black pants, black shoes, holding a red bag with &#x27;K&#x27; and a white bag, standing right of produce crates; back to camera, brown hair visible.
+Palette: #FF5733, #C0C0C0, #000000, #8B4513, #FFD700, #008000, #FFA500, #00FF00
+Text to render verbatim when possible:
+- &quot;GOWTU CENTRE JUWELIER&quot;
+- &quot;GOTU&quot;
+- &quot;Zoo&quot;
+- &quot;K&quot;
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: inventing names or breeds, inferring hidden features, describing non-visible text, generalizing people as &#x27;shoppers&#x27; without specific details; extra logos; watermarks; invented claims.
+</pre><p><a href="prompts/amsterdam-market-expanded.txt">Prompt</a> · <a href="results/amsterdam-market-expanded.json">Evaluation JSON</a></p></details>
+  <section class="questions" data-case="amsterdam-market-expanded">
+    <h3>Your assessment</h3>
+    <fieldset><legend>Subject and action preserved</legend><div class="scale"><label><input type="radio" name="amsterdam-market-expanded-subject" value="1"><span>1</span></label><label><input type="radio" name="amsterdam-market-expanded-subject" value="2"><span>2</span></label><label><input type="radio" name="amsterdam-market-expanded-subject" value="3"><span>3</span></label><label><input type="radio" name="amsterdam-market-expanded-subject" value="4"><span>4</span></label><label><input type="radio" name="amsterdam-market-expanded-subject" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Composition preserved</legend><div class="scale"><label><input type="radio" name="amsterdam-market-expanded-composition" value="1"><span>1</span></label><label><input type="radio" name="amsterdam-market-expanded-composition" value="2"><span>2</span></label><label><input type="radio" name="amsterdam-market-expanded-composition" value="3"><span>3</span></label><label><input type="radio" name="amsterdam-market-expanded-composition" value="4"><span>4</span></label><label><input type="radio" name="amsterdam-market-expanded-composition" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Color, lighting, and style preserved</legend><div class="scale"><label><input type="radio" name="amsterdam-market-expanded-appearance" value="1"><span>1</span></label><label><input type="radio" name="amsterdam-market-expanded-appearance" value="2"><span>2</span></label><label><input type="radio" name="amsterdam-market-expanded-appearance" value="3"><span>3</span></label><label><input type="radio" name="amsterdam-market-expanded-appearance" value="4"><span>4</span></label><label><input type="radio" name="amsterdam-market-expanded-appearance" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Overall semantic similarity</legend><div class="scale"><label><input type="radio" name="amsterdam-market-expanded-overall" value="1"><span>1</span></label><label><input type="radio" name="amsterdam-market-expanded-overall" value="2"><span>2</span></label><label><input type="radio" name="amsterdam-market-expanded-overall" value="3"><span>3</span></label><label><input type="radio" name="amsterdam-market-expanded-overall" value="4"><span>4</span></label><label><input type="radio" name="amsterdam-market-expanded-overall" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <label class="comment">Optional note<textarea name="amsterdam-market-expanded-comment" rows="2" placeholder="What survived? What changed?"></textarea></label>
+  </section>
+  <p class="credit">Source: <a href="https://commons.wikimedia.org/wiki/File:2023_Amsterdam_-_a_fruit_market_stall_at_the_Albert_Cuyp_market_in_the_sunlight_with_a_lot_of_city_people_walking_and_shopping_-_free_download_photo_in_Dutch_street_photography_by_Fons_Heijnsbroek,_Netherlands.tif">Fons Heijnsbroek</a> · <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0 Universal (public domain dedication)</a> · reconstruction generated from text only</p>
+</article>
+
+<article class="case" id="train-platform-expanded">
+  <div class="case-head">
+    <div><span class="eyebrow">CASE train-platform-expanded</span><h2>Passengers waiting on a train platform</h2></div>
+    <span class="status incomplete">INCOMPLETE</span>
+  </div>
+  <div class="pair"><figure><div class="image-frame"><img src="sources/train-platform.jpg" alt="Source: Passengers waiting on a train platform"></div><figcaption>Source</figcaption></figure><figure><div class="image-frame"><img src="reconstructions/train-platform-expanded.png" alt="Prompt-only reconstruction: Passengers waiting on a train platform"></div><figcaption>Refined prompt-only reconstruction</figcaption></figure></div>
+  <div class="metrics">
+    <div class="metric"><span>Visual proxy</span><strong>0.715</strong><div class="bar"><i style="width:71.5%"></i></div></div>
+    <div class="metric"><span>Layout</span><strong>0.755</strong><div class="bar"><i style="width:75.5%"></i></div></div>
+    <div class="metric"><span>dHash</span><strong>0.562</strong><div class="bar"><i style="width:56.2%"></i></div></div>
+    <div class="metric"><span>Palette distance</span><strong>0.049</strong><div class="bar"><i style="width:95.1%"></i></div></div>
+  </div>
+  <p class="compression"><strong>89.6:1</strong> artifact ratio · 333,386 → 3,721 bytes</p>
+  <details><summary>Prompt and machine-readable result</summary><pre>Create a new image from this semantic description.
+
+Primary request: Nighttime photograph of a Japanese train station platform with three men: one man in a dark overcoat, white shirt, blue tie, and dark pants walking toward the camera carrying a bag, two men standing to the right, one wearing a white mask and dark coat, the other in a dark coat, all on a platform with a sign reading &#x27;1 Yamanote Line Tokyo Ueno Komagome&#x27; above, dark background with train tracks and station infrastructure, shallow depth of field with blurred foreground element on the right, dim lighting with focused illumination on the platform and sign, visible text on the sign and platform edge, concrete platform surface with tactile paving, metal railings, and overhead station lights.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: photographic, high-contrast, shallow depth of field, nighttime urban scene with focused lighting on subjects and sign, grainy texture, documentary style
+Canvas: 1920x1080 (1.778:1)
+Composition:
+- 0 0 999 998: Full scene: dark nighttime station environment with platform on right, train tracks on left, overhead sign at top center, blurred foreground element on right edge, three men on platform, station infrastructure in background.
+- 492 95 623 198: Sign: rectangular, black background, white text &#x27;1&#x27; on left, green vertical bar, &#x27;山手線&#x27; in white, &#x27;Yamanote Line&#x27; in white below, &#x27;東京・上野・駒込方面&#x27; in white, &#x27;for Tokyo Ueno &amp; Komagome&#x27; in white below, mounted on pole above platform.
+- 453 462 537 859: Man walking: center of platform, dark overcoat, white shirt, blue tie, dark pants, black shoes, carrying dark bag in left hand, head slightly bowed, face visible, short dark hair, standing on platform with tactile paving, positioned between tracks and standing men.
+- 555 400 649 845: Man standing: right of walking man, dark coat, white mask covering nose and mouth, holding phone in right hand, short dark hair, facing left, standing near metal railing, partially obscured by foreground blur.
+- 610 319 682 750: Man standing: right of masked man, dark coat, short dark hair, facing left, right hand visible, partially obscured by foreground blur, standing near metal railing.
+- 575 715 685 998: Blurred foreground element: right edge of image, out-of-focus, light gray, indistinct shape, partially obscures standing men.
+- 0 720 455 998: Train tracks: left side of image, dark, metal rails, gravel ballast, extending into darkness, platform edge visible on right side of tracks.
+- 340 735 600 998: Platform surface: right side of image, concrete with tactile paving, light and dark stripes, metal railings along edge, illuminated by station lights.
+Palette: #000000, #1a1a1a, #2d2d2d, #4a4a4a, #666666, #8c8c8c, #b3b3b3, #d9d9d9
+Text to render verbatim when possible:
+- &quot;1&quot;
+- &quot;山手線&quot;
+- &quot;Yamanote Line&quot;
+- &quot;東京・上野・駒込方面&quot;
+- &quot;for Tokyo Ueno &amp; Komagome&quot;
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: inventing names or identities for people, inferring emotions beyond visible expressions, describing non-visible text or objects, using generic terms like &#x27;a man&#x27; without distinguishing features, speculating about the time of day beyond &#x27;nighttime&#x27;; extra logos; watermarks; invented claims.
+</pre><p><a href="prompts/train-platform-expanded.txt">Prompt</a> · <a href="results/train-platform-expanded.json">Evaluation JSON</a></p></details>
+  <section class="questions" data-case="train-platform-expanded">
+    <h3>Your assessment</h3>
+    <fieldset><legend>Subject and action preserved</legend><div class="scale"><label><input type="radio" name="train-platform-expanded-subject" value="1"><span>1</span></label><label><input type="radio" name="train-platform-expanded-subject" value="2"><span>2</span></label><label><input type="radio" name="train-platform-expanded-subject" value="3"><span>3</span></label><label><input type="radio" name="train-platform-expanded-subject" value="4"><span>4</span></label><label><input type="radio" name="train-platform-expanded-subject" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Composition preserved</legend><div class="scale"><label><input type="radio" name="train-platform-expanded-composition" value="1"><span>1</span></label><label><input type="radio" name="train-platform-expanded-composition" value="2"><span>2</span></label><label><input type="radio" name="train-platform-expanded-composition" value="3"><span>3</span></label><label><input type="radio" name="train-platform-expanded-composition" value="4"><span>4</span></label><label><input type="radio" name="train-platform-expanded-composition" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Color, lighting, and style preserved</legend><div class="scale"><label><input type="radio" name="train-platform-expanded-appearance" value="1"><span>1</span></label><label><input type="radio" name="train-platform-expanded-appearance" value="2"><span>2</span></label><label><input type="radio" name="train-platform-expanded-appearance" value="3"><span>3</span></label><label><input type="radio" name="train-platform-expanded-appearance" value="4"><span>4</span></label><label><input type="radio" name="train-platform-expanded-appearance" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Overall semantic similarity</legend><div class="scale"><label><input type="radio" name="train-platform-expanded-overall" value="1"><span>1</span></label><label><input type="radio" name="train-platform-expanded-overall" value="2"><span>2</span></label><label><input type="radio" name="train-platform-expanded-overall" value="3"><span>3</span></label><label><input type="radio" name="train-platform-expanded-overall" value="4"><span>4</span></label><label><input type="radio" name="train-platform-expanded-overall" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <label class="comment">Optional note<textarea name="train-platform-expanded-comment" rows="2" placeholder="What survived? What changed?"></textarea></label>
+  </section>
+  <p class="credit">Source: <a href="https://commons.wikimedia.org/wiki/File:People_waiting_for_the_train_(Unsplash).jpg">Redd Angelo</a> · <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0 Universal (public domain dedication)</a> · reconstruction generated from text only</p>
+</article>
+
+<article class="case" id="workspace-books-expanded">
+  <div class="case-head">
+    <div><span class="eyebrow">CASE workspace-books-expanded</span><h2>Desk with books, laptop and phone</h2></div>
+    <span class="status incomplete">INCOMPLETE</span>
+  </div>
+  <div class="pair"><figure><div class="image-frame"><img src="sources/workspace-books.jpg" alt="Source: Desk with books, laptop and phone"></div><figcaption>Source</figcaption></figure><figure><div class="image-frame"><img src="reconstructions/workspace-books-expanded.png" alt="Prompt-only reconstruction: Desk with books, laptop and phone"></div><figcaption>Refined prompt-only reconstruction</figcaption></figure></div>
+  <div class="metrics">
+    <div class="metric"><span>Visual proxy</span><strong>0.952</strong><div class="bar"><i style="width:95.2%"></i></div></div>
+    <div class="metric"><span>Layout</span><strong>0.982</strong><div class="bar"><i style="width:98.2%"></i></div></div>
+    <div class="metric"><span>dHash</span><strong>0.969</strong><div class="bar"><i style="width:96.9%"></i></div></div>
+    <div class="metric"><span>Palette distance</span><strong>0.028</strong><div class="bar"><i style="width:97.2%"></i></div></div>
+  </div>
+  <p class="compression"><strong>181.6:1</strong> artifact ratio · 541,310 → 2,980 bytes</p>
+  <details><summary>Prompt and machine-readable result</summary><pre>Create a new image from this semantic description.
+
+Primary request: Top-down photograph of a light wooden desk surface featuring a white laptop with a white keyboard, a stack of hardcover books with visible spines, an open magazine displaying various company logos including &#x27;Quark&#x27; and &#x27;conEdison&#x27;, a spiral-bound notebook with grid paper, three colored pencils (orange, green, yellow), a single orange pencil, a white eraser, a blue and white iPod brochure showing &#x27;iPod&#x27; and &#x27;iPod mini&#x27;, and a black smartphone with app icons on its screen, all arranged in a flat lay composition with soft lighting and a shallow depth of field.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: Photorealistic flat lay with soft, warm lighting, shallow depth of field, and a vintage filter effect.
+Canvas: 1920x1288 (1.491:1)
+Composition:
+- 0 0 437 432: White laptop with white keyboard, partially covered by a blue and white brochure showing &#x27;iPod&#x27; and &#x27;iPod mini&#x27; with a green iPod image; brochure positioned at top-left corner of laptop.
+- 434 0 857 297: Row of hardcover books with visible spines in various colors (teal, red, white, purple, green, blue, orange, black) arranged vertically along the top edge of the desk; books have different thicknesses and some show text on spines.
+- 142 515 330 915: Spiral-bound notebook with grid paper, featuring a simple geometric sketch; positioned below the laptop, with a single orange pencil, a white eraser, and three colored pencils (orange, green, yellow) placed on top of it.
+- 378 451 863 917: Open magazine with left page showing logos: &#x27;Quark&#x27; (green circle), &#x27;C&#x27; (yellow), &#x27;a&#x27; (teal), &#x27;conEdison&#x27; (blue &#x27;C&#x27; with text), &#x27;I&#x27; (green with leaf), &#x27;C&#x27; (red), and &#x27;L&#x27; (red circle); a black smartphone with app icons is placed on the left page; right page shows three circular patterns and text &#x27;University Science Park&#x27; with &#x27;100%&#x27; below it.
+- 0 545 115 825: Brown circular object with a decorative, textured edge (resembling a coaster or small tray) positioned at bottom-left corner of the desk.
+- 907 458 996 770: Black rectangular object (possibly a tablet or another device) partially visible at bottom-right corner of the desk.
+Palette: #F5E6D0, #FFFFFF, #000000, #00B4D8, #FF5A5A, #008080, #FFD700, #FF0000
+Text to render verbatim when possible:
+- &quot;iPod&quot;
+- &quot;iPod mini&quot;
+- &quot;Quark&quot;
+- &quot;conEdison&quot;
+- &quot;University Science Park&quot;
+- &quot;100%&quot;
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: inventing text not visible, describing non-existent people or animals, inferring hidden objects or context beyond visible elements; extra logos; watermarks; invented claims.
+</pre><p><a href="prompts/workspace-books-expanded.txt">Prompt</a> · <a href="results/workspace-books-expanded.json">Evaluation JSON</a></p></details>
+  <section class="questions" data-case="workspace-books-expanded">
+    <h3>Your assessment</h3>
+    <fieldset><legend>Subject and action preserved</legend><div class="scale"><label><input type="radio" name="workspace-books-expanded-subject" value="1"><span>1</span></label><label><input type="radio" name="workspace-books-expanded-subject" value="2"><span>2</span></label><label><input type="radio" name="workspace-books-expanded-subject" value="3"><span>3</span></label><label><input type="radio" name="workspace-books-expanded-subject" value="4"><span>4</span></label><label><input type="radio" name="workspace-books-expanded-subject" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Composition preserved</legend><div class="scale"><label><input type="radio" name="workspace-books-expanded-composition" value="1"><span>1</span></label><label><input type="radio" name="workspace-books-expanded-composition" value="2"><span>2</span></label><label><input type="radio" name="workspace-books-expanded-composition" value="3"><span>3</span></label><label><input type="radio" name="workspace-books-expanded-composition" value="4"><span>4</span></label><label><input type="radio" name="workspace-books-expanded-composition" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Color, lighting, and style preserved</legend><div class="scale"><label><input type="radio" name="workspace-books-expanded-appearance" value="1"><span>1</span></label><label><input type="radio" name="workspace-books-expanded-appearance" value="2"><span>2</span></label><label><input type="radio" name="workspace-books-expanded-appearance" value="3"><span>3</span></label><label><input type="radio" name="workspace-books-expanded-appearance" value="4"><span>4</span></label><label><input type="radio" name="workspace-books-expanded-appearance" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Overall semantic similarity</legend><div class="scale"><label><input type="radio" name="workspace-books-expanded-overall" value="1"><span>1</span></label><label><input type="radio" name="workspace-books-expanded-overall" value="2"><span>2</span></label><label><input type="radio" name="workspace-books-expanded-overall" value="3"><span>3</span></label><label><input type="radio" name="workspace-books-expanded-overall" value="4"><span>4</span></label><label><input type="radio" name="workspace-books-expanded-overall" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <label class="comment">Optional note<textarea name="workspace-books-expanded-comment" rows="2" placeholder="What survived? What changed?"></textarea></label>
+  </section>
+  <p class="credit">Source: <a href="https://commons.wikimedia.org/wiki/File:Books,_pencils,_laptop,_and_iphone_on_a_desk_(Unsplash).jpg">Aleks Dorohovich</a> · <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0 Universal (public domain dedication)</a> · reconstruction generated from text only</p>
+</article>
+
+<article class="case" id="dogs-beach-expanded">
+  <div class="case-head">
+    <div><span class="eyebrow">CASE dogs-beach-expanded</span><h2>Two dogs playing on a beach</h2></div>
+    <span class="status pass">PASS</span>
+  </div>
+  <div class="pair"><figure><div class="image-frame"><img src="sources/dogs-beach.jpg" alt="Source: Two dogs playing on a beach"></div><figcaption>Source</figcaption></figure><figure><div class="image-frame"><img src="reconstructions/dogs-beach-expanded.png" alt="Prompt-only reconstruction: Two dogs playing on a beach"></div><figcaption>Refined prompt-only reconstruction</figcaption></figure></div>
+  <div class="metrics">
+    <div class="metric"><span>Visual proxy</span><strong>0.693</strong><div class="bar"><i style="width:69.3%"></i></div></div>
+    <div class="metric"><span>Layout</span><strong>0.661</strong><div class="bar"><i style="width:66.1%"></i></div></div>
+    <div class="metric"><span>dHash</span><strong>0.391</strong><div class="bar"><i style="width:39.1%"></i></div></div>
+    <div class="metric"><span>Palette distance</span><strong>0.058</strong><div class="bar"><i style="width:94.2%"></i></div></div>
+  </div>
+  <p class="compression"><strong>193.7:1</strong> artifact ratio · 533,079 → 2,752 bytes</p>
+  <details><summary>Prompt and machine-readable result</summary><pre>Create a new image from this semantic description.
+
+Primary request: Two dogs, one with a brindle coat and the other solid dark gray, running side by side on a sandy beach; the brindle dog has its mouth open showing teeth, the dark gray dog is nipping at the brindle dog&#x27;s rear; both dogs have long legs, slender bodies, and long tails; the background is a blurred expanse of water and distant shoreline with sand flying up around their paws; the scene is captured in mid-action with a shallow depth of field focusing on the dogs.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: Photographic, dynamic action shot with shallow depth of field, natural lighting, and fine detail on the subjects with a blurred background.
+Canvas: 1920x1159 (1.657:1)
+Composition:
+- 0 0 999 545: Blurred background of water with light blue and white tones, showing no distinct features; distant shoreline with indistinct brown and green patches at the bottom edge of the water area.
+- 0 500 999 998: Sandy beach surface with light tan color, showing texture of loose sand and small clumps; sand is being kicked up around the dogs&#x27; paws, creating a dynamic effect with visible particles in the air.
+- 78 198 409 812: Brindle-coated dog with a mix of light gray and dark gray fur patterns; body is elongated with a slender build; head is turned to the right, mouth open showing teeth and pink tongue; ears are small and folded back; eyes are light blue; tail is long and curved, with a dark tip; front legs are extended forward, back legs are pushing off the sand; paws are light-colored with visible claws; the dog&#x27;s body is positioned at an angle, showing its side and rear.
+- 347 368 862 800: Solid dark gray dog with a smooth, short coat; body is elongated with a slender build; head is turned to the left, mouth closed; ears are small and folded back; eyes are dark; tail is long and curved, with a dark tip; front legs are extended forward, back legs are pushing off the sand; paws are dark-colored; the dog&#x27;s body is positioned at an angle, showing its side and rear; the dog appears to be nipping at the brindle dog&#x27;s rear.
+Palette: #D4C8B0, #A0A0A0, #4A4A4A, #B0B0B0, #E0E0E0, #808080
+Text to render verbatim when possible:
+- none
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: breed identification, inference of emotion beyond visible expression, assumptions about the dogs&#x27; relationship, speculation about the location beyond visible elements; extra logos; watermarks; invented claims.
+</pre><p><a href="prompts/dogs-beach-expanded.txt">Prompt</a> · <a href="results/dogs-beach-expanded.json">Evaluation JSON</a></p></details>
+  <section class="questions" data-case="dogs-beach-expanded">
+    <h3>Your assessment</h3>
+    <fieldset><legend>Subject and action preserved</legend><div class="scale"><label><input type="radio" name="dogs-beach-expanded-subject" value="1"><span>1</span></label><label><input type="radio" name="dogs-beach-expanded-subject" value="2"><span>2</span></label><label><input type="radio" name="dogs-beach-expanded-subject" value="3"><span>3</span></label><label><input type="radio" name="dogs-beach-expanded-subject" value="4"><span>4</span></label><label><input type="radio" name="dogs-beach-expanded-subject" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Composition preserved</legend><div class="scale"><label><input type="radio" name="dogs-beach-expanded-composition" value="1"><span>1</span></label><label><input type="radio" name="dogs-beach-expanded-composition" value="2"><span>2</span></label><label><input type="radio" name="dogs-beach-expanded-composition" value="3"><span>3</span></label><label><input type="radio" name="dogs-beach-expanded-composition" value="4"><span>4</span></label><label><input type="radio" name="dogs-beach-expanded-composition" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Color, lighting, and style preserved</legend><div class="scale"><label><input type="radio" name="dogs-beach-expanded-appearance" value="1"><span>1</span></label><label><input type="radio" name="dogs-beach-expanded-appearance" value="2"><span>2</span></label><label><input type="radio" name="dogs-beach-expanded-appearance" value="3"><span>3</span></label><label><input type="radio" name="dogs-beach-expanded-appearance" value="4"><span>4</span></label><label><input type="radio" name="dogs-beach-expanded-appearance" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Overall semantic similarity</legend><div class="scale"><label><input type="radio" name="dogs-beach-expanded-overall" value="1"><span>1</span></label><label><input type="radio" name="dogs-beach-expanded-overall" value="2"><span>2</span></label><label><input type="radio" name="dogs-beach-expanded-overall" value="3"><span>3</span></label><label><input type="radio" name="dogs-beach-expanded-overall" value="4"><span>4</span></label><label><input type="radio" name="dogs-beach-expanded-overall" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <label class="comment">Optional note<textarea name="dogs-beach-expanded-comment" rows="2" placeholder="What survived? What changed?"></textarea></label>
+  </section>
+  <p class="credit">Source: <a href="https://commons.wikimedia.org/wiki/File:Two_dogs_playing_on_the_beach_(Unsplash).jpg">Mark Galer</a> · <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0 Universal (public domain dedication)</a> · reconstruction generated from text only</p>
+</article>
+<div class="actions"><button id="export">Export my ratings</button><button class="secondary" id="reset">Reset</button></div>
+<footer><p><strong>Method.</strong> Sources were encoded by Ollama/Qwen3-VL into canonical llmPEG JSON. Each reconstruction used the resulting text prompt only. Metrics are deterministic structural proxies: dHash, RGB histogram, edge density, aspect ratio, and symmetric dominant-palette distance. They are not CLIP scores or human judgments. Ratings stay in this browser until exported.</p></footer></main>
+<script>const ids=["astronaut-crew-expanded", "food-table-expanded", "amsterdam-market-expanded", "train-platform-expanded", "workspace-books-expanded", "dogs-beach-expanded"],key="llmpeg-cat-survey-v1";function collect(){const out={created_at:new Date().toISOString(),ratings:{}};for(const id of ids){const box=document.querySelector(`[data-case="${id}"]`),item={};box.querySelectorAll("input:checked").forEach(x=>item[x.name.slice(id.length+1)]=Number(x.value));item.comment=box.querySelector("textarea").value;out.ratings[id]=item}return out}function save(){localStorage.setItem(key,JSON.stringify(collect()))}document.addEventListener("change",save);document.addEventListener("input",save);try{const old=JSON.parse(localStorage.getItem(key)||"null");if(old?.ratings)for(const [id,item] of Object.entries(old.ratings)){for(const [field,value] of Object.entries(item)){if(field==="comment")document.querySelector(`[name="${id}-comment"]`).value=value;else{const input=document.querySelector(`[name="${id}-${field}"] [value="${value}"]`)||document.querySelector(`input[name="${id}-${field}"][value="${value}"]`);if(input)input.checked=true}}}}catch(e){console.warn(e)}document.getElementById("export").onclick=()=>{const blob=new Blob([JSON.stringify(collect(),null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="llmpeg-survey-response.json";a.click();URL.revokeObjectURL(a.href)};document.getElementById("reset").onclick=()=>{localStorage.removeItem(key);document.querySelectorAll("input").forEach(x=>x.checked=false);document.querySelectorAll("textarea").forEach(x=>x.value="")};</script></body></html>
