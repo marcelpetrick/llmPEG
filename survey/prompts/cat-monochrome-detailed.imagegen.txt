@@ -1,0 +1,15 @@
+Use case: photorealistic-natural
+Asset type: semantic reconstruction benchmark
+Primary request: A vintage black-and-white photograph of one adult tabby-and-white cat seated upright outdoors on rough ground. The cat has a white lower face, muzzle, chest bib, and front paws, with dark tabby markings across the crown, ears, back, and sides. It looks toward frame-left with partially closed eyes.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize exact marking boundaries, facial proportions, seated pose, crop, and background texture over generic beauty or creative interpretation.
+Style/medium: genuinely monochrome old snapshot, soft diffuse light, shallow depth of field, visible fine film grain, mild edge wear, low-to-moderate contrast; not digitally colorized.
+Canvas: near-square, approximately 0.987:1.
+Composition, using a normalized 0–1000 coordinate grid:
+- Cat sits slightly left of center and fills most of the middle and lower frame; body faces generally forward while head turns left.
+- Upright ears; viewer-left ear slightly more forward. Partially closed eyes, viewer-left eye a little more open. Small dark nose, closed mouth, whiskers on both sides.
+- White facial area rises from muzzle toward forehead with a narrow dark stripe between eyes; dark tabby crown and ears.
+- Bright white chest and both front legs; front paws close together, viewer-right paw slightly forward.
+- Dark striped back and flank visible on viewer-right. Tail is not visible.
+- Rough light ground with pebbles, sparse grass, and debris along the bottom; dense dark leaves and stems across the upper background, slightly out of focus.
+Constraints: exactly one cat; preserve head direction, seated posture, white-versus-dark marking boundaries, paw placement, missing tail, near-square crop, and old-photo character. Add no collar, people, buildings, furniture, text, frame graphics, logos, or watermark.
+Avoid: color tinting, front-facing gaze, open eyes, visible tail, fluffy long-haired breed styling, pristine modern studio portrait, exaggerated scratches or torn edges.

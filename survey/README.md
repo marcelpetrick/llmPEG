@@ -23,8 +23,9 @@ their SHA-256 hashes are also embedded in the corresponding `.ppress.json` artif
 1. Encode each source with `qwen3-vl:32b-ctx49k`, seed 42, temperature 0, and the `balanced`
    fidelity profile.
 2. Render its canonical artifact into a generator-neutral prompt.
-3. Generate one reconstruction with Codex's built-in image generation from that prompt only. The
-   source images were not supplied to the generator as references.
+3. Normalize the rendered fields into the production prompt saved as `*.imagegen.txt`, then
+   generate one reconstruction with Codex's built-in image generation from that exact text only.
+   The source images were not supplied to the generator as references.
 4. Evaluate aspect ratio, dHash, RGB histogram, edge density, layout proxy, and symmetric dominant
    palette distance.
 5. Generate `index.html` from the manifest, artifacts, prompts, and evaluation JSON.

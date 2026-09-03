@@ -1,0 +1,16 @@
+Use case: photorealistic-natural
+Asset type: semantic reconstruction benchmark
+Primary request: A small tabby kitten with brown-and-black striped fur and white markings on its chest, front paws, muzzle, and nose bridge sleeps sprawled across a white computer keyboard on a light wooden desk. Its eyes are closed and its head rests directly on the keys.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize its marking boundaries, proportions, sleeping pose, crop, and object geometry over generic cuteness or creative interpretation.
+Style/medium: candid close-up photograph, natural soft light, shallow depth of field, slightly soft early-digital-camera character rather than polished studio photography.
+Canvas: landscape 4:3 aspect ratio.
+Composition, using a normalized 0–1000 coordinate grid:
+- White keyboard runs diagonally from lower-left toward mid-right and fills most of the lower two-thirds. Individual pale keys are visible but do not need readable lettering.
+- Kitten bbox approximately x=45 to 965, y=0 to 895. Its curved body lies across the keyboard, head low on the keys near center-left, eyes closed, mouth closed, ears visible.
+- Brown and black narrow tabby stripes across head, back, and tail. White muzzle/nose bridge, chest, and front paws. One white front paw lies forward on the keyboard.
+- Tail curls close to the body rather than extending straight.
+- Light-brown wooden desktop with visible grain surrounds keyboard.
+- Partial pale computer monitor/base at upper-right, softly out of focus. A small dark pen with a yellow accent lies nearby.
+Color palette: off-white #F5F5F5 keyboard, warm tan #D4B483 and brown #8B5A2B #A0522D fur/wood, dark stripes #000000, muted gray background.
+Constraints: exactly one kitten; preserve sleeping head-on-keys interaction, diagonal white keyboard, curved body, white marking locations, and 4:3 crop. Add no humans, collar, blanket, plants, extra electronics, logos, captions, or watermark. Do not beautify or stage the scene.
+Avoid: awake kitten, upright pose, black keyboard, oversized cat, perfectly centered studio composition, highly legible invented key labels.

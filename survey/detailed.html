@@ -21,25 +21,23 @@
   </div>
   <p class="delta"><strong>Visual proxy change:</strong> 0.595 → 0.579 (-0.016)</p>
   <p class="compression"><strong>302.2:1</strong> artifact ratio · 799,983 → 2,647 bytes</p>
-  <details><summary>Prompt and machine-readable result</summary><pre>Create a new image from this semantic description.
-
+  <details><summary>Prompt and machine-readable result</summary><pre>Use case: photorealistic-natural
+Asset type: semantic reconstruction benchmark
 Primary request: A light brown and black striped tabby cat with a white underbelly lies on its back on green grass, paws splayed outward, head turned to the right, tail extended to the left, viewed from above with natural daylight.
 Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
 Style/medium: photographic, natural daylight, shallow depth of field, soft focus on background, sharp focus on cat
-Canvas: 1536x1024 (1.500:1)
-Composition:
-- 0 0 999 999: Grassy background with short, uneven green and brown blades, some small patches of bare earth; cat positioned centrally, body spanning from left to right, head at top-right, tail at left, paws extended outward, body length approximately 60% of canvas width, height approximately 30% of canvas height, head turned to the right, tail extending to the left, paws splayed, fur pattern showing distinct dark brown stripes on light brown fur, white underbelly, ears upright, whiskers visible, eyes not open
-- 87 148 939 826: Cat body: light brown fur with dark brown to black vertical stripes on back and sides, white underbelly, tail with alternating dark and light rings, front paws extended upward and outward, hind paws splayed to the left, head turned to the right, ears upright, whiskers visible, nose and mouth not clearly visible, body length approximately 60% of canvas width, height approximately 30% of canvas height, head at top-right, tail at left, paws splayed, fur pattern showing distinct dark brown stripes,
-- 167 328 375 526: Tail: light brown with dark brown rings, extending to the left, tip slightly curved, length approximately 20% of canvas width, positioned at left side of cat&#x27;s body, tail base near mid-body, tail tip near left edge of canvas
-- 600 226 725 400: Head: light brown fur with dark stripes on neck, ears upright, whiskers visible, head turned to the right, nose and mouth not clearly visible, head width approximately 15% of canvas width, height approximately 10% of canvas height, positioned at top-right of cat&#x27;s body
-Palette: #8B9A5B, #A5C05B, #D4B483, #4A5D27, #6B6B6B
-Text to render verbatim when possible:
-- none
-Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
-unlisted subject, object, marking, or decoration.
-This is a semantic reconstruction, not the original.
-Avoid: breed name, cat&#x27;s name, inferred expression, inferred activity, inferred location, inferred time of day beyond daylight, inferred age; extra logos; watermarks; invented claims.
-</pre><p><a href="prompts/cat-on-grass-detailed.txt">Prompt</a> · <a href="results/cat-on-grass-detailed.json">Evaluation JSON</a></p></details>
+Canvas: landscape 3:2 aspect ratio.
+Composition, using a normalized 0–1000 coordinate grid:
+- Entire canvas: short, uneven green and brown grass blades with a few small patches of bare earth.
+- Cat bbox approximately x=87 to 939, y=148 to 826; centrally positioned, body runs left-to-right, occupies roughly 60% of canvas width and 30% of height.
+- Head at upper-right of body, centered near x=665 y=313; turned right; light brown fur with dark neck stripes; upright ears; visible whiskers; eyes closed; nose and mouth not clearly visible.
+- Torso on its back with white underbelly exposed; light brown coat and distinct dark-brown-to-black vertical stripes along back and sides.
+- Front paws extend upward and outward; hind paws splay toward the left.
+- Ringed tail starts near mid-body, extends about 20% of canvas width toward the left, with a slightly curved tip near the left side.
+Color palette: muted grass greens #8B9A5B #A5C05B #4A5D27; cat tan #D4B483 with dark stripes.
+Constraints: preserve every described landmark and spatial relationship. Exactly one cat. Add no collar, objects, flowers, people, logos, text, watermark, or extra markings. Natural imperfect documentary photograph, not a polished stock photo or illustration.
+Avoid: changing the cat into an upright, curled, or side-lying pose; moving the head to the left; hiding the white belly; shortening the ringed tail; symmetrical staged posing.
+</pre><p><a href="prompts/cat-on-grass-detailed.imagegen.txt">Prompt</a> · <a href="results/cat-on-grass-detailed.json">Evaluation JSON</a></p></details>
   <section class="questions" data-case="cat-on-grass-detailed">
     <h3>Your assessment</h3>
     <fieldset><legend>Subject and action preserved</legend><div class="scale"><label><input type="radio" name="cat-on-grass-detailed-subject" value="1"><span>1</span></label><label><input type="radio" name="cat-on-grass-detailed-subject" value="2"><span>2</span></label><label><input type="radio" name="cat-on-grass-detailed-subject" value="3"><span>3</span></label><label><input type="radio" name="cat-on-grass-detailed-subject" value="4"><span>4</span></label><label><input type="radio" name="cat-on-grass-detailed-subject" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
@@ -65,41 +63,23 @@ Avoid: breed name, cat&#x27;s name, inferred expression, inferred activity, infe
   </div>
   <p class="delta"><strong>Visual proxy change:</strong> 0.699 → 0.751 (+0.051)</p>
   <p class="compression"><strong>264.6:1</strong> artifact ratio · 612,448 → 2,315 bytes</p>
-  <details><summary>Prompt and machine-readable result</summary><pre>Create a new image from this semantic description.
-
-Primary request: A tabby kitten with brown and black striped fur and white markings on chest, paws, and nose rests its head on a white computer keyboard, eyes closed, one paw on the keyboard, tail curled, on a wooden desk with a white computer monitor and a pen in the background, slightly out of focus, close-up view, soft lighting.
-Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
-Style/medium: photographic, soft focus, natural lighting, close-up, shallow depth of field
-Canvas: 2048x1536 (1.333:1)
-Composition:
-- [0, 65, 910, 997]: white computer keyboard with visible keys including &#x27;1&#x27;, &#x27;2&#x27;, &#x27;3&#x27;, &#x27;Q&#x27;, &#x27;W&#x27;, &#x27;E&#x27;, &#x27;A&#x27;, &#x27;S&#x27;, &#x27;D&#x27;, &#x27;Z&#x27;, &#x27;X&#x27;, &#x27;C&#x27;, &#x27;V&#x27;, &#x27;N&#x27;, &#x27;M&#x27;, &#x27;K&#x27;, &#x27;F9&#x27;, &#x27;F10&#x27;, &#x27;F11&#x27;, &#x27;F12&#x27;, and function keys, positioned diagonally from top-left to bottom-right, with a kitten lying on it
-- [45, 0, 965, 895]: tabby kitten with brown and black striped fur, white markings on chest, paws, and nose, eyes closed, head resting on keyboard, one paw on keyboard, tail curled, body curved, ears visible, nose and mouth closed, lying on wooden desk
-- [0, 0, 998, 998]: wooden desk surface with visible grain, light brown color, under keyboard and kitten, extending to edges of image
-- [750, 0, 998, 220]: white computer monitor base with black edge, partially visible in top-right corner, slightly out of focus
-- [865, 175, 998, 305]: black and yellow pen with white stripe, lying on desk near monitor, partially out of focus
-Palette: #F5F5F5, #D4B483, #8B5A2B, #A0522D, #E0E0E0, #C0C0C0, #000000, #FFD700
-Text to render verbatim when possible:
-- &quot;1&quot;
-- &quot;2&quot;
-- &quot;3&quot;
-- &quot;Q&quot;
-- &quot;W&quot;
-- &quot;E&quot;
-- &quot;A&quot;
-- &quot;S&quot;
-- &quot;D&quot;
-- &quot;Z&quot;
-- &quot;X&quot;
-- &quot;C&quot;
-- &quot;V&quot;
-- &quot;N&quot;
-- &quot;M&quot;
-- &quot;K\&quot;, &quot;
-Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
-unlisted subject, object, marking, or decoration.
-This is a semantic reconstruction, not the original.
-Avoid: kitten breed, kitten name, kitten age, kitten gender, kitten expression interpretation, kitten activity beyond sleeping, kitten&#x27;s internal state, kitten&#x27;s emotional state, kitten&#x27;s health status, kitten&#x27;s background story; extra logos; watermarks; invented claims.
-</pre><p><a href="prompts/cat-on-keyboard-detailed.txt">Prompt</a> · <a href="results/cat-on-keyboard-detailed.json">Evaluation JSON</a></p></details>
+  <details><summary>Prompt and machine-readable result</summary><pre>Use case: photorealistic-natural
+Asset type: semantic reconstruction benchmark
+Primary request: A small tabby kitten with brown-and-black striped fur and white markings on its chest, front paws, muzzle, and nose bridge sleeps sprawled across a white computer keyboard on a light wooden desk. Its eyes are closed and its head rests directly on the keys.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize its marking boundaries, proportions, sleeping pose, crop, and object geometry over generic cuteness or creative interpretation.
+Style/medium: candid close-up photograph, natural soft light, shallow depth of field, slightly soft early-digital-camera character rather than polished studio photography.
+Canvas: landscape 4:3 aspect ratio.
+Composition, using a normalized 0–1000 coordinate grid:
+- White keyboard runs diagonally from lower-left toward mid-right and fills most of the lower two-thirds. Individual pale keys are visible but do not need readable lettering.
+- Kitten bbox approximately x=45 to 965, y=0 to 895. Its curved body lies across the keyboard, head low on the keys near center-left, eyes closed, mouth closed, ears visible.
+- Brown and black narrow tabby stripes across head, back, and tail. White muzzle/nose bridge, chest, and front paws. One white front paw lies forward on the keyboard.
+- Tail curls close to the body rather than extending straight.
+- Light-brown wooden desktop with visible grain surrounds keyboard.
+- Partial pale computer monitor/base at upper-right, softly out of focus. A small dark pen with a yellow accent lies nearby.
+Color palette: off-white #F5F5F5 keyboard, warm tan #D4B483 and brown #8B5A2B #A0522D fur/wood, dark stripes #000000, muted gray background.
+Constraints: exactly one kitten; preserve sleeping head-on-keys interaction, diagonal white keyboard, curved body, white marking locations, and 4:3 crop. Add no humans, collar, blanket, plants, extra electronics, logos, captions, or watermark. Do not beautify or stage the scene.
+Avoid: awake kitten, upright pose, black keyboard, oversized cat, perfectly centered studio composition, highly legible invented key labels.
+</pre><p><a href="prompts/cat-on-keyboard-detailed.imagegen.txt">Prompt</a> · <a href="results/cat-on-keyboard-detailed.json">Evaluation JSON</a></p></details>
   <section class="questions" data-case="cat-on-keyboard-detailed">
     <h3>Your assessment</h3>
     <fieldset><legend>Subject and action preserved</legend><div class="scale"><label><input type="radio" name="cat-on-keyboard-detailed-subject" value="1"><span>1</span></label><label><input type="radio" name="cat-on-keyboard-detailed-subject" value="2"><span>2</span></label><label><input type="radio" name="cat-on-keyboard-detailed-subject" value="3"><span>3</span></label><label><input type="radio" name="cat-on-keyboard-detailed-subject" value="4"><span>4</span></label><label><input type="radio" name="cat-on-keyboard-detailed-subject" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
@@ -125,25 +105,22 @@ Avoid: kitten breed, kitten name, kitten age, kitten gender, kitten expression i
   </div>
   <p class="delta"><strong>Visual proxy change:</strong> 0.706 → 0.725 (+0.019)</p>
   <p class="compression"><strong>114.4:1</strong> artifact ratio · 345,840 → 3,024 bytes</p>
-  <details><summary>Prompt and machine-readable result</summary><pre>Create a new image from this semantic description.
-
-Primary request: A black and white photograph of a cat with a white face, chest, and paws, and dark tabby markings on its back and head, sitting on a textured ground with foliage in the background, viewed from a slightly elevated angle with soft lighting and a shallow depth of field.
-Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
-Style/medium: black and white photograph with soft lighting, shallow depth of field, and visible grain texture
-Canvas: 1491x1510 (0.987:1)
-Composition:
-- 0 0 998 998: The cat is positioned slightly left of center, with its head turned to the left, eyes partially closed, ears upright, and body facing forward. The cat&#x27;s white face has a distinct boundary with the dark tabby markings on its head, which extend down the back. The white chest and paws contrast sharply with the dark fur. The cat&#x27;s tail is not visible. The ground beneath the cat is textured with small pebbles and grass. The background consists of dense foliage with leaves and stems, slightly out of 1
-- 25 10 440 200: Ears are upright, with the left ear (from viewer&#x27;s perspective) slightly more forward. The top of the head has dark tabby stripes, and the white fur on the face extends from the nose up to the forehead, with a small dark stripe between the eyes. The eyes are partially closed, with the left eye (from viewer&#x27;s perspective) more open than the right. The nose is small and dark, and the mouth is closed. The whiskers are visible on both sides of the face.
-- 150 400 560 950: The chest and front legs are white, with the front paws positioned close together. The right front paw (from viewer&#x27;s perspective) is slightly forward. The dark tabby markings on the back have distinct stripes, with the left side (from viewer&#x27;s perspective) showing a more pronounced stripe pattern. The body is slightly angled, with the right side (from viewer&#x27;s perspective) more visible.
-- 400 240 970 900: The back and side of the cat are covered in dark tabby markings with visible stripes. The fur texture is slightly blurred, indicating a shallow depth of field. The background foliage is dense, with leaves and stems visible, and the ground has a mix of small pebbles and grass. The lighting is soft, with no harsh shadows, suggesting an overcast day or diffused light source.
-Palette: #000000, #808080, #FFFFFF
-Text to render verbatim when possible:
-- none
-Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
-unlisted subject, object, marking, or decoration.
-This is a semantic reconstruction, not the original.
-Avoid: inference of breed, name, or backstory, describing the cat as &#x27;cute&#x27; or &#x27;sleepy&#x27; without visible evidence, assuming the cat is a specific age or gender; extra logos; watermarks; invented claims.
-</pre><p><a href="prompts/cat-monochrome-detailed.txt">Prompt</a> · <a href="results/cat-monochrome-detailed.json">Evaluation JSON</a></p></details>
+  <details><summary>Prompt and machine-readable result</summary><pre>Use case: photorealistic-natural
+Asset type: semantic reconstruction benchmark
+Primary request: A vintage black-and-white photograph of one adult tabby-and-white cat seated upright outdoors on rough ground. The cat has a white lower face, muzzle, chest bib, and front paws, with dark tabby markings across the crown, ears, back, and sides. It looks toward frame-left with partially closed eyes.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize exact marking boundaries, facial proportions, seated pose, crop, and background texture over generic beauty or creative interpretation.
+Style/medium: genuinely monochrome old snapshot, soft diffuse light, shallow depth of field, visible fine film grain, mild edge wear, low-to-moderate contrast; not digitally colorized.
+Canvas: near-square, approximately 0.987:1.
+Composition, using a normalized 0–1000 coordinate grid:
+- Cat sits slightly left of center and fills most of the middle and lower frame; body faces generally forward while head turns left.
+- Upright ears; viewer-left ear slightly more forward. Partially closed eyes, viewer-left eye a little more open. Small dark nose, closed mouth, whiskers on both sides.
+- White facial area rises from muzzle toward forehead with a narrow dark stripe between eyes; dark tabby crown and ears.
+- Bright white chest and both front legs; front paws close together, viewer-right paw slightly forward.
+- Dark striped back and flank visible on viewer-right. Tail is not visible.
+- Rough light ground with pebbles, sparse grass, and debris along the bottom; dense dark leaves and stems across the upper background, slightly out of focus.
+Constraints: exactly one cat; preserve head direction, seated posture, white-versus-dark marking boundaries, paw placement, missing tail, near-square crop, and old-photo character. Add no collar, people, buildings, furniture, text, frame graphics, logos, or watermark.
+Avoid: color tinting, front-facing gaze, open eyes, visible tail, fluffy long-haired breed styling, pristine modern studio portrait, exaggerated scratches or torn edges.
+</pre><p><a href="prompts/cat-monochrome-detailed.imagegen.txt">Prompt</a> · <a href="results/cat-monochrome-detailed.json">Evaluation JSON</a></p></details>
   <section class="questions" data-case="cat-monochrome-detailed">
     <h3>Your assessment</h3>
     <fieldset><legend>Subject and action preserved</legend><div class="scale"><label><input type="radio" name="cat-monochrome-detailed-subject" value="1"><span>1</span></label><label><input type="radio" name="cat-monochrome-detailed-subject" value="2"><span>2</span></label><label><input type="radio" name="cat-monochrome-detailed-subject" value="3"><span>3</span></label><label><input type="radio" name="cat-monochrome-detailed-subject" value="4"><span>4</span></label><label><input type="radio" name="cat-monochrome-detailed-subject" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
