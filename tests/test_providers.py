@@ -89,3 +89,12 @@ def test_ollama_accepts_valid_json_from_thinking_field(description: dict[str, An
             )
             == description
         )
+
+
+def test_extra_instruction_is_appended_without_changing_the_base() -> None:
+    base = _vision_instruction(FidelityProfile.BALANCED)
+    focused = _vision_instruction(FidelityProfile.BALANCED, "  Count every visible person.  ")
+    assert "Extra focus" not in base
+    assert focused.startswith(base)
+    assert focused.endswith("Count every visible person.")
+    assert _vision_instruction(FidelityProfile.BALANCED, "   ") == base

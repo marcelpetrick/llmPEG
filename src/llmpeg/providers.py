@@ -79,6 +79,7 @@ class OllamaVisionProvider:
     timeout: float = 600.0
     seed: int = 42
     temperature: float = 0.0
+    extra_instruction: str = ""
 
     @property
     def provenance(self) -> Provenance:
@@ -102,7 +103,7 @@ class OllamaVisionProvider:
             "messages": [
                 {
                     "role": "user",
-                    "content": _vision_instruction(profile),
+                    "content": _vision_instruction(profile, self.extra_instruction),
                     "images": [base64.b64encode(image).decode("ascii")],
                 }
             ],
@@ -153,7 +154,7 @@ class OllamaVisionProvider:
         return result
 
 
-def _vision_instruction(profile: FidelityProfile) -> str:
+def _vision_instruction(profile: FidelityProfile, extra: str = "") -> str:
     detail = {
         FidelityProfile.GIST: "Keep only subjects, action, setting, palette, and broad layout.",
         FidelityProfile.BALANCED: (
@@ -172,6 +173,7 @@ def _vision_instruction(profile: FidelityProfile) -> str:
             "this particular image from another image of the same scene category."
         ),
     }[profile]
+    focus = f"\nExtra focus for this run:\n{extra.strip()}" if extra.strip() else ""
     return f"""/no_think
 Analyze the attached image for lossy semantic reconstruction. {detail}
 Return ONLY one valid JSON object with exactly these fields:
@@ -189,4 +191,4 @@ Return ONLY one valid JSON object with exactly these fields:
 }}
 Describe only what is visible; never infer a name, breed, backstory, or hidden feature. Make the
 generation_prompt self-contained rather than referring to this image or the analysis. Do not wrap
-the JSON in Markdown."""
+the JSON in Markdown.{focus}"""
