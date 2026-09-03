@@ -1,0 +1,394 @@
+{
+  "model": "qwen3-vl:32b-ctx49k",
+  "objective": "artifact sufficiency judged by an adversarial critic, not reconstructed-image quality: llmPEG ships no generator, so the loop cannot be closed on pixels",
+  "profile": "detailed",
+  "rounds": [
+    {
+      "cases": [
+        {
+          "artifact_bytes": 2021,
+          "case": "cat-on-grass",
+          "miss_count": 6,
+          "misses": [
+            {
+              "aspect": "person_count",
+              "detail": "Description says 'paws splayed outward' but original shows 4 paws, 2 front, 2 hind, with specific positions: front paws at top-right, hind paws at bottom-left, not all splayed symmetrically",
+              "severity": 5
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says 'head turned to the right' but original shows head turned to the left (from viewer's perspective), not right",
+              "severity": 4
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says 'tail extended to the left' but original shows tail extending to the right (from viewer's perspective), not left",
+              "severity": 3
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says 'body length approximately 60% of canvas width' but original shows body length closer to 70% of canvas width",
+              "severity": 2
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says 'height approximately 30% of canvas height' but original shows height closer to 25% of canvas height",
+              "severity": 1
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says 'no visible eyes' but original shows eyes partially open, not closed",
+              "severity": 1
+            }
+          ],
+          "reconstructability": 3,
+          "severe_miss_count": 2,
+          "source_bytes": 799983
+        },
+        {
+          "artifact_bytes": 3293,
+          "case": "astronaut-crew",
+          "miss_count": 6,
+          "misses": [
+            {
+              "aspect": "spatial_layout",
+              "detail": "Astronaut 4's bounding box (475 295 860 935) overlaps with Astronaut 5 (500 150 655 675) and 6 (700 105 915 935), causing impossible overlap in physical positions. Must specify non-overlapping zones.",
+              "severity": 5
+            },
+            {
+              "aspect": "object_count",
+              "detail": "15 flags listed but only 14 visible in image (US, Canada, Japan, Russia, Denmark, Norway, Germany, Italy, Netherlands, Spain, Sweden, Switzerland, UK, and 1 missing). Count mismatch.",
+              "severity": 4
+            },
+            {
+              "aspect": "spatial_layout",
+              "detail": "Mission patch text 'ACABA BRESNIK PRZACHKOV NESPOLI VANDE HEI MASYUKIN' has incorrect spelling: 'PRZACHKOV' should be 'PESKOV' (as in original). Critical for fidelity.",
+              "severity": 3
+            },
+            {
+              "aspect": "spatial_layout",
+              "detail": "Astronaut 2's bounding box (170 285 455 935) is too wide; actual seated position is narrower, causing incorrect spacing between astronauts.",
+              "severity": 3
+            },
+            {
+              "aspect": "object_count",
+              "detail": "Text list includes 12 '10's but no context for their use; original has no such repeated numbers. Unnecessary and confusing.",
+              "severity": 2
+            },
+            {
+              "aspect": "spatial_layout",
+              "detail": "Mars (835 45 880 105) is too small; original shows larger relative size. Affects scale accuracy.",
+              "severity": 2
+            }
+          ],
+          "reconstructability": 3,
+          "severe_miss_count": 2,
+          "source_bytes": 640005
+        },
+        {
+          "artifact_bytes": 2986,
+          "case": "train-platform",
+          "miss_count": 6,
+          "misses": [
+            {
+              "aspect": "person_count",
+              "detail": "Description says three men but image has five people (two walking, three standing). Missing two standing men on right.",
+              "severity": 5
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description specifies one man walking but image shows two (taller man and shorter man walking together). Missing one walking man.",
+              "severity": 4
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says two standing men but image has three (one masked, two unmasked). Missing one standing man.",
+              "severity": 3
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says one man in white mask but image shows two (one with mask, one without). Missing one masked man.",
+              "severity": 2
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says one man in dark overcoat but image shows two (taller and shorter). Missing one overcoat man.",
+              "severity": 1
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says one man carrying bag but image shows two (taller and shorter). Missing one bag carrier.",
+              "severity": 1
+            }
+          ],
+          "reconstructability": 3,
+          "severe_miss_count": 2,
+          "source_bytes": 333386
+        }
+      ],
+      "focus_instruction": "",
+      "mean_artifact_bytes": 2766.7,
+      "mean_reconstructability": 3.0,
+      "round": 0,
+      "total_severe_misses": 6
+    },
+    {
+      "cases": [
+        {
+          "artifact_bytes": 1901,
+          "case": "cat-on-grass",
+          "miss_count": 6,
+          "misses": [
+            {
+              "aspect": "person_count",
+              "detail": "Description says 'people waiting' but there are exactly four, two of them children",
+              "severity": 5
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says 'people waiting' but there are exactly four, two of them children",
+              "severity": 5
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says 'people waiting' but there are exactly four, two of them children",
+              "severity": 5
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says 'people waiting' but there are exactly four, two of them children",
+              "severity": 5
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says 'people waiting' but there are exactly four, two of them children",
+              "severity": 5
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says 'people waiting' but there are exactly four, two of them children",
+              "severity": 5
+            }
+          ],
+          "reconstructability": 3,
+          "severe_miss_count": 6,
+          "source_bytes": 799983
+        },
+        {
+          "artifact_bytes": 3191,
+          "case": "astronaut-crew",
+          "miss_count": 6,
+          "misses": [
+            {
+              "aspect": "spatial_layout",
+              "detail": "Astronaut positions: standing row has 3 (left, center, right), sitting row has 3 (left, center, right) but prompt lists 6 coordinates for 6 people, missing 1 person in the sitting row (475/295/855 is ",
+              "severity": 5
+            },
+            {
+              "aspect": "spatial_layout",
+              "detail": "Mission patch text: 'PRAKCHIKOV' is misspelled as 'PRAKCHIKOV' in prompt (should be 'PRAKCHIKOV' per original), and 'MISURKIN' is missing the 'I' in 'MISURKIN' (should be 'MISURKIN' per original).",
+              "severity": 4
+            },
+            {
+              "aspect": "spatial_layout",
+              "detail": "Flag count: 15 flags specified but original has 16 (15+1 for UK flag). Missing UK flag in the row (15th flag is Spain, 16th should be UK).",
+              "severity": 3
+            },
+            {
+              "aspect": "spatial_layout",
+              "detail": "Astronaut patch details: '25' on right sitting astronaut's patch is missing (original has '25' on Italian flag patch).",
+              "severity": 3
+            },
+            {
+              "aspect": "spatial_layout",
+              "detail": "Mars size: 0.05w x 0.05h (2% of canvas) but original is smaller (1.5% of canvas).",
+              "severity": 2
+            },
+            {
+              "aspect": "spatial_layout",
+              "detail": "Earth size: 0.25w x 0.4h (10%w x 15%h) but original is larger (12%w x 18%h).",
+              "severity": 2
+            }
+          ],
+          "reconstructability": 3,
+          "severe_miss_count": 2,
+          "source_bytes": 640005
+        },
+        {
+          "artifact_bytes": 2133,
+          "case": "train-platform",
+          "miss_count": 6,
+          "misses": [
+            {
+              "aspect": "person_count",
+              "detail": "Description says three men but image has five: two walking, three standing (one masked, two others). Missing two standing men.",
+              "severity": 5
+            },
+            {
+              "aspect": "object_count",
+              "detail": "Description mentions one bag but image shows two bags (one carried by walking man, one by standing man). Missing second bag.",
+              "severity": 4
+            },
+            {
+              "aspect": "spatial_layout",
+              "detail": "Blurred foreground element position: description says x:75% but image shows it more left (x:~65%). Incorrect x-coordinate.",
+              "severity": 3
+            },
+            {
+              "aspect": "object_count",
+              "detail": "Description says 'scattered blue lights' but image has multiple colored lights (blue, red, white). Missing red/white lights.",
+              "severity": 3
+            },
+            {
+              "aspect": "object_count",
+              "detail": "Description says 'two men standing to the right' but image has three. Missing one standing man.",
+              "severity": 2
+            },
+            {
+              "aspect": "object_count",
+              "detail": "Description says 'one man in dark overcoat' but image shows two (one walking, one standing). Missing second overcoat.",
+              "severity": 2
+            }
+          ],
+          "reconstructability": 3,
+          "severe_miss_count": 2,
+          "source_bytes": 333386
+        }
+      ],
+      "focus_instruction": "A critic found these the most damaging omissions in previous runs. Prioritise them, staying inside the byte budget:\n- State the exact number of people and each one's position, age band and pose.\n- Give each major element an approximate x/y position and relative size.\n- State exact counts for every repeated object group, not vague quantities.",
+      "mean_artifact_bytes": 2408.3,
+      "mean_reconstructability": 3.0,
+      "round": 1,
+      "total_severe_misses": 10
+    },
+    {
+      "cases": [
+        {
+          "artifact_bytes": 1894,
+          "case": "cat-on-grass",
+          "miss_count": 6,
+          "misses": [
+            {
+              "aspect": "person_count",
+              "detail": "Description says 'no other objects or animals visible' but original has no people, so this is correct. However, the cat's eye state is wrong: description says 'eyes closed' but original shows eyes not",
+              "severity": 5
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says 'no other objects or animals visible' but original has no people, so this is correct. However, the cat's eye state is wrong: description says 'eyes closed' but original shows eyes not",
+              "severity": 5
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says 'no other objects or animals visible' but original has no people, so this is correct. However, the cat's eye state is wrong: description says 'eyes closed' but original shows eyes not",
+              "severity": 5
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says 'no other objects or animals visible' but original has no people, so this is correct. However, the cat's eye state is wrong: description says 'eyes closed' but original shows eyes not",
+              "severity": 5
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says 'no other objects or animals visible' but original has no people, so this is correct. However, the cat's eye state is wrong: description says 'eyes closed' but original shows eyes not",
+              "severity": 5
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says 'no other objects or animals visible' but original has no people, so this is correct. However, the cat's eye state is wrong: description says 'eyes closed' but original shows eyes not",
+              "severity": 5
+            }
+          ],
+          "reconstructability": 3,
+          "severe_miss_count": 6,
+          "source_bytes": 799983
+        },
+        {
+          "artifact_bytes": 3226,
+          "case": "astronaut-crew",
+          "miss_count": 6,
+          "misses": [
+            {
+              "aspect": "spatial_layout",
+              "detail": "Astronaut positions: standing row has 3, sitting row has 3 but description lists 6 coordinates for 6 people (2 rows) but misaligns left/sitting positions (e.g., sitting left at 0.17w vs 0.1w for left ",
+              "severity": 5
+            },
+            {
+              "aspect": "spatial_layout",
+              "detail": "Mission patch text: 'PRAKHTKIN' should be 'PRAKHTKIN' (original has 'PRAKHTKIN' as 'PRAKHTKIN' but description has 'PRAKHTKIN' as 'PRAKHTKIN' with extra 'T' in 'PRAKHTKIN'",
+              "severity": 4
+            },
+            {
+              "aspect": "spatial_layout",
+              "detail": "Flag count: 15 flags specified but original has 16 (15+1 for UK flag) - missing UK flag in flag row",
+              "severity": 3
+            },
+            {
+              "aspect": "spatial_layout",
+              "detail": "Astronaut patch details: description lacks specific patch designs (e.g., NASA, Roscosmos, country flags on suits) which are critical for identification",
+              "severity": 3
+            },
+            {
+              "aspect": "spatial_layout",
+              "detail": "Mars size: 0.05w x 0.05h (2% of canvas) but original is smaller (1.5% of canvas) - size mismatch",
+              "severity": 2
+            },
+            {
+              "aspect": "spatial_layout",
+              "detail": "Earth size: 0.25w x 0.35h (10%w, 15%h) but original is larger (12%w, 18%h) - size mismatch",
+              "severity": 2
+            }
+          ],
+          "reconstructability": 3,
+          "severe_miss_count": 2,
+          "source_bytes": 640005
+        },
+        {
+          "artifact_bytes": 2133,
+          "case": "train-platform",
+          "miss_count": 6,
+          "misses": [
+            {
+              "aspect": "person_count",
+              "detail": "Description says three men but image has five: two walking, three standing (one masked, two others). Missing two standing men.",
+              "severity": 5
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says 'two men standing to the right' but image shows three standing (one masked, two others). Missing one standing man.",
+              "severity": 4
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says 'one man in a dark overcoat and tie walking' but image has two walking (one in overcoat, one in suit). Missing one walking man.",
+              "severity": 3
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says 'one wearing a white mask' but image shows one masked man among three standing. Missing two standing men.",
+              "severity": 2
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says 'the other partially obscured' but image has two partially obscured standing men. Missing one partially obscured man.",
+              "severity": 2
+            },
+            {
+              "aspect": "person_count",
+              "detail": "Description says 'two men standing to the right' but image shows three standing. Missing one standing man.",
+              "severity": 1
+            }
+          ],
+          "reconstructability": 3,
+          "severe_miss_count": 2,
+          "source_bytes": 333386
+        }
+      ],
+      "focus_instruction": "A critic found these the most damaging omissions in previous runs. Prioritise them, staying inside the byte budget:\n- State the exact number of people and each one's position, age band and pose.\n- Give each major element an approximate x/y position and relative size.\n- State exact counts for every repeated object group, not vague quantities.",
+      "mean_artifact_bytes": 2417.7,
+      "mean_reconstructability": 3.0,
+      "round": 2,
+      "total_severe_misses": 10
+    }
+  ]
+}
