@@ -31,7 +31,11 @@ def build_parser() -> argparse.ArgumentParser:
     encode = subparsers.add_parser("encode", help="encode an image with an Ollama vision model")
     encode.add_argument("image", type=Path)
     encode.add_argument("--output", "-o", required=True, type=Path)
-    encode.add_argument("--profile", choices=FidelityProfile, default=FidelityProfile.BALANCED)
+    # choices must be a sequence, not the enum class: on Python 3.11 argparse's
+    # "value not in action.choices" raises TypeError against an EnumType.
+    encode.add_argument(
+        "--profile", choices=list(FidelityProfile), default=FidelityProfile.BALANCED
+    )
     encode.add_argument(
         "--host",
         default=os.environ.get("OLLAMA_VISION_HOST", "http://127.0.0.1:11434"),
