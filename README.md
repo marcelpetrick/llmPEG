@@ -54,7 +54,7 @@ three public-domain cat photographs and their prompt-only reconstructions. The p
 machine metrics, exact prompts, source/license links, 1–5 human-rating controls, browser-local
 autosave, and JSON export.
 
-The exploratory `n=3` result is **moderate semantic quality**:
+The initial exploratory `n=3` result is **moderate semantic quality**:
 
 | Aggregate (`balanced`) | Result |
 | --- | ---: |
@@ -68,11 +68,22 @@ The codec reliably preserved “what kind of cat is doing what, where?” It did
 same cat, exact markings, fur texture, or pixels. The sample is deliberately small and diverse;
 these numbers are a product probe, not a population estimate.
 
+The [detailed identity survey](survey/detailed.html) repeats the experiment with 2.3–3.0 KB
+artifacts containing subject bounds, pose landmarks, marking boundaries, camera geometry, and
+specific avoid constraints. It improves two visual-proxy scores but slightly lowers one, showing
+that extra semantic detail helps selectively rather than guaranteeing visual identity.
+
 Regenerate the HTML after changing the manifest or results:
 
 ```bash
 uv run promptpress survey survey/manifest.json --output survey/index.html --overwrite
+uv run promptpress survey survey/detailed-manifest.json --output survey/detailed.html --overwrite
 ```
+
+## Architecture
+
+See the [styled C4 architecture guide](docs/architecture.md) for system-context, container,
+component, and reconstruction-lifecycle diagrams.
 
 ## How it works
 
