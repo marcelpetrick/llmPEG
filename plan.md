@@ -86,6 +86,30 @@ pytest --cov=llmpeg --cov-report=term-missing --cov-fail-under=90
 python -m build
 ```
 
+## 6. Measure the measurements, then try to improve them
+
+Added after the MVP shipped. The MVP proved the loop runs; this phase asks whether its numbers
+mean anything and whether the encoder can improve itself.
+
+- Time a full cycle against the live vision endpoint and publish the raw data
+  (`scripts/benchmark_cycle.py` → `docs/benchmark-cycle.json`).
+- Check whether the structural metrics track a human eye, using a vision-model judge as a
+  stand-in reviewer (`scripts/perceptual_judge.py` → `docs/metrics.md`).
+- Attempt GAN-shaped self-improvement: encoder proposes, critic attacks, misses steer the next
+  round (`scripts/adversarial_refine.py` → `docs/adversarial.md`).
+- Publish CI status, licence, and coverage badges in the README.
+
+Exit gate: every claim above is backed by a checked-in JSON record that a reader can recompute,
+and negative results are published as prominently as positive ones.
+
+**Outcome: two of three answers were negative, and both are documented.** `visual_proxy_score`
+correlates −0.47 with perceived similarity, and the adversarial loop failed because the critic
+returned a constant verdict. The timing benchmark succeeded and also showed that re-encoding the
+same image varies the compression ratio by 28%.
+
+Still open: calibrate the judge against real human ratings; rebuild the critic as a pairwise
+forced choice; finish the four ungenerated benchmark cases; trace their Commons URLs.
+
 ## Definition of done
 
 The MVP is done when the offline suite passes, the real reference artifact has been produced by

@@ -58,6 +58,9 @@ README, and is not part of the benchmark set. Do not add a second exception.
 | `examples/` | The flagship news-article demo: artifact, prompt, reconstruction, evaluation |
 | `survey/` | Reproduction surveys, sources, prompts, artifacts, results |
 | `docs/architecture.md` | C4 diagrams, system context down to components |
+| `docs/metrics.md` | Whether the metrics track a human eye (they do not) |
+| `docs/adversarial.md` | The GAN-shaped refinement loop and why it failed |
+| `scripts/` | Measurement tools: cycle timing, perceptual judge, adversarial loop |
 
 ## Commands
 
@@ -77,7 +80,11 @@ uv run pytest --cov=llmpeg --cov-report=term-missing --cov-fail-under=90
 uv run python -m build
 ```
 
-Current baseline: **46 tests, 93.3% branch coverage**. Update this line when it changes — a stale
+Scripts under `scripts/` are linted and type-checked like the package, but are measurement
+tools rather than product surface: they may talk to the live Ollama endpoint, and they never
+run in CI. Never record the endpoint host in their output — model name only.
+
+Current baseline: **47 tests, 93.4% branch coverage**. Update this line when it changes — a stale
 self-measurement is the most embarrassing possible bug in a project about honest measurement.
 
 ## Testing
@@ -133,3 +140,8 @@ Established scopes: `codec` (encoder/artifact/providers), `survey`, `architectur
   see the media rule above.
 - Two measured cases (`train-platform`, `workspace-books`) have no OCR transcript, so they report
   `incomplete` rather than pass or fail.
+- `visual_proxy_score` correlates **negatively** with perceived similarity (`docs/metrics.md`).
+  Do not present it as a quality score, and do not reweight it on the current twelve points.
+- The adversarial critic returns a constant verdict, so the refinement loop has no gradient
+  (`docs/adversarial.md`). Rebuild it as a pairwise forced choice before trusting any round.
+- The vision-model judge has never been calibrated against real human ratings.

@@ -5,7 +5,7 @@
 [![Python 3.14](https://img.shields.io/badge/Python-3.14-3776ab.svg)](https://www.python.org/)
 [![Ruff](https://img.shields.io/badge/lint-ruff-261230.svg)](https://docs.astral.sh/ruff/)
 [![mypy strict](https://img.shields.io/badge/types-mypy%20strict-2a6db2.svg)](https://mypy-lang.org/)
-[![Coverage 93.3%](https://img.shields.io/badge/coverage-93.3%25-brightgreen.svg)](#development)
+[![Coverage 93.4%](https://img.shields.io/badge/coverage-93.4%25-brightgreen.svg)](#development)
 
 **llmPEG** — the *LLM Photo Expert Group*. JPEG was built by the **J**oint **P**hotographic
 **E**xperts **G**roup. This one was built by a language model, so the joke writes itself.
@@ -182,6 +182,53 @@ benchmark produced a **1,275-byte** artifact where the checked-in run produced *
 temperature `0`. The compression ratio is not a property of your photo. It is a property of one
 particular run of one particular model, and it moves by 28% between runs.
 
+### Does the score match a human eye? No.
+
+A vision-model judge rated all twelve checked-in pairs the way a reviewer would — scene, identity,
+composition, mood, and an overall "is this a faithful stand-in?". Rank correlation between the
+machine metrics and that verdict, `n = 12`:
+
+| Metric | ρ vs judge |
+| --- | ---: |
+| `aspect_similarity` | +0.532 (degenerate: σ = 0.005) |
+| `layout_score` | −0.070 |
+| `dhash_similarity` | −0.160 |
+| **`visual_proxy_score`** | **−0.468** |
+| `palette_distance` (inverted) | −0.725 |
+
+**The headline metric points the wrong way.** It rewards busy scenes, where edges and histograms
+have plenty to agree about, while every person in them is quietly replaced. `cat-on-grass` scores
+the *lowest* proxy in the set (0.595) and the judge's *top* mark (5/5). The astronaut crew scores
+0.732 and gets 1/5.
+
+What a reviewer actually judges is **identity** — the judge's identity axis predicts its overall
+verdict on eleven of twelve cases. Edges, hashes and histograms are blind to it.
+
+The score has not been reweighted: no blend of those signals can recover subject identity, and
+re-tuning on twelve points would be curve-fitting. `visual_proxy_score` is instead documented for
+what it is — a structural sanity check, not a quality score. Full analysis and caveats in
+[`docs/metrics.md`](docs/metrics.md).
+
+### Can the codec improve itself? Not yet.
+
+[`scripts/adversarial_refine.py`](scripts/adversarial_refine.py) runs a GAN-*shaped* loop — no
+gradients, no trained discriminator, just the useful part of the idea: the extraction instruction
+proposes, a critic that sees the original and only the generated prompt attacks, and its
+complaints steer the next round.
+
+| Round | Mean reconstructability | Severe misses | Mean artifact bytes |
+| ---: | ---: | ---: | ---: |
+| 0 (baseline) | 3.00 | 6 | 2,767 |
+| 1 | 3.00 | 10 | 2,408 |
+| 2 | 3.00 | 10 | 2,418 |
+
+It failed, and the failure is the useful part: **the critic returned exactly 3 for all nine
+case-rounds.** A discriminator with no dynamic range provides no gradient, so nothing downstream
+could work. Told to prioritise counts and positions, the encoder produced *smaller* artifacts with
+*more* severe misses — focus instructions compete for a fixed byte budget, and nothing decided
+what was safe to drop. Diagnosis and the fix worth trying next (pairwise forced choice instead of
+absolute scoring) in [`docs/adversarial.md`](docs/adversarial.md).
+
 Regenerate any survey page after changing a manifest or result:
 
 ```bash
@@ -289,8 +336,10 @@ improve the ratio.
 The offline harness uses Pillow to compare aspect ratio, dHash, RGB histograms, edge density, and
 dominant colors, combining them into `visual_proxy_score` and `layout_score`. These are fast
 structural proxies — not human judgment, not CLIP similarity, and not proof that two images mean
-the same thing. Critical-text recall is scored separately and reports `not_evaluated` when no
-transcript is supplied.
+the same thing. Measured against a vision-model judge they correlate *negatively* with perceived
+similarity ([`docs/metrics.md`](docs/metrics.md)), so read `visual_proxy_score` as a structural
+sanity check and use the judge's identity axis for anything identity-critical. Critical-text
+recall is scored separately and reports `not_evaluated` when no transcript is supplied.
 
 The demo transcript was verified by hand because the local Tesseract installation had no language
 data. llmPEG consumes OCR text; it does not ship an OCR engine.
@@ -306,7 +355,7 @@ uv run python -m build
 ```
 
 The suite is offline and injects fake providers. Live Ollama and image-generation runs are manual
-demo steps, not CI dependencies. Current suite: **46 tests, 93.3% branch-aware coverage**.
+demo steps, not CI dependencies. Current suite: **47 tests, 93.4% branch-aware coverage**.
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs all five gates on Python 3.14 for
 every push and pull request.
