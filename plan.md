@@ -13,7 +13,7 @@ commit, and the final phase includes a clean-room self-review of the complete di
 
 ## 1. Establish the project and contracts
 
-- Add a Python 3.11+ `src/` package with a `llmpeg` console command.
+- Add a Python 3.14+ `src/` package with a `llmpeg` console command.
 - Pin runtime and development dependencies in `pyproject.toml`.
 - Define a versioned artifact model with strict validation and canonical compact JSON.
 - Encode the three fidelity profiles and their prompt-byte budgets as executable policy.

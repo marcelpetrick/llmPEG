@@ -67,7 +67,7 @@ uv run llmpeg --help
 ```
 
 Gates — all five must pass before a commit, and `.github/workflows/ci.yml` runs them on
-Python 3.11, 3.12, and 3.13 for every push and pull request:
+Python 3.14 for every push and pull request:
 
 ```bash
 uv run ruff format --check .

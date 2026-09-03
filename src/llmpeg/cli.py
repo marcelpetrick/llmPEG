@@ -31,8 +31,9 @@ def build_parser() -> argparse.ArgumentParser:
     encode = subparsers.add_parser("encode", help="encode an image with an Ollama vision model")
     encode.add_argument("image", type=Path)
     encode.add_argument("--output", "-o", required=True, type=Path)
-    # choices must be a sequence, not the enum class: on Python 3.11 argparse's
-    # "value not in action.choices" raises TypeError against an EnumType.
+    # choices is a sequence of members, not the enum class itself: argparse's
+    # "value not in action.choices" is a plain membership test, and StrEnum
+    # members compare equal to their string values.
     encode.add_argument(
         "--profile", choices=list(FidelityProfile), default=FidelityProfile.BALANCED
     )

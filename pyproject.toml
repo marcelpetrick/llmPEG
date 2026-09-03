@@ -7,7 +7,7 @@ name = "llmpeg"
 version = "0.1.0"
 description = "An honest experimental semantic image codec"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.14"
 license = { text = "GPL-3.0-or-later" }
 authors = [{ name = "Marcel Petrick", email = "mail@marcelpetrick.it" }]
 dependencies = ["Pillow==11.3.0"]
@@ -29,7 +29,7 @@ llmpeg = "llmpeg.cli:main"
 packages = ["src/llmpeg"]
 
 [tool.ruff]
-target-version = "py311"
+target-version = "py314"
 line-length = 100
 
 [tool.ruff.lint]
@@ -39,7 +39,7 @@ select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
 "src/llmpeg/survey.py" = ["E501"] # Embedded HTML/CSS/JS is intentionally compact.
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.14"
 strict = true
 packages = ["llmpeg"]
 mypy_path = "src"
