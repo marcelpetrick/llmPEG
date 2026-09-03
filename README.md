@@ -5,6 +5,12 @@ small, versioned description; an image model later renders a new image from that
 
 It is also a test of where that idea breaks.
 
+**Author: Marcel Petrick <mail@marcelpetrick.it>**
+
+**Note: project is generated with AI.**
+
+**License: GPLv3 or later. See `LICENSE`.**
+
 > PromptPress does not preserve pixels. It throws away the original visual data and keeps a
 > structured caption. Never use it for archives, evidence, medical images, identity documents, or
 > anything you cannot afford to lose.
@@ -201,4 +207,4 @@ steps, not flaky CI dependencies. The current suite has 44 tests and 93%+ branch
 - Generator compute and model weights dwarf the artifact; this is a storage experiment, not a
   claim about total-system efficiency.
 
-Licensed under the [MIT License](LICENSE).
+Licensed under the [GNU General Public License v3.0 or later](LICENSE).
