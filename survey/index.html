@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PromptPress Cat Reconstruction Survey</title><style>
+:root{--ink:#17202a;--muted:#667085;--paper:#f6f4ef;--card:#fff;--navy:#102a43;--blue:#2878b5;--mint:#32a071;--line:#ddd8ce}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 ui-sans-serif,system-ui,sans-serif}header{background:var(--navy);color:white;padding:64px max(24px,calc((100% - 1180px)/2)) 54px}header p{max-width:760px;color:#d9e7f2;font-size:1.08rem}h1{font-size:clamp(2.4rem,6vw,5rem);line-height:.98;margin:.2em 0}main{max-width:1180px;margin:auto;padding:36px 24px 72px}.summary{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:-65px;margin-bottom:36px}.summary div{background:var(--card);padding:18px;border-radius:14px;box-shadow:0 8px 25px #102a4315}.summary span,.eyebrow{display:block;color:var(--muted);font-size:.73rem;font-weight:750;letter-spacing:.08em;text-transform:uppercase}.summary strong{font-size:1.65rem}.finding{border-left:5px solid var(--blue);padding:14px 20px;background:#eaf3f9;border-radius:0 10px 10px 0;margin:0 0 36px}.case{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;margin:24px 0;box-shadow:0 12px 35px #243b5310}.case-head{display:flex;justify-content:space-between;gap:20px;align-items:start}h2{margin:.15em 0 .7em;font-size:1.7rem}.status{background:#dff5e9;color:#17663f;border-radius:999px;padding:6px 12px;font-weight:800;font-size:.78rem}.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px}figure{margin:0}.image-frame{background:#e8e6e0;aspect-ratio:4/3;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center}img{width:100%;height:100%;object-fit:contain}figcaption{font-weight:750;padding:7px 2px}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.metric{font-size:.82rem}.metric strong{float:right}.bar{height:7px;background:#e8e9eb;border-radius:9px;clear:both;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:var(--mint)}.compression{color:var(--muted)}details{border-top:1px solid var(--line);padding-top:13px}summary{cursor:pointer;font-weight:700}pre{white-space:pre-wrap;background:#101b26;color:#e7edf2;padding:16px;border-radius:10px;max-height:340px;overflow:auto}a{color:#176b9c}.questions{margin-top:20px;background:#f8fafb;border-radius:14px;padding:18px}h3{margin-top:0}fieldset{border:0;padding:0;margin:15px 0}legend{font-weight:650}.scale{display:flex;gap:7px;margin-top:7px}.scale input{position:absolute;opacity:0}.scale span{display:grid;place-items:center;width:38px;height:34px;border:1px solid #b9c2ca;border-radius:8px;cursor:pointer;background:white}.scale input:checked+span{background:var(--blue);color:white;border-color:var(--blue)}small{color:var(--muted)}.comment{display:grid;gap:6px;font-weight:650}textarea{font:inherit;padding:9px;border:1px solid #b9c2ca;border-radius:8px}.credit{font-size:.78rem;color:var(--muted);margin-bottom:0}.actions{position:sticky;bottom:12px;display:flex;gap:10px;justify-content:center;margin-top:30px}button{border:0;border-radius:999px;padding:12px 20px;font-weight:750;cursor:pointer;background:var(--navy);color:white}button.secondary{background:white;color:var(--navy);border:1px solid var(--line)}footer{color:var(--muted);font-size:.85rem;margin-top:36px}@media(max-width:800px){.summary{grid-template-columns:repeat(2,1fr);margin-top:-45px}.pair,.metrics{grid-template-columns:1fr}header{padding-top:42px}}
+</style></head><body><header><span class="eyebrow">EXPLORATORY BENCHMARK · 2026-09-03</span><h1>PromptPress Cat Reconstruction Survey</h1><p>Can a roughly 1 KB semantic description preserve what matters in a photograph? Three public-domain cat images were encoded with the same vision model and balanced profile, then reconstructed by Codex image generation from text alone.</p></header><main>
+<section class="summary"><div><span>Cases passed</span><strong>3/3</strong></div><div><span>Mean visual proxy</span><strong>0.667</strong></div><div><span>Mean layout</span><strong>0.686</strong></div><div><span>Mean palette distance</span><strong>0.081</strong></div><div><span>Mean dHash</span><strong>0.474</strong></div></section>
+<p class="finding"><strong>Finding: moderate semantic quality.</strong> All 3 cases pass the permissive <code>balanced</code> proxy thresholds, but mean dHash is only 0.474. Subject, action, setting, palette, and broad composition survive; exact cat identity, fur markings, texture, and pixels do not. With n=3, this is a product probe—not a population estimate.</p>
+
+<article class="case" id="cat-on-grass">
+  <div class="case-head">
+    <div><span class="eyebrow">CASE cat-on-grass</span><h2>Cat stretched on grass</h2></div>
+    <span class="status">PASS</span>
+  </div>
+  <div class="pair">
+    <figure><div class="image-frame"><img src="sources/cat-on-grass.jpg" alt="Source: Cat stretched on grass"></div><figcaption>Source</figcaption></figure>
+    <figure><div class="image-frame"><img src="reconstructions/cat-on-grass.png" alt="Prompt-only reconstruction: Cat stretched on grass"></div><figcaption>Prompt-only reconstruction</figcaption></figure>
+  </div>
+  <div class="metrics">
+    <div class="metric"><span>Visual proxy</span><strong>0.595</strong><div class="bar"><i style="width:59.5%"></i></div></div>
+    <div class="metric"><span>Layout</span><strong>0.706</strong><div class="bar"><i style="width:70.6%"></i></div></div>
+    <div class="metric"><span>dHash</span><strong>0.500</strong><div class="bar"><i style="width:50.0%"></i></div></div>
+    <div class="metric"><span>Palette distance</span><strong>0.081</strong><div class="bar"><i style="width:91.9%"></i></div></div>
+  </div>
+  <p class="compression"><strong>802.4:1</strong> artifact ratio · 799,983 → 997 bytes</p>
+  <details><summary>Prompt and machine-readable result</summary><pre>Create a new image from this semantic description.
+
+Primary request: A tabby cat with brown and black stripes is lying on its back on a grassy lawn, viewed from above, with its legs and tail spread out.
+Style/medium: photographic, natural lighting, outdoor scene
+Canvas: 1536x1024 (1.500:1)
+Composition:
+- center: tabby cat lying on back with legs and tail spread
+- entire image: grassy lawn with patches of green and brown grass
+Palette: #8BC34A, #D4A017, #4E342E, #A67B5B
+Text to render verbatim when possible:
+- none
+Constraints: preserve the described hierarchy and spatial relationships.
+This is a semantic reconstruction, not the original.
+Avoid: adding text or objects not present, altering cat&#x27;s position or color pattern, changing grass texture or color variations; extra logos; watermarks; invented claims.
+</pre><p><a href="prompts/cat-on-grass.txt">Prompt</a> · <a href="results/cat-on-grass.json">Evaluation JSON</a></p></details>
+  <section class="questions" data-case="cat-on-grass">
+    <h3>Your assessment</h3>
+    <fieldset><legend>Subject and action preserved</legend><div class="scale"><label><input type="radio" name="cat-on-grass-subject" value="1"><span>1</span></label><label><input type="radio" name="cat-on-grass-subject" value="2"><span>2</span></label><label><input type="radio" name="cat-on-grass-subject" value="3"><span>3</span></label><label><input type="radio" name="cat-on-grass-subject" value="4"><span>4</span></label><label><input type="radio" name="cat-on-grass-subject" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Composition preserved</legend><div class="scale"><label><input type="radio" name="cat-on-grass-composition" value="1"><span>1</span></label><label><input type="radio" name="cat-on-grass-composition" value="2"><span>2</span></label><label><input type="radio" name="cat-on-grass-composition" value="3"><span>3</span></label><label><input type="radio" name="cat-on-grass-composition" value="4"><span>4</span></label><label><input type="radio" name="cat-on-grass-composition" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Color, lighting, and style preserved</legend><div class="scale"><label><input type="radio" name="cat-on-grass-appearance" value="1"><span>1</span></label><label><input type="radio" name="cat-on-grass-appearance" value="2"><span>2</span></label><label><input type="radio" name="cat-on-grass-appearance" value="3"><span>3</span></label><label><input type="radio" name="cat-on-grass-appearance" value="4"><span>4</span></label><label><input type="radio" name="cat-on-grass-appearance" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Overall semantic similarity</legend><div class="scale"><label><input type="radio" name="cat-on-grass-overall" value="1"><span>1</span></label><label><input type="radio" name="cat-on-grass-overall" value="2"><span>2</span></label><label><input type="radio" name="cat-on-grass-overall" value="3"><span>3</span></label><label><input type="radio" name="cat-on-grass-overall" value="4"><span>4</span></label><label><input type="radio" name="cat-on-grass-overall" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <label class="comment">Optional note<textarea name="cat-on-grass-comment" rows="2" placeholder="What survived? What changed?"></textarea></label>
+  </section>
+  <p class="credit">Source: <a href="https://commons.wikimedia.org/wiki/File:Cat_full_length.jpg">Clavecin</a> · <a href="https://commons.wikimedia.org/wiki/File:Cat_full_length.jpg#Licensing">Public domain dedication</a> · reconstruction generated from text only</p>
+</article>
+
+<article class="case" id="cat-on-keyboard">
+  <div class="case-head">
+    <div><span class="eyebrow">CASE cat-on-keyboard</span><h2>Kitten sleeping on a keyboard</h2></div>
+    <span class="status">PASS</span>
+  </div>
+  <div class="pair">
+    <figure><div class="image-frame"><img src="sources/cat-on-keyboard.jpg" alt="Source: Kitten sleeping on a keyboard"></div><figcaption>Source</figcaption></figure>
+    <figure><div class="image-frame"><img src="reconstructions/cat-on-keyboard.png" alt="Prompt-only reconstruction: Kitten sleeping on a keyboard"></div><figcaption>Prompt-only reconstruction</figcaption></figure>
+  </div>
+  <div class="metrics">
+    <div class="metric"><span>Visual proxy</span><strong>0.699</strong><div class="bar"><i style="width:69.9%"></i></div></div>
+    <div class="metric"><span>Layout</span><strong>0.676</strong><div class="bar"><i style="width:67.6%"></i></div></div>
+    <div class="metric"><span>dHash</span><strong>0.438</strong><div class="bar"><i style="width:43.8%"></i></div></div>
+    <div class="metric"><span>Palette distance</span><strong>0.088</strong><div class="bar"><i style="width:91.2%"></i></div></div>
+  </div>
+  <p class="compression"><strong>467.9:1</strong> artifact ratio · 612,448 → 1,309 bytes</p>
+  <details><summary>Prompt and machine-readable result</summary><pre>Create a new image from this semantic description.
+
+Primary request: A close-up photo of a tabby kitten with white paws sleeping on a white computer keyboard on a wooden desk, with a computer monitor and pen visible in the background.
+Style/medium: photographic, slightly blurry, natural lighting
+Canvas: 2048x1536 (1.333:1)
+Composition:
+- left: white computer keyboard with visible keys and text
+- center: tabby kitten with white paws sleeping on keyboard
+- right: wooden desk surface with a computer monitor and pen in the background
+- top: part of a computer monitor and a pen on the desk
+Palette: #D4B483, #F5F5F5, #8B7355, #A0A0A0, #E0E0E0
+Text to render verbatim when possible:
+- &quot;1&quot;
+- &quot;2&quot;
+- &quot;3&quot;
+- &quot;Q&quot;
+- &quot;W&quot;
+- &quot;E&quot;
+- &quot;A&quot;
+- &quot;S&quot;
+- &quot;D&quot;
+- &quot;Z&quot;
+- &quot;X&quot;
+- &quot;C&quot;
+- &quot;F9&quot;
+- &quot;F10&quot;
+- &quot;F11&quot;
+- &quot;F12&quot;
+Constraints: preserve the described hierarchy and spatial relationships.
+This is a semantic reconstruction, not the original.
+Avoid: reconstructing the kitten as awake, adding text not visible on keys, changing the keyboard color to black or other colors; extra logos; watermarks; invented claims.
+</pre><p><a href="prompts/cat-on-keyboard.txt">Prompt</a> · <a href="results/cat-on-keyboard.json">Evaluation JSON</a></p></details>
+  <section class="questions" data-case="cat-on-keyboard">
+    <h3>Your assessment</h3>
+    <fieldset><legend>Subject and action preserved</legend><div class="scale"><label><input type="radio" name="cat-on-keyboard-subject" value="1"><span>1</span></label><label><input type="radio" name="cat-on-keyboard-subject" value="2"><span>2</span></label><label><input type="radio" name="cat-on-keyboard-subject" value="3"><span>3</span></label><label><input type="radio" name="cat-on-keyboard-subject" value="4"><span>4</span></label><label><input type="radio" name="cat-on-keyboard-subject" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Composition preserved</legend><div class="scale"><label><input type="radio" name="cat-on-keyboard-composition" value="1"><span>1</span></label><label><input type="radio" name="cat-on-keyboard-composition" value="2"><span>2</span></label><label><input type="radio" name="cat-on-keyboard-composition" value="3"><span>3</span></label><label><input type="radio" name="cat-on-keyboard-composition" value="4"><span>4</span></label><label><input type="radio" name="cat-on-keyboard-composition" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Color, lighting, and style preserved</legend><div class="scale"><label><input type="radio" name="cat-on-keyboard-appearance" value="1"><span>1</span></label><label><input type="radio" name="cat-on-keyboard-appearance" value="2"><span>2</span></label><label><input type="radio" name="cat-on-keyboard-appearance" value="3"><span>3</span></label><label><input type="radio" name="cat-on-keyboard-appearance" value="4"><span>4</span></label><label><input type="radio" name="cat-on-keyboard-appearance" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Overall semantic similarity</legend><div class="scale"><label><input type="radio" name="cat-on-keyboard-overall" value="1"><span>1</span></label><label><input type="radio" name="cat-on-keyboard-overall" value="2"><span>2</span></label><label><input type="radio" name="cat-on-keyboard-overall" value="3"><span>3</span></label><label><input type="radio" name="cat-on-keyboard-overall" value="4"><span>4</span></label><label><input type="radio" name="cat-on-keyboard-overall" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <label class="comment">Optional note<textarea name="cat-on-keyboard-comment" rows="2" placeholder="What survived? What changed?"></textarea></label>
+  </section>
+  <p class="credit">Source: <a href="https://commons.wikimedia.org/wiki/File:Wikipedians_cat.jpg">Remedios44</a> · <a href="https://commons.wikimedia.org/wiki/File:Wikipedians_cat.jpg#Licensing">Public domain dedication</a> · reconstruction generated from text only</p>
+</article>
+
+<article class="case" id="cat-monochrome">
+  <div class="case-head">
+    <div><span class="eyebrow">CASE cat-monochrome</span><h2>Monochrome cat portrait</h2></div>
+    <span class="status">PASS</span>
+  </div>
+  <div class="pair">
+    <figure><div class="image-frame"><img src="sources/cat-monochrome.jpg" alt="Source: Monochrome cat portrait"></div><figcaption>Source</figcaption></figure>
+    <figure><div class="image-frame"><img src="reconstructions/cat-monochrome.png" alt="Prompt-only reconstruction: Monochrome cat portrait"></div><figcaption>Prompt-only reconstruction</figcaption></figure>
+  </div>
+  <div class="metrics">
+    <div class="metric"><span>Visual proxy</span><strong>0.706</strong><div class="bar"><i style="width:70.6%"></i></div></div>
+    <div class="metric"><span>Layout</span><strong>0.675</strong><div class="bar"><i style="width:67.5%"></i></div></div>
+    <div class="metric"><span>dHash</span><strong>0.484</strong><div class="bar"><i style="width:48.4%"></i></div></div>
+    <div class="metric"><span>Palette distance</span><strong>0.074</strong><div class="bar"><i style="width:92.6%"></i></div></div>
+  </div>
+  <p class="compression"><strong>302.0:1</strong> artifact ratio · 345,840 → 1,145 bytes</p>
+  <details><summary>Prompt and machine-readable result</summary><pre>Create a new image from this semantic description.
+
+Primary request: A vintage black and white photo of a tabby and white cat sitting on a grassy and leafy ground, with visible film grain and slight wear on the photo edges.
+Style/medium: vintage black and white photograph with film grain and slight physical wear
+Canvas: 1491x1510 (0.987:1)
+Composition:
+- center: a tabby and white cat with dark stripes on its back and white paws, chest, and face markings
+- top: dark grass and leaves in the background
+- bottom: lighter ground with small patches of grass and debris
+Palette: #000000, #FFFFFF, #808080
+Text to render verbatim when possible:
+- none
+Constraints: preserve the described hierarchy and spatial relationships.
+This is a semantic reconstruction, not the original.
+Avoid: color reconstruction, adding text or details not visible, altering the cat&#x27;s posture or expression; extra logos; watermarks; invented claims.
+</pre><p><a href="prompts/cat-monochrome.txt">Prompt</a> · <a href="results/cat-monochrome.json">Evaluation JSON</a></p></details>
+  <section class="questions" data-case="cat-monochrome">
+    <h3>Your assessment</h3>
+    <fieldset><legend>Subject and action preserved</legend><div class="scale"><label><input type="radio" name="cat-monochrome-subject" value="1"><span>1</span></label><label><input type="radio" name="cat-monochrome-subject" value="2"><span>2</span></label><label><input type="radio" name="cat-monochrome-subject" value="3"><span>3</span></label><label><input type="radio" name="cat-monochrome-subject" value="4"><span>4</span></label><label><input type="radio" name="cat-monochrome-subject" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Composition preserved</legend><div class="scale"><label><input type="radio" name="cat-monochrome-composition" value="1"><span>1</span></label><label><input type="radio" name="cat-monochrome-composition" value="2"><span>2</span></label><label><input type="radio" name="cat-monochrome-composition" value="3"><span>3</span></label><label><input type="radio" name="cat-monochrome-composition" value="4"><span>4</span></label><label><input type="radio" name="cat-monochrome-composition" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Color, lighting, and style preserved</legend><div class="scale"><label><input type="radio" name="cat-monochrome-appearance" value="1"><span>1</span></label><label><input type="radio" name="cat-monochrome-appearance" value="2"><span>2</span></label><label><input type="radio" name="cat-monochrome-appearance" value="3"><span>3</span></label><label><input type="radio" name="cat-monochrome-appearance" value="4"><span>4</span></label><label><input type="radio" name="cat-monochrome-appearance" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <fieldset><legend>Overall semantic similarity</legend><div class="scale"><label><input type="radio" name="cat-monochrome-overall" value="1"><span>1</span></label><label><input type="radio" name="cat-monochrome-overall" value="2"><span>2</span></label><label><input type="radio" name="cat-monochrome-overall" value="3"><span>3</span></label><label><input type="radio" name="cat-monochrome-overall" value="4"><span>4</span></label><label><input type="radio" name="cat-monochrome-overall" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
+    <label class="comment">Optional note<textarea name="cat-monochrome-comment" rows="2" placeholder="What survived? What changed?"></textarea></label>
+  </section>
+  <p class="credit">Source: <a href="https://commons.wikimedia.org/wiki/File:Cat_bw-photo.jpg">Barmanru</a> · <a href="https://commons.wikimedia.org/wiki/File:Cat_bw-photo.jpg#Licensing">Public domain dedication</a> · reconstruction generated from text only</p>
+</article>
+<div class="actions"><button id="export">Export my ratings</button><button class="secondary" id="reset">Reset</button></div>
+<footer><p><strong>Method.</strong> Sources were encoded by Ollama/Qwen3-VL into canonical PromptPress JSON. Each reconstruction used the resulting text prompt only. Metrics are deterministic structural proxies: dHash, RGB histogram, edge density, aspect ratio, and symmetric dominant-palette distance. They are not CLIP scores or human judgments. Ratings stay in this browser until exported.</p></footer></main>
+<script>const ids=["cat-on-grass", "cat-on-keyboard", "cat-monochrome"],key="promptpress-cat-survey-v1";function collect(){const out={created_at:new Date().toISOString(),ratings:{}};for(const id of ids){const box=document.querySelector(`[data-case="${id}"]`),item={};box.querySelectorAll("input:checked").forEach(x=>item[x.name.slice(id.length+1)]=Number(x.value));item.comment=box.querySelector("textarea").value;out.ratings[id]=item}return out}function save(){localStorage.setItem(key,JSON.stringify(collect()))}document.addEventListener("change",save);document.addEventListener("input",save);try{const old=JSON.parse(localStorage.getItem(key)||"null");if(old?.ratings)for(const [id,item] of Object.entries(old.ratings)){for(const [field,value] of Object.entries(item)){if(field==="comment")document.querySelector(`[name="${id}-comment"]`).value=value;else{const input=document.querySelector(`[name="${id}-${field}"] [value="${value}"]`)||document.querySelector(`input[name="${id}-${field}"][value="${value}"]`);if(input)input.checked=true}}}}catch(e){console.warn(e)}document.getElementById("export").onclick=()=>{const blob=new Blob([JSON.stringify(collect(),null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="promptpress-survey-response.json";a.click();URL.revokeObjectURL(a.href)};document.getElementById("reset").onclick=()=>{localStorage.removeItem(key);document.querySelectorAll("input").forEach(x=>x.checked=false);document.querySelectorAll("textarea").forEach(x=>x.value="")};</script></body></html>

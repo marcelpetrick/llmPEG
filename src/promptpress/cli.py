@@ -17,6 +17,7 @@ from promptpress.encoder import (
 )
 from promptpress.evaluation import evaluate_with_artifact
 from promptpress.providers import OllamaVisionProvider
+from promptpress.survey import write_survey
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -58,6 +59,11 @@ def build_parser() -> argparse.ArgumentParser:
     evaluate.add_argument("--ocr-text", type=Path)
     evaluate.add_argument("--output", "-o", type=Path)
     evaluate.add_argument("--overwrite", action="store_true")
+
+    survey = subparsers.add_parser("survey", help="render an interactive HTML quality survey")
+    survey.add_argument("manifest", type=Path)
+    survey.add_argument("--output", "-o", required=True, type=Path)
+    survey.add_argument("--overwrite", action="store_true")
     return parser
 
 
@@ -110,6 +116,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                 return 1
             if report.status == "incomplete":
                 return 3
+        elif args.command == "survey":
+            write_survey(args.manifest, args.output, overwrite=args.overwrite)
+            print(f"wrote {args.output}")
         else:  # pragma: no cover - argparse enforces a known command
             raise AssertionError(f"unknown command: {args.command}")
     except (ArtifactError, OSError, UnicodeError) as error:

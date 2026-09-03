@@ -47,6 +47,33 @@ The reconstruction PNG is 1.88 MB, larger than the input JPEG. The storage claim
 while retaining the artifact and regenerating on demand; compute cost, model storage, and service
 availability are not free.
 
+## Cat quality survey
+
+Open [`survey/index.html`](survey/index.html) locally for a visual, interactive comparison of
+three public-domain cat photographs and their prompt-only reconstructions. The page includes
+machine metrics, exact prompts, source/license links, 1–5 human-rating controls, browser-local
+autosave, and JSON export.
+
+The exploratory `n=3` result is **moderate semantic quality**:
+
+| Aggregate (`balanced`) | Result |
+| --- | ---: |
+| Cases passing proxy thresholds | 3/3 |
+| Mean visual proxy | 0.667 |
+| Mean layout score | 0.686 |
+| Mean palette distance | 0.081 |
+| Mean dHash similarity | 0.474 |
+
+The codec reliably preserved “what kind of cat is doing what, where?” It did not preserve the
+same cat, exact markings, fur texture, or pixels. The sample is deliberately small and diverse;
+these numbers are a product probe, not a population estimate.
+
+Regenerate the HTML after changing the manifest or results:
+
+```bash
+uv run promptpress survey survey/manifest.json --output survey/index.html --overwrite
+```
+
 ## How it works
 
 ```text
@@ -150,7 +177,7 @@ uv run python -m build
 ```
 
 The suite is offline and injects fake providers. Live Ollama and image-generation runs are demo
-steps, not flaky CI dependencies. The current suite has 41 tests and 95%+ branch-aware coverage.
+steps, not flaky CI dependencies. The current suite has 44 tests and 93%+ branch-aware coverage.
 
 ## Limitations
 
