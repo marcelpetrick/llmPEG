@@ -269,8 +269,8 @@ uv run llmpeg survey survey/expanded-manifest.json --output survey/expanded.html
 
 View the checked-in comparisons directly on GitHub Pages:
 
-- [Balanced cat survey](https://marcelpetrick.github.io/llmPEG/)
-- [Detailed cat survey](https://marcelpetrick.github.io/llmPEG/detailed.html)
+- [Detailed cat survey](https://marcelpetrick.github.io/llmPEG/)
+- [Balanced cat survey](https://marcelpetrick.github.io/llmPEG/balanced.html)
 - [Expanded scene survey](https://marcelpetrick.github.io/llmPEG/expanded.html)
 
 ## Media and licensing
