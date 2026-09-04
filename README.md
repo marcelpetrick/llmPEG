@@ -267,6 +267,12 @@ uv run llmpeg survey survey/detailed-manifest.json --output survey/detailed.html
 uv run llmpeg survey survey/expanded-manifest.json --output survey/expanded.html --overwrite
 ```
 
+View the checked-in comparisons directly on GitHub Pages:
+
+- [Balanced cat survey](https://marcelpetrick.github.io/llmPEG/)
+- [Detailed cat survey](https://marcelpetrick.github.io/llmPEG/detailed.html)
+- [Expanded scene survey](https://marcelpetrick.github.io/llmPEG/expanded.html)
+
 ## Media and licensing
 
 The project requires every benchmark and survey image to be freely licensed, with attribution
