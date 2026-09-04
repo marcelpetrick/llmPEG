@@ -31,7 +31,7 @@ MAJOR_BRAND = "lpg1"
 COMPATIBLE_BRANDS: tuple[str, ...] = ("lpg1",)
 
 CODEC_NAME = "llmpeg"
-CODEC_VERSION = "0.1.0"
+CODEC_VERSION = "0.2.0"
 MIN_READER_VERSION = "0.1.0"
 
 # Stated plainly so nobody mistakes this container for something self-contained:

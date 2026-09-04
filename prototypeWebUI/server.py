@@ -121,7 +121,7 @@ def generate_pollinations(prompt: str, width: int, height: int, seed: int) -> by
         {"width": width, "height": height, "seed": seed, "nologo": "true"}
     )
     url = f"{POLLINATIONS}{urllib.parse.quote(prompt, safe='')}?{query}"
-    request = urllib.request.Request(url, headers={"User-Agent": "llmPEG-prototype/0.1"})
+    request = urllib.request.Request(url, headers={"User-Agent": "llmPEG-prototype/0.2.0"})
     with urllib.request.urlopen(request, timeout=CONFIG.timeout) as response:
         return bytes(response.read())
 
@@ -271,7 +271,7 @@ def generation_request(payload: object) -> tuple[str, int, int, int]:
 class Handler(BaseHTTPRequestHandler):
     """Minimal framework-free router for the page and its API."""
 
-    server_version = "llmPEGPrototype/0.1"
+    server_version = "llmPEGPrototype/0.2.0"
 
     def log_message(self, format: str, *args: Any) -> None:
         sys.stderr.write(f"{self.address_string()} {format % args}\n")
