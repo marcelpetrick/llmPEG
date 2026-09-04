@@ -172,13 +172,17 @@ boundaries.
 - [x] Show image → editable prompt → new image as an explicit workflow.
 - [x] Use the logged-in Codex CLI and its `$imagegen` skill by default; send no source image to the
       generator.
-- [x] Keep Pollinations and Automatic1111-compatible adapters optional and explicit about privacy.
+- [x] Let the page select Codex, ComfyUI, Pollinations, or an Automatic1111-compatible backend per
+      generation request.
+- [x] Run ComfyUI through the sibling checkout's self-starting shell adapter and fall back to Codex
+      only when its service is unavailable.
+- [x] Keep hosted and local adapters explicit about privacy.
 - [x] Report expected and measured generation time, generated dimensions, and upstream failures.
 - [x] Add responsive light and dark themes and offline request-path tests.
 
-The UI remains a local prototype. Its Codex path has run end to end. The current authenticated
-Pollinations path has offline coverage but still needs a live check; the local Stable Diffusion
-path remains unverified.
+The UI remains a local prototype. Its Codex and ComfyUI paths have run end to end. The current
+authenticated Pollinations path has offline coverage but still needs a live check; the
+Automatic1111-compatible path remains unverified.
 
 ## Open work
 

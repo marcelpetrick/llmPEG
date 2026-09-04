@@ -71,10 +71,10 @@ uv run python prototypeWebUI/server.py     # then open http://127.0.0.1:8000
 ```
 
 Generation defaults to the logged-in Codex CLI and explicitly invokes its `$imagegen` skill.
-[Pollinations](https://pollinations.ai/) remains available with an API key, and an
-Automatic1111-compatible local Stable Diffusion path keeps prompts on your own hardware. The
-prompt is editable before generation—the one real perk of a codec whose compressed form is
-readable.
+The page can switch per request to a sibling ComfyUI checkout, Pollinations with an API key, or an
+Automatic1111-compatible server. The ComfyUI adapter uses its existing self-starting shell script
+and falls back to Codex only when that local service is unavailable. The prompt remains editable
+before generation—the one real perk of a codec whose compressed form is readable.
 
 Doing this to a photo you took yourself makes the point faster than any table below.
 
@@ -582,7 +582,7 @@ uv run python -m build
 ```
 
 The suite is offline and injects fake providers. Live Ollama and image-generation runs are manual
-demo steps, not CI dependencies. Current suite: **90 tests, 96.0% branch-aware coverage**.
+demo steps, not CI dependencies. Current suite: **95 tests, 96.0% branch-aware coverage**.
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs all five gates on Python 3.14 for
 every push and pull request.

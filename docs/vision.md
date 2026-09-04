@@ -57,8 +57,8 @@ The MVP is a Python package and command-line tool that can:
 
 Real providers live behind small interfaces. The encoder targets an Ollama vision endpoint.
 Generation can be performed interactively or through the prototype Web UI, which supports Codex,
-Pollinations, and an unverified Automatic1111-compatible path. The core codec remains
-generator-neutral and fully testable without network access or credentials.
+the sibling ComfyUI checkout, Pollinations, and an unverified Automatic1111-compatible path. The
+core codec remains generator-neutral and fully testable without network access or credentials.
 
 ## Fidelity contract
 

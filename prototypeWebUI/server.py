@@ -54,6 +54,12 @@ MAX_GENERATION_EDGE = 1536
 FILE_ORIGIN = "null"
 
 POLLINATIONS = "https://gen.pollinations.ai/image/"
+GENERATORS = ("codex", "comfyui", "pollinations", "local")
+DEFAULT_COMFYUI_SCRIPT = HERE.parent.parent / "ComfyUI" / "generate_image.sh"
+
+
+class ComfyUIUnavailable(ArtifactError):
+    """Raised when the local ComfyUI adapter cannot reach its service."""
 
 
 class Config:
@@ -64,6 +70,10 @@ class Config:
         self.model = os.environ.get("LLMPEG_MODEL", "qwen3-vl:32b-ctx49k")
         self.generator = os.environ.get("LLMPEG_GENERATOR", "codex")
         self.pollinations_api_key = os.environ.get("POLLINATIONS_API_KEY", "")
+        self.comfyui_script = Path(
+            os.environ.get("LLMPEG_COMFYUI_SCRIPT", str(DEFAULT_COMFYUI_SCRIPT))
+        ).expanduser()
+        self.comfyui_host = os.environ.get("LLMPEG_COMFYUI_HOST", "http://127.0.0.1:8188")
         self.sd_host = os.environ.get("LLMPEG_SD_HOST", "http://127.0.0.1:7860")
         self.timeout = float(os.environ.get("LLMPEG_TIMEOUT", "600"))
 
@@ -164,6 +174,62 @@ def generate_local(prompt: str, width: int, height: int, seed: int) -> bytes:
     return base64.b64decode(images[0])
 
 
+def comfyui_reachable() -> bool:
+    """Return whether the ComfyUI service answers its lightweight health endpoint."""
+    try:
+        with urllib.request.urlopen(
+            CONFIG.comfyui_host.rstrip("/") + "/system_stats",
+            timeout=min(CONFIG.timeout, 2.0),
+        ):
+            return True
+    except OSError, urllib.error.URLError:
+        return False
+
+
+def generate_comfyui(prompt: str, width: int, height: int, seed: int) -> bytes:
+    """Generate through the local ComfyUI checkout's self-starting shell adapter."""
+    del width, height, seed  # The selected ComfyUI workflow owns these settings.
+    script = CONFIG.comfyui_script
+    if not script.is_file():
+        raise ComfyUIUnavailable(f"ComfyUI generator script not found: {script}")
+    with tempfile.TemporaryDirectory() as tmp:
+        output = Path(tmp) / "out.png"
+        try:
+            completed = subprocess.run(
+                [str(script), prompt, str(output)],
+                cwd=script.parent,
+                check=True,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=CONFIG.timeout,
+            )
+        except subprocess.TimeoutExpired as error:
+            message = f"ComfyUI timed out after {CONFIG.timeout:.0f}s"
+            if not comfyui_reachable():
+                raise ComfyUIUnavailable(message) from error
+            raise ArtifactError(message) from error
+        except (OSError, subprocess.CalledProcessError) as error:
+            detail = ""
+            if isinstance(error, subprocess.CalledProcessError):
+                detail = (error.stderr or error.stdout or "")[-500:].strip()
+            message = f"ComfyUI failed{f': {detail}' if detail else ''}"
+            if not comfyui_reachable():
+                raise ComfyUIUnavailable(message) from error
+            raise ArtifactError(message) from error
+        if not output.is_file():
+            tail = (completed.stdout or completed.stderr or "")[-500:].strip()
+            raise ArtifactError(f"ComfyUI produced no image{f': {tail}' if tail else ''}")
+        data = output.read_bytes()
+        try:
+            with Image.open(io.BytesIO(data)) as image:
+                image.verify()
+        except (OSError, SyntaxError) as error:
+            raise ArtifactError("ComfyUI produced an invalid image") from error
+        return data
+
+
 def generate_codex(prompt: str, width: int, height: int, seed: int) -> bytes:
     """Drive the Codex CLI's built-in image tool through its ``$imagegen`` skill.
 
@@ -232,7 +298,7 @@ def generate_codex(prompt: str, width: int, height: int, seed: int) -> bytes:
 
 
 def image_media_type(data: bytes) -> str:
-    """Sniff the format, since the three generators do not agree on one."""
+    """Sniff the format, since the generators do not agree on one."""
     if data.startswith(b"\x89PNG\r\n\x1a\n"):
         return "image/png"
     if data.startswith(b"RIFF") and data[8:12] == b"WEBP":
@@ -240,18 +306,24 @@ def image_media_type(data: bytes) -> str:
     return "image/jpeg"
 
 
-def generate(prompt: str, width: int, height: int, seed: int) -> bytes:
-    """Dispatch to the configured generator."""
-    if CONFIG.generator == "local":
-        return generate_local(prompt, width, height, seed)
-    if CONFIG.generator == "codex":
-        return generate_codex(prompt, width, height, seed)
-    if CONFIG.generator == "pollinations":
-        return generate_pollinations(prompt, width, height, seed)
-    raise ArtifactError(f"unsupported generator: {CONFIG.generator}")
+def generate(generator: str, prompt: str, width: int, height: int, seed: int) -> tuple[bytes, str]:
+    """Dispatch to the requested generator and report the provider actually used."""
+    if generator == "local":
+        return generate_local(prompt, width, height, seed), generator
+    if generator == "codex":
+        return generate_codex(prompt, width, height, seed), generator
+    if generator == "pollinations":
+        return generate_pollinations(prompt, width, height, seed), generator
+    if generator == "comfyui":
+        try:
+            return generate_comfyui(prompt, width, height, seed), generator
+        except ComfyUIUnavailable as error:
+            sys.stderr.write(f"{error}; falling back to Codex\n")
+            return generate_codex(prompt, width, height, seed), "codex"
+    raise ArtifactError(f"unsupported generator: {generator}")
 
 
-def generation_request(payload: object) -> tuple[str, int, int, int]:
+def generation_request(payload: object) -> tuple[str, str, int, int, int]:
     """Validate and normalize an image-generation request."""
     if not isinstance(payload, dict):
         raise ArtifactError("request body must be a JSON object")
@@ -260,6 +332,9 @@ def generation_request(payload: object) -> tuple[str, int, int, int]:
         raise ArtifactError("a prompt is required")
     if len(prompt) > MAX_PROMPT_CHARS:
         raise ArtifactError(f"prompt exceeds {MAX_PROMPT_CHARS} characters")
+    generator = str(payload.get("generator") or CONFIG.generator)
+    if generator not in GENERATORS:
+        raise ArtifactError(f"unsupported generator: {generator}")
     try:
         width = int(payload.get("width", 1024))
         height = int(payload.get("height", 1024))
@@ -274,7 +349,7 @@ def generation_request(payload: object) -> tuple[str, int, int, int]:
         raise ArtifactError(
             f"height must be between {MIN_GENERATION_EDGE} and {MAX_GENERATION_EDGE}"
         )
-    return prompt, width, height, seed
+    return generator, prompt, width, height, seed
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -285,13 +360,23 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, format: str, *args: Any) -> None:
         sys.stderr.write(f"{self.address_string()} {format % args}\n")
 
-    def _send(self, status: int, body: bytes, content_type: str) -> None:
+    def _send(
+        self,
+        status: int,
+        body: bytes,
+        content_type: str,
+        extra_headers: dict[str, str] | None = None,
+    ) -> None:
         self.send_response(status)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Cache-Control", "no-store")
+        for name, value in (extra_headers or {}).items():
+            self.send_header(name, value)
         if self.headers.get("Origin") == FILE_ORIGIN:
             self.send_header("Access-Control-Allow-Origin", FILE_ORIGIN)
+            if extra_headers:
+                self.send_header("Access-Control-Expose-Headers", ", ".join(extra_headers))
         self.end_headers()
         self.wfile.write(body)
 
@@ -335,6 +420,8 @@ class Handler(BaseHTTPRequestHandler):
                 200,
                 {
                     "generator": CONFIG.generator,
+                    "generators": list(GENERATORS),
+                    "comfyui_script_available": CONFIG.comfyui_script.is_file(),
                     "model": CONFIG.model,
                     "vision_configured": bool(CONFIG.vision_host),
                     "vision_host": CONFIG.vision_host,
@@ -352,11 +439,16 @@ class Handler(BaseHTTPRequestHandler):
                 self._send_json(200, encode(self._body(), FidelityProfile(name)))
                 return
             if route == "/api/generate":
-                prompt, width, height, seed = generation_request(
+                generator, prompt, width, height, seed = generation_request(
                     json.loads(self._body().decode("utf-8"))
                 )
-                image = generate(prompt, width, height, seed)
-                self._send(200, image, image_media_type(image))
+                image, used_generator = generate(generator, prompt, width, height, seed)
+                self._send(
+                    200,
+                    image,
+                    image_media_type(image),
+                    {"X-llmPEG-Generator": used_generator},
+                )
                 return
             self._send_json(404, {"error": "not found"})
         except ArtifactError as error:
@@ -380,7 +472,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--generator",
-        choices=("codex", "pollinations", "local"),
+        choices=GENERATORS,
         default=CONFIG.generator,
         help="image generator (defaults to LLMPEG_GENERATOR or codex)",
     )

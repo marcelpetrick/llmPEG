@@ -1,0 +1,34 @@
+{
+  "date": "2026-09-04",
+  "provider": "ComfyUI",
+  "provider_version": "0.34.0",
+  "workflow": "flux2_klein_4b_distilled_api.json",
+  "service_was_running": true,
+  "prompt": "A single small red cube centered on a plain white background, studio lighting",
+  "elapsed_seconds": 7.64,
+  "output": {
+    "media_type": "image/png",
+    "width": 768,
+    "height": 768,
+    "byte_size": 391353
+  },
+  "result": "pass",
+  "http_integration": {
+    "route": "POST /api/generate",
+    "requested_provider": "comfyui",
+    "reported_provider": "comfyui",
+    "prompt": "A single blue sphere centered on a pale gray background, soft studio light",
+    "status": 200,
+    "response_headers": {
+      "Content-Type": "image/png",
+      "X-llmPEG-Generator": "comfyui"
+    },
+    "output": {
+      "media_type": "image/png",
+      "width": 768,
+      "height": 768,
+      "byte_size": 597610
+    },
+    "result": "pass"
+  }
+}

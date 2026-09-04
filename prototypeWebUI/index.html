@@ -233,6 +233,14 @@
     <div class="card-body">
       <textarea id="prompt" spellcheck="false" aria-label="Editable image-generation prompt"></textarea>
       <div class="row">
+        <label class="field" for="generator">Generator
+          <select id="generator">
+            <option value="codex">Codex imagegen</option>
+            <option value="comfyui">ComfyUI (Codex fallback)</option>
+            <option value="pollinations">Pollinations</option>
+            <option value="local">Automatic1111 / Forge</option>
+          </select>
+        </label>
         <label class="field" for="size">Target size
           <select id="size">
             <option value="768">768 &times; 768</option>
@@ -336,6 +344,11 @@ async function loadConfig() {
     const config = await response.json();
     backendReady = config.vision_configured;
     generatorName = config.generator;
+    if (config.generators.includes(config.generator)) $("generator").value = config.generator;
+    if (!config.comfyui_script_available) {
+      $("generator").querySelector('[value="comfyui"]').textContent =
+        "ComfyUI unavailable (Codex fallback)";
+    }
     backendProblem = backendReady ? "" : "Its Ollama vision host is not configured.";
     $("cfg").textContent = `vision: ${config.model} via ${config.vision_host || "not configured"}` +
       ` · generator: ${config.generator}`;
@@ -400,8 +413,16 @@ function showStats(data) {
 function generationEstimate() {
   if (generatorName === "codex") return "Usually about 40 seconds; it can take several minutes.";
   if (generatorName === "pollinations") return "Usually about 3 seconds.";
+  if (generatorName === "comfyui") {
+    return "Runs locally; first use may spend up to two minutes starting ComfyUI. Codex is the fallback.";
+  }
   return "The time depends on your local generator.";
 }
+
+$("generator").addEventListener("change", () => {
+  generatorName = $("generator").value;
+  $("genhint").textContent = `${generationEstimate()} You can edit every word first.`;
+});
 
 const drop = $("drop");
 drop.addEventListener("click", () => $("file").click());
@@ -460,27 +481,33 @@ $("generate").addEventListener("click", async () => {
   say(`Generating from text alone${edited}… ${generationEstimate()}`, "busy");
   try {
     const size = parseInt($("size").value, 10);
+    const requestedGenerator = $("generator").value;
     const res = await request("/api/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt, width: size, height: size,
-                             seed: parseInt($("seed").value, 10) || 42 }),
+                             seed: parseInt($("seed").value, 10) || 42,
+                             generator: requestedGenerator }),
     });
     if (!res.ok) throw new Error(await responseError(res));
+    const usedGenerator = res.headers.get("X-llmPEG-Generator") || requestedGenerator;
+    const fallback = usedGenerator !== requestedGenerator;
     const blob = await res.blob();
     if (outputUrl) URL.revokeObjectURL(outputUrl);
     outputUrl = URL.createObjectURL(blob);
     const elapsed = ((performance.now() - started) / 1000).toFixed(1);
     $("out").onload = () => {
       $("outhint").textContent = `This is a new ${$("out").naturalWidth}×${
-        $("out").naturalHeight} image. Generation took ${elapsed} seconds. It is not your photo.`;
+        $("out").naturalHeight} image from ${usedGenerator}. Generation took ${elapsed} seconds.${
+        fallback ? ` ${requestedGenerator} was unavailable, so ${usedGenerator} was used.` : ""} It is not your photo.`;
       $("outhint").classList.remove("hidden");
     };
     $("out").src = outputUrl;
     $("out").alt = "Image regenerated from the editable text prompt";
     $("out").classList.remove("hidden");
     $("outempty").classList.add("hidden");
-    say(`Done in ${elapsed} seconds. Compare them — then notice what changed.`, "ok");
+    say(`Done in ${elapsed} seconds with ${usedGenerator}${fallback ? " (fallback)" : ""}. ` +
+      "Compare them — then notice what changed.", "ok");
   } catch (err) {
     const elapsed = ((performance.now() - started) / 1000).toFixed(1);
     say(`Generation failed after ${elapsed} seconds: ${err.message}`, "err");

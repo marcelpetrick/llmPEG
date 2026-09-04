@@ -40,6 +40,11 @@ def test_file_page_targets_local_backend_without_unsafe_html() -> None:
     assert "NEW IMAGE <small>invented pixels</small>" in page
     assert "performance.now()" in page
     assert "Usually about 40 seconds" in page
+    assert 'id="generator"' in page
+    assert '<option value="comfyui">ComfyUI (Codex fallback)</option>' in page
+    assert "ComfyUI unavailable (Codex fallback)" in page
+    assert "generator: requestedGenerator" in page
+    assert 'res.headers.get("X-llmPEG-Generator")' in page
     assert 'id="theme"' in page
     assert 'data-theme="dark"' in page
     assert 'localStorage.setItem("llmpeg-theme", theme)' in page
@@ -60,6 +65,7 @@ def test_config_allows_file_origin(web_server: str, monkeypatch: pytest.MonkeyPa
         assert response.headers["Access-Control-Allow-Origin"] == web.FILE_ORIGIN
     assert payload["vision_host"] == "http://vision.test:11434"
     assert payload["vision_configured"] is True
+    assert payload["generators"] == ["codex", "comfyui", "pollinations", "local"]
 
 
 def test_preflight_allows_file_page_posts(web_server: str) -> None:
@@ -79,6 +85,27 @@ def test_preflight_allows_file_page_posts(web_server: str) -> None:
         assert response.headers["Access-Control-Allow-Private-Network"] == "true"
 
 
+def test_generate_route_reports_fallback_generator(
+    web_server: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(
+        web,
+        "generate",
+        lambda _generator, _prompt, _width, _height, _seed: (b"generated", "codex"),
+    )
+    request = urllib.request.Request(
+        f"{web_server}/api/generate",
+        data=json.dumps({"generator": "comfyui", "prompt": "cat"}).encode(),
+        method="POST",
+        headers={"Content-Type": "application/json", "Origin": web.FILE_ORIGIN},
+    )
+
+    with urllib.request.urlopen(request) as response:
+        assert response.read() == b"generated"
+        assert response.headers["X-llmPEG-Generator"] == "codex"
+        assert response.headers["Access-Control-Expose-Headers"] == "X-llmPEG-Generator"
+
+
 def test_encode_rejects_non_image_upload(web_server: str, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(web.CONFIG, "vision_host", "http://vision.test:11434")
     request = urllib.request.Request(
@@ -95,8 +122,14 @@ def test_encode_rejects_non_image_upload(web_server: str, monkeypatch: pytest.Mo
 
 def test_generation_request_accepts_ui_values() -> None:
     assert web.generation_request(
-        {"prompt": "a tabby cat", "width": 1024, "height": 1024, "seed": 42}
-    ) == ("a tabby cat", 1024, 1024, 42)
+        {
+            "generator": "comfyui",
+            "prompt": "a tabby cat",
+            "width": 1024,
+            "height": 1024,
+            "seed": 42,
+        }
+    ) == ("comfyui", "a tabby cat", 1024, 1024, 42)
 
 
 @pytest.mark.parametrize(
@@ -107,6 +140,7 @@ def test_generation_request_accepts_ui_values() -> None:
         {"prompt": "cat", "width": "wide"},
         {"prompt": "cat", "width": 128},
         {"prompt": "cat", "height": 2048},
+        {"prompt": "cat", "generator": "mystery"},
         {"prompt": "x" * (web.MAX_PROMPT_CHARS + 1)},
     ],
 )
@@ -116,9 +150,64 @@ def test_generation_request_rejects_invalid_values(payload: object) -> None:
 
 
 def test_unknown_generator_fails_closed(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(web.CONFIG, "generator", "mystery")
     with pytest.raises(ArtifactError, match="unsupported generator"):
-        web.generate("cat", 1024, 1024, 42)
+        web.generate("mystery", "cat", 1024, 1024, 42)
+
+
+def test_comfyui_generator_runs_checkout_script(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    script = tmp_path / "generate_image.sh"
+    script.write_text("#!/usr/bin/env bash\n", encoding="utf-8")
+    commands: list[list[str]] = []
+
+    def run(command: list[str], **_kwargs: object) -> subprocess.CompletedProcess[str]:
+        commands.append(command)
+        Image.new("RGB", (8, 8), "purple").save(command[2])
+        return subprocess.CompletedProcess(command, 0, command[2], "")
+
+    monkeypatch.setattr(web.CONFIG, "comfyui_script", script)
+    monkeypatch.setattr("prototypeWebUI.server.subprocess.run", run)
+
+    generated = web.generate_comfyui("a purple cat", 1024, 1024, 7)
+
+    assert generated.startswith(b"\x89PNG\r\n\x1a\n")
+    assert commands[0][0] == str(script)
+    assert commands[0][1] == "a purple cat"
+    assert commands[0][2].endswith("out.png")
+
+
+def test_unavailable_comfyui_falls_back_to_codex(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(web.CONFIG, "comfyui_script", tmp_path / "missing.sh")
+    monkeypatch.setattr(
+        web, "generate_codex", lambda _prompt, _width, _height, _seed: b"codex-image"
+    )
+
+    assert web.generate("comfyui", "cat", 1024, 1024, 42) == (b"codex-image", "codex")
+
+
+def test_reachable_comfyui_workflow_error_does_not_fallback(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    script = tmp_path / "generate_image.sh"
+    script.write_text("#!/usr/bin/env bash\n", encoding="utf-8")
+
+    def fail(command: list[str], **_kwargs: object) -> subprocess.CompletedProcess[str]:
+        raise subprocess.CalledProcessError(1, command, stderr="workflow failed")
+
+    monkeypatch.setattr(web.CONFIG, "comfyui_script", script)
+    monkeypatch.setattr(web, "comfyui_reachable", lambda: True)
+    monkeypatch.setattr("prototypeWebUI.server.subprocess.run", fail)
+    monkeypatch.setattr(
+        web,
+        "generate_codex",
+        lambda _prompt, _width, _height, _seed: pytest.fail("Codex must not run"),
+    )
+
+    with pytest.raises(ArtifactError, match="workflow failed"):
+        web.generate("comfyui", "cat", 1024, 1024, 42)
 
 
 def test_pollinations_generator_requires_api_key(monkeypatch: pytest.MonkeyPatch) -> None:

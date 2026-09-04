@@ -49,7 +49,7 @@ C4Container
   }
 
   System_Ext(ollama, "Ollama + Qwen3-VL", "Non-deterministic semantic extraction boundary")
-  System_Ext(imagegen, "Image generators", "Codex, Pollinations, or Automatic1111-compatible server")
+  System_Ext(imagegen, "Image generators", "Codex, ComfyUI, Pollinations, or Automatic1111-compatible server")
 
   Rel(user, cli, "Runs")
   Rel(user, web, "Drops an image and reviews the prompt")
@@ -152,8 +152,10 @@ sequenceDiagram
 ```
 
 The Web UI wraps the same core sequence in two localhost requests: `/api/encode` returns the
-artifact and rendered prompt, then `/api/generate` sends that prompt to Codex, Pollinations, or an
-Automatic1111-compatible server. It is a local prototype, not a hardened network service.
+artifact and rendered prompt, then `/api/generate` sends that prompt to Codex, ComfyUI,
+Pollinations, or an Automatic1111-compatible server. ComfyUI runs through the sibling checkout's
+self-starting shell adapter and falls back to Codex only when its service is unavailable. The Web
+UI is a local prototype, not a hardened network service.
 
 ## Architectural consequences
 

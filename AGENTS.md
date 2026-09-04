@@ -69,7 +69,7 @@ README, and is not part of the benchmark set. Do not add a second exception.
 | `docs/effort-evaluation.md` | Measured development-session effort snapshot |
 | `docs/ideas.md` | Unscheduled ideas that require measurement before implementation |
 | `scripts/` | Measurement tools: cycle timing, perceptual judge, adversarial loop |
-| `prototypeWebUI/` | Local drag-and-drop demo UI (prototype, lightly tested, not product surface) |
+| `prototypeWebUI/` | Local drag-and-drop demo UI (offline request tests; live providers manual) |
 
 ## Commands
 
@@ -93,7 +93,7 @@ Scripts under `scripts/` are linted and type-checked like the package, but are m
 tools rather than product surface: they may talk to the live Ollama endpoint, and they never
 run in CI. Never record the endpoint host in their output — model name only.
 
-Current baseline: **90 tests, 96.0% branch coverage**. Update this line when it changes — a stale
+Current baseline: **95 tests, 96.0% branch coverage**. Update this line when it changes — a stale
 self-measurement is the most embarrassing possible bug in a project about honest measurement.
 
 ## Testing
