@@ -139,8 +139,11 @@ Established scopes: `codec` (encoder/artifact/providers), `survey`, `architectur
   unverified in the gallery. Trace them before publishing anything that asserts their licensing.
 - `critical_text_recall` measures recall only: invented text is not penalised, and duplicate
   expected strings all match one rendered occurrence. Do not quote it as text fidelity.
-- `visual_proxy_score` correlates **negatively** with perceived similarity (`docs/metrics.md`).
-  Do not present it as a quality score, and do not reweight it on the current twelve points.
+- Whether `visual_proxy_score` tracks human perception is **unresolved** (`docs/metrics.md`). A
+  first judge run said −0.47; a second, differing only by a prompt formatting tweak, said +0.01.
+  Do not quote either number as a finding, and do not reweight the score on them.
+- The vision-model judge is unstable: a cosmetic prompt change moved 11 of 12 verdicts by 1.67
+  points on a 1–5 scale at temperature 0. Measure repeat-stability before trusting any new judge.
 - The adversarial critic returns a constant verdict, so the refinement loop has no gradient
   (`docs/adversarial.md`). Rebuild it as a pairwise forced choice before trusting any round.
 - The vision-model judge has never been calibrated against real human ratings.

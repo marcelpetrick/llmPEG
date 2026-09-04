@@ -1,0 +1,340 @@
+{
+  "cases": 12,
+  "caveat": "The judge is a vision model standing in for a human reviewer, not a human. n=12 is small, so rank correlations are indicative only.",
+  "judge_scale": "1-5, 5 = indistinguishable",
+  "model": "qwen3-vl:32b-ctx49k",
+  "records": [
+    {
+      "id": "amsterdam-market-expanded",
+      "judge": {
+        "differences": [
+          "All people are different (no matching individuals),",
+          "Market stalls and produce are different (e.g., no oranges/lemons in same arrangement),",
+          "Buildings and signage are different (e.g., no 'Zoo' or 'GOTU' signs),",
+          "No Dutch flags present,",
+          "Lighting and color palette are different (darker, less vibrant),",
+          "Pavement and street layout differ (e.g., no red brick pattern)."
+        ],
+        "overall_human_similarity": 1,
+        "same_composition": 1,
+        "same_identity": 1,
+        "same_mood": 1,
+        "same_scene": 5
+      },
+      "metrics": {
+        "aspect_similarity": 1.0,
+        "critical_text_recall": 1.0,
+        "dhash_similarity": 0.390625,
+        "edge_similarity": 0.988586,
+        "histogram_similarity": 0.778544,
+        "layout_score": 0.66142,
+        "palette_distance": 0.068568,
+        "visual_proxy_score": 0.717999
+      },
+      "reconstruction": "survey/reconstructions/amsterdam-market-expanded.png",
+      "result": "survey/results/amsterdam-market-expanded.json",
+      "source": "survey/sources/amsterdam-market.jpg"
+    },
+    {
+      "id": "astronaut-crew-expanded",
+      "judge": {
+        "differences": [
+          "The second image is a text-generated image of a group of astronauts, but the original is a specific photograph of Expedition 53/54 crew. The text description would not capture the exact individuals, their specific uniforms, patches, or the precise arrangement. The background elements (Earth, Moon, Mars) and the mission patch details would be plausible but not accurate. The flags at the bottom would be generic or incorrect. The faces would be AI-generated and not match the real astronauts."
+        ],
+        "overall_human_similarity": 1,
+        "same_composition": 1,
+        "same_identity": 1,
+        "same_mood": 1,
+        "same_scene": 1
+      },
+      "metrics": {
+        "aspect_similarity": 0.999643,
+        "critical_text_recall": 0.5,
+        "dhash_similarity": 0.59375,
+        "edge_similarity": 0.978088,
+        "histogram_similarity": 0.595337,
+        "layout_score": 0.769935,
+        "palette_distance": 0.054039,
+        "visual_proxy_score": 0.731978
+      },
+      "reconstruction": "survey/reconstructions/astronaut-crew-expanded.png",
+      "result": "survey/results/astronaut-crew-expanded.json",
+      "source": "survey/sources/astronaut-crew.jpg"
+    },
+    {
+      "id": "cat-monochrome-detailed",
+      "judge": {
+        "differences": [
+          "Cat's posture and orientation (first looks down, second looks left)",
+          "Different background elements (first has dense foliage, second has gravel and sparse plants)",
+          "First image has a damaged/aged appearance with scratches, second is clean",
+          "Cat's fur pattern and markings differ (e.g., first has more solid dark patches, second has distinct stripes)",
+          "First image shows a crouched position, second is sitting upright"
+        ],
+        "overall_human_similarity": 3,
+        "same_composition": 3,
+        "same_identity": 2,
+        "same_mood": 3,
+        "same_scene": 4
+      },
+      "metrics": {
+        "aspect_similarity": 0.987417,
+        "critical_text_recall": 1.0,
+        "dhash_similarity": 0.484375,
+        "edge_similarity": 0.913391,
+        "histogram_similarity": 0.750366,
+        "layout_score": 0.688536,
+        "palette_distance": 0.051097,
+        "visual_proxy_score": 0.725432
+      },
+      "reconstruction": "survey/reconstructions/cat-monochrome-detailed.png",
+      "result": "survey/results/cat-monochrome-detailed.json",
+      "source": "survey/sources/cat-monochrome.jpg"
+    },
+    {
+      "id": "cat-monochrome",
+      "judge": {
+        "differences": [
+          "Cat's posture and orientation (first is turned left, second faces forward)",
+          "Different ear shape and position (first has one ear tilted back, second both upright)",
+          "Different facial markings (first has more white on face, second has distinct tabby stripes on forehead)",
+          "Different body proportions (first appears more compact, second more elongated)",
+          "Different background elements (first has more grass, second has more leaves and different ground texture)"
+        ],
+        "overall_human_similarity": 2,
+        "same_composition": 2,
+        "same_identity": 2,
+        "same_mood": 3,
+        "same_scene": 4
+      },
+      "metrics": {
+        "aspect_similarity": 0.987417,
+        "critical_text_recall": 1.0,
+        "dhash_similarity": 0.484375,
+        "edge_similarity": 0.869019,
+        "histogram_similarity": 0.715739,
+        "layout_score": 0.675225,
+        "palette_distance": 0.073735,
+        "visual_proxy_score": 0.706169
+      },
+      "reconstruction": "survey/reconstructions/cat-monochrome.png",
+      "result": "survey/results/cat-monochrome.json",
+      "source": "survey/sources/cat-monochrome.jpg"
+    },
+    {
+      "id": "cat-on-grass-detailed",
+      "judge": {
+        "differences": [],
+        "overall_human_similarity": 5,
+        "same_composition": 5,
+        "same_identity": 5,
+        "same_mood": 5,
+        "same_scene": 5
+      },
+      "metrics": {
+        "aspect_similarity": 1.0,
+        "critical_text_recall": 1.0,
+        "dhash_similarity": 0.453125,
+        "edge_similarity": 0.944397,
+        "histogram_similarity": 0.272949,
+        "layout_score": 0.682538,
+        "palette_distance": 0.083983,
+        "visual_proxy_score": 0.579358
+      },
+      "reconstruction": "survey/reconstructions/cat-on-grass-detailed.png",
+      "result": "survey/results/cat-on-grass-detailed.json",
+      "source": "survey/sources/cat-on-grass.jpg"
+    },
+    {
+      "id": "cat-on-grass",
+      "judge": {
+        "differences": [],
+        "overall_human_similarity": 5,
+        "same_composition": 5,
+        "same_identity": 5,
+        "same_mood": 5,
+        "same_scene": 5
+      },
+      "metrics": {
+        "aspect_similarity": 1.0,
+        "critical_text_recall": 1.0,
+        "dhash_similarity": 0.5,
+        "edge_similarity": 0.937317,
+        "histogram_similarity": 0.275045,
+        "layout_score": 0.706195,
+        "palette_distance": 0.081482,
+        "visual_proxy_score": 0.594977
+      },
+      "reconstruction": "survey/reconstructions/cat-on-grass.png",
+      "result": "survey/results/cat-on-grass.json",
+      "source": "survey/sources/cat-on-grass.jpg"
+    },
+    {
+      "id": "cat-on-keyboard-detailed",
+      "judge": {
+        "differences": [],
+        "overall_human_similarity": 5,
+        "same_composition": 5,
+        "same_identity": 5,
+        "same_mood": 5,
+        "same_scene": 5
+      },
+      "metrics": {
+        "aspect_similarity": 1.0,
+        "critical_text_recall": 0.0,
+        "dhash_similarity": 0.5625,
+        "edge_similarity": 0.900085,
+        "histogram_similarity": 0.745687,
+        "layout_score": 0.729401,
+        "palette_distance": 0.084686,
+        "visual_proxy_score": 0.750598
+      },
+      "reconstruction": "survey/reconstructions/cat-on-keyboard-detailed.png",
+      "result": "survey/results/cat-on-keyboard-detailed.json",
+      "source": "survey/sources/cat-on-keyboard.jpg"
+    },
+    {
+      "id": "cat-on-keyboard",
+      "judge": {
+        "differences": [],
+        "overall_human_similarity": 5,
+        "same_composition": 5,
+        "same_identity": 5,
+        "same_mood": 5,
+        "same_scene": 5
+      },
+      "metrics": {
+        "aspect_similarity": 1.0,
+        "critical_text_recall": null,
+        "dhash_similarity": 0.4375,
+        "edge_similarity": 0.949768,
+        "histogram_similarity": 0.68752,
+        "layout_score": 0.675555,
+        "palette_distance": 0.088494,
+        "visual_proxy_score": 0.699335
+      },
+      "reconstruction": "survey/reconstructions/cat-on-keyboard.png",
+      "result": "survey/results/cat-on-keyboard.json",
+      "source": "survey/sources/cat-on-keyboard.jpg"
+    },
+    {
+      "id": "dogs-beach-expanded",
+      "judge": {
+        "differences": [
+          "The brindle dog's tail is curled upward in the second image instead of being straight and slightly curved downward in the first. The brindle dog's posture is more upright in the second image, with legs positioned differently. The black dog's tail is straighter and less curved in the second image. The background rocks and water appear slightly different in texture and color. The sand texture and the amount of sand kicked up are different. The brindle dog's mouth is open wider in the second image, and the expression is slightly different."
+        ],
+        "overall_human_similarity": 4,
+        "same_composition": 3,
+        "same_identity": 4,
+        "same_mood": 4,
+        "same_scene": 5
+      },
+      "metrics": {
+        "aspect_similarity": 0.999266,
+        "critical_text_recall": 1.0,
+        "dhash_similarity": 0.390625,
+        "edge_similarity": 0.985901,
+        "histogram_similarity": 0.695964,
+        "layout_score": 0.660504,
+        "palette_distance": 0.057907,
+        "visual_proxy_score": 0.692578
+      },
+      "reconstruction": "survey/reconstructions/dogs-beach-expanded.png",
+      "result": "survey/results/dogs-beach-expanded.json",
+      "source": "survey/sources/dogs-beach.jpg"
+    },
+    {
+      "id": "food-table-expanded",
+      "judge": {
+        "differences": [],
+        "overall_human_similarity": 5,
+        "same_composition": 5,
+        "same_identity": 5,
+        "same_mood": 5,
+        "same_scene": 5
+      },
+      "metrics": {
+        "aspect_similarity": 1.0,
+        "critical_text_recall": 1.0,
+        "dhash_similarity": 0.4375,
+        "edge_similarity": 0.968567,
+        "histogram_similarity": 0.473612,
+        "layout_score": 0.681195,
+        "palette_distance": 0.162029,
+        "visual_proxy_score": 0.638922
+      },
+      "reconstruction": "survey/reconstructions/food-table-expanded.png",
+      "result": "survey/results/food-table-expanded.json",
+      "source": "survey/sources/food-table.jpg"
+    },
+    {
+      "id": "train-platform-expanded",
+      "judge": {
+        "differences": [
+          "The second image is a text-generated image with no specific individuals, only generic people in a train station setting",
+          "The original has specific people (e.g., the man in the suit with a briefcase, the woman beside him) which are not present in the text-generated image",
+          "The text-generated image lacks the specific details of the original, such as the platform number signs, the train tracks, and the exact arrangement of people",
+          "The lighting and atmosphere in the text-generated image are generic and do not match the specific nighttime, dimly lit mood of the original",
+          "The text-generated image has a different composition with people arranged differently and no clear platform or train tracks visible"
+        ],
+        "overall_human_similarity": 1,
+        "same_composition": 1,
+        "same_identity": 1,
+        "same_mood": 1,
+        "same_scene": 5
+      },
+      "metrics": {
+        "aspect_similarity": 0.999469,
+        "critical_text_recall": null,
+        "dhash_similarity": 0.5625,
+        "edge_similarity": 0.986084,
+        "histogram_similarity": 0.57076,
+        "layout_score": 0.755121,
+        "palette_distance": 0.048706,
+        "visual_proxy_score": 0.71524
+      },
+      "reconstruction": "survey/reconstructions/train-platform-expanded.png",
+      "result": "survey/results/train-platform-expanded.json",
+      "source": "survey/sources/train-platform.jpg"
+    },
+    {
+      "id": "workspace-books-expanded",
+      "judge": {
+        "differences": [
+          "Book spines in top row: some text on spines is different (e.g., 'C' vs 'C' on red book, 'H' vs 'H' on orange book, and other minor text variations on other spines)",
+          "iPod mini brochure: text on brochure is slightly different (e.g., 'iPod - iPod mini' vs 'iPod - iPod mini' with different spacing/arrangement of text)",
+          "Pencil eraser: the eraser on the pencil is slightly different in shape/position",
+          "Smartphone screen: app icons on smartphone screen are slightly different in arrangement and some icons are different",
+          "Notebook grid: the grid lines on the notebook paper are slightly different in thickness/spacing"
+        ],
+        "overall_human_similarity": 4,
+        "same_composition": 5,
+        "same_identity": 5,
+        "same_mood": 5,
+        "same_scene": 5
+      },
+      "metrics": {
+        "aspect_similarity": 0.999303,
+        "critical_text_recall": null,
+        "dhash_similarity": 0.96875,
+        "edge_similarity": 0.998718,
+        "histogram_similarity": 0.878092,
+        "layout_score": 0.982323,
+        "palette_distance": 0.02825,
+        "visual_proxy_score": 0.952129
+      },
+      "reconstruction": "survey/reconstructions/workspace-books-expanded.png",
+      "result": "survey/results/workspace-books-expanded.json",
+      "source": "survey/sources/workspace-books.jpg"
+    }
+  ],
+  "spearman_vs_overall_human_similarity": {
+    "aspect_similarity": 0.532,
+    "dhash_similarity": -0.16,
+    "edge_similarity": -0.392,
+    "histogram_similarity": -0.377,
+    "layout_score": -0.07,
+    "palette_distance": -0.725,
+    "visual_proxy_score": -0.468
+  }
+}

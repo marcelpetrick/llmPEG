@@ -102,10 +102,15 @@ mean anything and whether the encoder can improve itself.
 Exit gate: every claim above is backed by a checked-in JSON record that a reader can recompute,
 and negative results are published as prominently as positive ones.
 
-**Outcome: two of three answers were negative, and both are documented.** `visual_proxy_score`
-correlates −0.47 with perceived similarity, and the adversarial loop failed because the critic
-returned a constant verdict. The timing benchmark succeeded and also showed that re-encoding the
-same image varies the compression ratio by 28%.
+**Outcome: the timing benchmark succeeded; both quality experiments failed, and are documented as
+failures.** The adversarial loop produced no gradient because its critic returned a constant
+verdict. The perceptual judge first appeared to show `visual_proxy_score` correlating −0.47 with
+perceived similarity; a second run changed 11 of 12 verdicts after only a formatting tweak, so
+that claim was withdrawn and the judge itself is the thing now known to be unreliable. The timing
+benchmark also showed that re-encoding one image varies its compression ratio by 28%.
+
+The pattern across all three: absolute 1–5 scores from a vision model collapse or drift. Pairwise
+forced choice is the common fix.
 
 **Closed since:** the four ungenerated benchmark cases were generated, transcribed and evaluated,
 completing the study at `n=10` (9 pass, 1 fail); two of their four missing Commons records were

@@ -1,110 +1,97 @@
-# Do the metrics match a human eye?
+# Do the metrics match a human eye? We still cannot say.
 
 llmPEG scores reconstructions with `visual_proxy_score`, a blend of cheap structural signals:
-perceptual hash (dHash), RGB histogram intersection, edge density, and aspect ratio. Those signals
-are deterministic, offline and fast. Nothing established that they track what a person actually
-notices.
+perceptual hash (dHash), RGB histogram intersection, edge density, and aspect ratio. Nothing
+established that those signals track what a person actually notices.
 
-This document reports the first attempt to check. **The answer is that they do not**, and on the
-current sample the headline metric points the wrong way.
+To find out, [`scripts/perceptual_judge.py`](../scripts/perceptual_judge.py) shows a vision model
+both images and asks it to rate the pair the way a careful reviewer would, on five 1–5 axes.
 
-## Method
+**An earlier version of this document reported that `visual_proxy_score` correlates −0.468 with
+that judge — that the headline metric pointed the wrong way. That conclusion is withdrawn.** It
+did not survive a second run.
 
-[`scripts/perceptual_judge.py`](../scripts/perceptual_judge.py) shows a vision model
-(`qwen3-vl:32b-ctx49k`, temperature 0, seed 42) the source and the reconstruction together and
-asks it to rate the pair the way a careful reviewer would, on five 1–5 axes: scene, identity,
-composition, mood, and an overall "is this a faithful stand-in?". Every checked-in reconstruction
-pair was judged: **n = 12** (6 cat-survey pairs, 6 expanded-scene pairs).
+## What happened
 
-Raw output, including the judge's per-case list of visible differences, is in
-[`perceptual-judge.json`](perceptual-judge.json).
+Run 1 judged the 12 reconstruction pairs that existed at the time. Run 2 judged all 16 that exist
+now, after the expanded benchmark was completed. Between the two runs the judge's *instruction*
+changed cosmetically: a cap of "at most 6 differences, each under 200 characters" was added,
+because run 1 had been overflowing its token limit and truncating its own JSON.
 
-The judge is a model, not a person. It is a second opinion that can be audited case by case, not
-ground truth. `n = 12`, one model, one run.
+Nothing else changed. Same model, same temperature `0`, same seed `42`, same images.
 
-## Result: the proxy is anti-correlated with perceived similarity
+On the 12 pairs common to both runs:
 
-Spearman rank correlation against the judge's `overall_human_similarity`:
+| | Result |
+| --- | ---: |
+| Pairs re-judged | 12 |
+| Pairs whose overall verdict changed | **11** |
+| Mean absolute change, on a 1–5 scale | **1.67** |
+| Largest single change | 3 points (`cat-on-grass-detailed`, `cat-on-keyboard-detailed`) |
 
-| Metric | ρ vs judge | Reading |
-| --- | ---: | --- |
-| `aspect_similarity` | +0.532 | degenerate — range is 0.987–1.000, σ = 0.005 |
-| `dhash_similarity` | −0.160 | no useful signal |
-| `layout_score` | −0.070 | no useful signal |
-| `histogram_similarity` | −0.377 | wrong direction |
-| `edge_similarity` | −0.392 | wrong direction |
-| **`visual_proxy_score`** | **−0.468** | **wrong direction** |
-| `palette_distance` (inverted) | −0.725 | wrong direction |
+`cat-on-grass` went from 5/5 to 3/5. `train-platform` went from 1/5 to 3/5. `amsterdam-market`
+went from 1/5 to 3/5.
 
-Not one metric is usefully positive. The only positive number, `aspect_similarity`, varies by less
-than half a percent across the whole set, so its correlation is noise on a near-constant.
+The headline correlation moved with them:
 
-## Why: the proxy measures busyness, not fidelity
+| Metric | ρ, run 1 (n=12) | ρ, run 2 (n=16) |
+| --- | ---: | ---: |
+| **`visual_proxy_score`** | **−0.468** | **+0.007** |
+| `palette_distance` (inverted) | −0.725 | +0.287 |
+| `edge_similarity` | −0.392 | +0.389 |
+| `histogram_similarity` | −0.377 | +0.123 |
+| `dhash_similarity` | −0.160 | +0.007 |
+| `layout_score` | −0.070 | +0.048 |
+| `aspect_similarity` | +0.532 | −0.234 |
 
-The sample splits cleanly:
+Every correlation flipped sign or collapsed. `edge_similarity` went from −0.392 to +0.389 —
+almost exactly the same magnitude, opposite direction.
 
-| Group | n | Mean judge score | Mean `visual_proxy_score` |
-| --- | ---: | ---: | ---: |
-| Cat survey (simple scenes) | 6 | 4.17 | 0.676 |
-| Expanded benchmark (busy scenes) | 6 | 2.67 | 0.741 |
+## The finding
 
-The busy scenes score **higher** on the machine proxy and **lower** with the judge. A crowded
-market or a station platform gives dHash and edge density plenty of structure to agree about,
-while the reconstruction quietly replaces every person in it. A cat on grass has little structure
-to match, so the proxy scores it poorly even when the result is an excellent stand-in.
+**The judge is not a stable instrument.** A formatting instruction that should not have changed
+any verdict changed eleven of twelve, by 1.67 points on average. Correlations computed on top of
+it are therefore not measuring the metrics; they are measuring one particular prompt.
 
-The starkest cases:
+So the honest state of the question is:
 
-| Case | `visual_proxy_score` | Judge | What happened |
-| --- | ---: | ---: | --- |
-| `cat-on-grass` | 0.595 (lowest) | **5** | different cat, but a faithful stand-in |
-| `astronaut-crew-expanded` | 0.732 | **1** | six real people replaced by six invented ones |
-| `train-platform-expanded` | 0.715 | **1** | right scene, entirely different travellers |
-| `amsterdam-market-expanded` | 0.718 | **1** | scene rated 5, identity rated 1 |
+- **Not established** that `visual_proxy_score` tracks human perception.
+- **Not established** that it points the wrong way, which is what run 1 appeared to show.
+- **Established** that a single-run vision-model judge cannot settle either, and that the earlier
+  confident answer was an artifact.
 
-## What humans actually judge: identity
+Both runs are checked in — [`perceptual-judge-run1.json`](perceptual-judge-run1.json) and
+[`perceptual-judge.json`](perceptual-judge.json) — so anyone can recompute this rather than take
+it on trust.
 
-The judge's `same_identity` axis predicts its overall verdict almost perfectly. The two agree
-exactly on ten of twelve cases, and never differ by more than one point — the two exceptions are
-`cat-monochrome-detailed` (identity 2, overall 3) and `workspace-books-expanded` (identity 5,
-overall 4):
+## What survives from run 1
 
-```
-(identity, overall): (1,1) (1,1) (2,3) (2,2) (5,5) (5,5) (5,5) (5,5) (4,4) (5,5) (1,1) (5,4)
-```
+Two observations are robust across both runs:
 
-That is the finding in one line: **a reviewer's verdict is identity preservation.** Everything the
-structural proxies measure — edges, histograms, hashes — is blind to it. `amsterdam-market` scoring
-`same_scene: 5` and `same_identity: 1` is the whole problem in one case.
+**`aspect_similarity` is degenerate.** Its range is 0.987–1.000 with σ ≈ 0.004 in both runs.
+Whatever correlation it shows is noise on a near-constant, in either direction.
 
-## What this changes
+**Identity matters more than structure.** In run 1 the judge's `same_identity` axis matched its
+overall verdict exactly on 10 of 12 cases; in run 2 that fell to 5 of 16, but the two still never
+differ by more than one point except once. The structural metrics remain blind to subject
+identity, which is the thing a reviewer looks at first. This is an argument from the metrics'
+construction — edges and histograms cannot encode *who* is in a photograph — not from the
+correlations, which is why it survives their collapse.
 
-**`visual_proxy_score` is not renamed or reweighted.** Two reasons. Re-tuning weights on twelve
-points would be curve-fitting, and no reweighting of edge density and colour histograms can
-recover subject identity — the information is not in those signals. Changing the formula would
-also silently invalidate every checked-in evaluation report.
+## What would actually answer the question
 
-Instead:
-
-1. **`visual_proxy_score` is documented as a structural sanity check, not a quality score.** It
-   answers "is this the same kind of picture, roughly arranged the same way?" It does not answer
-   "would a person accept this?" The name was already honest; the surrounding claims were not
-   careful enough.
-2. **Identity gets its own axis**, measured by an explicitly labelled model judge and stored
-   separately, never folded into the deterministic score. A slow, non-deterministic, clearly
-   marked judgement beats a fast deterministic number that points the wrong way.
-3. **Acceptance for identity-critical images should read `same_identity`**, not
-   `visual_proxy_score`. The astronaut crew portrait passed three structural thresholds and failed
-   the only one that mattered.
+1. **Repeat-stability first.** Run the judge three times on identical input with an unchanged
+   prompt before trusting a single number from it. That check should have come before the
+   correlations, not after.
+2. **Real human ratings.** The survey pages already collect 1–5 ratings and export them; none are
+   checked in. A dozen human ratings would outrank any amount of model judging.
+3. **Forced pairwise choice.** Absolute 1–5 scores from a vision model are what proved unstable
+   here, and the same collapse-to-the-middle showed up in
+   [the adversarial loop](adversarial.md). Asking which of two reconstructions is better is a
+   easier question and a more robust instrument.
 
 ## Honest limits
 
-- `n = 12`, one judge model, one run per pair, no repeat-stability measurement yet.
-- The judge has never been calibrated against real human ratings. The survey pages collect 1–5
-  human ratings and export them; none are checked in yet. Comparing judge scores to real ratings
-  is the obvious next step and would either validate this document or overturn it.
-- Simple-versus-busy scene type is confounded with survey group here. A sample that varies scene
-  complexity within each group would separate those effects.
-- Rank correlations on twelve points have wide error bars. The direction is consistent across five
-  of seven metrics, which is why it is reported at all, but no single ρ here should be quoted as
-  precise.
+`n` is 12 and 16. One model. One run per configuration. No human ground truth anywhere in this
+document. The instability reported above is itself measured from two runs, which is enough to
+show a problem exists but not enough to characterise its size.

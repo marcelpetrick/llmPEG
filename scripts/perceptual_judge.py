@@ -41,7 +41,11 @@ JUDGE_SCHEMA: dict[str, Any] = {
         "same_composition": {"type": "integer", "minimum": 1, "maximum": 5},
         "same_mood": {"type": "integer", "minimum": 1, "maximum": 5},
         "overall_human_similarity": {"type": "integer", "minimum": 1, "maximum": 5},
-        "differences": {"type": "array", "items": {"type": "string"}},
+        "differences": {
+            "type": "array",
+            "maxItems": 6,
+            "items": {"type": "string", "maxLength": 200},
+        },
     },
     "required": [
         "same_scene",
@@ -69,7 +73,9 @@ different" and 5 means "indistinguishable":
   for the first?
 
 Also list the concrete visible differences a person would notice first, most important first.
-Be strict: plausible-but-invented detail is a difference, not a match. Reply with JSON only."""
+Be strict: plausible-but-invented detail is a difference, not a match.
+
+List AT MOST 6 differences, worst first, each under 200 characters. Reply with JSON only."""
 
 
 def _encoded(path: Path) -> str:
@@ -90,7 +96,7 @@ def judge_pair(host: str, model: str, timeout: float, source: Path, reconstructi
         "think": False,
         "format": JUDGE_SCHEMA,
         "keep_alive": "30m",
-        "options": {"temperature": 0.0, "seed": 42, "num_predict": 1024},
+        "options": {"temperature": 0.0, "seed": 42, "num_predict": 8192},
         "messages": [
             {
                 "role": "user",
@@ -112,7 +118,14 @@ def judge_pair(host: str, model: str, timeout: float, source: Path, reconstructi
         lines = content.splitlines()
         if lines[-1].strip() == "```":
             content = "\n".join(lines[1:-1]).removeprefix("json").lstrip()
-    return json.loads(content)
+    try:
+        return json.loads(content)
+    except json.JSONDecodeError as error:
+        # A truncated verdict is unusable: fail loudly rather than scoring a partial answer.
+        raise SystemExit(
+            f"judge returned invalid JSON ({error}); done_reason="
+            f"{raw.get('done_reason', 'unknown')}, {len(content)} chars received"
+        ) from error
 
 
 def _spearman(left: list[float], right: list[float]) -> float:

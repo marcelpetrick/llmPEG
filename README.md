@@ -207,32 +207,31 @@ benchmark produced a **1,275-byte** artifact where the checked-in run produced *
 temperature `0`. The compression ratio is not a property of your photo. It is a property of one
 particular run of one particular model, and it moves by 28% between runs.
 
-### Does the score match a human eye? No.
+### Does the score match a human eye? We still cannot say.
 
-A vision-model judge rated all twelve checked-in pairs the way a reviewer would — scene, identity,
-composition, mood, and an overall "is this a faithful stand-in?". Rank correlation between the
-machine metrics and that verdict, `n = 12`:
+A vision-model judge rated every checked-in pair on scene, identity, composition, mood, and an
+overall "is this a faithful stand-in?".
 
-| Metric | ρ vs judge |
-| --- | ---: |
-| `aspect_similarity` | +0.532 (degenerate: σ = 0.005) |
-| `layout_score` | −0.070 |
-| `dhash_similarity` | −0.160 |
-| **`visual_proxy_score`** | **−0.468** |
-| `palette_distance` (inverted) | −0.725 |
+An earlier version of this README reported that `visual_proxy_score` correlates **−0.468** with
+that judge — that the headline metric pointed the wrong way. **That claim is withdrawn.** A second
+run, differing only by a formatting instruction added to the judge's prompt, changed **11 of 12
+verdicts by an average of 1.67 points** on a 1–5 scale, at temperature 0 with a fixed seed. The
+correlation moved with them:
 
-**The headline metric points the wrong way.** It rewards busy scenes, where edges and histograms
-have plenty to agree about, while every person in them is quietly replaced. `cat-on-grass` scores
-the *lowest* proxy in the set (0.595) and the judge's *top* mark (5/5). The astronaut crew scores
-0.732 and gets 1/5.
+| Metric | ρ, run 1 (n=12) | ρ, run 2 (n=16) |
+| --- | ---: | ---: |
+| **`visual_proxy_score`** | **−0.468** | **+0.007** |
+| `edge_similarity` | −0.392 | +0.389 |
+| `palette_distance` (inverted) | −0.725 | +0.287 |
 
-What a reviewer actually judges is **identity** — the judge's identity axis predicts its overall
-verdict exactly on ten of twelve cases, and never differs from it by more than one point. Edges,
-hashes and histograms are blind to it.
+Every correlation flipped sign or collapsed. The finding is therefore not about the metrics at
+all: **a single-run vision-model judge is not a stable enough instrument to validate them.** Both
+runs are checked in so the flip can be recomputed rather than believed.
 
-The score has not been reweighted: no blend of those signals can recover subject identity, and
-re-tuning on twelve points would be curve-fitting. `visual_proxy_score` is instead documented for
-what it is — a structural sanity check, not a quality score. Full analysis and caveats in
+What survives: `aspect_similarity` is degenerate in both runs (σ ≈ 0.004), and the structural
+signals remain blind to subject identity by construction — edges and histograms cannot encode
+*who* is in a photograph. Treat `visual_proxy_score` as a structural sanity check, not a quality
+score. Full analysis, both datasets, and what would actually settle the question in
 [`docs/metrics.md`](docs/metrics.md).
 
 ### Can the codec improve itself? Not yet.
@@ -367,10 +366,10 @@ improve the ratio.
 The offline harness uses Pillow to compare aspect ratio, dHash, RGB histograms, edge density, and
 dominant colors, combining them into `visual_proxy_score` and `layout_score`. These are fast
 structural proxies — not human judgment, not CLIP similarity, and not proof that two images mean
-the same thing. Measured against a vision-model judge they correlate *negatively* with perceived
-similarity ([`docs/metrics.md`](docs/metrics.md)), so read `visual_proxy_score` as a structural
-sanity check and use the judge's identity axis for anything identity-critical. Critical-text
-recall is scored separately and reports `not_evaluated` when no transcript is supplied.
+the same thing. An attempt to validate them against a vision-model judge was inconclusive — the
+judge itself proved unstable ([`docs/metrics.md`](docs/metrics.md)) — so read `visual_proxy_score`
+as a structural sanity check rather than a quality score. Critical-text recall is scored
+separately and reports `not_evaluated` when no transcript is supplied.
 
 The demo transcript was verified by hand because the local Tesseract installation had no language
 data. llmPEG consumes OCR text; it does not ship an OCR engine.

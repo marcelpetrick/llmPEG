@@ -1,6 +1,6 @@
 {
-  "cases": 12,
-  "caveat": "The judge is a vision model standing in for a human reviewer, not a human. n=12 is small, so rank correlations are indicative only.",
+  "cases": 16,
+  "caveat": "The judge is a vision model standing in for a human reviewer, not a human. n=16 is small, so rank correlations are indicative only.",
   "judge_scale": "1-5, 5 = indistinguishable",
   "model": "qwen3-vl:32b-ctx49k",
   "records": [
@@ -8,18 +8,18 @@
       "id": "amsterdam-market-expanded",
       "judge": {
         "differences": [
-          "All people are different (no matching individuals),",
-          "Market stalls and produce are different (e.g., no oranges/lemons in same arrangement),",
-          "Buildings and signage are different (e.g., no 'Zoo' or 'GOTU' signs),",
-          "No Dutch flags present,",
-          "Lighting and color palette are different (darker, less vibrant),",
-          "Pavement and street layout differ (e.g., no red brick pattern)."
+          "People in second image are different individuals (e.g., the three walking people are not the same as in first image).",
+          "Fruit arrangement changed: oranges and limes are in stacked crates instead of loose on tables.",
+          "Background buildings and signs are different (e.g., 'GOWTU CENTRE JUWELIER' sign vs. original's green sign).",
+          "Market stalls and awnings have different colors and structures (e.g., red awning vs. original's orange/brown).",
+          "Ground surface changed from asphalt to brick pavement.",
+          "Lighting and shadows differ: second image has brighter, more even lighting vs. first's directional shadows."
         ],
-        "overall_human_similarity": 1,
-        "same_composition": 1,
-        "same_identity": 1,
-        "same_mood": 1,
-        "same_scene": 5
+        "overall_human_similarity": 3,
+        "same_composition": 2,
+        "same_identity": 2,
+        "same_mood": 3,
+        "same_scene": 4
       },
       "metrics": {
         "aspect_similarity": 1.0,
@@ -39,13 +39,18 @@
       "id": "astronaut-crew-expanded",
       "judge": {
         "differences": [
-          "The second image is a text-generated image of a group of astronauts, but the original is a specific photograph of Expedition 53/54 crew. The text description would not capture the exact individuals, their specific uniforms, patches, or the precise arrangement. The background elements (Earth, Moon, Mars) and the mission patch details would be plausible but not accurate. The flags at the bottom would be generic or incorrect. The faces would be AI-generated and not match the real astronauts."
+          "Astronauts' faces are different (e.g., front-left person in first image has a different face than second image's front-left).",
+          "Mission patch text and design changed (e.g., '53' instead of '5' and different names/graphics).",
+          "Earth and Mars appear larger and more detailed in second image.",
+          "Numbered patches (20,23,24,25,26,27) replaced numbers on first image's patches.",
+          "Bottom flag row order and some flags (e.g., Germany, Spain) are different.",
+          "Moon and background stars are less detailed in second image."
         ],
-        "overall_human_similarity": 1,
-        "same_composition": 1,
-        "same_identity": 1,
-        "same_mood": 1,
-        "same_scene": 1
+        "overall_human_similarity": 2,
+        "same_composition": 2,
+        "same_identity": 3,
+        "same_mood": 3,
+        "same_scene": 5
       },
       "metrics": {
         "aspect_similarity": 0.999643,
@@ -65,14 +70,15 @@
       "id": "cat-monochrome-detailed",
       "judge": {
         "differences": [
-          "Cat's posture and orientation (first looks down, second looks left)",
-          "Different background elements (first has dense foliage, second has gravel and sparse plants)",
-          "First image has a damaged/aged appearance with scratches, second is clean",
-          "Cat's fur pattern and markings differ (e.g., first has more solid dark patches, second has distinct stripes)",
-          "First image shows a crouched position, second is sitting upright"
+          "Cat's body shape and posture are different (first is crouched, second is upright).",
+          "First image has a damaged/aged film look (scratches, uneven exposure), second is clean.",
+          "Ears: first has one ear slightly bent, second both ears upright.",
+          "Background: first has dense leaves, second has gravel and sparse plants.",
+          "Paws: first has one paw tucked, second all paws visible and aligned.",
+          "Fur pattern: first has broader stripes, second has finer, more defined stripes."
         ],
-        "overall_human_similarity": 3,
-        "same_composition": 3,
+        "overall_human_similarity": 2,
+        "same_composition": 2,
         "same_identity": 2,
         "same_mood": 3,
         "same_scene": 4
@@ -95,15 +101,16 @@
       "id": "cat-monochrome",
       "judge": {
         "differences": [
-          "Cat's posture and orientation (first is turned left, second faces forward)",
-          "Different ear shape and position (first has one ear tilted back, second both upright)",
-          "Different facial markings (first has more white on face, second has distinct tabby stripes on forehead)",
-          "Different body proportions (first appears more compact, second more elongated)",
-          "Different background elements (first has more grass, second has more leaves and different ground texture)"
+          "Cat's posture: first image shows a side profile with head turned, second is front-facing. (100)",
+          "Eyes: first image has one eye partially closed, second has both eyes wide open. (98)",
+          "Fur pattern: first image has more distinct dark stripes on body, second has lighter, less defined stripes. (100)",
+          "Background: first image has more grass and leaves, second has more bare ground and scattered leaves. (100)",
+          "Paws: first image shows one paw slightly raised, second has all paws on ground. (98)",
+          "Ears: first image has one ear slightly tilted, second has both ears upright and symmetrical. (98)"
         ],
-        "overall_human_similarity": 2,
+        "overall_human_similarity": 3,
         "same_composition": 2,
-        "same_identity": 2,
+        "same_identity": 3,
         "same_mood": 3,
         "same_scene": 4
       },
@@ -124,11 +131,18 @@
     {
       "id": "cat-on-grass-detailed",
       "judge": {
-        "differences": [],
-        "overall_human_similarity": 5,
-        "same_composition": 5,
-        "same_identity": 5,
-        "same_mood": 5,
+        "differences": [
+          "Cat's belly is white in second image but not in first (invented detail).",
+          "Second image shows more exposed soil/less grass in background.",
+          "Cat's posture differs: first has head tilted up, second has head resting down.",
+          "Tail pattern is less distinct in second image (blacker stripes vs first's brown).",
+          "Eyes are closed in second image but open in first.",
+          "Paw positions differ: front paws splayed differently in second image."
+        ],
+        "overall_human_similarity": 2,
+        "same_composition": 2,
+        "same_identity": 3,
+        "same_mood": 3,
         "same_scene": 5
       },
       "metrics": {
@@ -148,11 +162,18 @@
     {
       "id": "cat-on-grass",
       "judge": {
-        "differences": [],
-        "overall_human_similarity": 5,
-        "same_composition": 5,
-        "same_identity": 5,
-        "same_mood": 5,
+        "differences": [
+          "Cat's body orientation is flipped (head/tail reversed) in second image",
+          "Second image shows cat's face clearly while first shows back of head",
+          "Tail pattern and position differ significantly (first has striped tail, second has dark tip)",
+          "Paw positions are different (first has front paws extended, second has one bent)",
+          "Grass texture and color variation differ (first is more uniform green, second has more dry patches)",
+          "Cat's fur pattern details (e.g., spot shapes) are not identical between images"
+        ],
+        "overall_human_similarity": 3,
+        "same_composition": 3,
+        "same_identity": 4,
+        "same_mood": 4,
         "same_scene": 5
       },
       "metrics": {
@@ -172,11 +193,18 @@
     {
       "id": "cat-on-keyboard-detailed",
       "judge": {
-        "differences": [],
-        "overall_human_similarity": 5,
-        "same_composition": 5,
-        "same_identity": 5,
-        "same_mood": 5,
+        "differences": [
+          "Kitten's head position and orientation are different (first: head down on keyboard, second: head resting on keyboard with eyes closed differently).",
+          "First image has a white keyboard with visible keys (e.g., 'F', '1', '2', '3'), second image has a different keyboard layout with no visible key labels.",
+          "First image shows a wooden desk with a pen and cable, second image has a different desk background and a different pen (yellow tip vs. black/yellow).",
+          "Kitten's fur pattern and coloration differ (first: more brown/gray stripes, second: darker stripes with more white on face).",
+          "First image has a visible computer monitor edge, second image shows a different monitor style (white vs. gray).",
+          "Kitten's paws and tail positions are different (first: paws on keyboard, tail curled; second: one paw on keyboard, tail extended)."
+        ],
+        "overall_human_similarity": 2,
+        "same_composition": 2,
+        "same_identity": 3,
+        "same_mood": 3,
         "same_scene": 5
       },
       "metrics": {
@@ -196,12 +224,19 @@
     {
       "id": "cat-on-keyboard",
       "judge": {
-        "differences": [],
-        "overall_human_similarity": 5,
-        "same_composition": 5,
-        "same_identity": 5,
-        "same_mood": 5,
-        "same_scene": 5
+        "differences": [
+          "Cat's body position and orientation are different (curled vs. stretched).",
+          "Keyboard layout and key labels differ (e.g., 'F1' vs. 'F2' placement).",
+          "Background objects: first has multiple pens, second has one pen and a monitor base.",
+          "Cat's ear shape and fur pattern details differ (e.g., ear size, stripe patterns).",
+          "Lighting and color tone: first is warmer, second is cooler and more even.",
+          "Cat's paws: first has one paw on keyboard, second has both paws on keyboard."
+        ],
+        "overall_human_similarity": 3,
+        "same_composition": 2,
+        "same_identity": 2,
+        "same_mood": 3,
+        "same_scene": 4
       },
       "metrics": {
         "aspect_similarity": 1.0,
@@ -221,9 +256,14 @@
       "id": "dogs-beach-expanded",
       "judge": {
         "differences": [
-          "The brindle dog's tail is curled upward in the second image instead of being straight and slightly curved downward in the first. The brindle dog's posture is more upright in the second image, with legs positioned differently. The black dog's tail is straighter and less curved in the second image. The background rocks and water appear slightly different in texture and color. The sand texture and the amount of sand kicked up are different. The brindle dog's mouth is open wider in the second image, and the expression is slightly different."
+          "The brindle dog's tail is curled upward in the second image instead of hanging down as in the original.",
+          "The black dog's tail is straight in the second image, whereas it was curved in the original.",
+          "The brindle dog's posture is more upright in the second image, with legs positioned differently.",
+          "The background rocks and water appear less detailed and slightly blurred in the second image.",
+          "The sand texture and motion blur differ, with the second image showing more uniform sand and less dynamic movement.",
+          "The brindle dog's mouth is open wider in the second image, altering the expression slightly."
         ],
-        "overall_human_similarity": 4,
+        "overall_human_similarity": 3,
         "same_composition": 3,
         "same_identity": 4,
         "same_mood": 4,
@@ -246,12 +286,19 @@
     {
       "id": "food-table-expanded",
       "judge": {
-        "differences": [],
-        "overall_human_similarity": 5,
-        "same_composition": 5,
-        "same_identity": 5,
-        "same_mood": 5,
-        "same_scene": 5
+        "differences": [
+          "Skewers are now in a single dense cluster (not fanned out), and the number/arrangement of skewers differs significantly.",
+          "The large white bowl with mixed beans/peas is replaced by a bowl of chickpeas with red peppers.",
+          "The blue glass containers are now two small vases (not one large and one small), and their position is different.",
+          "The background shows a different kitchen setup (cabinets, fridge, window) with a more rustic feel.",
+          "The salad in the wooden bowl has a different composition (more green, less visible ingredients).",
+          "The small dish with three dips has different contents (e.g., white dip instead of orange in one section)."
+        ],
+        "overall_human_similarity": 3,
+        "same_composition": 2,
+        "same_identity": 3,
+        "same_mood": 3,
+        "same_scene": 4
       },
       "metrics": {
         "aspect_similarity": 1.0,
@@ -268,24 +315,149 @@
       "source": "survey/sources/food-table.jpg"
     },
     {
+      "id": "kitchen-table-expanded",
+      "judge": {
+        "differences": [
+          "Bread is now a single loaf on a round board (was multiple loaves on a flat board).",
+          "Egg jar now has 'MASON' text (was clear with no text).",
+          "Utensil container now holds 4 items (spoon, whisk, 2 spoons) vs 7+ in original.",
+          "Two dark egg cups replaced by two brown egg cups.",
+          "Bucket now has a handle (was handleless in original).",
+          "Lace cover now on a small container (was on a larger one)."
+        ],
+        "overall_human_similarity": 3,
+        "same_composition": 2,
+        "same_identity": 3,
+        "same_mood": 3,
+        "same_scene": 4
+      },
+      "metrics": {
+        "aspect_similarity": 0.999632,
+        "critical_text_recall": 1.0,
+        "dhash_similarity": 0.59375,
+        "edge_similarity": 0.963562,
+        "histogram_similarity": 0.666951,
+        "layout_score": 0.765576,
+        "palette_distance": 0.066808,
+        "visual_proxy_score": 0.750555
+      },
+      "reconstruction": "survey/reconstructions/kitchen-table-expanded.png",
+      "result": "survey/results/kitchen-table-expanded.json",
+      "source": "survey/sources/kitchen-table.jpg"
+    },
+    {
+      "id": "living-room-expanded",
+      "judge": {
+        "differences": [
+          "Lamp arm structure: first has multiple joints and visible wiring; second has simplified, fewer joints and cleaner design.",
+          "Book text: first shows partial title; second shows full title 'THE BEST INTERFACE IS NO INTERFACE' with subtitle and logo.",
+          "Table top: first has rough, natural wood edge; second has smoother, more uniform wood surface.",
+          "Lamp base: first has circular base with visible mounting; second has larger, more modern base with screw detail.",
+          "Wiring: first has black wire with visible plug; second has wire without plug, running straight down.",
+          "Flooring: first shows wooden floor with visible planks; second shows floor with less distinct planks and different lighting."
+        ],
+        "overall_human_similarity": 4,
+        "same_composition": 4,
+        "same_identity": 5,
+        "same_mood": 4,
+        "same_scene": 5
+      },
+      "metrics": {
+        "aspect_similarity": 0.998373,
+        "critical_text_recall": 1.0,
+        "dhash_similarity": 0.46875,
+        "edge_similarity": 0.947632,
+        "histogram_similarity": 0.656637,
+        "layout_score": 0.691858,
+        "palette_distance": 0.042651,
+        "visual_proxy_score": 0.700336
+      },
+      "reconstruction": "survey/reconstructions/living-room-expanded.png",
+      "result": "survey/results/living-room-expanded.json",
+      "source": "survey/sources/living-room.jpg"
+    },
+    {
+      "id": "mountain-hikers-expanded",
+      "judge": {
+        "differences": [
+          "The number of people changed (4 in original vs 3 in regenerated).",
+          "The person with the walking stick is now wearing a hood instead of a beanie.",
+          "The mountain peaks in the background are different (original has hazy layers, regenerated has sharp snow-capped peaks).",
+          "The foreground rocks and terrain are significantly altered (original has large boulders, regenerated has more grassy slopes).",
+          "The sky is brighter and bluer in the regenerated image, with different cloud patterns.",
+          "The snow patches on the mountains are in different locations and more extensive in the regenerated image."
+        ],
+        "overall_human_similarity": 3,
+        "same_composition": 2,
+        "same_identity": 3,
+        "same_mood": 3,
+        "same_scene": 4
+      },
+      "metrics": {
+        "aspect_similarity": 0.999283,
+        "critical_text_recall": 1.0,
+        "dhash_similarity": 0.59375,
+        "edge_similarity": 0.953918,
+        "histogram_similarity": 0.717814,
+        "layout_score": 0.76263,
+        "palette_distance": 0.099134,
+        "visual_proxy_score": 0.763833
+      },
+      "reconstruction": "survey/reconstructions/mountain-hikers-expanded.png",
+      "result": "survey/results/mountain-hikers-expanded.json",
+      "source": "survey/sources/mountain-hikers.jpg"
+    },
+    {
+      "id": "street-bicycles-expanded",
+      "judge": {
+        "differences": [
+          "Bike count: 5 in second vs 6 in first image (leftmost yellow bike partially visible in first, fully visible in second).",
+          "Bike baskets: first has blue/white '\u0412\u0422\u0411' labels with white text; second has solid blue labels with white text (no white stripes).",
+          "Bike numbers: first has no visible numbers; second has numbers like '2299' on frames.",
+          "Bike design: first has black handlebar grips; second has silver/gray grips.",
+          "Background: first has a stone curb with greenery; second has a smooth, uniform green background.",
+          "Bike wheels: first has black tires with silver rims; second has black tires with orange accents on rims."
+        ],
+        "overall_human_similarity": 3,
+        "same_composition": 3,
+        "same_identity": 5,
+        "same_mood": 4,
+        "same_scene": 5
+      },
+      "metrics": {
+        "aspect_similarity": 1.0,
+        "critical_text_recall": 1.0,
+        "dhash_similarity": 0.53125,
+        "edge_similarity": 0.964233,
+        "histogram_similarity": 0.590922,
+        "layout_score": 0.731457,
+        "palette_distance": 0.063538,
+        "visual_proxy_score": 0.706061
+      },
+      "reconstruction": "survey/reconstructions/street-bicycles-expanded.png",
+      "result": "survey/results/street-bicycles-expanded.json",
+      "source": "survey/sources/street-bicycles.jpg"
+    },
+    {
       "id": "train-platform-expanded",
       "judge": {
         "differences": [
-          "The second image is a text-generated image with no specific individuals, only generic people in a train station setting",
-          "The original has specific people (e.g., the man in the suit with a briefcase, the woman beside him) which are not present in the text-generated image",
-          "The text-generated image lacks the specific details of the original, such as the platform number signs, the train tracks, and the exact arrangement of people",
-          "The lighting and atmosphere in the text-generated image are generic and do not match the specific nighttime, dimly lit mood of the original",
-          "The text-generated image has a different composition with people arranged differently and no clear platform or train tracks visible"
+          "The man in the center is a different person (face, posture, and suit style differ).",
+          "The platform sign text is altered (e.g., 'for Tokyo Ueno & Komagome' vs. original Japanese/English mix).",
+          "The background lighting and train tracks are less detailed and have different light sources.",
+          "The two men on the right are in different positions (one is now facing forward, not side profile).",
+          "The platform edge and safety markings are different (e.g., yellow line vs. original pattern).",
+          "The foreground blur on the right is a different object (e.g., a pole vs. a person's shoulder)."
         ],
-        "overall_human_similarity": 1,
-        "same_composition": 1,
-        "same_identity": 1,
-        "same_mood": 1,
+        "overall_human_similarity": 3,
+        "same_composition": 3,
+        "same_identity": 4,
+        "same_mood": 4,
         "same_scene": 5
       },
       "metrics": {
         "aspect_similarity": 0.999469,
-        "critical_text_recall": null,
+        "critical_text_recall": 1.0,
         "dhash_similarity": 0.5625,
         "edge_similarity": 0.986084,
         "histogram_similarity": 0.57076,
@@ -301,11 +473,12 @@
       "id": "workspace-books-expanded",
       "judge": {
         "differences": [
-          "Book spines in top row: some text on spines is different (e.g., 'C' vs 'C' on red book, 'H' vs 'H' on orange book, and other minor text variations on other spines)",
-          "iPod mini brochure: text on brochure is slightly different (e.g., 'iPod - iPod mini' vs 'iPod - iPod mini' with different spacing/arrangement of text)",
-          "Pencil eraser: the eraser on the pencil is slightly different in shape/position",
-          "Smartphone screen: app icons on smartphone screen are slightly different in arrangement and some icons are different",
-          "Notebook grid: the grid lines on the notebook paper are slightly different in thickness/spacing"
+          "Book spines: 'Cafe' and 'C' replaced with 'JEBY' and 'E' (2nd image).",
+          "iPod mini brochure: 'iPod + iPod mini' text changed to 'iPod - iPod mini' (2nd image).",
+          "Pencil eraser: gray in 1st, white in 2nd image.",
+          "Laptop keyboard: 1st has 'fn' key visible, 2nd does not.",
+          "Phone screen: app icons slightly different (2nd image).",
+          "Notebook grid: 1st has faint lines, 2nd is cleaner (2nd image)."
         ],
         "overall_human_similarity": 4,
         "same_composition": 5,
@@ -315,7 +488,7 @@
       },
       "metrics": {
         "aspect_similarity": 0.999303,
-        "critical_text_recall": null,
+        "critical_text_recall": 1.0,
         "dhash_similarity": 0.96875,
         "edge_similarity": 0.998718,
         "histogram_similarity": 0.878092,
@@ -329,12 +502,12 @@
     }
   ],
   "spearman_vs_overall_human_similarity": {
-    "aspect_similarity": 0.532,
-    "dhash_similarity": -0.16,
-    "edge_similarity": -0.392,
-    "histogram_similarity": -0.377,
-    "layout_score": -0.07,
-    "palette_distance": -0.725,
-    "visual_proxy_score": -0.468
+    "aspect_similarity": -0.234,
+    "dhash_similarity": 0.007,
+    "edge_similarity": 0.389,
+    "histogram_similarity": 0.123,
+    "layout_score": 0.048,
+    "palette_distance": 0.287,
+    "visual_proxy_score": 0.007
   }
 }
