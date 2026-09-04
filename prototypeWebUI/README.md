@@ -34,7 +34,9 @@ uv run python prototypeWebUI/server.py --vision-host http://your-ollama-host:114
 Drag an image in (or click, or paste from the clipboard), pick a fidelity profile, press
 **Analyze image**, wait, then press **Generate image**. The prompt box is editable before you
 generate — that is the one genuinely nice property of a codec whose compressed form is readable
-text.
+text. The page shows an expected generation time while it waits and the measured elapsed time
+when the request finishes. It follows the operating-system color preference on first load and
+offers a persistent light/dark toggle in the header.
 
 ## About that "free Google image API"
 

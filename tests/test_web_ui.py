@@ -33,6 +33,15 @@ def test_file_page_targets_local_backend_without_unsafe_html() -> None:
     page = web.INDEX.read_text(encoding="utf-8")
     assert 'location.protocol === "file:" ? "http://127.0.0.1:8000"' in page
     assert ".innerHTML" not in page
+    assert 'aria-label="Workflow: image to prompt to new image"' in page
+    assert "IMAGE <small>your source</small>" in page
+    assert "PROMPT <small>editable text</small>" in page
+    assert "NEW IMAGE <small>invented pixels</small>" in page
+    assert "performance.now()" in page
+    assert "Usually about 40 seconds" in page
+    assert 'id="theme"' in page
+    assert 'data-theme="dark"' in page
+    assert 'localStorage.setItem("llmpeg-theme", theme)' in page
 
 
 def test_config_defaults_to_codex(monkeypatch: pytest.MonkeyPatch) -> None:
