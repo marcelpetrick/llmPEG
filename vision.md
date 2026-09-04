@@ -81,9 +81,12 @@ article concept,” not a readable duplicate.
 
 ## Artifact and size budget
 
-The encoded `.llmpeg.json` file contains a schema version, fidelity profile, source dimensions,
-generation prompt, critical verbatim text, normalized composition regions, palette, and model
-provenance. It does not embed the source image. Canonical compact JSON makes byte counts stable.
+The encoded `.llmpeg.json` file opens with a versioned format header — magic, format version,
+brands, encoder, and the decoder it requires — followed by the fidelity profile, source
+dimensions, generation prompt, critical verbatim text, normalized composition regions, palette,
+and model provenance. It does not embed the source image. Canonical compact JSON makes byte counts
+stable, and the header costs a constant 209 bytes that every reported ratio is charged for. See
+[docs/format.md](docs/format.md).
 
 Budgets are deliberately tied to source size:
 
@@ -93,6 +96,62 @@ Budgets are deliberately tied to source size:
 
 If critical text exceeds a profile’s budget, the encoder must fail clearly or require the user to
 choose what to drop. It must not silently discard facts to manufacture an impressive ratio.
+
+## Standing requirements
+
+Constraints set by the project owner. They are recorded here because they are decisions, not
+preferences to be re-derived each session.
+
+**Identity and framing**
+
+- The name is the thesis: **llmPEG**, the *LLM Photo Expert Group*, against JPEG's Joint
+  Photographic Experts Group. The pun must stay legible in the README.
+- The project is a **meme built for real**. Lead with the joke, then the measured prototype, then
+  the applicable background. It can be done — and the interesting part is where it breaks.
+- Say **TOTALLY LOSSY**, loudly and above the fold. Never let a reader assume otherwise.
+- The package, CLI, and artifact extension are all `llmpeg`. The original name was PromptPress and
+  survives only in early commit messages.
+
+**Licensing and attribution**
+
+- **GPLv3 or later.** Author: Marcel Petrick <mail@marcelpetrick.it>. The README carries a bold
+  author / AI-generated / licence block.
+- **Every benchmark and survey image must be freely licensed** (CC0 or public domain) with its
+  author, licence, and source URL read from the source record — never guessed. Say so in the
+  README. An image whose provenance cannot be verified is labelled unverified rather than quietly
+  credited or quietly dropped.
+
+**Format**
+
+- The artifact carries a **versioned header** so a reader knows which tooling can decode it,
+  modelled on how real image formats do metadata. See [docs/format.md](docs/format.md).
+- **Output must always conform.** The encoder cannot emit a file that does not parse back as a
+  valid artifact; conformance is enforced in code, not documented and hoped for.
+
+**Documentation**
+
+- A **mermaid data-flow diagram for non-technical readers**, compression through "decompression".
+- A **copy-pasteable folder round trip**: convert a whole folder of photos, restore it, with real
+  wall-clock timing so a new user knows what they are in for.
+- Benchmarks report **how long a full cycle takes** and **how close the result is**.
+- CI, licence, and coverage **badges** in the README.
+
+**Engineering**
+
+- **Python 3.14** baseline.
+- **Conventional Commits**, reviewed and corrected rather than assumed.
+- Dependencies **pinned exactly** and kept at the latest stable release.
+- A **GitHub Action builds the wheel** and attaches release artifacts.
+- Everything must fit **current best standards**; when a gate cannot pass, say so rather than
+  claiming green.
+
+**Method**
+
+- Prefer **free** image generation. Paid credits are not assumed to exist; Pollinations needs no
+  key, and the Codex CLI's built-in tool is used when it is available.
+- Improvement work is **iterative and auditable**: every claim traceable to a checked-in record a
+  reader can recompute, and **negative results published as prominently as positive ones**.
+- Use **smaller models for parallel agent work** where it is applicable.
 
 ## Principles and non-goals
 

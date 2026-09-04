@@ -38,8 +38,8 @@ the same idea.
 
 ```mermaid
 flowchart LR
-    A["📷 Your photo<br/>800 KB"] -->|"a vision model<br/>looks at it"| B["📝 A description<br/>1 KB of text"]
-    B --> C["💾 You keep ONLY this<br/>800x smaller"]
+    A["📷 Your photo<br/>800 KB"] -->|"a vision model<br/>looks at it"| B["📝 A description<br/>1.2 KB of text"]
+    B --> C["💾 You keep ONLY this<br/>660x smaller"]
     A -.->|"the original is<br/>thrown away"| D["🗑️ Gone forever"]
     C -->|"later, an image model<br/>reads the description"| E["🎨 A NEW picture<br/>painted from words"]
     E --> F["👀 The same scene —<br/>but not the same photo"]
@@ -85,14 +85,14 @@ Doing this to a photo you took yourself makes the point faster than any table be
 | Measurement | Result |
 | --- | ---: |
 | Source JPEG | 799,983 bytes |
-| Semantic artifact | 997 bytes |
-| **Compression ratio** | **802:1** |
-| Size reduction | 99.88% |
+| Semantic artifact | 1,206 bytes |
+| **Compression ratio** | **663:1** |
+| Size reduction | 99.85% |
 | Visual proxy score | 0.595 (pass, `balanced`) |
 | Layout score | 0.706 (pass) |
 | dHash similarity | 0.500 |
 
-**802:1.** That is the whole seduction of the idea, and it is real — 997 bytes of text stood in
+**663:1.** That is the whole seduction of the idea, and it is real — 1,206 bytes of text stood in
 for an 800 KB photograph, and what comes back is unmistakably a cat stretched out on grass.
 
 Now the catch: it is **not the same cat**. The markings are invented, the pose is approximate, the
@@ -113,8 +113,8 @@ alone — the generator never saw the source.
 | Measurement | Result |
 | --- | ---: |
 | Source JPEG | 123,585 bytes |
-| Semantic artifact | 3,334 bytes |
-| Size reduction | 97.30% (37:1) |
+| Semantic artifact | 3,543 bytes |
+| Size reduction | 97.13% (35:1) |
 | Visual proxy score | 0.770 (pass) |
 | Layout score | 0.812 (pass) |
 | Palette distance | 0.059 (pass; lower is better) |
@@ -148,7 +148,7 @@ exact prompts, source/license links, 1–5 human-rating controls, and JSON expor
 The codec reliably preserved "what kind of cat is doing what, where?" It did not preserve the same
 cat, exact markings, fur texture, or pixels.
 
-The [detailed identity survey](survey/detailed.html) repeats the experiment with 2.3–3.0 KB
+The [detailed identity survey](survey/detailed.html) repeats the experiment with 2.5–3.2 KB
 artifacts carrying subject bounds, pose landmarks, marking boundaries, and camera geometry. It
 improves two visual-proxy scores and slightly lowers one — extra detail helps selectively rather
 than guaranteeing identity.
@@ -206,6 +206,9 @@ benchmark produced a **1,275-byte** artifact where the checked-in run produced *
 627:1 instead of 802:1, from the same image, the same model name, the same seed `42` and
 temperature `0`. The compression ratio is not a property of your photo. It is a property of one
 particular run of one particular model, and it moves by 28% between runs.
+
+(Both figures predate the 209-byte format header, so they are comparable with each other but not
+with the tables above. The header is a constant and does not affect the spread.)
 
 ### Does the score match a human eye? We still cannot say.
 

@@ -57,6 +57,9 @@ def build_parser() -> argparse.ArgumentParser:
     inspect = subparsers.add_parser("inspect", help="show artifact sizes and provenance")
     inspect.add_argument("artifact", type=Path)
 
+    verify = subparsers.add_parser("verify", help="check a file conforms to the llmPEG format")
+    verify.add_argument("artifact", type=Path)
+
     evaluate = subparsers.add_parser("evaluate", help="compare source and reconstruction")
     evaluate.add_argument("source", type=Path)
     evaluate.add_argument("reconstruction", type=Path)
@@ -105,6 +108,17 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(f"size ratio: {source_size / artifact_size:.2f}:1")
             print(f"saved: {(1 - artifact_size / source_size) * 100:.2f}%")
             print(f"encoder: {artifact.provenance.provider}/{artifact.provenance.model}")
+        elif args.command == "verify":
+            artifact = Artifact.read(args.artifact)
+            header = artifact.header
+            print(f"{header.magic} {header.format_version} ({header.major_brand})")
+            print(f"compatible brands: {', '.join(header.compatible_brands)}")
+            print(f"written by: {header.encoder}")
+            print(f"needs reader: llmpeg >= {header.min_reader_version}")
+            print(f"decoder: {header.decoder}")
+            print(f"profile: {artifact.profile.value}")
+            print(f"encoder model: {artifact.provenance.provider}/{artifact.provenance.model}")
+            print("conforms: yes")
         elif args.command == "evaluate":
             artifact = Artifact.read(args.artifact)
             ocr_text = args.ocr_text.read_text(encoding="utf-8") if args.ocr_text else None

@@ -4,6 +4,8 @@ from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
 
+import pytest
+
 from llmpeg.artifact import Artifact, SourceInfo, source_digest
 from llmpeg.cli import main
 
@@ -103,3 +105,19 @@ def test_evaluate_cli_returns_status_exit_code(
     wrong = tmp_path / "wrong.txt"
     wrong.write_text("wrong")
     assert main([*base, "--ocr-text", str(wrong)]) == 1
+
+
+def test_verify_reports_conformance_and_rejects_foreign_json(
+    artifact: Artifact, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    good = tmp_path / "good.llmpeg.json"
+    artifact.write(good)
+    assert main(["verify", str(good)]) == 0
+    out = capsys.readouterr().out
+    assert "llmPEG 1.0 (lpg1)" in out
+    assert "conforms: yes" in out
+
+    foreign = tmp_path / "foreign.json"
+    foreign.write_text('{"hello": "world"}', encoding="utf-8")
+    assert main(["verify", str(foreign)]) == 2
+    assert "not an llmPEG artifact" in capsys.readouterr().err

@@ -14,16 +14,16 @@ per-case licensing.
 
 | Case | Source bytes | Artifact bytes | Ratio | Visual proxy | Layout | Palette dist. | Text recall | Verdict |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| astronaut-crew | 640,005 | 3,276 | 195:1 | 0.732 | 0.770 | 0.054 | 0.50 | **fail** |
-| food-table | 379,957 | 2,028 | 187:1 | 0.639 | 0.681 | 0.162 | 1.00 | pass |
-| amsterdam-market | 742,058 | 2,920 | 254:1 | 0.718 | 0.661 | 0.069 | 1.00 | pass |
-| train-platform | 333,386 | 3,721 | 90:1 | 0.715 | 0.755 | 0.049 | 1.00 | pass |
-| workspace-books | 541,310 | 2,980 | 182:1 | 0.952 | 0.982 | 0.028 | 1.00 | pass |
-| dogs-beach | 533,079 | 2,752 | 194:1 | 0.693 | 0.661 | 0.058 | 1.00 | pass |
-| mountain-hikers | 800,010 | 2,399 | 333:1 | 0.764 | 0.763 | 0.099 | 1.00 | pass |
-| street-bicycles | 1,299,141 | 3,964 | 328:1 | 0.706 | 0.731 | 0.064 | 1.00 | pass |
-| kitchen-table | 548,012 | 3,014 | 182:1 | 0.751 | 0.766 | 0.067 | 1.00 | pass |
-| living-room | 251,650 | 3,439 | 73:1 | 0.700 | 0.692 | 0.043 | 1.00 | pass |
+| astronaut-crew | 640,005 | 3,485 | 184:1 | 0.732 | 0.770 | 0.054 | 0.50 | **fail** |
+| food-table | 379,957 | 2,237 | 170:1 | 0.639 | 0.681 | 0.162 | 1.00 | pass |
+| amsterdam-market | 742,058 | 3,129 | 237:1 | 0.718 | 0.661 | 0.069 | 1.00 | pass |
+| train-platform | 333,386 | 3,930 | 85:1 | 0.715 | 0.755 | 0.049 | 1.00 | pass |
+| workspace-books | 541,310 | 3,189 | 170:1 | 0.952 | 0.982 | 0.028 | 1.00 | pass |
+| dogs-beach | 533,079 | 2,961 | 180:1 | 0.693 | 0.661 | 0.058 | 1.00 | pass |
+| mountain-hikers | 800,010 | 2,608 | 307:1 | 0.764 | 0.763 | 0.099 | 1.00 | pass |
+| street-bicycles | 1,299,141 | 4,173 | 311:1 | 0.706 | 0.731 | 0.064 | 1.00 | pass |
+| kitchen-table | 548,012 | 3,223 | 170:1 | 0.751 | 0.766 | 0.067 | 1.00 | pass |
+| living-room | 251,650 | 3,648 | 69:1 | 0.700 | 0.692 | 0.043 | 1.00 | pass |
 
 | Aggregate | Value |
 | --- | ---: |
@@ -52,8 +52,11 @@ it did not improve with the four new cases.
 small lettering — scores 0.952 visual proxy, still the best result anywhere in this repository.
 
 **Difficulty tracks scene busyness, not file size.** `living-room` has the smallest source
-(251 KB) and the worst ratio (73:1); `mountain-hikers` has the largest (800 KB) and the best
-(333:1). A near-empty corner needs more words per byte of source than a mountain does.
+(251 KB) and the worst ratio (69:1); `mountain-hikers` has the largest (800 KB) and the best
+(307:1). A near-empty corner needs more words per byte of source than a mountain does.
+
+All ratios above include the 209-byte format header introduced in format 1.0; earlier revisions
+of this table quoted figures without it.
 
 ## Two caveats about the text-recall figure
 

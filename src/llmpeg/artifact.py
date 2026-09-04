@@ -13,12 +13,144 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Any, Self
 
-SCHEMA_VERSION = 1
+HEADER_KEY = "llmpeg"
+MAGIC = "llmPEG"
+
+# Container format version. Major changes are breaking: a reader that does not
+# know the major refuses the file. Minor changes are additive: a reader accepts
+# a higher minor and ignores fields it does not know, the way PNG lets decoders
+# skip ancillary chunks.
+FORMAT_MAJOR = 1
+FORMAT_MINOR = 0
+FORMAT_VERSION = f"{FORMAT_MAJOR}.{FORMAT_MINOR}"
+
+# Brands follow the ISO base media file format idea used by AVIF and HEIF: the
+# major brand is the specification this file claims to follow, and the
+# compatible brands list every specification a reader may use to interpret it.
+MAJOR_BRAND = "lpg1"
+COMPATIBLE_BRANDS: tuple[str, ...] = ("lpg1",)
+
+CODEC_NAME = "llmpeg"
+CODEC_VERSION = "0.1.0"
+MIN_READER_VERSION = "0.1.0"
+
+# Stated plainly so nobody mistakes this container for something self-contained:
+# reconstruction needs an external text-to-image model and never returns pixels.
+DECODER_REQUIREMENT = "text-to-image model; lossy; non-deterministic; not bundled"
+
+# Artifacts written before the header existed carried a bare `schema_version: 1`.
+LEGACY_SCHEMA_VERSION = 1
+
+FORMAT_VERSION_PATTERN = re.compile(r"^(\d+)\.(\d+)$")
 HEX_COLOR = re.compile(r"^#[0-9a-fA-F]{6}$")
 
 
 class ArtifactError(ValueError):
     """Raised when an artifact is invalid or cannot be safely written."""
+
+
+class UnsupportedFormatError(ArtifactError):
+    """Raised when a file was written by a newer, incompatible llmPEG format."""
+
+
+@dataclass(frozen=True)
+class FormatHeader:
+    """Identifies the container so a reader knows whether it can decode it.
+
+    This is the JSON equivalent of a magic number plus a version field: PNG's
+    signature, GIF's `GIF89a`, PDF's `%PDF-1.7`, and the `ftyp` box that AVIF
+    and HEIF use to declare which specification a decoder needs.
+    """
+
+    magic: str = MAGIC
+    format_version: str = FORMAT_VERSION
+    major_brand: str = MAJOR_BRAND
+    compatible_brands: tuple[str, ...] = COMPATIBLE_BRANDS
+    encoder: str = f"{CODEC_NAME}/{CODEC_VERSION}"
+    min_reader_version: str = MIN_READER_VERSION
+    decoder: str = DECODER_REQUIREMENT
+
+    @property
+    def version_tuple(self) -> tuple[int, int]:
+        """Return the format version as (major, minor)."""
+        match = FORMAT_VERSION_PATTERN.fullmatch(self.format_version)
+        if match is None:
+            raise ArtifactError(f"format_version must be MAJOR.MINOR, got {self.format_version!r}")
+        return int(match.group(1)), int(match.group(2))
+
+    def validate(self) -> None:
+        """Validate the header and reject formats this build cannot read."""
+        if self.magic != MAGIC:
+            raise ArtifactError(f"not an llmPEG artifact: magic is {self.magic!r}")
+        major, _ = self.version_tuple
+        if major > FORMAT_MAJOR:
+            raise UnsupportedFormatError(
+                f"artifact uses format {self.format_version}; this build reads "
+                f"{FORMAT_MAJOR}.x and needs llmpeg >= {self.min_reader_version}"
+            )
+        if not self.major_brand.strip():
+            raise ArtifactError("major_brand must not be empty")
+        if self.major_brand not in self.compatible_brands:
+            raise ArtifactError("compatible_brands must include the major_brand")
+        for name, value in {
+            "encoder": self.encoder,
+            "min_reader_version": self.min_reader_version,
+            "decoder": self.decoder,
+        }.items():
+            if not value.strip():
+                raise ArtifactError(f"header {name} must not be empty")
+
+    def is_strict(self) -> bool:
+        """Unknown fields are an error unless the file comes from a newer minor."""
+        return self.version_tuple <= (FORMAT_MAJOR, FORMAT_MINOR)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Return the JSON-ready header."""
+        return {
+            "magic": self.magic,
+            "format_version": self.format_version,
+            "major_brand": self.major_brand,
+            "compatible_brands": list(self.compatible_brands),
+            "encoder": self.encoder,
+            "min_reader_version": self.min_reader_version,
+            "decoder": self.decoder,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> Self:
+        """Parse a header, tolerating unknown fields from a newer minor version."""
+        required = {
+            "magic",
+            "format_version",
+            "major_brand",
+            "compatible_brands",
+            "encoder",
+            "min_reader_version",
+            "decoder",
+        }
+        missing = required - set(data)
+        if missing:
+            raise ArtifactError(f"header keys missing={sorted(missing)}")
+        brands = _require_list(data["compatible_brands"], "header.compatible_brands")
+        header = cls(
+            magic=_require_string(data["magic"], "header.magic"),
+            format_version=_require_string(data["format_version"], "header.format_version"),
+            major_brand=_require_string(data["major_brand"], "header.major_brand"),
+            compatible_brands=tuple(
+                _require_string(brand, f"header.compatible_brands[{index}]")
+                for index, brand in enumerate(brands)
+            ),
+            encoder=_require_string(data["encoder"], "header.encoder"),
+            min_reader_version=_require_string(
+                data["min_reader_version"], "header.min_reader_version"
+            ),
+            decoder=_require_string(data["decoder"], "header.decoder"),
+        )
+        header.validate()
+        extra = set(data) - required
+        if extra and header.is_strict():
+            raise ArtifactError(f"header keys mismatch; extra={sorted(extra)}")
+        return header
 
 
 class FidelityProfile(StrEnum):
@@ -73,7 +205,7 @@ class Provenance:
 class Artifact:
     """The portable semantic representation of an image."""
 
-    schema_version: int
+    header: FormatHeader
     profile: FidelityProfile
     source: SourceInfo
     summary: str
@@ -87,10 +219,7 @@ class Artifact:
 
     def validate(self) -> None:
         """Validate all invariants of the current schema."""
-        if type(self.schema_version) is not int:
-            raise ArtifactError("schema_version must be an integer")
-        if self.schema_version != SCHEMA_VERSION:
-            raise ArtifactError(f"unsupported schema_version: {self.schema_version}")
+        self.header.validate()
         if any(
             type(value) is not int
             for value in (self.source.width, self.source.height, self.source.byte_size)
@@ -125,6 +254,8 @@ class Artifact:
         """Return the JSON-ready representation."""
         self.validate()
         data = asdict(self)
+        data[HEADER_KEY] = self.header.to_dict()
+        del data["header"]
         data["profile"] = self.profile.value
         data["critical_text"] = list(self.critical_text)
         data["composition"] = [asdict(region) for region in self.composition]
@@ -133,10 +264,16 @@ class Artifact:
         return data
 
     def to_bytes(self) -> bytes:
-        """Serialize to canonical compact UTF-8 JSON."""
-        return json.dumps(
-            self.to_dict(), ensure_ascii=False, separators=(",", ":"), sort_keys=True
-        ).encode("utf-8")
+        """Serialize to canonical compact UTF-8 JSON with the header first.
+
+        Key order is fixed rather than merely sorted so the magic is the first
+        thing in the file and `head -c 40` identifies it, the way a binary
+        format's signature sits at offset zero.
+        """
+        data = self.to_dict()
+        ordered: dict[str, Any] = {HEADER_KEY: data.pop(HEADER_KEY)}
+        ordered.update({key: _deep_sorted(data[key]) for key in sorted(data)})
+        return json.dumps(ordered, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
 
     def enforce_budget(self) -> None:
         """Raise when the canonical artifact exceeds its profile's size budget."""
@@ -148,8 +285,13 @@ class Artifact:
             )
 
     def write(self, path: Path, *, overwrite: bool = False) -> None:
-        """Atomically write an artifact without overwriting by default."""
+        """Atomically write an artifact without overwriting by default.
+
+        The serialized bytes are parsed back before anything touches the disk, so
+        the tool can never emit a file that does not conform to its own format.
+        """
         self.enforce_budget()
+        _verify_round_trip(self)
         path = path.resolve()
         path.parent.mkdir(parents=True, exist_ok=True)
         if path.exists() and not overwrite:
@@ -178,8 +320,18 @@ class Artifact:
     def from_dict(cls, data: dict[str, Any]) -> Self:
         """Parse and validate an artifact dictionary."""
         try:
+            if HEADER_KEY in data:
+                header = FormatHeader.from_dict(_require_mapping(data[HEADER_KEY], HEADER_KEY))
+            elif data.get("schema_version") == LEGACY_SCHEMA_VERSION:
+                # Written before the header existed. It is upgraded to the current
+                # format on read, so anything this tool writes conforms; the unknown
+                # encoder is what records that the original predated the header.
+                header = FormatHeader(encoder=f"{CODEC_NAME}/unknown")
+            else:
+                raise ArtifactError(
+                    f"missing {HEADER_KEY!r} header: this is not an llmPEG artifact"
+                )
             required = {
-                "schema_version",
                 "profile",
                 "source",
                 "summary",
@@ -191,7 +343,16 @@ class Artifact:
                 "avoid",
                 "provenance",
             }
-            _require_keys(data, required, "artifact")
+            body = {
+                key: value
+                for key, value in data.items()
+                if key not in {HEADER_KEY, "schema_version"}
+            }
+            missing, extra = required - set(body), set(body) - required
+            if missing or (extra and header.is_strict()):
+                raise ArtifactError(
+                    f"artifact keys mismatch; missing={sorted(missing)}, extra={sorted(extra)}"
+                )
             source = _require_mapping(data["source"], "source")
             _require_keys(
                 source, {"width", "height", "byte_size", "media_type", "sha256"}, "source"
@@ -210,7 +371,7 @@ class Artifact:
                     )
                 )
             artifact = cls(
-                schema_version=_require_integer(data["schema_version"], "schema_version"),
+                header=header,
                 profile=FidelityProfile(_require_string(data["profile"], "profile")),
                 source=SourceInfo(
                     _require_integer(source["width"], "source.width"),
@@ -255,6 +416,15 @@ class Artifact:
 def source_digest(content: bytes) -> str:
     """Return a lowercase SHA-256 digest for source bytes."""
     return hashlib.sha256(content).hexdigest()
+
+
+def _deep_sorted(value: Any) -> Any:
+    """Recursively sort mapping keys so serialization is byte-stable."""
+    if isinstance(value, dict):
+        return {key: _deep_sorted(value[key]) for key in sorted(value)}
+    if isinstance(value, list):
+        return [_deep_sorted(item) for item in value]
+    return value
 
 
 def _require_keys(data: dict[str, Any], expected: set[str], context: str) -> None:
@@ -306,3 +476,14 @@ def _string_tuple(value: Any, name: str) -> tuple[str, ...]:
         _require_string(item, f"{name}[{index}]")
         for index, item in enumerate(_require_list(value, name))
     )
+
+
+def _verify_round_trip(artifact: Artifact) -> None:
+    """Fail before writing if the encoded bytes do not parse back identically."""
+    encoded = artifact.to_bytes()
+    try:
+        reparsed = Artifact.from_dict(json.loads(encoded.decode("utf-8")))
+    except (ArtifactError, UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise ArtifactError(f"refusing to write a non-conforming artifact: {error}") from error
+    if reparsed.to_bytes() != encoded:
+        raise ArtifactError("refusing to write an artifact that does not round-trip")

@@ -11,10 +11,11 @@ from typing import Any
 from PIL import Image, UnidentifiedImageError
 
 from llmpeg.artifact import (
-    SCHEMA_VERSION,
+    HEADER_KEY,
     Artifact,
     ArtifactError,
     FidelityProfile,
+    FormatHeader,
     SourceInfo,
     source_digest,
 )
@@ -95,7 +96,7 @@ def _artifact_from_description(
         )
     return Artifact.from_dict(
         {
-            "schema_version": SCHEMA_VERSION,
+            HEADER_KEY: FormatHeader().to_dict(),
             "profile": profile.value,
             "source": asdict(source),
             **data,

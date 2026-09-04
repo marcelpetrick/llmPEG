@@ -7,9 +7,9 @@ import pytest
 from PIL import Image, ImageDraw
 
 from llmpeg.artifact import (
-    SCHEMA_VERSION,
     Artifact,
     FidelityProfile,
+    FormatHeader,
     Provenance,
     Region,
     SourceInfo,
@@ -46,7 +46,7 @@ def description() -> dict[str, Any]:
 @pytest.fixture
 def artifact() -> Artifact:
     return Artifact(
-        SCHEMA_VERSION,
+        FormatHeader(),
         FidelityProfile.DETAILED,
         SourceInfo(160, 120, 100_000, "image/png", "a" * 64),
         "Two rectangles on a navy field.",

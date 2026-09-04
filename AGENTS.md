@@ -33,6 +33,8 @@ Concretely:
   `"status": "fail"` on critical-text recall and that stays visible in the README.
 - Never let the encoder silently drop content to make a ratio look better. Over-budget output must
   fail closed. This is enforced in `artifact.py`, not just documented.
+- Every reported ratio includes the 209-byte format header. Do not quote a pre-header figure, and
+  do not quote a ratio against an original that was downscaled before encoding.
 
 ## Media rule
 
@@ -58,6 +60,7 @@ README, and is not part of the benchmark set. Do not add a second exception.
 | `examples/` | The flagship news-article demo: artifact, prompt, reconstruction, evaluation |
 | `survey/` | Reproduction surveys, sources, prompts, artifacts, results |
 | `docs/architecture.md` | C4 diagrams, system context down to components |
+| `docs/format.md` | Normative spec for the `.llmpeg.json` container and its header |
 | `docs/metrics.md` | Whether the metrics track a human eye (they do not) |
 | `docs/adversarial.md` | The GAN-shaped refinement loop and why it failed |
 | `scripts/` | Measurement tools: cycle timing, perceptual judge, adversarial loop |
@@ -102,6 +105,22 @@ the network, credentials, or a running model.
 - Output files are never overwritten without `--overwrite`.
 - Encoding uploads the full image to the configured endpoint. Treat that as a privacy boundary and
   keep it visible to the user.
+
+## The artifact format
+
+`.llmpeg.json` files open with a versioned `llmpeg` header — magic, format version, brands,
+encoder, `min_reader_version`, and the decoder they require. [`docs/format.md`](docs/format.md) is
+normative; read it before touching `artifact.py`.
+
+Rules that are easy to break by accident:
+
+- **Adding a field means bumping `FORMAT_MINOR`.** At the current version the reader is strict, so
+  an unversioned new key is rejected — which is the point.
+- **Removing or repurposing a field means bumping `FORMAT_MAJOR`** and adding a brand.
+- `Artifact.write()` re-parses its own bytes before writing, so a non-conforming artifact can
+  never reach disk. Do not weaken that check to make a test easier.
+- Legacy files (bare `schema_version: 1`, no header) stay readable and upgrade on read.
+- `llmpeg verify <file>` reports conformance and exits non-zero when a file does not conform.
 
 ## Commit messages
 
