@@ -4,10 +4,9 @@
 > All numbers are traceable to git history, cloc, and AGENTS.md.
 >
 > **Snapshot:** this measures the session up to commit `402e2f5` (31 commits, 46 tests, 93.3%
-> coverage). Work continued afterwards — the 3.14 baseline, the dependency upgrade, and the
-> measurement phase in [`plan.md`](plan.md) §6 — so the live repository now reports higher
-> counts. The figures below are deliberately left at their snapshot values rather than being
-> re-measured piecemeal, which would mix two different sessions into one set of numbers.
+> coverage). Work continued afterwards—the 3.14 baseline, dependency upgrades, measurement and
+> format phases, and prototype Web UI—so the live repository now reports higher counts. The
+> figures below remain at their snapshot values rather than mixing separate sessions.
 
 ## 1. Actual Session Metrics
 

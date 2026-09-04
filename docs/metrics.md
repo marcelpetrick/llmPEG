@@ -1,4 +1,4 @@
-# Do the metrics match a human eye? We still cannot say.
+# Do the metrics match a human eye? We still cannot say
 
 llmPEG scores reconstructions with `visual_proxy_score`, a blend of cheap structural signals:
 perceptual hash (dHash), RGB histogram intersection, edge density, and aspect ratio. Nothing

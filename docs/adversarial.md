@@ -7,7 +7,7 @@ extraction instruction can be improved automatically instead of by hand.
 adversarial training — not a GAN, no gradients, no trained discriminator, just the part of the
 idea that transfers to a text codec:
 
-```
+```text
 generator  = the extraction instruction (what the vision model is told to capture)
 critic     = a vision model shown the ORIGINAL image and ONLY the rendered generation prompt,
              asked what a generator would get wrong
@@ -15,8 +15,9 @@ signal     = the critic's misses, weighted by severity, aggregated into a focus 
 next round = re-encode with that focus, then attack again
 ```
 
-The objective is **artifact sufficiency**, not reconstructed-image quality. llmPEG ships no
-generator, so the loop cannot be closed on pixels. That is a proxy, and it is reported as one.
+The objective is **artifact sufficiency**, not reconstructed-image quality. This experiment does
+not invoke a generator, so its loop cannot close on pixels. That is a proxy, and it is reported as
+one.
 
 ## What happened
 

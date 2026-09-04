@@ -21,7 +21,7 @@ C4Context
   Rel(reviewer, llmpeg, "Encodes, reconstructs, inspects, evaluates", "CLI / HTML")
   Rel(llmpeg, vision, "Sends source image and strict extraction schema", "Ollama /api/chat")
   Rel(llmpeg, generator, "Supplies generator-neutral prompt", "Text")
-  Rel(generator, llmpeg, "Returns a novel reconstruction", "PNG")
+  Rel(generator, llmpeg, "Returns a novel generated image")
   Rel(llmpeg, reviewer, "Shows provenance, compression ratio, comparisons, and ratings")
 
   UpdateElementStyle(llmpeg, $bgColor="#DBEAFE", $fontColor="#102A43", $borderColor="#2563EB")
@@ -42,16 +42,24 @@ C4Container
     Container(core, "Codec core", "Python", "Validates images and creates canonical semantic artifacts")
     Container(eval, "Evaluation harness", "Python / Pillow", "Computes deterministic structural proxy metrics")
     Container(survey, "Survey renderer", "Python", "Builds a portable interactive HTML report")
+    Container(web, "Prototype Web UI", "HTML / CSS / JavaScript", "Runs the image → prompt → new-image demonstration")
+    Container(webBackend, "Prototype backend", "Python HTTP server", "Downscales uploads and proxies model calls")
     ContainerDb(files, "Experiment evidence", "JSON, text, PNG/JPEG", "Sources, artifacts, prompts, reconstructions, metrics, manifests")
     Container(html, "Static survey", "HTML/CSS/JS", "Side-by-side inspection, browser-local ratings, JSON export")
   }
 
   System_Ext(ollama, "Ollama + Qwen3-VL", "Non-deterministic semantic extraction boundary")
-  System_Ext(imagegen, "Codex image generation", "Non-deterministic reconstruction boundary")
+  System_Ext(imagegen, "Image generators", "Codex, Pollinations, or Automatic1111-compatible server")
 
   Rel(user, cli, "Runs")
+  Rel(user, web, "Drops an image and reviews the prompt")
+  Rel(web, webBackend, "Encode and generate requests", "HTTP on localhost")
   Rel(cli, core, "Invokes")
+  Rel(webBackend, core, "Invokes")
   Rel(core, ollama, "Image + extraction contract", "HTTP/JSON")
+  Rel(webBackend, ollama, "Downscaled image + extraction contract", "HTTP/JSON")
+  Rel(webBackend, imagegen, "Editable prompt only", "CLI or HTTP")
+  Rel(imagegen, webBackend, "Generated image")
   Rel(core, files, "Writes canonical .llmpeg.json and prompt")
   Rel(files, imagegen, "Prompt only — never source pixels")
   Rel(imagegen, files, "Writes reconstruction PNG")
@@ -63,13 +71,16 @@ C4Container
   Rel(user, html, "Reviews and rates", "Browser")
 
   UpdateElementStyle(files, $bgColor="#FFF7D6", $fontColor="#713F12", $borderColor="#D97706")
+  UpdateElementStyle(web, $bgColor="#DBEAFE", $fontColor="#102A43", $borderColor="#2563EB")
+  UpdateElementStyle(webBackend, $bgColor="#DBEAFE", $fontColor="#102A43", $borderColor="#2563EB")
   UpdateElementStyle(ollama, $bgColor="#F3E8FF", $fontColor="#3B0764", $borderColor="#9333EA")
   UpdateElementStyle(imagegen, $bgColor="#F3E8FF", $fontColor="#3B0764", $borderColor="#9333EA")
 ```
 
-The model calls are trust boundaries: provenance records their configuration, but llmPEG
-cannot make their outputs deterministic. Everything after extraction—validation, canonical JSON,
-budgets, prompt rendering, proxy evaluation, and HTML rendering—is local and testable.
+The model calls are trust boundaries: provenance records the encoder configuration, but llmPEG
+cannot make model output deterministic. The prototype sends a downscaled copy to Ollama and sends
+only the resulting editable prompt to its configured generator. Validation, canonical JSON,
+budgets, prompt rendering, proxy evaluation, and HTML rendering are local and testable.
 
 ## 3. Codec components
 
@@ -109,7 +120,7 @@ C4Component
   UpdateElementStyle(adapter, $bgColor="#F3E8FF", $fontColor="#3B0764", $borderColor="#9333EA")
 ```
 
-## 4. Reconstruction lifecycle
+## 4. CLI reconstruction lifecycle
 
 ```mermaid
 %%{init: {"theme":"base","themeVariables":{"fontFamily":"Inter, ui-sans-serif, system-ui","actorBkg":"#DBEAFE","actorBorder":"#2563EB","signalColor":"#475569","activationBkgColor":"#FFF7D6","activationBorderColor":"#D97706"}}}%%
@@ -139,6 +150,10 @@ sequenceDiagram
   C->>H: Generate self-contained report
   H-->>U: Visual inspection + human ratings export
 ```
+
+The Web UI wraps the same core sequence in two localhost requests: `/api/encode` returns the
+artifact and rendered prompt, then `/api/generate` sends that prompt to Codex, Pollinations, or an
+Automatic1111-compatible server. It is a local prototype, not a hardened network service.
 
 ## Architectural consequences
 

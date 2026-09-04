@@ -55,10 +55,10 @@ The MVP is a Python package and command-line tool that can:
 4. evaluate a reconstructed image with transparent, repeatable structural metrics; and
 5. run fully offline tests by substituting deterministic fake providers.
 
-Real encode/decode providers live behind small interfaces. The first real encoder targets the
-locally available Ollama vision endpoint used by the `claude-vision` shell function. Generation
-can be performed interactively with Codex image generation or through a future/API adapter; the
-core codec must remain testable without network access or credentials.
+Real providers live behind small interfaces. The encoder targets an Ollama vision endpoint.
+Generation can be performed interactively or through the prototype Web UI, which supports Codex,
+Pollinations, and an unverified Automatic1111-compatible path. The core codec remains
+generator-neutral and fully testable without network access or credentials.
 
 ## Fidelity contract
 
@@ -103,7 +103,7 @@ choose what to drop. It must not silently discard facts to manufacture an impres
 Constraints set by the project owner. They are recorded here because they are decisions, not
 preferences to be re-derived each session.
 
-**Identity and framing**
+### Identity and framing
 
 - The name is the thesis: **llmPEG**, the *LLM Photo Expert Group*, against JPEG's Joint
   Photographic Experts Group. The pun must stay legible in the README.
@@ -113,7 +113,7 @@ preferences to be re-derived each session.
 - The package, CLI, and artifact extension are all `llmpeg`. The original name was PromptPress and
   survives only in early commit messages.
 
-**Licensing and attribution**
+### Licensing and attribution
 
 - **GPLv3 or later.** Author: Marcel Petrick <mail@marcelpetrick.it>. The README carries a bold
   author / AI-generated / licence block.
@@ -122,14 +122,14 @@ preferences to be re-derived each session.
   README. An image whose provenance cannot be verified is labelled unverified rather than quietly
   credited or quietly dropped.
 
-**Format**
+### Format
 
 - The artifact carries a **versioned header** so a reader knows which tooling can decode it,
   modelled on how real image formats do metadata. See [format.md](format.md).
 - **Output must always conform.** The encoder cannot emit a file that does not parse back as a
   valid artifact; conformance is enforced in code, not documented and hoped for.
 
-**Documentation**
+### Documentation
 
 - A **mermaid data-flow diagram for non-technical readers**, compression through "decompression".
 - A **copy-pasteable folder round trip**: convert a whole folder of photos, restore it, with real
@@ -137,7 +137,7 @@ preferences to be re-derived each session.
 - Benchmarks report **how long a full cycle takes** and **how close the result is**.
 - CI, licence, and coverage **badges** in the README.
 
-**Engineering**
+### Engineering
 
 - **Python 3.14** baseline.
 - **Conventional Commits**, reviewed and corrected rather than assumed.
@@ -146,10 +146,10 @@ preferences to be re-derived each session.
 - Everything must fit **current best standards**; when a gate cannot pass, say so rather than
   claiming green.
 
-**Method**
+### Method
 
-- Prefer **free** image generation. Paid credits are not assumed to exist; Pollinations needs no
-  key, and the Codex CLI's built-in tool is used when it is available.
+- Prefer generation already available to the user. Pollinations now requires a key and credits;
+  the Codex CLI's built-in tool uses the logged-in session when available.
 - Improvement work is **iterative and auditable**: every claim traceable to a checked-in record a
   reader can recompute, and **negative results published as prominently as positive ones**.
 - Use **smaller models for parallel agent work** where it is applicable.

@@ -81,7 +81,7 @@ from each file's own Commons record, not assumed.
 | Case | Author | License | Commons record |
 | --- | --- | --- | --- |
 | astronaut-crew | Robert Markowitz | Public domain (NASA) | [Expedition 53 crew portrait](https://commons.wikimedia.org/wiki/File:Expedition_53_crew_portrait.jpg) |
-| food-table | www.Pixel.la Free Stock Photos | CC0 1.0 | [Table with food](https://commons.wikimedia.org/wiki/File:Table_with_food.jpg) |
+| food-table | `www.Pixel.la` Free Stock Photos | CC0 1.0 | [Table with food](https://commons.wikimedia.org/wiki/File:Table_with_food.jpg) |
 | amsterdam-market | Fons Heijnsbroek | CC0 1.0 | [Albert Cuyp market stall](https://commons.wikimedia.org/wiki/File:2023_Amsterdam_-_a_fruit_market_stall_at_the_Albert_Cuyp_market_in_the_sunlight_with_a_lot_of_city_people_walking_and_shopping_-_free_download_photo_in_Dutch_street_photography_by_Fons_Heijnsbroek,_Netherlands.tif) |
 | train-platform | Redd Angelo | CC0 1.0 | [People waiting for the train](https://commons.wikimedia.org/wiki/File:People_waiting_for_the_train_(Unsplash).jpg) |
 | workspace-books | Aleks Dorohovich | CC0 1.0 | [Books, pencils, laptop and iphone on a desk](https://commons.wikimedia.org/wiki/File:Books,_pencils,_laptop,_and_iphone_on_a_desk_(Unsplash).jpg) |

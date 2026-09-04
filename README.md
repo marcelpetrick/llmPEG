@@ -17,8 +17,8 @@ been renamed compression. Everybody laughs.
 
 llmPEG is that joke, built for real and measured honestly. A vision model turns your image into a
 small text description. Later, an image generator reads that description and paints a **brand new
-picture**. The original is gone. What comes back is not your photo — it is a stranger's photo of
-the same idea.
+picture**. If you delete the original, it is gone. What comes back is not your photo — it is a
+stranger's photo of the same idea.
 
 **Author: Marcel Petrick <mail@marcelpetrick.it>**
 
@@ -71,10 +71,10 @@ uv run python prototypeWebUI/server.py     # then open http://127.0.0.1:8000
 ```
 
 Generation defaults to the logged-in Codex CLI and explicitly invokes its `$imagegen` skill.
-[Pollinations](https://pollinations.ai/) remains available without an account or API key, and an
-Automatic1111-compatible local Stable Diffusion path is available for keeping prompts on your own
-hardware. The prompt is editable before you generate, which is the one real perk of a codec whose
-compressed form is readable.
+[Pollinations](https://pollinations.ai/) remains available with an API key, and an
+Automatic1111-compatible local Stable Diffusion path keeps prompts on your own hardware. The
+prompt is editable before generation—the one real perk of a codec whose compressed form is
+readable.
 
 Doing this to a photo you took yourself makes the point faster than any table below.
 
@@ -198,10 +198,10 @@ Measured by [`scripts/benchmark_cycle.py`](scripts/benchmark_cycle.py) against a
 | **Decompress** (prompt → new image) | not measured | external generator |
 
 The cost is wildly asymmetric. Compressing one photograph costs over a minute of GPU time;
-everything llmPEG itself does afterwards is effectively free. And the expensive half —
-regenerating the picture — is not even in this codebase, because llmPEG ships no generator. A
-codec whose decompressor is "rent a diffusion model" has an honesty problem with the word
-*compression*, which is the joke.
+everything in the core package afterwards is effectively free. The expensive generation step was
+not measured in this benchmark. The prototype can invoke a generator, but that compute remains an
+external cost. A codec whose decompressor is "rent a diffusion model" has an honesty problem with
+the word *compression*, which is the joke.
 
 **Reproducibility is worse than the ratio suggests.** Re-encoding `cat-on-grass` for this
 benchmark produced a **1,275-byte** artifact where the checked-in run produced **997 bytes** —
@@ -212,7 +212,7 @@ particular run of one particular model, and it moves by 28% between runs.
 (Both figures predate the format header, so they are comparable with each other but not with the
 tables above. The header is a constant and does not affect the spread.)
 
-### Does the score match a human eye? We still cannot say.
+### Does the score match a human eye? We still cannot say
 
 A vision-model judge rated every checked-in pair on scene, identity, composition, mood, and an
 overall "is this a faithful stand-in?".
@@ -239,7 +239,7 @@ signals remain blind to subject identity by construction — edges and histogram
 score. Full analysis, both datasets, and what would actually settle the question in
 [`docs/metrics.md`](docs/metrics.md).
 
-### Can the codec improve itself? Not yet.
+### Can the codec improve itself? Not yet
 
 [`scripts/adversarial_refine.py`](scripts/adversarial_refine.py) runs a GAN-*shaped* loop — no
 gradients, no trained discriminator, just the useful part of the idea: the extraction instruction
@@ -269,9 +269,9 @@ uv run llmpeg survey survey/expanded-manifest.json --output survey/expanded.html
 
 ## Media and licensing
 
-**Every benchmark and survey image in this repository is freely licensed media from Wikimedia
-Commons** — CC0 1.0 or public domain — with attribution read from each file's own Commons record
-rather than assumed:
+The project requires every benchmark and survey image to be freely licensed, with attribution
+read from its source record rather than guessed. The three cat images and eight traced expanded
+images meet that rule; two older expanded images remain explicitly unverified:
 
 | Set | Images | Licensing |
 | --- | ---: | --- |
@@ -366,7 +366,8 @@ image ──vision model──> versioned .llmpeg.json ──prompt renderer─�
 The artifact holds source dimensions and hash, a fidelity profile, generation prompt, critical
 text, composition regions, palette, style, avoid-list, and encoder provenance. It never contains
 the original image bytes. JSON is serialized canonically, byte budgets are enforced, and source
-files are never modified or deleted.
+files are never modified or deleted. The prototype Web UI adds optional generator adapters around
+this core; the package itself remains generator-neutral.
 
 ## Quick start
 
@@ -383,7 +384,7 @@ Point it at your vision server once, then the everyday commands take no flags at
 ```bash
 export OLLAMA_VISION_HOST=http://your-ollama-server:11434
 
-uv run llmpeg encode photo.jpg               # -> photo.jpg.llmpeg.json  (1,341 bytes, 597:1)
+uv run llmpeg encode photo.jpg               # -> photo.jpg.llmpeg.json; reports bytes and ratio
 uv run llmpeg reconstruct photo.jpg.llmpeg.json > photo.prompt.txt
 uv run llmpeg verify photo.jpg.llmpeg.json
 uv run llmpeg inspect photo.jpg.llmpeg.json
@@ -397,8 +398,8 @@ stdout so it pipes. `evaluate` finds the artifact the same way:
 uv run llmpeg evaluate photo.jpg regenerated.png   # uses photo.jpg.llmpeg.json
 ```
 
-Send the prompt to the image generator of your choice — Codex's built-in image generation produced
-the checked-in demos, and llmPEG ships no generator itself.
+Send the prompt to the image generator of your choice. Codex's built-in image generation produced
+the checked-in demos; the optional prototype Web UI automates that handoff.
 
 Output files are never overwritten unless `--overwrite` is supplied. Encoding sends the full image
 to the configured Ollama endpoint, so only use a server you trust.
@@ -447,19 +448,19 @@ mkdir -p llmpeg/artifacts llmpeg/prompts llmpeg/restored
 
 find . -maxdepth 1 -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) -print0 |
   while IFS= read -r -d '' f; do
-    uv run llmpeg encode "${f#./}"        # -> photo.jpg.llmpeg.json, beside the photo
+    n=$(basename "${f#./}")
+    uv run llmpeg encode "${f#./}" \
+      --output "llmpeg/artifacts/$n.llmpeg.json"
   done
 
-du -sh .                         # your folder, now mostly text
+du -sh llmpeg/artifacts          # compact text artifacts; originals still remain
 ```
 
 `encode` appends `.llmpeg.json` to the **whole** file name, so `photo.jpg` and `photo.png` in one
-folder produce two artifacts instead of one silently overwriting the other, and every artifact says
-which file it came from. No `--overwrite`, so re-running stops on anything already encoded rather
-than spending another minute of GPU on it.
-
-`find` rather than a `*.jpg` glob because zsh treats an unmatched glob as a hard error, and
-`-print0` because photo folders contain spaces.
+folder produce two artifacts instead of one silently overwriting the other. The explicit output
+path places them where the later loops expect them. With no `--overwrite`, re-running stops on an
+existing artifact rather than spending more model time. `find` avoids zsh's unmatched-glob error;
+`-print0` handles spaces in file names.
 
 ### 2. Check what you actually have
 
@@ -520,11 +521,11 @@ done
 ```
 
 No Codex account? Run the [`prototypeWebUI/`](prototypeWebUI/README.md) backend with
-`--generator pollinations`; Pollinations is free and needs no key.
+`--generator pollinations` and a Pollinations API key, or configure a local generator.
 
 ### What it costs: five photos, measured
 
-A real run over five CC0 photographs (1.5–3.1 MB each), `balanced` profile, local
+A real run over five CC0 photographs (3,125,477 bytes total), `balanced` profile, local
 `qwen3-vl:32b-ctx49k` for encoding and Codex for generation:
 
 | Stage | Time |
@@ -581,7 +582,7 @@ uv run python -m build
 ```
 
 The suite is offline and injects fake providers. Live Ollama and image-generation runs are manual
-demo steps, not CI dependencies. Current suite: **88 tests, 96.0% branch-aware coverage**.
+demo steps, not CI dependencies. Current suite: **90 tests, 96.0% branch-aware coverage**.
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs all five gates on Python 3.14 for
 every push and pull request.
@@ -594,6 +595,8 @@ Commits requirement.
 Pushing a `v*` tag runs [`.github/workflows/release.yml`](.github/workflows/release.yml), which
 builds an sdist and a wheel with `uv build`, checks them with twine, and attaches both to a
 generated GitHub Release.
+
+The current release is [`v0.2.0`](https://github.com/marcelpetrick/llmPEG/releases/tag/v0.2.0).
 
 There is no PyPI upload: the distribution name `llmpeg` is already registered there by an
 unrelated project, so installing is done from a release artifact or from a checkout:
