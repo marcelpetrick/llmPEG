@@ -101,6 +101,12 @@ to Codex. The result identifies Codex as the provider and the page displays the 
 service is reachable but its workflow fails, the error remains visible; Codex is not run a second
 time.
 
+The package CLI uses the same adapter and fallback policy:
+
+```bash
+uv run llmpeg generate photo.jpg.llmpeg.json
+```
+
 A live smoke test against ComfyUI 0.34.0 generated a valid 768×768 PNG in 7.64 seconds with the
 service already running. A second check through `POST /api/generate` returned another valid PNG
 and identified `comfyui` as the provider. This is not a general latency claim. Exact prompts,

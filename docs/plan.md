@@ -176,6 +176,8 @@ boundaries.
       generation request.
 - [x] Run ComfyUI through the sibling checkout's self-starting shell adapter and fall back to Codex
       only when its service is unavailable.
+- [x] Share that ComfyUI-first adapter with `llmpeg generate`, while keeping `reconstruct` as the
+      generator-neutral prompt renderer.
 - [x] Keep hosted and local adapters explicit about privacy.
 - [x] Report expected and measured generation time, generated dimensions, and upstream failures.
 - [x] Add responsive light and dark themes and offline request-path tests.

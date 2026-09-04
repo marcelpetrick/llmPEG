@@ -7,7 +7,8 @@ from unittest.mock import patch
 import pytest
 
 from llmpeg.artifact import Artifact, SourceInfo, source_digest
-from llmpeg.cli import artifact_path_for, main
+from llmpeg.cli import artifact_path_for, generated_path_for, main
+from llmpeg.generators import GeneratedImage
 
 
 def test_reconstruct_inspect_and_evaluate_cli(
@@ -161,3 +162,92 @@ def test_evaluate_defaults_the_artifact_beside_the_source(
 def test_artifact_path_keeps_the_whole_filename(name: str, expected: str) -> None:
     """The suffix is appended, so photo.jpg and photo.png cannot collide."""
     assert artifact_path_for(Path(name)).name == expected
+
+
+@pytest.mark.parametrize(
+    ("name", "expected"),
+    [
+        ("photo.jpg.llmpeg.json", "photo.jpg.reconstructed.png"),
+        ("artifact.json", "artifact.reconstructed.png"),
+    ],
+)
+def test_generated_path_preserves_the_source_name(name: str, expected: str) -> None:
+    assert generated_path_for(Path(name)).name == expected
+
+
+def test_generate_cli_prefers_comfyui(
+    artifact: Artifact, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    artifact_path = tmp_path / "photo.jpg.llmpeg.json"
+    artifact.write(artifact_path)
+    output = tmp_path / "generated.png"
+    result = GeneratedImage(b"generated", "comfyui")
+
+    with patch("llmpeg.cli.generate_prefer_comfyui", return_value=result) as generate:
+        assert main(["generate", str(artifact_path), "-o", str(output)]) == 0
+
+    assert output.read_bytes() == b"generated"
+    assert "generator: comfyui" in capsys.readouterr().out
+    assert "Primary request" in generate.call_args.args[0]
+    assert generate.call_args.args[1:3] == (160, 120)
+
+
+def test_generate_cli_reports_codex_fallback(
+    artifact: Artifact, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    artifact_path = tmp_path / "photo.llmpeg.json"
+    artifact.write(artifact_path)
+    result = GeneratedImage(b"generated", "codex", "service offline")
+
+    with patch("llmpeg.cli.generate_prefer_comfyui", return_value=result):
+        assert main(["generate", str(artifact_path)]) == 0
+
+    captured = capsys.readouterr()
+    assert "generator: codex" in captured.out
+    assert "ComfyUI unavailable (service offline)" in captured.err
+    assert (tmp_path / "photo.reconstructed.png").read_bytes() == b"generated"
+
+
+def test_generate_cli_can_select_codex(
+    artifact: Artifact, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    artifact_path = tmp_path / "artifact.json"
+    artifact.write(artifact_path)
+    output = tmp_path / "generated.png"
+
+    with patch("llmpeg.cli.generate_codex", return_value=b"codex") as generate:
+        assert (
+            main(
+                [
+                    "generate",
+                    str(artifact_path),
+                    "--generator",
+                    "codex",
+                    "--timeout",
+                    "12",
+                    "-o",
+                    str(output),
+                ]
+            )
+            == 0
+        )
+
+    assert output.read_bytes() == b"codex"
+    assert generate.call_args.args[1:] == (160, 120, 12.0)
+    assert "generator: codex" in capsys.readouterr().out
+
+
+def test_generate_cli_checks_overwrite_before_generation(
+    artifact: Artifact, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    artifact_path = tmp_path / "artifact.json"
+    artifact.write(artifact_path)
+    output = tmp_path / "generated.png"
+    output.write_bytes(b"keep")
+
+    with patch("llmpeg.cli.generate_prefer_comfyui") as generate:
+        assert main(["generate", str(artifact_path), "-o", str(output)]) == 2
+
+    generate.assert_not_called()
+    assert output.read_bytes() == b"keep"
+    assert "refusing to overwrite" in capsys.readouterr().err

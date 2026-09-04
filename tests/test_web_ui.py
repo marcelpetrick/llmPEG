@@ -167,7 +167,7 @@ def test_comfyui_generator_runs_checkout_script(
         return subprocess.CompletedProcess(command, 0, command[2], "")
 
     monkeypatch.setattr(web.CONFIG, "comfyui_script", script)
-    monkeypatch.setattr("prototypeWebUI.server.subprocess.run", run)
+    monkeypatch.setattr("llmpeg.generators.subprocess.run", run)
 
     generated = web.generate_comfyui("a purple cat", 1024, 1024, 7)
 
@@ -198,8 +198,8 @@ def test_reachable_comfyui_workflow_error_does_not_fallback(
         raise subprocess.CalledProcessError(1, command, stderr="workflow failed")
 
     monkeypatch.setattr(web.CONFIG, "comfyui_script", script)
-    monkeypatch.setattr(web, "comfyui_reachable", lambda: True)
-    monkeypatch.setattr("prototypeWebUI.server.subprocess.run", fail)
+    monkeypatch.setattr("llmpeg.generators.comfyui_reachable", lambda _host, _timeout: True)
+    monkeypatch.setattr("llmpeg.generators.subprocess.run", fail)
     monkeypatch.setattr(
         web,
         "generate_codex",
@@ -253,8 +253,8 @@ def test_codex_generator_explicitly_invokes_imagegen(
         Image.new("RGB", (8, 8), "navy").save(work / "out.png")
         return subprocess.CompletedProcess(command, 0, "DONE", "")
 
-    monkeypatch.setattr("prototypeWebUI.server.shutil.which", lambda _name: "/usr/bin/codex")
-    monkeypatch.setattr("prototypeWebUI.server.subprocess.run", run)
+    monkeypatch.setattr("llmpeg.generators.shutil.which", lambda _name: "/usr/bin/codex")
+    monkeypatch.setattr("llmpeg.generators.subprocess.run", run)
 
     generated = web.generate_codex("a tabby cat on grass", 1024, 1024, 42)
 
@@ -268,7 +268,7 @@ def test_codex_generator_explicitly_invokes_imagegen(
 
 
 def test_codex_generator_requires_installed_cli(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr("prototypeWebUI.server.shutil.which", lambda _name: None)
+    monkeypatch.setattr("llmpeg.generators.shutil.which", lambda _name: None)
     with pytest.raises(ArtifactError, match="not on PATH"):
         web.generate_codex("cat", 1024, 1024, 42)
 

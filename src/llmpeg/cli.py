@@ -16,6 +16,13 @@ from llmpeg.encoder import (
     render_generation_prompt,
 )
 from llmpeg.evaluation import evaluate_with_artifact
+from llmpeg.generators import (
+    DEFAULT_COMFYUI_HOST,
+    GeneratedImage,
+    default_comfyui_script,
+    generate_codex,
+    generate_prefer_comfyui,
+)
 from llmpeg.providers import OllamaVisionProvider
 from llmpeg.survey import write_survey
 
@@ -55,6 +62,28 @@ def build_parser() -> argparse.ArgumentParser:
     reconstruct.add_argument("artifact", type=Path)
     reconstruct.add_argument("--output", "-o", type=Path)
     reconstruct.add_argument("--overwrite", action="store_true")
+
+    generate = subparsers.add_parser(
+        "generate", help="render an artifact as a new image via ComfyUI, with Codex fallback"
+    )
+    generate.add_argument("artifact", type=Path)
+    generate.add_argument(
+        "--output", "-o", type=Path, help="default: <source-name>.reconstructed.png"
+    )
+    generate.add_argument("--generator", choices=("comfyui", "codex"), default="comfyui")
+    generate.add_argument(
+        "--comfyui-script",
+        type=Path,
+        default=Path(
+            os.environ.get("LLMPEG_COMFYUI_SCRIPT", str(default_comfyui_script()))
+        ).expanduser(),
+    )
+    generate.add_argument(
+        "--comfyui-host",
+        default=os.environ.get("LLMPEG_COMFYUI_HOST", DEFAULT_COMFYUI_HOST),
+    )
+    generate.add_argument("--timeout", type=float, default=600.0)
+    generate.add_argument("--overwrite", action="store_true")
 
     inspect = subparsers.add_parser("inspect", help="show artifact sizes and provenance")
     inspect.add_argument("artifact", type=Path)
@@ -105,6 +134,37 @@ def main(argv: Sequence[str] | None = None) -> int:
                 print(f"wrote {args.output}")
             else:
                 print(prompt, end="")
+        elif args.command == "generate":
+            artifact = Artifact.read(args.artifact)
+            output = args.output or generated_path_for(args.artifact)
+            _check_overwrite(output, overwrite=args.overwrite)
+            prompt = render_generation_prompt(artifact)
+            if args.generator == "codex":
+                result = GeneratedImage(
+                    generate_codex(
+                        prompt,
+                        artifact.source.width,
+                        artifact.source.height,
+                        args.timeout,
+                    ),
+                    "codex",
+                )
+            else:
+                result = generate_prefer_comfyui(
+                    prompt,
+                    artifact.source.width,
+                    artifact.source.height,
+                    args.comfyui_script,
+                    args.comfyui_host,
+                    args.timeout,
+                )
+            _write_bytes(output, result.data, overwrite=args.overwrite)
+            if result.fallback_reason:
+                print(
+                    f"ComfyUI unavailable ({result.fallback_reason}); used Codex fallback",
+                    file=sys.stderr,
+                )
+            print(f"wrote {output} (generator: {result.provider})")
         elif args.command == "inspect":
             artifact = Artifact.read(args.artifact)
             artifact_size = len(artifact.to_bytes())
@@ -161,6 +221,26 @@ def artifact_path_for(image: Path) -> Path:
     It also keeps the source obvious from the artifact's name alone.
     """
     return image.parent / f"{image.name}.llmpeg.json"
+
+
+def generated_path_for(artifact: Path) -> Path:
+    """Return the default generated-image path beside an artifact."""
+    suffix = ".llmpeg.json"
+    source_name = artifact.name[: -len(suffix)] if artifact.name.endswith(suffix) else artifact.stem
+    return artifact.parent / f"{source_name}.reconstructed.png"
+
+
+def _check_overwrite(path: Path, *, overwrite: bool) -> None:
+    if path.exists() and not overwrite:
+        raise ArtifactError(f"refusing to overwrite existing file: {path}")
+
+
+def _write_bytes(path: Path, content: bytes, *, overwrite: bool) -> None:
+    _check_overwrite(path, overwrite=overwrite)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    mode = "wb" if overwrite else "xb"
+    with path.open(mode) as stream:
+        stream.write(content)
 
 
 def _write_text(path: Path, content: str, *, overwrite: bool) -> None:

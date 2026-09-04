@@ -38,7 +38,7 @@ C4Container
   Person(user, "Experimenter", "Runs a deliberately lossy reconstruction experiment")
 
   System_Boundary(pp, "llmPEG") {
-    Container(cli, "CLI", "Python / argparse", "Coordinates encode, reconstruct, inspect, evaluate, and survey commands")
+    Container(cli, "CLI", "Python / argparse", "Coordinates encode, reconstruct, generate, inspect, evaluate, and survey commands")
     Container(core, "Codec core", "Python", "Validates images and creates canonical semantic artifacts")
     Container(eval, "Evaluation harness", "Python / Pillow", "Computes deterministic structural proxy metrics")
     Container(survey, "Survey renderer", "Python", "Builds a portable interactive HTML report")
@@ -61,6 +61,7 @@ C4Container
   Rel(webBackend, imagegen, "Editable prompt only", "CLI or HTTP")
   Rel(imagegen, webBackend, "Generated image")
   Rel(core, files, "Writes canonical .llmpeg.json and prompt")
+  Rel(cli, imagegen, "Rendered prompt only; ComfyUI first, Codex fallback", "Shell / CLI")
   Rel(files, imagegen, "Prompt only — never source pixels")
   Rel(imagegen, files, "Writes reconstruction PNG")
   Rel(cli, eval, "Invokes")
@@ -95,11 +96,13 @@ C4Component
     Component(codec, "Artifact builder", "encoder.py", "Converts extracted fields into a validated artifact")
     Component(model, "Artifact model", "artifact.py", "Writes the versioned header, validates the schema, enforces the byte budget, and writes canonical JSON atomically")
     Component(renderer, "Prompt renderer", "encoder.py", "Expands the artifact into a model-neutral generation brief")
+    Component(generator, "Generator adapters", "generators.py", "Runs ComfyUI first and falls back to Codex only when unavailable")
     Component(metrics, "Metric engine", "evaluation.py", "Measures aspect, dHash, histogram, edges, palette, layout, and text recall")
     Component(report, "Survey renderer", "survey.py", "Combines evidence into interactive static HTML")
   }
 
   Container_Ext(ollama, "Qwen3-VL", "Vision model")
+  Container_Ext(imagegen, "Image generators", "ComfyUI or Codex")
   ContainerDb_Ext(evidence, "Evidence files", "Image, JSON, text, HTML")
 
   Rel(cli, guard, "encode")
@@ -111,6 +114,10 @@ C4Component
   Rel(cli, renderer, "reconstruct")
   Rel(renderer, model, "Reads")
   Rel(renderer, evidence, "Writes prompt")
+  Rel(cli, generator, "generate")
+  Rel(generator, renderer, "Uses rendered prompt")
+  Rel(generator, imagegen, "Prompt only")
+  Rel(generator, evidence, "Writes new image")
   Rel(cli, metrics, "evaluate")
   Rel(metrics, evidence, "Reads pair; writes result")
   Rel(cli, report, "survey")
@@ -141,8 +148,11 @@ sequenceDiagram
   C->>A: Validate budget and atomically persist
   Note over A: Original pixels are not embedded
   U->>C: reconstruct artifact
-  C-->>G: Text prompt only
-  G-->>U: Novel reconstruction PNG
+  C-->>U: Text prompt
+  U->>C: generate artifact
+  C->>G: Text prompt only (ComfyUI first)
+  G-->>C: Novel reconstruction PNG
+  C-->>U: Output path and actual provider
   U->>C: evaluate source + reconstruction + artifact
   C->>E: Verified source pair
   E-->>A: Structural metrics and threshold checks
@@ -151,7 +161,9 @@ sequenceDiagram
   H-->>U: Visual inspection + human ratings export
 ```
 
-The Web UI wraps the same core sequence in two localhost requests: `/api/encode` returns the
+The CLI's optional `generate` command uses ComfyUI first and falls back to Codex only when its
+adapter or service is unavailable. A reachable workflow failure remains an error. The Web UI wraps
+the same core sequence in two localhost requests: `/api/encode` returns the
 artifact and rendered prompt, then `/api/generate` sends that prompt to Codex, ComfyUI,
 Pollinations, or an Automatic1111-compatible server. ComfyUI runs through the sibling checkout's
 self-starting shell adapter and falls back to Codex only when its service is unavailable. The Web

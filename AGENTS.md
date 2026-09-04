@@ -55,6 +55,7 @@ README, and is not part of the benchmark set. Do not add a second exception.
 | `src/llmpeg/artifact.py` | Versioned artifact model, canonical JSON, profile byte budgets |
 | `src/llmpeg/encoder.py` | Image → artifact encoding |
 | `src/llmpeg/providers.py` | Ollama vision client and provider protocols |
+| `src/llmpeg/generators.py` | Optional ComfyUI-first generation and Codex fallback adapters |
 | `src/llmpeg/evaluation.py` | Deterministic visual proxy metrics |
 | `src/llmpeg/survey.py` | HTML survey report generation (embedded CSS/JS, `E501` exempt) |
 | `src/llmpeg/cli.py` | `llmpeg` console entry point |
@@ -93,7 +94,7 @@ Scripts under `scripts/` are linted and type-checked like the package, but are m
 tools rather than product surface: they may talk to the live Ollama endpoint, and they never
 run in CI. Never record the endpoint host in their output — model name only.
 
-Current baseline: **95 tests, 96.0% branch coverage**. Update this line when it changes — a stale
+Current baseline: **121 tests, 96.5% branch coverage**. Update this line when it changes — a stale
 self-measurement is the most embarrassing possible bug in a project about honest measurement.
 
 ## Testing

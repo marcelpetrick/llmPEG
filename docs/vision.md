@@ -56,8 +56,9 @@ The MVP is a Python package and command-line tool that can:
 5. run fully offline tests by substituting deterministic fake providers.
 
 Real providers live behind small interfaces. The encoder targets an Ollama vision endpoint.
-Generation can be performed interactively or through the prototype Web UI, which supports Codex,
-the sibling ComfyUI checkout, Pollinations, and an unverified Automatic1111-compatible path. The
+Generation can be performed through the CLI, interactively, or through the prototype Web UI. The
+CLI tries the sibling ComfyUI checkout first and falls back to Codex when it is unavailable; the
+Web UI additionally supports Pollinations and an unverified Automatic1111-compatible path. The
 core codec remains generator-neutral and fully testable without network access or credentials.
 
 ## Fidelity contract
