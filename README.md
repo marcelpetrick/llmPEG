@@ -441,20 +441,23 @@ file conforms to the format and `2` when it does not.
 
 ## Convert a whole folder, and convert it back
 
-The joke in full: turn a folder of photographs into a folder of text, then paint them back.
-Copy-paste as-is — it uses only the CLI plus a shell loop.
+The joke in full: turn a folder of photographs into a folder of text, then paint them back. The
+commands below use `--project` so `uv` remains attached to this checkout after entering the photo
+folder. Set the photo directory and trusted Ollama endpoint before running them.
 
 ### 1. Compress every photo
 
 ```bash
-cd ~/photos                      # your folder of .jpg / .png
+LLMPEG_PROJECT=/home/mpetrick/repos/llmPEG
+PHOTO_DIR=/path/to/photos
+cd "$PHOTO_DIR"
 export OLLAMA_VISION_HOST=http://your-ollama-host:11434
 mkdir -p llmpeg/artifacts llmpeg/restored
 
 find . -maxdepth 1 -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) -print0 |
   while IFS= read -r -d '' f; do
     n=$(basename "${f#./}")
-    uv run llmpeg encode "${f#./}" \
+    uv run --project "$LLMPEG_PROJECT" llmpeg encode "${f#./}" \
       --output "llmpeg/artifacts/$n.llmpeg.json"
   done
 
@@ -471,8 +474,8 @@ existing artifact rather than spending more model time. `find` avoids zsh's unma
 
 ```bash
 for a in llmpeg/artifacts/*.llmpeg.json; do
-  uv run llmpeg verify "$a" | head -1     # llmPEG 1.0 (lpg1)
-  uv run llmpeg inspect "$a" | grep ratio
+  uv run --project "$LLMPEG_PROJECT" llmpeg verify "$a" | head -1  # llmPEG 1.0 (lpg1)
+  uv run --project "$LLMPEG_PROJECT" llmpeg inspect "$a" | grep ratio
 done
 ```
 
@@ -507,7 +510,8 @@ unavailable:
 ```bash
 for a in llmpeg/artifacts/*.llmpeg.json; do
   n=$(basename "$a" .llmpeg.json)
-  uv run llmpeg generate "$a" --output "llmpeg/restored/$n.png" --overwrite
+  uv run --project "$LLMPEG_PROJECT" llmpeg generate "$a" \
+    --output "llmpeg/restored/$n.png" --overwrite
 done
 ```
 
@@ -518,13 +522,24 @@ are elsewhere, pass `--comfyui-script /path/to/generate_image.sh`. To bypass Com
 ```bash
 for a in llmpeg/artifacts/*.llmpeg.json; do
   n=$(basename "$a" .llmpeg.json)
-  uv run llmpeg generate "$a" --generator codex \
+  uv run --project "$LLMPEG_PROJECT" llmpeg generate "$a" --generator codex \
     --output "llmpeg/restored/$n.png" --overwrite
 done
 ```
 
 `reconstruct` remains available when you want to inspect, edit, or pipe the exact prompt without
 generating an image. There is still no decompressor: every output is a newly invented image.
+
+For the artifacts already written under this repository's `llmpeg-output/`, run:
+
+```bash
+cd /home/mpetrick/repos/llmPEG
+mkdir -p llmpeg-output/generated
+for a in llmpeg-output/artifacts/*.llmpeg.json; do
+  n=$(basename "$a" .llmpeg.json)
+  uv run llmpeg generate "$a" --output "llmpeg-output/generated/$n.png"
+done
+```
 
 ### What it costs: five photos, measured
 
