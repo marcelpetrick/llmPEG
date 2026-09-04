@@ -103,7 +103,7 @@
     <h2>The entire description that will be sent to the generator</h2>
     <textarea id="prompt" spellcheck="false"></textarea>
     <div class="row">
-      <label for="size">Size</label>
+      <label for="size">Target size</label>
       <select id="size">
         <option value="768">768 &times; 768</option>
         <option value="1024" selected>1024 &times; 1024</option>
@@ -298,10 +298,13 @@ $("generate").addEventListener("click", async () => {
     const blob = await res.blob();
     if (outputUrl) URL.revokeObjectURL(outputUrl);
     outputUrl = URL.createObjectURL(blob);
+    $("out").onload = () => {
+      $("outhint").textContent = `This is a new ${$("out").naturalWidth}×${
+        $("out").naturalHeight} image. It is not your photo.`;
+    };
     $("out").src = outputUrl;
     $("out").alt = "Image regenerated from the editable text prompt";
     $("out").classList.remove("hidden");
-    $("outhint").textContent = "This is a new image. It is not your photo.";
     say("Done. Compare them — then notice what changed.", "ok");
   } catch (err) {
     say("Generation failed: " + err.message, "err");
@@ -318,6 +321,7 @@ $("reset").addEventListener("click", () => {
   $("file").value = "";
   $("src").removeAttribute("src");
   $("out").removeAttribute("src");
+  $("out").onload = null;
   ["src", "out", "stats"].forEach(id => $(id).classList.add("hidden"));
   $("stats").replaceChildren();
   $("promptcard").hidden = true;

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 import threading
 import urllib.error
 import urllib.request
@@ -9,6 +10,7 @@ from http.server import ThreadingHTTPServer
 from pathlib import Path
 
 import pytest
+from PIL import Image
 
 from llmpeg.artifact import ArtifactError
 from prototypeWebUI import server as web
@@ -31,6 +33,11 @@ def test_file_page_targets_local_backend_without_unsafe_html() -> None:
     page = web.INDEX.read_text(encoding="utf-8")
     assert 'location.protocol === "file:" ? "http://127.0.0.1:8000"' in page
     assert ".innerHTML" not in page
+
+
+def test_config_defaults_to_codex(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("LLMPEG_GENERATOR", raising=False)
+    assert web.Config().generator == "codex"
 
 
 def test_config_allows_file_origin(web_server: str, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -102,6 +109,39 @@ def test_unknown_generator_fails_closed(monkeypatch: pytest.MonkeyPatch) -> None
     monkeypatch.setattr(web.CONFIG, "generator", "mystery")
     with pytest.raises(ArtifactError, match="unsupported generator"):
         web.generate("cat", 1024, 1024, 42)
+
+
+def test_codex_generator_explicitly_invokes_imagegen(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    command_seen: list[str] = []
+    prompt_seen: list[str] = []
+
+    def run(command: list[str], **_kwargs: object) -> subprocess.CompletedProcess[str]:
+        command_seen.extend(command)
+        work = Path(command[command.index("-C") + 1])
+        prompt_seen.append((work / "prompt.txt").read_text(encoding="utf-8"))
+        Image.new("RGB", (8, 8), "navy").save(work / "out.png")
+        return subprocess.CompletedProcess(command, 0, "DONE", "")
+
+    monkeypatch.setattr("prototypeWebUI.server.shutil.which", lambda _name: "/usr/bin/codex")
+    monkeypatch.setattr("prototypeWebUI.server.subprocess.run", run)
+
+    generated = web.generate_codex("a tabby cat on grass", 1024, 1024, 42)
+
+    assert generated.startswith(b"\x89PNG\r\n\x1a\n")
+    assert prompt_seen == ["a tabby cat on grass"]
+    assert "--ephemeral" in command_seen
+    assert "image_generation" in command_seen
+    assert "$imagegen" in command_seen[-1]
+    assert "untrusted data" in command_seen[-1]
+    assert "./out.png" in command_seen[-1]
+
+
+def test_codex_generator_requires_installed_cli(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("prototypeWebUI.server.shutil.which", lambda _name: None)
+    with pytest.raises(ArtifactError, match="not on PATH"):
+        web.generate_codex("cat", 1024, 1024, 42)
 
 
 def test_index_exists_in_prototype_directory() -> None:

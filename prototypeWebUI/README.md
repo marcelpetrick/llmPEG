@@ -46,8 +46,8 @@ exactly like that:
 https://image.pollinations.ai/prompt/<url-encoded prompt>?width=1024&height=1024&seed=42
 ```
 
-No API key, no account, no credits. That is the default generator here, and it is verified
-working — the round trip below was produced with it.
+No API key, no account, no credits. It remains available as an opt-in alternative, and the round
+trip below was produced with it.
 
 The backend proxies that call rather than putting the URL straight into an `<img>` tag, so the
 same code path can serve a local generator, and so a failure produces a readable error instead of
@@ -57,23 +57,25 @@ a broken image icon.
 
 | Option | Effort | Cost | Speed | Quality | Privacy |
 | --- | --- | --- | --- | --- | --- |
-| **Pollinations** (default) | none — already works | free | ~3 s | good | **prompt leaves your machine** |
-| **Codex CLI** (`codex`) | none if you are logged in | uses your ChatGPT quota | ~40 s | best of the three | prompt goes to OpenAI |
+| Pollinations | none — already works | free | ~3 s | good | **prompt leaves your machine** |
+| **Codex CLI** (`codex`, default) | none if you are logged in | uses your ChatGPT quota | ~40 s | best of the three | prompt goes to OpenAI |
 | Local Stable Diffusion (A1111/Forge) | hours of setup, ~4–8 GB VRAM | free after setup | varies | very good, controllable | fully local |
 | ComfyUI | more setup, node graphs | free after setup | varies | best control | fully local |
 
-**The recommendation:** stay on Pollinations for casual use — it is instant and costs nothing.
-Switch to `codex` when you want the best result and do not mind spending quota; it produced every
-reconstruction in the expanded benchmark. Move to local Stable Diffusion when the prompt content
-itself is sensitive, since that is the only option that keeps descriptions on your own hardware.
+Codex is the default because it produced every reconstruction in the expanded benchmark. Use
+Pollinations when speed and no-account access matter more, or local Stable Diffusion when the
+prompt content itself is sensitive.
 
 ```bash
-export LLMPEG_GENERATOR=codex      # verified working
+uv run python prototypeWebUI/server.py --generator pollinations
 ```
 
-Codex is an agent, not an image API, so this hands it a directory containing only `prompt.txt` and
-asks it to save `out.png`. That isolation is deliberate: it is the same method the benchmark uses
-to guarantee the generator never sees the source image.
+Codex is an agent, not an image API. The backend runs `codex exec` in an ephemeral directory that
+contains only `prompt.txt`, explicitly invokes `$imagegen` in built-in-tool mode, and requires it
+to save `out.png`. The image API fallback is forbidden, so this path uses the logged-in Codex
+session and does not require `OPENAI_API_KEY`. The source image is absent from both the request and
+the temporary working directory. The selected size is a target for Codex; the built-in tool may
+choose a different supported pixel size, which the page reports beneath the generated image.
 
 You already run a GPU box for Ollama, so a local generator is a realistic next step:
 
@@ -94,11 +96,12 @@ while this was written. Pollinations and Codex have both actually run through th
 | --- | --- | --- |
 | `OLLAMA_VISION_HOST` | *(required)* | your Ollama endpoint |
 | `LLMPEG_MODEL` | `qwen3-vl:32b-ctx49k` | vision model |
-| `LLMPEG_GENERATOR` | `pollinations` | `pollinations`, `codex`, or `local` |
+| `LLMPEG_GENERATOR` | `codex` | `codex`, `pollinations`, or `local` |
 | `LLMPEG_SD_HOST` | `http://127.0.0.1:7860` | Automatic1111-compatible server |
 | `LLMPEG_TIMEOUT` | `600` | seconds |
 
-`--host`, `--port`, and `--vision-host` are flags; the default bind is `127.0.0.1:8000`.
+`--host`, `--port`, `--vision-host`, and `--generator` are flags; the default bind is
+`127.0.0.1:8000`.
 
 ## What actually happened when this was tested
 

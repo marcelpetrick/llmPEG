@@ -92,7 +92,7 @@ Scripts under `scripts/` are linted and type-checked like the package, but are m
 tools rather than product surface: they may talk to the live Ollama endpoint, and they never
 run in CI. Never record the endpoint host in their output — model name only.
 
-Current baseline: **85 tests, 96.0% branch coverage**. Update this line when it changes — a stale
+Current baseline: **88 tests, 96.0% branch coverage**. Update this line when it changes — a stale
 self-measurement is the most embarrassing possible bug in a project about honest measurement.
 
 ## Testing
