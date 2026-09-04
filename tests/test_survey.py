@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -100,4 +101,90 @@ def test_survey_rejects_bad_manifest(tmp_path: Path) -> None:
     manifest = tmp_path / "bad.json"
     manifest.write_text('{"title":"x","date":"x","profile":"x","cases":[]}')
     with pytest.raises(ArtifactError, match="non-empty"):
+        render_survey(manifest)
+
+
+def _load_manifest(path: Path) -> dict[str, Any]:
+    loaded: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
+    return loaded
+
+
+def _save(path: Path, data: dict[str, Any]) -> None:
+    path.write_text(json.dumps(data), encoding="utf-8")
+
+
+def test_survey_rejects_a_case_that_is_not_an_object(tmp_path: Path, artifact: Artifact) -> None:
+    manifest = _manifest(tmp_path, artifact)
+    data = _load_manifest(manifest)
+    data["cases"] = ["not an object"]
+    _save(manifest, data)
+    with pytest.raises(ArtifactError, match="each survey case must be an object"):
+        render_survey(manifest)
+
+
+def test_survey_rejects_a_result_without_metrics(tmp_path: Path, artifact: Artifact) -> None:
+    manifest = _manifest(tmp_path, artifact)
+    _save(tmp_path / "result.json", {"status": "pass"})
+    with pytest.raises(ArtifactError, match="metrics missing"):
+        render_survey(manifest)
+
+
+def test_survey_rejects_a_case_without_credit(tmp_path: Path, artifact: Artifact) -> None:
+    manifest = _manifest(tmp_path, artifact)
+    data = _load_manifest(manifest)
+    del data["cases"][0]["credit"]
+    _save(manifest, data)
+    with pytest.raises(ArtifactError, match="credit missing"):
+        render_survey(manifest)
+
+
+def test_survey_rejects_a_non_numeric_metric(tmp_path: Path, artifact: Artifact) -> None:
+    manifest = _manifest(tmp_path, artifact)
+    _save(
+        tmp_path / "result.json",
+        {
+            "status": "pass",
+            "metrics": {
+                "visual_proxy_score": "high",
+                "layout_score": 0.8,
+                "dhash_similarity": 0.6,
+                "palette_distance": 0.1,
+            },
+        },
+    )
+    with pytest.raises(ArtifactError, match="must be a number"):
+        render_survey(manifest)
+
+
+def test_survey_rejects_a_blank_required_field(tmp_path: Path, artifact: Artifact) -> None:
+    manifest = _manifest(tmp_path, artifact)
+    data = _load_manifest(manifest)
+    data["title"] = ""
+    _save(manifest, data)
+    with pytest.raises(ArtifactError, match="must be a non-empty string"):
+        render_survey(manifest)
+
+
+def test_survey_rejects_unreadable_and_non_object_data(tmp_path: Path, artifact: Artifact) -> None:
+    manifest = _manifest(tmp_path, artifact)
+    (tmp_path / "result.json").write_text("{ broken", encoding="utf-8")
+    with pytest.raises(ArtifactError, match="cannot read survey data"):
+        render_survey(manifest)
+    (tmp_path / "result.json").write_text("[]", encoding="utf-8")
+    with pytest.raises(ArtifactError, match="root must be an object"):
+        render_survey(manifest)
+
+
+def test_survey_rejects_invalid_baseline_references(tmp_path: Path, artifact: Artifact) -> None:
+    manifest = _manifest(tmp_path, artifact)
+    data = _load_manifest(manifest)
+    data["cases"][0]["baseline_result"] = ""
+    _save(manifest, data)
+    with pytest.raises(ArtifactError, match="baseline_result invalid"):
+        render_survey(manifest)
+
+    data["cases"][0]["baseline_result"] = "baseline.json"
+    _save(tmp_path / "baseline.json", {"status": "pass"})
+    _save(manifest, data)
+    with pytest.raises(ArtifactError, match="baseline metrics missing"):
         render_survey(manifest)

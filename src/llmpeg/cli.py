@@ -30,7 +30,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     encode = subparsers.add_parser("encode", help="encode an image with an Ollama vision model")
     encode.add_argument("image", type=Path)
-    encode.add_argument("--output", "-o", required=True, type=Path)
+    encode.add_argument(
+        "--output", "-o", type=Path, help="default: <image>.llmpeg.json beside the image"
+    )
     # choices is a sequence of members, not the enum class itself: argparse's
     # "value not in action.choices" is a plain membership test, and StrEnum
     # members compare equal to their string values.
@@ -63,7 +65,9 @@ def build_parser() -> argparse.ArgumentParser:
     evaluate = subparsers.add_parser("evaluate", help="compare source and reconstruction")
     evaluate.add_argument("source", type=Path)
     evaluate.add_argument("reconstruction", type=Path)
-    evaluate.add_argument("--artifact", required=True, type=Path)
+    evaluate.add_argument(
+        "--artifact", type=Path, help="default: <source>.llmpeg.json beside the source"
+    )
     evaluate.add_argument("--ocr-text", type=Path)
     evaluate.add_argument("--output", "-o", type=Path)
     evaluate.add_argument("--overwrite", action="store_true")
@@ -80,6 +84,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
         if args.command == "encode":
+            output = args.output or artifact_path_for(args.image)
             provider = OllamaVisionProvider(args.host, args.model, args.timeout)
             artifact = encode_image(
                 args.image,
@@ -88,8 +93,10 @@ def main(argv: Sequence[str] | None = None) -> int:
                 max_image_bytes=args.max_image_bytes,
                 max_image_pixels=args.max_image_pixels,
             )
-            artifact.write(args.output, overwrite=args.overwrite)
-            print(f"wrote {args.output} ({len(artifact.to_bytes())} bytes)")
+            artifact.write(output, overwrite=args.overwrite)
+            size = len(artifact.to_bytes())
+            ratio = artifact.source.byte_size / size
+            print(f"wrote {output} ({size:,} bytes, {ratio:.0f}:1)")
         elif args.command == "reconstruct":
             artifact = Artifact.read(args.artifact)
             prompt = render_generation_prompt(artifact)
@@ -120,7 +127,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(f"encoder model: {artifact.provenance.provider}/{artifact.provenance.model}")
             print("conforms: yes")
         elif args.command == "evaluate":
-            artifact = Artifact.read(args.artifact)
+            artifact = Artifact.read(args.artifact or artifact_path_for(args.source))
             ocr_text = args.ocr_text.read_text(encoding="utf-8") if args.ocr_text else None
             report = evaluate_with_artifact(
                 args.source, args.reconstruction, artifact, ocr_text=ocr_text
@@ -144,6 +151,16 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"llmpeg: error: {error}", file=sys.stderr)
         return 2
     return 0
+
+
+def artifact_path_for(image: Path) -> Path:
+    """Return the artifact path beside an image: photo.jpg -> photo.jpg.llmpeg.json.
+
+    The whole original name is kept and `.llmpeg.json` is appended rather than replacing the
+    extension, so `photo.jpg` and `photo.png` in one folder cannot collide on a single artifact.
+    It also keeps the source obvious from the artifact's name alone.
+    """
+    return image.parent / f"{image.name}.llmpeg.json"
 
 
 def _write_text(path: Path, content: str, *, overwrite: bool) -> None:

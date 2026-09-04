@@ -42,7 +42,7 @@ but the serializer fixes the order anyway, so `head -c 40` identifies a file the
 identifies a PNG:
 
 ```console
-$ head -c 40 photo.llmpeg.json
+$ head -c 40 photo.jpg.llmpeg.json
 {"llmpeg":{"magic":"llmPEG","format_
 ```
 
@@ -91,8 +91,9 @@ Byte-stable, so a hash or a size measurement means something:
 3. The `llmpeg` header first, retaining its declared field order so `magic` leads.
 4. Every other top-level key sorted, and all nested object keys sorted recursively.
 
-The header costs **209 bytes**. That is real overhead and it is charged honestly against every
-compression ratio this project reports.
+The header costs **228 bytes**. Migrating an old artifact also removed the 19-byte
+`"schema_version":1,` field it replaced, so existing files grew by **209 bytes net**. That is real
+overhead and it is charged honestly against every compression ratio this project reports.
 
 ## Conformance
 
@@ -108,7 +109,7 @@ fails rather than silently dropping content to flatter a ratio.
 Check any file:
 
 ```console
-$ llmpeg verify photo.llmpeg.json
+$ llmpeg verify photo.jpg.llmpeg.json
 llmPEG 1.0 (lpg1)
 compatible brands: lpg1
 written by: llmpeg/0.1.0
@@ -121,6 +122,13 @@ conforms: yes
 
 `verify` exits `0` when the file conforms and `2` when it does not, so it works in a pipeline.
 
+## File naming
+
+`llmpeg encode photo.jpg` writes `photo.jpg.llmpeg.json`: the suffix is **appended** to the whole
+name rather than replacing the extension. `photo.jpg` and `photo.png` therefore keep separate
+artifacts instead of colliding, and an artifact always names the file it came from. Nothing in the
+format depends on the file name — `magic` is the identifier — so any name is readable.
+
 ## Legacy files
 
 Artifacts written before the header existed carried a bare `schema_version: 1` and no `llmpeg`
@@ -128,7 +136,9 @@ object. They are still readable: the reader recognises them, upgrades them to 1.
 records `encoder: "llmpeg/unknown"` because the writing version was never stored. Writing such an
 artifact emits current-format bytes, so the upgrade is one-way and automatic.
 
-Every artifact in this repository has been migrated; each grew by exactly 209 bytes.
+Every artifact in this repository has been migrated. Fifteen grew by exactly 209 bytes; two moved
+by 210 and 208 because the same commit also normalised a `temperature` value and a stray space in
+their bodies.
 
 ## What the format deliberately does not do
 

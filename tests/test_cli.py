@@ -7,7 +7,7 @@ from unittest.mock import patch
 import pytest
 
 from llmpeg.artifact import Artifact, SourceInfo, source_digest
-from llmpeg.cli import main
+from llmpeg.cli import artifact_path_for, main
 
 
 def test_reconstruct_inspect_and_evaluate_cli(
@@ -121,3 +121,43 @@ def test_verify_reports_conformance_and_rejects_foreign_json(
     foreign.write_text('{"hello": "world"}', encoding="utf-8")
     assert main(["verify", str(foreign)]) == 2
     assert "not an llmPEG artifact" in capsys.readouterr().err
+
+
+def test_encode_defaults_the_output_beside_the_image(
+    artifact: Artifact, sample_image: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """`llmpeg encode photo.jpg` needs no flags and writes photo.llmpeg.json."""
+    expected = sample_image.parent / f"{sample_image.name}.llmpeg.json"
+    with patch("llmpeg.cli.encode_image", return_value=artifact):
+        assert main(["encode", str(sample_image)]) == 0
+    assert expected.exists()
+    out = capsys.readouterr().out
+    assert str(expected) in out
+    assert ":1" in out  # the ratio is reported without needing `inspect`
+
+
+def test_evaluate_defaults_the_artifact_beside_the_source(
+    artifact: Artifact, sample_image: Path
+) -> None:
+    """`llmpeg evaluate photo.png regen.png` finds photo.llmpeg.json on its own."""
+    raw = sample_image.read_bytes()
+    stored = replace(
+        artifact,
+        source=SourceInfo(160, 120, len(raw), "image/png", source_digest(raw)),
+    )
+    stored.write(sample_image.parent / f"{sample_image.name}.llmpeg.json")
+    assert main(["evaluate", str(sample_image), str(sample_image)]) in {0, 1, 3}
+
+
+@pytest.mark.parametrize(
+    ("name", "expected"),
+    [
+        ("photo.jpg", "photo.jpg.llmpeg.json"),
+        ("photo.png", "photo.png.llmpeg.json"),
+        ("my.photo.jpg", "my.photo.jpg.llmpeg.json"),
+        ("noextension", "noextension.llmpeg.json"),
+    ],
+)
+def test_artifact_path_keeps_the_whole_filename(name: str, expected: str) -> None:
+    """The suffix is appended, so photo.jpg and photo.png cannot collide."""
+    assert artifact_path_for(Path(name)).name == expected

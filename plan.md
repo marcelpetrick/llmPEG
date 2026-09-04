@@ -82,7 +82,7 @@ Final gate:
 ruff format --check .
 ruff check .
 mypy src tests scripts prototypeWebUI
-pytest --cov=llmpeg --cov-report=term-missing --cov-fail-under=90
+pytest --cov=llmpeg --cov-report=term-missing --cov-fail-under=95
 python -m build
 ```
 
@@ -119,6 +119,66 @@ recovered and verified by exact perceptual-hash match.
 Still open: calibrate the judge against real human ratings; rebuild the critic as a pairwise
 forced choice; trace the Commons records for `kitchen-table` and `living-room`; add a precision
 counterpart to `critical_text_recall` so invented text is penalised.
+
+## 7. Format, packaging, and ergonomics
+
+Added after the measurement phase, in response to a direct requirement: a reader must be able to
+tell which tooling can decode an artifact.
+
+- [x] Give the artifact a **versioned header** — magic, format version, brands, encoder,
+      `min_reader_version`, decoder requirement — modelled on PNG/GIF/PDF signatures and the
+      AVIF/HEIF `ftyp` brands. Spec in [`docs/format.md`](docs/format.md).
+- [x] Define compatibility rules: higher major refused, higher minor accepted with unknown fields
+      ignored, known version strict.
+- [x] **Enforce conformance in code** — `write()` re-parses its own bytes before touching disk, so
+      a non-conforming artifact cannot be emitted. Add `llmpeg verify`.
+- [x] Migrate all 17 checked-in artifacts (+209 bytes each) and **re-measure every published
+      ratio** rather than quoting old figures against new files.
+- [x] Document a **copy-pasteable folder round trip** with measured wall-clock, the destructive
+      step explicitly guarded.
+- [x] Add a **release workflow** building sdist + wheel on `v*` tags.
+- [x] Simplify the everyday commands: `encode` derives its output path and prints the ratio,
+      `evaluate` derives the artifact path, and the expert flags stay available.
+- [x] Raise the coverage floor to **95%** and enforce it in CI.
+
+Exit gate: `head -c 40` identifies an artifact, `llmpeg verify` exits non-zero on a foreign file,
+every published ratio matches the file on disk, and the common path needs no flags.
+
+## Open work
+
+Nothing below is done. Each item says why it is still open.
+
+**Blocked on provenance**
+
+- [ ] Trace the Wikimedia Commons records for `kitchen-table` and `living-room`. Three search
+      passes verified by perceptual hash failed; they are labelled unverified in the gallery and
+      must be traced before the benchmark is published anywhere asserting licensing.
+
+**Measurement quality**
+
+- [ ] Measure the perceptual judge's **repeat stability** — three runs on identical input with an
+      unchanged prompt — before quoting any number from it again. A cosmetic prompt change already
+      moved 11 of 12 verdicts by 1.67 points.
+- [ ] Collect **real human ratings**. The survey pages export them; none are checked in. A dozen
+      would outrank all the model judging in this repository.
+- [ ] Rebuild the adversarial critic as a **pairwise forced choice**. Absolute 1–5 scoring
+      collapsed to a constant 3 in the loop and drifted in the judge; the same fix applies to both.
+- [ ] Add a **precision counterpart to `critical_text_recall`**. It currently rewards recall and
+      ignores invented text, so a reconstruction that adds a fictional bike number still scores
+      1.00.
+- [ ] `docs/benchmark-cycle.json` and `docs/adversarial-rounds.json` record artifact byte sizes
+      measured **before** the format header existed. Their timings remain valid; their byte and
+      ratio fields are 209 bytes light and should be re-run.
+
+**Packaging and platform**
+
+- [ ] Publishing to PyPI is not possible under the name `llmpeg` — it is taken by an unrelated
+      project. Publishing needs a different distribution name; the import package can stay
+      `llmpeg`.
+- [ ] `prototypeWebUI/generate_local()`, the Automatic1111 path, is **unverified**: no Stable
+      Diffusion server was reachable when it was written.
+- [ ] `prototypeWebUI/` has **no automated tests**. It is a prototype, and the codec it calls
+      carries the suite, but the downscale and dispatch logic is untested.
 
 ## Definition of done
 

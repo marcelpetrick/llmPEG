@@ -55,7 +55,7 @@ small lettering — scores 0.952 visual proxy, still the best result anywhere in
 (251 KB) and the worst ratio (69:1); `mountain-hikers` has the largest (800 KB) and the best
 (307:1). A near-empty corner needs more words per byte of source than a mountain does.
 
-All ratios above include the 209-byte format header introduced in format 1.0; earlier revisions
+All ratios above include the 228-byte format header introduced in format 1.0; earlier revisions
 of this table quoted figures without it.
 
 ## Two caveats about the text-recall figure

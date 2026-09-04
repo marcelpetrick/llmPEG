@@ -33,8 +33,9 @@ Concretely:
   `"status": "fail"` on critical-text recall and that stays visible in the README.
 - Never let the encoder silently drop content to make a ratio look better. Over-budget output must
   fail closed. This is enforced in `artifact.py`, not just documented.
-- Every reported ratio includes the 209-byte format header. Do not quote a pre-header figure, and
-  do not quote a ratio against an original that was downscaled before encoding.
+- Every reported ratio includes the 228-byte format header (existing artifacts grew 209 bytes net,
+  because migration dropped the 19-byte `schema_version` field). Do not quote a pre-header figure,
+  and do not quote a ratio against an original that was downscaled before encoding.
 
 ## Media rule
 
@@ -80,7 +81,7 @@ Python 3.14 for every push and pull request:
 uv run ruff format --check .
 uv run ruff check .
 uv run mypy src tests scripts prototypeWebUI
-uv run pytest --cov=llmpeg --cov-report=term-missing --cov-fail-under=90
+uv run pytest --cov=llmpeg --cov-report=term-missing --cov-fail-under=95
 uv run python -m build
 ```
 
@@ -88,7 +89,7 @@ Scripts under `scripts/` are linted and type-checked like the package, but are m
 tools rather than product surface: they may talk to the live Ollama endpoint, and they never
 run in CI. Never record the endpoint host in their output — model name only.
 
-Current baseline: **59 tests, 94.0% branch coverage**. Update this line when it changes — a stale
+Current baseline: **72 tests, 96.0% branch coverage**. Update this line when it changes — a stale
 self-measurement is the most embarrassing possible bug in a project about honest measurement.
 
 ## Testing

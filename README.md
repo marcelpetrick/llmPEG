@@ -5,14 +5,15 @@
 [![Python 3.14](https://img.shields.io/badge/Python-3.14-3776ab.svg)](https://www.python.org/)
 [![Ruff](https://img.shields.io/badge/lint-ruff-261230.svg)](https://docs.astral.sh/ruff/)
 [![mypy strict](https://img.shields.io/badge/types-mypy%20strict-2a6db2.svg)](https://mypy-lang.org/)
-[![Coverage 94.0%](https://img.shields.io/badge/coverage-94.0%25-brightgreen.svg)](#development)
+[![Coverage 96.0%](https://img.shields.io/badge/coverage-96.0%25-brightgreen.svg)](#development)
 
-**llmPEG** — the *LLM Photo Expert Group*. JPEG was built by the **J**oint **P**hotographic
-**E**xperts **G**roup. This one was built by a language model, so the joke writes itself.
+**llmPEG** — the *LLM Photo Expert Group*, after JPEG's **J**oint **P**hotographic **E**xperts
+**G**roup. In JPEG the codec is an algorithm. Here the codec is a **large language model**: an LLM
+does the compressing, and a second model does the "decompressing".
 
-The joke is the point. A meme goes around every few months: *"I compressed my family photos into
-an AI prompt and deleted the originals — 6 MB down to 200 bytes!"* It is satire. Deletion has been
-renamed compression. Everybody laughs.
+The joke came first. A satirical article does the rounds every few months — *"teenager compresses
+family photos into AI prompts and deletes the originals, 6 MB down to 200 bytes!"* Deletion has
+been renamed compression. Everybody laughs.
 
 llmPEG is that joke, built for real and measured honestly. A vision model turns your image into a
 small text description. Later, an image generator reads that description and paints a **brand new
@@ -207,8 +208,8 @@ benchmark produced a **1,275-byte** artifact where the checked-in run produced *
 temperature `0`. The compression ratio is not a property of your photo. It is a property of one
 particular run of one particular model, and it moves by 28% between runs.
 
-(Both figures predate the 209-byte format header, so they are comparable with each other but not
-with the tables above. The header is a constant and does not affect the spread.)
+(Both figures predate the format header, so they are comparable with each other but not with the
+tables above. The header is a constant and does not affect the spread.)
 
 ### Does the score match a human eye? We still cannot say.
 
@@ -314,10 +315,10 @@ That last field is the one this format needs and others do not. A PNG decoder sh
 library; llmPEG's does not exist here at all, so the container says so in every single file.
 
 ```console
-$ head -c 40 photo.llmpeg.json
+$ head -c 40 photo.jpg.llmpeg.json
 {"llmpeg":{"magic":"llmPEG","format_
 
-$ llmpeg verify photo.llmpeg.json
+$ llmpeg verify photo.jpg.llmpeg.json
 llmPEG 1.0 (lpg1)
 written by: llmpeg/0.1.0
 needs reader: llmpeg >= 0.1.0
@@ -339,8 +340,9 @@ conforms: yes
 back, and compares — if the round trip is not byte-identical it raises *before* touching the disk.
 The encoder cannot emit a file it could not read.
 
-**What the header cost.** 209 bytes per artifact, constant. That is real overhead and it is charged
-against every ratio in this README: the cat went from 802:1 to **663:1** and the news article from
+**What the header cost.** 228 bytes per artifact. Migrating an old file also dropped the 19-byte
+`schema_version` field it replaced, so the checked-in artifacts grew by 209 bytes net. That is real
+overhead and it is charged against every ratio in this README: the cat went from 802:1 to **663:1** and the news article from
 37:1 to **35:1** when the header landed. All 17 checked-in artifacts were migrated and every
 published figure re-measured, because the alternative — quoting the old ratios against the new
 files — is exactly the kind of accounting this project exists to make fun of.
@@ -375,44 +377,60 @@ uv sync --extra dev
 uv run llmpeg --help
 ```
 
-Encode with an Ollama vision server:
+Point it at your vision server once, then the everyday commands take no flags at all:
 
 ```bash
 export OLLAMA_VISION_HOST=http://your-ollama-server:11434
-uv run llmpeg encode photo.jpg --profile balanced --output photo.llmpeg.json
+
+uv run llmpeg encode photo.jpg               # -> photo.jpg.llmpeg.json  (1,341 bytes, 597:1)
+uv run llmpeg reconstruct photo.jpg.llmpeg.json > photo.prompt.txt
+uv run llmpeg verify photo.jpg.llmpeg.json
+uv run llmpeg inspect photo.jpg.llmpeg.json
 ```
 
-The default model is `qwen3-vl:32b-ctx49k`. The client uses Ollama's `/api/chat`, structured
-output, temperature `0`, seed `42`, and `/no_think`. Ollama 0.32 with this Qwen build sometimes
-places valid schema-constrained JSON in `message.thinking` despite `think:false`; llmPEG accepts
-that field only when it parses as complete valid JSON. It fails closed on empty, truncated,
-malformed, or over-budget output.
-
-Render a generator-neutral prompt, then feed it to the image generator of your choice:
+`encode` writes `<whole file name>.llmpeg.json` beside the image and prints the ratio, so the
+common case needs no `--output` and no follow-up command. `reconstruct` writes the prompt to
+stdout so it pipes. `evaluate` finds the artifact the same way:
 
 ```bash
-uv run llmpeg reconstruct photo.llmpeg.json --output photo.prompt.txt
+uv run llmpeg evaluate photo.jpg regenerated.png   # uses photo.jpg.llmpeg.json
 ```
 
-Codex's built-in image generation produced the checked-in demos. llmPEG ships no generator and
-does not pretend to.
-
-Inspect the actual size claim, and evaluate a reconstruction:
-
-```bash
-uv run llmpeg inspect photo.llmpeg.json
-
-uv run llmpeg evaluate photo.jpg regenerated.png \
-  --artifact photo.llmpeg.json \
-  --ocr-text regenerated.txt \
-  --output evaluation.json
-```
+Send the prompt to the image generator of your choice — Codex's built-in image generation produced
+the checked-in demos, and llmPEG ships no generator itself.
 
 Output files are never overwritten unless `--overwrite` is supplied. Encoding sends the full image
 to the configured Ollama endpoint, so only use a server you trust.
 
+### When you need the details
+
+Everything above has an explicit form, and every default is overridable:
+
+```bash
+uv run llmpeg encode photo.jpg \
+  --profile detailed \                 # gist | balanced (default) | detailed
+  --output artifacts/photo.jpg.llmpeg.json \
+  --host http://other-host:11434 \
+  --model qwen3-vl:32b-ctx49k \
+  --timeout 600 \
+  --max-image-bytes 26214400 \
+  --max-image-pixels 50000000 \
+  --overwrite
+
+uv run llmpeg evaluate photo.jpg regenerated.png \
+  --artifact artifacts/photo.jpg.llmpeg.json \
+  --ocr-text regenerated.txt \
+  --output evaluation.json
+```
+
+The client uses Ollama's `/api/chat`, structured output, temperature `0`, seed `42`, and
+`/no_think`. Ollama 0.32 with this Qwen build sometimes places valid schema-constrained JSON in
+`message.thinking` despite `think:false`; llmPEG accepts that field only when it parses as
+complete valid JSON. It fails closed on empty, truncated, malformed, or over-budget output.
+
 `evaluate` exits `0` for pass, `1` for threshold failure, `2` for usage/data errors, and `3` when
-a required check (normally `detailed`-profile OCR) was not evaluated.
+a required check (normally `detailed`-profile OCR) was not evaluated. `verify` exits `0` when a
+file conforms to the format and `2` when it does not.
 
 ## Convert a whole folder, and convert it back
 
@@ -426,14 +444,21 @@ cd ~/photos                      # your folder of .jpg / .png
 export OLLAMA_VISION_HOST=http://your-ollama-host:11434
 mkdir -p llmpeg/artifacts llmpeg/prompts llmpeg/restored
 
-for f in *.jpg *.png; do
-  [ -e "$f" ] || continue
-  uv run llmpeg encode "$f" --profile balanced \
-    --output "llmpeg/artifacts/${f%.*}.llmpeg.json" --overwrite
-done
+find . -maxdepth 1 -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) -print0 |
+  while IFS= read -r -d '' f; do
+    uv run llmpeg encode "${f#./}"        # -> photo.jpg.llmpeg.json, beside the photo
+  done
 
-du -sh . llmpeg/artifacts        # compare the folder with its description
+du -sh .                         # your folder, now mostly text
 ```
+
+`encode` appends `.llmpeg.json` to the **whole** file name, so `photo.jpg` and `photo.png` in one
+folder produce two artifacts instead of one silently overwriting the other, and every artifact says
+which file it came from. No `--overwrite`, so re-running stops on anything already encoded rather
+than spending another minute of GPU on it.
+
+`find` rather than a `*.jpg` glob because zsh treats an unmatched glob as a hard error, and
+`-print0` because photo folders contain spaces.
 
 ### 2. Check what you actually have
 
@@ -460,8 +485,7 @@ by scroll-back accident:
 I_UNDERSTAND_THIS_DELETES_MY_PHOTOS=yes bash -c '
   [ "$I_UNDERSTAND_THIS_DELETES_MY_PHOTOS" = yes ] || exit 1
   for a in llmpeg/artifacts/*.llmpeg.json; do
-    n=$(basename "$a" .llmpeg.json)
-    rm -f -- "$n".jpg "$n".png
+    rm -f -- "$(basename "$a" .llmpeg.json)"   # photo.jpg.llmpeg.json -> photo.jpg
   done
   echo "originals deleted; only the text remains"
 '
@@ -550,12 +574,12 @@ data. llmPEG consumes OCR text; it does not ship an OCR engine.
 uv run ruff format --check .
 uv run ruff check .
 uv run mypy src tests scripts prototypeWebUI
-uv run pytest --cov=llmpeg --cov-report=term-missing --cov-fail-under=90
+uv run pytest --cov=llmpeg --cov-report=term-missing --cov-fail-under=95
 uv run python -m build
 ```
 
 The suite is offline and injects fake providers. Live Ollama and image-generation runs are manual
-demo steps, not CI dependencies. Current suite: **59 tests, 94.0% branch-aware coverage**.
+demo steps, not CI dependencies. Current suite: **72 tests, 96.0% branch-aware coverage**.
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs all five gates on Python 3.14 for
 every push and pull request.
