@@ -14,8 +14,8 @@ an image generator later renders a **new** image from that text alone. The gener
 source.
 
 The project is **totally lossy** and says so everywhere. That honesty is the product, not a
-disclaimer bolted on afterwards. See `vision.md` for the contract and `plan.md` for the delivery
-plan.
+disclaimer bolted on afterwards. See `docs/vision.md` for the contract and `docs/plan.md` for the
+delivery plan.
 
 ## The one rule that matters
 
@@ -60,10 +60,13 @@ README, and is not part of the benchmark set. Do not add a second exception.
 | `src/llmpeg/cli.py` | `llmpeg` console entry point |
 | `examples/` | The flagship news-article demo: artifact, prompt, reconstruction, evaluation |
 | `survey/` | Reproduction surveys, sources, prompts, artifacts, results |
+| `docs/vision.md` | Product vision and fidelity contract |
+| `docs/plan.md` | Delivery plan and review record |
 | `docs/architecture.md` | C4 diagrams, system context down to components |
 | `docs/format.md` | Normative spec for the `.llmpeg.json` container and its header |
 | `docs/metrics.md` | Whether the metrics track a human eye (they do not) |
 | `docs/adversarial.md` | The GAN-shaped refinement loop and why it failed |
+| `docs/effort-evaluation.md` | Measured development-session effort snapshot |
 | `scripts/` | Measurement tools: cycle timing, perceptual judge, adversarial loop |
 | `prototypeWebUI/` | Local drag-and-drop demo UI (prototype, untested, not product surface) |
 

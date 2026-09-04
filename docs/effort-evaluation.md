@@ -1,4 +1,4 @@
-# llmPEG Effort Evaluation
+# llmPEG effort evaluation
 
 > Measured data from the actual agentic development session on 2026-09-03.
 > All numbers are traceable to git history, cloc, and AGENTS.md.

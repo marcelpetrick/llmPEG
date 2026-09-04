@@ -85,8 +85,9 @@ The encoded `.llmpeg.json` file opens with a versioned format header — magic, 
 brands, encoder, and the decoder it requires — followed by the fidelity profile, source
 dimensions, generation prompt, critical verbatim text, normalized composition regions, palette,
 and model provenance. It does not embed the source image. Canonical compact JSON makes byte counts
-stable, and the header costs a constant 209 bytes that every reported ratio is charged for. See
-[docs/format.md](docs/format.md).
+stable. The header is 228 bytes; migrated artifacts grew by 209 bytes after the obsolete 19-byte
+`schema_version` field was removed. Every reported ratio includes the full header. See
+[format.md](format.md).
 
 Budgets are deliberately tied to source size:
 
@@ -124,7 +125,7 @@ preferences to be re-derived each session.
 **Format**
 
 - The artifact carries a **versioned header** so a reader knows which tooling can decode it,
-  modelled on how real image formats do metadata. See [docs/format.md](docs/format.md).
+  modelled on how real image formats do metadata. See [format.md](format.md).
 - **Output must always conform.** The encoder cannot emit a file that does not parse back as a
   valid artifact; conformance is enforced in code, not documented and hoped for.
 

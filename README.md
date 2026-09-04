@@ -614,7 +614,7 @@ uv pip install .                               # from a clone
 
 Inspired by [this LinkedIn post](https://lnkd.in/p/eSqXmyvw) and the satirical
 ["New Compression Technique"](https://programmerhumor.io/ai-memes/new-compression-technique-9yp7)
-article. See [vision.md](vision.md) for the product contract and [plan.md](plan.md) for the
-delivery plan.
+article. See the [product vision](docs/vision.md) for the contract and the
+[delivery plan](docs/plan.md) for its implementation history.
 
 Licensed under the [GNU General Public License v3.0 or later](LICENSE).
