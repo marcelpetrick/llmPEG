@@ -67,6 +67,7 @@ README, and is not part of the benchmark set. Do not add a second exception.
 | `docs/metrics.md` | Whether the metrics track a human eye (they do not) |
 | `docs/adversarial.md` | The GAN-shaped refinement loop and why it failed |
 | `docs/effort-evaluation.md` | Measured development-session effort snapshot |
+| `docs/ideas.md` | Unscheduled ideas that require measurement before implementation |
 | `scripts/` | Measurement tools: cycle timing, perceptual judge, adversarial loop |
 | `prototypeWebUI/` | Local drag-and-drop demo UI (prototype, lightly tested, not product surface) |
 
