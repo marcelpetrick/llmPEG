@@ -44,16 +44,25 @@ a broken image icon.
 
 ## Options for generation, cheapest effort first
 
-| Option | Effort | Cost | Quality | Privacy |
-| --- | --- | --- | --- | --- |
-| **Pollinations** (default) | none — it already works | free | good | **prompt leaves your machine** |
-| Local Stable Diffusion (A1111/Forge) | a few hours setup, ~4–8 GB VRAM | free after setup | very good, controllable | fully local |
-| ComfyUI | more setup, node graphs | free after setup | best control | fully local |
-| Hosted APIs (OpenAI, Replicate…) | trivial | **costs credits** | best | prompt leaves your machine |
+| Option | Effort | Cost | Speed | Quality | Privacy |
+| --- | --- | --- | --- | --- | --- |
+| **Pollinations** (default) | none — already works | free | ~3 s | good | **prompt leaves your machine** |
+| **Codex CLI** (`codex`) | none if you are logged in | uses your ChatGPT quota | ~40 s | best of the three | prompt goes to OpenAI |
+| Local Stable Diffusion (A1111/Forge) | hours of setup, ~4–8 GB VRAM | free after setup | varies | very good, controllable | fully local |
+| ComfyUI | more setup, node graphs | free after setup | varies | best control | fully local |
 
-**The recommendation:** start on Pollinations, because it is already working and costs nothing.
-Move to local Stable Diffusion when the prompt content starts to matter, since that is the only
-option here that keeps your photos' descriptions on your own hardware.
+**The recommendation:** stay on Pollinations for casual use — it is instant and costs nothing.
+Switch to `codex` when you want the best result and do not mind spending quota; it produced every
+reconstruction in the expanded benchmark. Move to local Stable Diffusion when the prompt content
+itself is sensitive, since that is the only option that keeps descriptions on your own hardware.
+
+```bash
+export LLMPEG_GENERATOR=codex      # verified working
+```
+
+Codex is an agent, not an image API, so this hands it a directory containing only `prompt.txt` and
+asks it to save `out.png`. That isolation is deliberate: it is the same method the benchmark uses
+to guarantee the generator never sees the source image.
 
 You already run a GPU box for Ollama, so a local generator is a realistic next step:
 
@@ -65,9 +74,8 @@ export LLMPEG_SD_HOST=http://your-gpu-host:7860
 ```
 
 `generate_local()` speaks the Automatic1111 `/sdapi/v1/txt2img` protocol, which Forge and several
-others also implement. **It is unverified**: no Stable Diffusion server was reachable while this
-was written, so treat it as a starting point, not a tested path. The Pollinations path is the one
-that has actually run.
+others also implement. **It is the one unverified path**: no Stable Diffusion server was reachable
+while this was written. Pollinations and Codex have both actually run through this server.
 
 ## Configuration
 
@@ -75,7 +83,7 @@ that has actually run.
 | --- | --- | --- |
 | `OLLAMA_VISION_HOST` | *(required)* | your Ollama endpoint |
 | `LLMPEG_MODEL` | `qwen3-vl:32b-ctx49k` | vision model |
-| `LLMPEG_GENERATOR` | `pollinations` | `pollinations` or `local` |
+| `LLMPEG_GENERATOR` | `pollinations` | `pollinations`, `codex`, or `local` |
 | `LLMPEG_SD_HOST` | `http://127.0.0.1:7860` | Automatic1111-compatible server |
 | `LLMPEG_TIMEOUT` | `600` | seconds |
 

@@ -25,6 +25,8 @@ import base64
 import io
 import json
 import os
+import shutil
+import subprocess
 import sys
 import tempfile
 import urllib.error
@@ -149,10 +151,67 @@ def generate_local(prompt: str, width: int, height: int, seed: int) -> bytes:
     return base64.b64decode(images[0])
 
 
+def generate_codex(prompt: str, width: int, height: int, seed: int) -> bytes:
+    """Drive the Codex CLI's built-in image tool.
+
+    Codex is an agent, not an image API: it is handed a directory containing only the
+    prompt and asked to save `out.png` there. Slower and it consumes the account's quota,
+    but the quality is the best of the three and the prompt never reaches a public service.
+    """
+    del seed  # the built-in image tool exposes no seed
+    binary = shutil.which("codex")
+    if binary is None:
+        raise ArtifactError("the `codex` CLI is not on PATH")
+    orientation = "landscape" if width > height else "portrait" if height > width else "square"
+    with tempfile.TemporaryDirectory() as tmp:
+        work = Path(tmp)
+        (work / "prompt.txt").write_text(prompt, encoding="utf-8")
+        try:
+            subprocess.run(
+                [
+                    binary,
+                    "exec",
+                    "--skip-git-repo-check",
+                    "-C",
+                    str(work),
+                    "-s",
+                    "workspace-write",
+                    "The file prompt.txt in this directory contains an image-generation prompt. "
+                    "Generate exactly that image with your built-in image generation tool and "
+                    "save it as out.png in this directory. Use the prompt as written; add no "
+                    f"subject, text or decoration of your own. Orientation must be {orientation}. "
+                    "When finished reply with only: DONE",
+                ],
+                check=True,
+                capture_output=True,
+                timeout=CONFIG.timeout,
+            )
+        except subprocess.TimeoutExpired as error:
+            raise ArtifactError(f"codex timed out after {CONFIG.timeout:.0f}s") from error
+        except subprocess.CalledProcessError as error:
+            tail = (error.stderr or b"").decode("utf-8", "replace")[-300:]
+            raise ArtifactError(f"codex failed: {tail}") from error
+        produced = work / "out.png"
+        if not produced.is_file():
+            raise ArtifactError("codex produced no image")
+        return produced.read_bytes()
+
+
+def image_media_type(data: bytes) -> str:
+    """Sniff the format, since the three generators do not agree on one."""
+    if data.startswith(b"\x89PNG\r\n\x1a\n"):
+        return "image/png"
+    if data.startswith(b"RIFF") and data[8:12] == b"WEBP":
+        return "image/webp"
+    return "image/jpeg"
+
+
 def generate(prompt: str, width: int, height: int, seed: int) -> bytes:
     """Dispatch to the configured generator."""
     if CONFIG.generator == "local":
         return generate_local(prompt, width, height, seed)
+    if CONFIG.generator == "codex":
+        return generate_codex(prompt, width, height, seed)
     return generate_pollinations(prompt, width, height, seed)
 
 
@@ -219,7 +278,7 @@ class Handler(BaseHTTPRequestHandler):
                     int(request.get("height", 1024)),
                     int(request.get("seed", 42)),
                 )
-                self._send(200, image, "image/jpeg")
+                self._send(200, image, image_media_type(image))
                 return
             self._send_json(404, {"error": "not found"})
         except ArtifactError as error:
