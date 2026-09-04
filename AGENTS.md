@@ -134,13 +134,11 @@ Established scopes: `codec` (encoder/artifact/providers), `survey`, `architectur
 
 ## Known issues
 
-- The expanded scene benchmark is measured at `n=6`, not the planned `n=10`. Four cases
-  (`kitchen-table`, `living-room`, `mountain-hikers`, `street-bicycles`) are encoded and have
-  rendered prompts but no reconstruction, because generation is a manual adapter step.
-- Those same four sources have no recorded Commons URL. They must be traced before publication —
-  see the media rule above.
-- Two measured cases (`train-platform`, `workspace-books`) have no OCR transcript, so they report
-  `incomplete` rather than pass or fail.
+- Two expanded-benchmark sources (`kitchen-table`, `living-room`) have no traced Commons record.
+  Three search passes verified by perceptual hash failed to find them, so they are labelled
+  unverified in the gallery. Trace them before publishing anything that asserts their licensing.
+- `critical_text_recall` measures recall only: invented text is not penalised, and duplicate
+  expected strings all match one rendered occurrence. Do not quote it as text fidelity.
 - `visual_proxy_score` correlates **negatively** with perceived similarity (`docs/metrics.md`).
   Do not present it as a quality score, and do not reweight it on the current twelve points.
 - The adversarial critic returns a constant verdict, so the refinement loop has no gradient

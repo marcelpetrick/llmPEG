@@ -1,13 +1,13 @@
 {
   "checks": {
-    "critical_text_recall": null,
+    "critical_text_recall": true,
     "layout_score": true,
     "palette_distance": true,
     "visual_proxy_score": true
   },
   "metrics": {
     "aspect_similarity": 0.999469,
-    "critical_text_recall": null,
+    "critical_text_recall": 1.0,
     "dhash_similarity": 0.5625,
     "edge_similarity": 0.986084,
     "histogram_similarity": 0.57076,
@@ -16,5 +16,5 @@
     "visual_proxy_score": 0.71524
   },
   "profile": "detailed",
-  "status": "incomplete"
+  "status": "pass"
 }

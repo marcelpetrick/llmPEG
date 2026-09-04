@@ -6,14 +6,14 @@
     "visual_proxy_score": true
   },
   "metrics": {
-    "aspect_similarity": 0.999303,
+    "aspect_similarity": 1.0,
     "critical_text_recall": 1.0,
-    "dhash_similarity": 0.96875,
-    "edge_similarity": 0.998718,
-    "histogram_similarity": 0.878092,
-    "layout_score": 0.982323,
-    "palette_distance": 0.02825,
-    "visual_proxy_score": 0.952129
+    "dhash_similarity": 0.53125,
+    "edge_similarity": 0.964233,
+    "histogram_similarity": 0.590922,
+    "layout_score": 0.731457,
+    "palette_distance": 0.063538,
+    "visual_proxy_score": 0.706061
   },
   "profile": "detailed",
   "status": "pass"

@@ -153,27 +153,34 @@ artifacts carrying subject bounds, pose landmarks, marking boundaries, and camer
 improves two visual-proxy scores and slightly lowers one — extra detail helps selectively rather
 than guaranteeing identity.
 
-### Expanded scene benchmark (`n=6`, `detailed`)
+### Expanded scene benchmark (`n=10`, `detailed`) — complete
 
 Harder question: what survives in a busy scene full of people, objects, and signage? Ten complex
-sources were encoded; **six are reconstructed and measured, four are still awaiting generation**.
-Per-case table in [`survey/EXPANDED.md`](survey/EXPANDED.md), visuals in
+sources, all reconstructed from their prompts alone and evaluated. Per-case table in
+[`survey/EXPANDED.md`](survey/EXPANDED.md), visuals in
 [`survey/expanded.html`](survey/expanded.html).
 
 | Aggregate | Result |
 | --- | ---: |
-| Cases measured | 6 of 10 planned |
-| Passing all thresholds | 3 |
+| Cases measured | 10 of 10 |
+| Passing all thresholds | 9 |
 | Failing a threshold | 1 (crew portrait, on text recall) |
-| Incomplete (no OCR transcript) | 2 |
-| Mean visual proxy | 0.741 |
-| Mean layout score | 0.752 |
-| Mean palette distance | 0.070 |
+| Mean visual proxy | 0.737 |
+| Mean layout score | 0.746 |
+| Mean palette distance | 0.069 |
+| Mean critical-text recall | 0.950 |
 
-Object inventory and broad layout survive well: a quiet desk scene scored 0.952, the best result
-in the repository. A six-person astronaut crew portrait **failed**, recalling half the critical
-text and inventing the rest — six specific people became six plausible people. Difficulty tracks
-scene busyness, not file size.
+**Text survived far better than expected.** Nine of ten cases recalled every critical string — one
+reconstruction rendered a Japanese platform sign, `山手線 / Yamanote Line / 東京・上野・駒込方面`,
+correctly from the description alone.
+
+**Identity still did not.** The single failure is the one that depends on *who* is in the frame:
+the six-person astronaut crew portrait recalled half its text and invented the rest, turning six
+specific people into six plausible ones. More cases did not soften that.
+
+Two caveats on the 0.950: recall does not punish *invented* text (one reconstruction adds a
+fictional bike number and still scores 1.00), and duplicate expected strings all match a single
+rendered occurrence. Both are documented in `EXPANDED.md`.
 
 ### What a full cycle costs
 
@@ -265,12 +272,17 @@ rather than assumed:
 | Set | Images | Licensing |
 | --- | ---: | --- |
 | Cat survey | 3 | Public domain dedication — [per-case credits](survey/README.md) |
-| Expanded scene benchmark | 6 measured (+4 pending) | CC0 1.0 and NASA public domain — [per-case credits](survey/EXPANDED.md#sources-and-licensing) |
+| Expanded scene benchmark | 10 (8 traced, 2 unverified) | CC0 1.0 and NASA public domain — [per-case credits](survey/EXPANDED.md#sources-and-licensing) |
 
 Sources are stored unmodified apart from being resized to at most 1920 px on the longest edge, and
 every artifact embeds its source's SHA-256 hash.
 
-One exception, stated plainly: `media/newsArticle.jpg` is **not** free-licensed media. It is the
+Two expanded-benchmark sources (`kitchen-table`, `living-room`) have **no traced Commons record**.
+Their URLs were never recorded, and three search passes verified by perceptual hash failed to find
+them, so they are labelled unverified in the gallery rather than credited on a guess. They must be
+traced before this benchmark is published anywhere that asserts licensing.
+
+One further exception, stated plainly: `media/newsArticle.jpg` is **not** free-licensed media. It is the
 third-party satirical image that motivated the project, reproduced here for commentary and as a
 deliberately difficult test case. It is not part of the licensed benchmark set.
 

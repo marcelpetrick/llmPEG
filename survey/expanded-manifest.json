@@ -1,6 +1,6 @@
 {
   "title": "llmPEG Expanded Scene Benchmark",
-  "date": "2026-09-03",
+  "date": "2026-09-04",
   "profile": "detailed",
   "cases": [
     {
@@ -91,6 +91,66 @@
         "license": "CC0 1.0 Universal (public domain dedication)",
         "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
         "source_url": "https://commons.wikimedia.org/wiki/File:Two_dogs_playing_on_the_beach_(Unsplash).jpg"
+      }
+    },
+    {
+      "id": "mountain-hikers-expanded",
+      "name": "Hikers on a mountain ridge",
+      "source": "sources/mountain-hikers.jpg",
+      "reconstruction": "reconstructions/mountain-hikers-expanded.png",
+      "artifact": "artifacts/mountain-hikers-expanded.llmpeg.json",
+      "prompt": "prompts/mountain-hikers-expanded.txt",
+      "result": "results/mountain-hikers-expanded.json",
+      "credit": {
+        "author": "Galen Crout",
+        "license": "CC0 1.0 Universal (public domain dedication)",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Adventurous_Mountain_Hikes_(Unsplash).jpg"
+      }
+    },
+    {
+      "id": "street-bicycles-expanded",
+      "name": "Rental bicycles on a Moscow street",
+      "source": "sources/street-bicycles.jpg",
+      "reconstruction": "reconstructions/street-bicycles-expanded.png",
+      "artifact": "artifacts/street-bicycles-expanded.llmpeg.json",
+      "prompt": "prompts/street-bicycles-expanded.txt",
+      "result": "results/street-bicycles-expanded.json",
+      "credit": {
+        "author": "Retired electrician",
+        "license": "CC0 1.0 Universal (public domain dedication)",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Moscow,_Nizhnyaya_Krasnokholmskaya_Street_bicycles_May_2023_01.jpg"
+      }
+    },
+    {
+      "id": "kitchen-table-expanded",
+      "name": "Rustic kitchen still life",
+      "source": "sources/kitchen-table.jpg",
+      "reconstruction": "reconstructions/kitchen-table-expanded.png",
+      "artifact": "artifacts/kitchen-table-expanded.llmpeg.json",
+      "prompt": "prompts/kitchen-table-expanded.txt",
+      "result": "results/kitchen-table-expanded.json",
+      "credit": {
+        "author": "Unknown",
+        "license": "Provenance not verified \u2014 see EXPANDED.md",
+        "license_url": "https://commons.wikimedia.org/wiki/Commons:Licensing",
+        "source_url": "https://commons.wikimedia.org/w/index.php?search=&title=Special:MediaSearch&type=image"
+      }
+    },
+    {
+      "id": "living-room-expanded",
+      "name": "Book and lamp on a side table",
+      "source": "sources/living-room.jpg",
+      "reconstruction": "reconstructions/living-room-expanded.png",
+      "artifact": "artifacts/living-room-expanded.llmpeg.json",
+      "prompt": "prompts/living-room-expanded.txt",
+      "result": "results/living-room-expanded.json",
+      "credit": {
+        "author": "Unknown",
+        "license": "Provenance not verified \u2014 see EXPANDED.md",
+        "license_url": "https://commons.wikimedia.org/wiki/Commons:Licensing",
+        "source_url": "https://commons.wikimedia.org/w/index.php?search=&title=Special:MediaSearch&type=image"
       }
     }
   ]
