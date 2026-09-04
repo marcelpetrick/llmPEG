@@ -144,6 +144,22 @@ tell which tooling can decode an artifact.
 Exit gate: `head -c 40` identifies an artifact, `llmpeg verify` exits non-zero on a foreign file,
 every published ratio matches the file on disk, and the common path needs no flags.
 
+An independent review of the phase caught three defects, all fixed:
+
+- [x] The header cost was quoted as 209 bytes everywhere. It is **228**; 209 was the net change
+      after migration dropped the 19-byte `schema_version` field it replaced. "Each grew by exactly
+      209 bytes" was also wrong for two of seventeen files, which moved 210 and 208 because the same
+      commit normalised a value in their bodies.
+- [x] The documented folder loop could silently overwrite an artifact when a folder held both
+      `photo.jpg` and `photo.png`. The suffix is now appended to the whole file name, in the CLI
+      default as well as the docs.
+- [x] `for f in *.jpg` is a hard error in zsh when nothing matches, so the loop aborted rather than
+      skipping. Replaced with `find -print0`, which also survives spaces in file names.
+
+The review verified the rest against the files on disk: 17/17 artifacts carry the magic, verify
+clean, and round-trip byte-identically; every ratio in the README and `EXPANDED.md` matches; all
+41 relative links resolve; the release workflow is least-privilege with current action versions.
+
 ## Open work
 
 Nothing below is done. Each item says why it is still open.
