@@ -193,8 +193,9 @@ Nothing below is done. Each item says why it is still open.
       `llmpeg`.
 - [ ] `prototypeWebUI/generate_local()`, the Automatic1111 path, is **unverified**: no Stable
       Diffusion server was reachable when it was written.
-- [ ] `prototypeWebUI/` has **no automated tests**. It is a prototype, and the codec it calls
-      carries the suite, but the downscale and dispatch logic is untested.
+- [ ] `prototypeWebUI/` still has no automated browser or live-provider test. Offline request-path
+      tests cover direct-file access, validation, and configuration, but generator integration
+      remains a manual check.
 
 ## Definition of done
 

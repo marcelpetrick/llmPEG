@@ -36,7 +36,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 
 from llmpeg.artifact import ArtifactError, FidelityProfile
 from llmpeg.encoder import encode_image, render_generation_prompt
@@ -48,6 +48,10 @@ INDEX = HERE / "index.html"
 MAX_UPLOAD_BYTES = 40 * 1024 * 1024
 MAX_EDGE = 1536
 JPEG_QUALITY = 92
+MAX_PROMPT_CHARS = 20_000
+MIN_GENERATION_EDGE = 256
+MAX_GENERATION_EDGE = 1536
+FILE_ORIGIN = "null"
 
 POLLINATIONS = "https://image.pollinations.ai/prompt/"
 
@@ -212,11 +216,39 @@ def generate(prompt: str, width: int, height: int, seed: int) -> bytes:
         return generate_local(prompt, width, height, seed)
     if CONFIG.generator == "codex":
         return generate_codex(prompt, width, height, seed)
-    return generate_pollinations(prompt, width, height, seed)
+    if CONFIG.generator == "pollinations":
+        return generate_pollinations(prompt, width, height, seed)
+    raise ArtifactError(f"unsupported generator: {CONFIG.generator}")
+
+
+def generation_request(payload: object) -> tuple[str, int, int, int]:
+    """Validate and normalize an image-generation request."""
+    if not isinstance(payload, dict):
+        raise ArtifactError("request body must be a JSON object")
+    prompt = str(payload.get("prompt") or "").strip()
+    if not prompt:
+        raise ArtifactError("a prompt is required")
+    if len(prompt) > MAX_PROMPT_CHARS:
+        raise ArtifactError(f"prompt exceeds {MAX_PROMPT_CHARS} characters")
+    try:
+        width = int(payload.get("width", 1024))
+        height = int(payload.get("height", 1024))
+        seed = int(payload.get("seed", 42))
+    except (TypeError, ValueError) as error:
+        raise ArtifactError("width, height, and seed must be integers") from error
+    if not MIN_GENERATION_EDGE <= width <= MAX_GENERATION_EDGE:
+        raise ArtifactError(
+            f"width must be between {MIN_GENERATION_EDGE} and {MAX_GENERATION_EDGE}"
+        )
+    if not MIN_GENERATION_EDGE <= height <= MAX_GENERATION_EDGE:
+        raise ArtifactError(
+            f"height must be between {MIN_GENERATION_EDGE} and {MAX_GENERATION_EDGE}"
+        )
+    return prompt, width, height, seed
 
 
 class Handler(BaseHTTPRequestHandler):
-    """Minimal router. Three routes, no framework."""
+    """Minimal framework-free router for the page and its API."""
 
     server_version = "llmPEGPrototype/0.1"
 
@@ -228,6 +260,8 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Cache-Control", "no-store")
+        if self.headers.get("Origin") == FILE_ORIGIN:
+            self.send_header("Access-Control-Allow-Origin", FILE_ORIGIN)
         self.end_headers()
         self.wfile.write(body)
 
@@ -240,7 +274,26 @@ class Handler(BaseHTTPRequestHandler):
             raise ArtifactError("empty request body")
         if length > MAX_UPLOAD_BYTES:
             raise ArtifactError(f"upload exceeds {MAX_UPLOAD_BYTES} bytes")
-        return bytes(self.rfile.read(length))
+        body = bytes(self.rfile.read(length))
+        if len(body) != length:
+            raise ArtifactError("incomplete request body")
+        return body
+
+    def do_OPTIONS(self) -> None:
+        """Allow API requests from this page when it was opened through ``file://``."""
+        route = urllib.parse.urlparse(self.path).path
+        if not route.startswith("/api/") or self.headers.get("Origin") != FILE_ORIGIN:
+            self._send_json(403, {"error": "cross-origin request not allowed"})
+            return
+        self.send_response(204)
+        self.send_header("Access-Control-Allow-Origin", FILE_ORIGIN)
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        if self.headers.get("Access-Control-Request-Private-Network") == "true":
+            self.send_header("Access-Control-Allow-Private-Network", "true")
+        self.send_header("Content-Length", "0")
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
 
     def do_GET(self) -> None:
         route = urllib.parse.urlparse(self.path).path
@@ -254,6 +307,7 @@ class Handler(BaseHTTPRequestHandler):
                     "generator": CONFIG.generator,
                     "model": CONFIG.model,
                     "vision_configured": bool(CONFIG.vision_host),
+                    "vision_host": CONFIG.vision_host,
                 },
             )
             return
@@ -268,16 +322,10 @@ class Handler(BaseHTTPRequestHandler):
                 self._send_json(200, encode(self._body(), FidelityProfile(name)))
                 return
             if route == "/api/generate":
-                request = json.loads(self._body().decode("utf-8"))
-                prompt = str(request.get("prompt") or "").strip()
-                if not prompt:
-                    raise ArtifactError("a prompt is required")
-                image = generate(
-                    prompt,
-                    int(request.get("width", 1024)),
-                    int(request.get("height", 1024)),
-                    int(request.get("seed", 42)),
+                prompt, width, height, seed = generation_request(
+                    json.loads(self._body().decode("utf-8"))
                 )
+                image = generate(prompt, width, height, seed)
                 self._send(200, image, image_media_type(image))
                 return
             self._send_json(404, {"error": "not found"})
@@ -285,6 +333,8 @@ class Handler(BaseHTTPRequestHandler):
             self._send_json(400, {"error": str(error)})
         except ValueError as error:
             self._send_json(400, {"error": f"bad request: {error}"})
+        except UnidentifiedImageError:
+            self._send_json(400, {"error": "uploaded data is not a supported image"})
         except (OSError, urllib.error.URLError) as error:
             self._send_json(502, {"error": f"upstream failed: {error}"})
 
@@ -293,12 +343,24 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Run the llmPEG prototype web UI.")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8000)
+    parser.add_argument(
+        "--vision-host",
+        default=CONFIG.vision_host,
+        help="Ollama base URL (defaults to OLLAMA_VISION_HOST)",
+    )
     args = parser.parse_args(argv)
+    CONFIG.vision_host = args.vision_host.rstrip("/")
 
     if not CONFIG.vision_host:
         print("warning: OLLAMA_VISION_HOST is not set; encoding will fail", file=sys.stderr)
     print(f"llmPEG prototype on http://{args.host}:{args.port}  (generator: {CONFIG.generator})")
-    ThreadingHTTPServer((args.host, args.port), Handler).serve_forever()
+    server = ThreadingHTTPServer((args.host, args.port), Handler)
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        print("\nllmPEG prototype stopped")
+    finally:
+        server.server_close()
     return 0
 
 

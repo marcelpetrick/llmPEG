@@ -42,6 +42,8 @@
   .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
   select{background:#0b1220;color:var(--ink);border:1px solid var(--edge);
          border-radius:8px;padding:9px 11px}
+  #seed{width:92px;background:#0b1220;color:var(--ink);border:1px solid var(--edge);
+        border-radius:8px;padding:9px}
   .status{margin-top:14px;min-height:22px;font-size:.9rem;color:var(--dim)}
   .status.err{color:var(--bad)} .status.ok{color:var(--ok)}
   .spin{display:inline-block;width:13px;height:13px;border:2px solid var(--edge);
@@ -64,7 +66,7 @@
 </header>
 
 <main>
-  <div id="drop">
+  <div id="drop" role="button" tabindex="0" aria-controls="file">
     <strong>Drop an image here</strong>
     <p>or click to choose &mdash; JPG, PNG, WebP, GIF, BMP</p>
     <p id="cfg" style="font-size:.85rem"></p>
@@ -81,7 +83,7 @@
     <button id="analyze" disabled>Analyze image</button>
     <button id="reset" class="ghost">Reset</button>
   </div>
-  <div id="status" class="status"></div>
+  <div id="status" class="status" role="status" aria-live="polite"></div>
 
   <div class="grid">
     <div class="card">
@@ -108,8 +110,7 @@
         <option value="1280">1280 &times; 1280</option>
       </select>
       <label for="seed">Seed</label>
-      <input id="seed" type="number" value="42" style="width:92px;background:#0b1220;
-        color:var(--ink);border:1px solid var(--edge);border-radius:8px;padding:9px">
+      <input id="seed" type="number" value="42">
       <button id="generate">Generate image</button>
     </div>
     <p style="color:var(--dim);font-size:.85rem;margin:12px 0 0">
@@ -127,29 +128,121 @@
 <script>
 const $ = (id) => document.getElementById(id);
 let chosen = null, lastPrompt = "";
+let backendReady = false, backendProblem = "", sourceUrl = null, outputUrl = null;
+const apiRoot = location.protocol === "file:" ? "http://127.0.0.1:8000" : "";
 
-fetch("/api/config").then(r => r.json()).then(c => {
-  $("cfg").textContent = `vision: ${c.model}` +
-    (c.vision_configured ? "" : " — OLLAMA_VISION_HOST not set!") +
-    ` · generator: ${c.generator}`;
-}).catch(() => {});
+function apiUrl(path) {
+  return apiRoot + path;
+}
 
-function say(msg, kind) {
+function say(msg, kind = "") {
   $("status").className = "status" + (kind ? " " + kind : "");
-  $("status").innerHTML = kind === "busy" ? '<span class="spin"></span>' + msg : msg;
+  $("status").replaceChildren();
+  if (kind === "busy") {
+    const spinner = document.createElement("span");
+    spinner.className = "spin";
+    spinner.setAttribute("aria-hidden", "true");
+    $("status").append(spinner);
+  }
+  $("status").append(document.createTextNode(msg));
+}
+
+function updateAnalyzeButton() {
+  $("analyze").disabled = !chosen || !backendReady;
+}
+
+async function request(path, options) {
+  try {
+    return await fetch(apiUrl(path), options);
+  } catch (error) {
+    const where = apiRoot || location.origin;
+    throw new Error(`Cannot reach the llmPEG backend at ${where}. ` +
+      "Start it with: uv run python prototypeWebUI/server.py, then reload this page.");
+  }
+}
+
+async function responseError(response) {
+  try {
+    const payload = await response.json();
+    return payload.error || `${response.status} ${response.statusText}`;
+  } catch {
+    return `${response.status} ${response.statusText}`;
+  }
+}
+
+async function loadConfig() {
+  try {
+    const response = await request("/api/config");
+    if (!response.ok) throw new Error(await responseError(response));
+    const config = await response.json();
+    backendReady = config.vision_configured;
+    backendProblem = backendReady ? "" : "Its Ollama vision host is not configured.";
+    $("cfg").textContent = `vision: ${config.model} via ${config.vision_host || "not configured"}` +
+      ` · generator: ${config.generator}`;
+    if (!backendReady) {
+      say("The backend is running, but its Ollama vision host is not configured.", "err");
+    }
+  } catch (error) {
+    backendReady = false;
+    backendProblem = error.message;
+    $("cfg").textContent = "Backend unavailable";
+    say(backendProblem, "err");
+  }
+  updateAnalyzeButton();
 }
 
 function pick(file) {
-  if (!file || !file.type.startsWith("image/")) { say("That is not an image.", "err"); return; }
+  if (!file || (file.type && !file.type.startsWith("image/"))) {
+    say("That is not an image.", "err");
+    return;
+  }
   chosen = file;
-  $("src").src = URL.createObjectURL(file);
+  if (sourceUrl) URL.revokeObjectURL(sourceUrl);
+  sourceUrl = URL.createObjectURL(file);
+  $("src").src = sourceUrl;
+  $("src").alt = `Selected source: ${file.name}`;
   $("src").classList.remove("hidden");
-  $("analyze").disabled = false;
-  say(`Ready: ${file.name} (${(file.size / 1024).toFixed(0)} KB)`);
+  updateAnalyzeButton();
+  const ready = `Selected: ${file.name} (${(file.size / 1024).toFixed(0)} KB).`;
+  say(backendReady ? ready : `${ready} ${backendProblem}`, backendReady ? "" : "err");
+}
+
+function showStats(data) {
+  const percent = (100 * data.artifact_bytes / data.encoded_bytes).toFixed(2);
+  const encodedAt = `${data.encoded_width}×${data.encoded_height}` +
+    (data.was_downscaled ? ` (from ${data.original_width}×${data.original_height})` : "");
+  const rows = [
+    ["Uploaded", `${data.upload_bytes.toLocaleString()} B`],
+    ["Encoded at", encodedAt],
+    ["Source for ratio", `${data.encoded_bytes.toLocaleString()} B`],
+    ["Artifact", `${data.artifact_bytes.toLocaleString()} B`],
+    ["Ratio", `${data.ratio}:1 (${percent}%)`],
+    ["Profile", data.profile],
+  ];
+  $("stats").replaceChildren(...rows.map(([label, value]) => {
+    const row = document.createElement("tr");
+    const key = document.createElement("td");
+    const result = document.createElement("td");
+    key.textContent = label;
+    result.textContent = value;
+    if (label === "Ratio") {
+      key.style.fontWeight = "bold";
+      result.style.fontWeight = "bold";
+    }
+    row.append(key, result);
+    return row;
+  }));
+  $("stats").classList.remove("hidden");
 }
 
 const drop = $("drop");
 drop.addEventListener("click", () => $("file").click());
+drop.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    $("file").click();
+  }
+});
 $("file").addEventListener("change", (e) => pick(e.target.files[0]));
 ["dragenter", "dragover"].forEach(t => drop.addEventListener(t, (e) => {
   e.preventDefault(); drop.classList.add("hot");
@@ -168,26 +261,17 @@ $("analyze").addEventListener("click", async () => {
   $("analyze").disabled = true;
   say("Encoding with the vision model — this usually takes 30–120 seconds…", "busy");
   try {
-    const res = await fetch(`/api/encode?profile=${$("profile").value}`, {
+    const res = await request(`/api/encode?profile=${encodeURIComponent($("profile").value)}`, {
       method: "POST",
       headers: { "Content-Type": chosen.type || "application/octet-stream" },
       body: chosen,
     });
+    if (!res.ok) throw new Error(await responseError(res));
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || res.statusText);
     lastPrompt = data.prompt;
     $("prompt").value = data.prompt;
     $("promptcard").hidden = false;
-    const pct = (100 * data.artifact_bytes / data.encoded_bytes).toFixed(2);
-    $("stats").innerHTML = `
-      <tr><td>Uploaded</td><td>${data.upload_bytes.toLocaleString()} B</td></tr>
-      <tr><td>Encoded at</td><td>${data.encoded_width}×${data.encoded_height}${
-        data.was_downscaled ? ` (from ${data.original_width}×${data.original_height})` : ""}</td></tr>
-      <tr><td>Source for ratio</td><td>${data.encoded_bytes.toLocaleString()} B</td></tr>
-      <tr><td>Artifact</td><td>${data.artifact_bytes.toLocaleString()} B</td></tr>
-      <tr><td><strong>Ratio</strong></td><td><strong>${data.ratio}:1</strong> (${pct}%)</td></tr>
-      <tr><td>Profile</td><td>${data.profile}</td></tr>`;
-    $("stats").classList.remove("hidden");
+    showStats(data);
     say(`Described in ${data.artifact_bytes.toLocaleString()} bytes — ${data.ratio}:1.`, "ok");
   } catch (err) {
     say("Encoding failed: " + err.message, "err");
@@ -204,15 +288,18 @@ $("generate").addEventListener("click", async () => {
   say("Generating from text alone…" + edited, "busy");
   try {
     const size = parseInt($("size").value, 10);
-    const res = await fetch("/api/generate", {
+    const res = await request("/api/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt, width: size, height: size,
                              seed: parseInt($("seed").value, 10) || 42 }),
     });
-    if (!res.ok) throw new Error((await res.json()).error || res.statusText);
+    if (!res.ok) throw new Error(await responseError(res));
     const blob = await res.blob();
-    $("out").src = URL.createObjectURL(blob);
+    if (outputUrl) URL.revokeObjectURL(outputUrl);
+    outputUrl = URL.createObjectURL(blob);
+    $("out").src = outputUrl;
+    $("out").alt = "Image regenerated from the editable text prompt";
     $("out").classList.remove("hidden");
     $("outhint").textContent = "This is a new image. It is not your photo.";
     say("Done. Compare them — then notice what changed.", "ok");
@@ -225,13 +312,26 @@ $("generate").addEventListener("click", async () => {
 
 $("reset").addEventListener("click", () => {
   chosen = null; lastPrompt = "";
+  if (sourceUrl) URL.revokeObjectURL(sourceUrl);
+  if (outputUrl) URL.revokeObjectURL(outputUrl);
+  sourceUrl = null; outputUrl = null;
   $("file").value = "";
+  $("src").removeAttribute("src");
+  $("out").removeAttribute("src");
   ["src", "out", "stats"].forEach(id => $(id).classList.add("hidden"));
+  $("stats").replaceChildren();
   $("promptcard").hidden = true;
-  $("analyze").disabled = true;
+  updateAnalyzeButton();
   $("outhint").textContent = "Analyze an image, then generate.";
   say("");
 });
+
+window.addEventListener("beforeunload", () => {
+  if (sourceUrl) URL.revokeObjectURL(sourceUrl);
+  if (outputUrl) URL.revokeObjectURL(outputUrl);
+});
+
+loadConfig();
 </script>
 </body>
 </html>

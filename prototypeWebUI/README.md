@@ -20,6 +20,17 @@ uv run python prototypeWebUI/server.py
 # open http://127.0.0.1:8000
 ```
 
+The served URL is the simplest option. Opening `prototypeWebUI/index.html` directly also works:
+when loaded through `file://`, the page sends API requests to the backend at
+`http://127.0.0.1:8000`. The Python backend must still be running because it validates artifacts,
+downscales uploads, and proxies Ollama and the image generator.
+
+The Ollama endpoint can also be supplied without exporting an environment variable:
+
+```bash
+uv run python prototypeWebUI/server.py --vision-host http://your-ollama-host:11434
+```
+
 Drag an image in (or click, or paste from the clipboard), pick a fidelity profile, press
 **Analyze image**, wait, then press **Generate image**. The prompt box is editable before you
 generate — that is the one genuinely nice property of a codec whose compressed form is readable
@@ -87,7 +98,7 @@ while this was written. Pollinations and Codex have both actually run through th
 | `LLMPEG_SD_HOST` | `http://127.0.0.1:7860` | Automatic1111-compatible server |
 | `LLMPEG_TIMEOUT` | `600` | seconds |
 
-`--host` and `--port` are flags; the default bind is `127.0.0.1:8000`.
+`--host`, `--port`, and `--vision-host` are flags; the default bind is `127.0.0.1:8000`.
 
 ## What actually happened when this was tested
 
@@ -107,7 +118,7 @@ different cat**. Which is the entire point.
 
 Note the ratio is quoted against the *re-encoded* bytes the model actually saw, not the original
 upload. Quoting it against the 800 KB original would inflate it to 597:1 by taking credit for a
-plain JPEG resize. The artifact includes the 209-byte format header
+plain JPEG resize. The artifact includes the 228-byte format header
 ([`docs/format.md`](../docs/format.md)); encode time varies with how warm the model is.
 
 ## Endpoints
@@ -119,8 +130,8 @@ plain JPEG resize. The artifact includes the 209-byte format header
 | `POST /api/encode?profile=balanced` | raw image bytes in, JSON with prompt and stats out |
 | `POST /api/generate` | `{prompt, width, height, seed}` in, JPEG out |
 
-The upload is the raw file as the request body — no multipart parsing, which keeps the server
-under 250 lines.
+The upload is the raw file as the request body, avoiding a multipart parser and another runtime
+dependency.
 
 ## Warnings
 
@@ -132,5 +143,5 @@ under 250 lines.
 - **Nothing is stored.** The upload lives in a temporary directory for the duration of one encode
   and is deleted; results exist only in your browser tab. Reloading loses them.
 - The uploaded original is never modified — llmPEG never touches your source file.
-- No automated tests cover this directory. It is a prototype, like `scripts/`, not product
-  surface; the codec it calls is what carries the test suite.
+- Offline tests cover request validation, direct-file CORS, backend discovery, and invalid image
+  handling. Ollama and generator integrations remain manual checks.

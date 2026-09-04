@@ -68,7 +68,7 @@ README, and is not part of the benchmark set. Do not add a second exception.
 | `docs/adversarial.md` | The GAN-shaped refinement loop and why it failed |
 | `docs/effort-evaluation.md` | Measured development-session effort snapshot |
 | `scripts/` | Measurement tools: cycle timing, perceptual judge, adversarial loop |
-| `prototypeWebUI/` | Local drag-and-drop demo UI (prototype, untested, not product surface) |
+| `prototypeWebUI/` | Local drag-and-drop demo UI (prototype, lightly tested, not product surface) |
 
 ## Commands
 
@@ -92,7 +92,7 @@ Scripts under `scripts/` are linted and type-checked like the package, but are m
 tools rather than product surface: they may talk to the live Ollama endpoint, and they never
 run in CI. Never record the endpoint host in their output — model name only.
 
-Current baseline: **72 tests, 96.0% branch coverage**. Update this line when it changes — a stale
+Current baseline: **85 tests, 96.0% branch coverage**. Update this line when it changes — a stale
 self-measurement is the most embarrassing possible bug in a project about honest measurement.
 
 ## Testing
