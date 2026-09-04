@@ -6,8 +6,8 @@ handle alone:
 * the Ollama vision endpoint usually lives on another machine on the LAN, which a page
   served from localhost cannot call directly (CORS, and mixed content over HTTPS);
 * downscaling is done with Pillow's LANCZOS filter, which is better than a canvas resize;
-* image generation is proxied so the same code path serves both the free hosted generator
-  and a local Stable Diffusion server.
+* image generation is proxied so one interface can drive Codex, Pollinations, or a local
+  Stable Diffusion server.
 
 Nothing here is hardened. It binds to 127.0.0.1, it has no authentication, and it is a
 prototype for one person on one laptop. Do not expose it.
@@ -53,7 +53,7 @@ MIN_GENERATION_EDGE = 256
 MAX_GENERATION_EDGE = 1536
 FILE_ORIGIN = "null"
 
-POLLINATIONS = "https://image.pollinations.ai/prompt/"
+POLLINATIONS = "https://gen.pollinations.ai/image/"
 
 
 class Config:
@@ -63,6 +63,7 @@ class Config:
         self.vision_host = os.environ.get("OLLAMA_VISION_HOST", "")
         self.model = os.environ.get("LLMPEG_MODEL", "qwen3-vl:32b-ctx49k")
         self.generator = os.environ.get("LLMPEG_GENERATOR", "codex")
+        self.pollinations_api_key = os.environ.get("POLLINATIONS_API_KEY", "")
         self.sd_host = os.environ.get("LLMPEG_SD_HOST", "http://127.0.0.1:7860")
         self.timeout = float(os.environ.get("LLMPEG_TIMEOUT", "600"))
 
@@ -116,12 +117,20 @@ def encode(raw: bytes, profile: FidelityProfile) -> dict[str, Any]:
 
 
 def generate_pollinations(prompt: str, width: int, height: int, seed: int) -> bytes:
-    """Fetch one image from the free hosted generator. The prompt leaves this machine."""
+    """Fetch one image from Pollinations. The prompt leaves this machine."""
+    if not CONFIG.pollinations_api_key:
+        raise ArtifactError("POLLINATIONS_API_KEY is required for the Pollinations generator")
     query = urllib.parse.urlencode(
-        {"width": width, "height": height, "seed": seed, "nologo": "true"}
+        {"model": "flux", "width": width, "height": height, "seed": seed}
     )
     url = f"{POLLINATIONS}{urllib.parse.quote(prompt, safe='')}?{query}"
-    request = urllib.request.Request(url, headers={"User-Agent": "llmPEG-prototype/0.2.0"})
+    request = urllib.request.Request(
+        url,
+        headers={
+            "Authorization": f"Bearer {CONFIG.pollinations_api_key}",
+            "User-Agent": "llmPEG-prototype/0.2.0",
+        },
+    )
     with urllib.request.urlopen(request, timeout=CONFIG.timeout) as response:
         return bytes(response.read())
 

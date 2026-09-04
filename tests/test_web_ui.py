@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import io
 import json
 import subprocess
 import threading
@@ -118,6 +119,36 @@ def test_unknown_generator_fails_closed(monkeypatch: pytest.MonkeyPatch) -> None
     monkeypatch.setattr(web.CONFIG, "generator", "mystery")
     with pytest.raises(ArtifactError, match="unsupported generator"):
         web.generate("cat", 1024, 1024, 42)
+
+
+def test_pollinations_generator_requires_api_key(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(web.CONFIG, "pollinations_api_key", "")
+    with pytest.raises(ArtifactError, match="POLLINATIONS_API_KEY"):
+        web.generate_pollinations("cat", 1024, 768, 42)
+
+
+def test_pollinations_generator_uses_current_authenticated_endpoint(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    requests: list[urllib.request.Request] = []
+
+    def urlopen(request: urllib.request.Request, timeout: float) -> io.BytesIO:
+        requests.append(request)
+        assert timeout == web.CONFIG.timeout
+        return io.BytesIO(b"image")
+
+    monkeypatch.setattr(web.CONFIG, "pollinations_api_key", "secret")
+    monkeypatch.setattr("prototypeWebUI.server.urllib.request.urlopen", urlopen)
+
+    assert web.generate_pollinations("a cat", 1024, 768, 42) == b"image"
+    assert len(requests) == 1
+    request = requests[0]
+    assert request.full_url.startswith("https://gen.pollinations.ai/image/a%20cat?")
+    assert "model=flux" in request.full_url
+    assert "width=1024" in request.full_url
+    assert "height=768" in request.full_url
+    assert "seed=42" in request.full_url
+    assert request.get_header("Authorization") == "Bearer secret"
 
 
 def test_codex_generator_explicitly_invokes_imagegen(
