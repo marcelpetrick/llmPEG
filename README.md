@@ -288,6 +288,67 @@ One further exception, stated plainly: `media/newsArticle.jpg` is **not** free-l
 third-party satirical image that motivated the project, reproduced here for commentary and as a
 deliberately difficult test case. It is not part of the licensed benchmark set.
 
+## The file format
+
+A real image format tells you, before you parse anything, whether the file is yours and whether
+your version can read it. PNG opens with an eight-byte signature. GIF spells the version into the
+magic itself (`GIF87a`, `GIF89a`). PDF writes `%PDF-1.7`. AVIF and HEIF carry an ISO base media
+`ftyp` box naming a **major brand** and the **compatible brands** a decoder may use.
+
+llmPEG artifacts are JSON, so the signature is a JSON object — but it answers the same questions,
+and it comes first in the file:
+
+```json
+{"llmpeg":{
+  "magic":"llmPEG",
+  "format_version":"1.0",
+  "major_brand":"lpg1",
+  "compatible_brands":["lpg1"],
+  "encoder":"llmpeg/0.1.0",
+  "min_reader_version":"0.1.0",
+  "decoder":"text-to-image model; lossy; non-deterministic; not bundled"
+}, ...}
+```
+
+That last field is the one this format needs and others do not. A PNG decoder ships with the
+library; llmPEG's does not exist here at all, so the container says so in every single file.
+
+```console
+$ head -c 40 photo.llmpeg.json
+{"llmpeg":{"magic":"llmPEG","format_
+
+$ llmpeg verify photo.llmpeg.json
+llmPEG 1.0 (lpg1)
+written by: llmpeg/0.1.0
+needs reader: llmpeg >= 0.1.0
+decoder: text-to-image model; lossy; non-deterministic; not bundled
+conforms: yes
+```
+
+`verify` exits `0` when a file conforms and `2` when it does not, so it works in a pipeline.
+
+**Compatibility** follows PNG's critical/ancillary split, expressed through the version number:
+
+| File version vs. your build | Behaviour |
+| --- | --- |
+| Higher **major** | **Refused**, naming the release you need |
+| Higher **minor** | **Accepted**; unknown fields ignored, because minor bumps are additive |
+| Same or older | **Accepted strictly** — an unknown key is a bug, not a feature |
+
+**Conformance is enforced, not promised.** `write()` serializes the artifact, parses its own bytes
+back, and compares — if the round trip is not byte-identical it raises *before* touching the disk.
+The encoder cannot emit a file it could not read.
+
+**What the header cost.** 209 bytes per artifact, constant. That is real overhead and it is charged
+against every ratio in this README: the cat went from 802:1 to **663:1** and the news article from
+37:1 to **35:1** when the header landed. All 17 checked-in artifacts were migrated and every
+published figure re-measured, because the alternative — quoting the old ratios against the new
+files — is exactly the kind of accounting this project exists to make fun of.
+
+Files written before the header existed remain readable and upgrade on read. Full specification,
+including the body schema and the canonical serialization rules, in
+[`docs/format.md`](docs/format.md).
+
 ## Architecture
 
 See the [styled C4 architecture guide](docs/architecture.md) for system-context, container,
@@ -501,6 +562,20 @@ every push and pull request.
 
 See [AGENTS.md](AGENTS.md) for the contributor working agreement, including the Conventional
 Commits requirement.
+
+### Releases
+
+Pushing a `v*` tag runs [`.github/workflows/release.yml`](.github/workflows/release.yml), which
+builds an sdist and a wheel with `uv build`, checks them with twine, and attaches both to a
+generated GitHub Release.
+
+There is no PyPI upload: the distribution name `llmpeg` is already registered there by an
+unrelated project, so installing is done from a release artifact or from a checkout:
+
+```bash
+uv pip install llmpeg-0.1.0-py3-none-any.whl   # from a GitHub Release
+uv pip install .                               # from a clone
+```
 
 ## Limitations
 
