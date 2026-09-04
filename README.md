@@ -5,7 +5,7 @@
 [![Python 3.14](https://img.shields.io/badge/Python-3.14-3776ab.svg)](https://www.python.org/)
 [![Ruff](https://img.shields.io/badge/lint-ruff-261230.svg)](https://docs.astral.sh/ruff/)
 [![mypy strict](https://img.shields.io/badge/types-mypy%20strict-2a6db2.svg)](https://mypy-lang.org/)
-[![Coverage 93.4%](https://img.shields.io/badge/coverage-93.4%25-brightgreen.svg)](#development)
+[![Coverage 94.0%](https://img.shields.io/badge/coverage-94.0%25-brightgreen.svg)](#development)
 
 **llmPEG** — the *LLM Photo Expert Group*. JPEG was built by the **J**oint **P**hotographic
 **E**xperts **G**roup. This one was built by a language model, so the joke writes itself.
@@ -353,6 +353,112 @@ to the configured Ollama endpoint, so only use a server you trust.
 `evaluate` exits `0` for pass, `1` for threshold failure, `2` for usage/data errors, and `3` when
 a required check (normally `detailed`-profile OCR) was not evaluated.
 
+## Convert a whole folder, and convert it back
+
+The joke in full: turn a folder of photographs into a folder of text, then paint them back.
+Copy-paste as-is — it uses only the CLI plus a shell loop.
+
+### 1. Compress every photo
+
+```bash
+cd ~/photos                      # your folder of .jpg / .png
+export OLLAMA_VISION_HOST=http://your-ollama-host:11434
+mkdir -p llmpeg/artifacts llmpeg/prompts llmpeg/restored
+
+for f in *.jpg *.png; do
+  [ -e "$f" ] || continue
+  uv run llmpeg encode "$f" --profile balanced \
+    --output "llmpeg/artifacts/${f%.*}.llmpeg.json" --overwrite
+done
+
+du -sh . llmpeg/artifacts        # compare the folder with its description
+```
+
+### 2. Check what you actually have
+
+```bash
+for a in llmpeg/artifacts/*.llmpeg.json; do
+  uv run llmpeg verify "$a" | head -1     # llmPEG 1.0 (lpg1)
+  uv run llmpeg inspect "$a" | grep ratio
+done
+```
+
+### 3. Delete the originals — the destructive step
+
+> ### 🔥 STOP
+>
+> This is the part of the meme that is a joke. Your photographs do **not** come back. What comes
+> back is a new picture of a similar scene: different faces, different pets, different text.
+> **Never run this on photographs you care about.** Run it on copies, or on the sample folder
+> below, and only to see the point made.
+
+The step is deliberately not a one-liner. Set the variable in the same command so it cannot happen
+by scroll-back accident:
+
+```bash
+I_UNDERSTAND_THIS_DELETES_MY_PHOTOS=yes bash -c '
+  [ "$I_UNDERSTAND_THIS_DELETES_MY_PHOTOS" = yes ] || exit 1
+  for a in llmpeg/artifacts/*.llmpeg.json; do
+    n=$(basename "$a" .llmpeg.json)
+    rm -f -- "$n".jpg "$n".png
+  done
+  echo "originals deleted; only the text remains"
+'
+```
+
+### 4. Convert back
+
+Render each artifact to a prompt, then give the prompt — and nothing else — to an image
+generator:
+
+```bash
+for a in llmpeg/artifacts/*.llmpeg.json; do
+  n=$(basename "$a" .llmpeg.json)
+  uv run llmpeg reconstruct "$a" --output "llmpeg/prompts/$n.txt" --overwrite
+done
+```
+
+With the [Codex CLI](https://github.com/openai/codex), which has a built-in image tool:
+
+```bash
+for p in llmpeg/prompts/*.txt; do
+  n=$(basename "$p" .txt)
+  d=$(mktemp -d); cp "$p" "$d/prompt.txt"
+  codex exec --skip-git-repo-check -C "$d" -s workspace-write \
+    "The file prompt.txt contains an image-generation prompt. Generate exactly that image with
+     your built-in image generation tool and save it as out.png here. Add nothing of your own.
+     Reply with only: DONE"
+  cp "$d/out.png" "llmpeg/restored/$n.png"; rm -rf "$d"
+done
+```
+
+No Codex account? [`prototypeWebUI/`](prototypeWebUI/README.md) does the same round trip in a
+browser using [Pollinations](https://pollinations.ai/), which is free and needs no key.
+
+### What it costs: five photos, measured
+
+A real run over five CC0 photographs (1.5–3.1 MB each), `balanced` profile, local
+`qwen3-vl:32b-ctx49k` for encoding and Codex for generation:
+
+| Stage | Time |
+| --- | ---: |
+| Compress 5 photos | **101 s** (14–27 s each, mean 20 s) |
+| Render 5 prompts | **< 1 s** |
+| "Decompress" 5 photos | **304 s** (51–69 s each, mean 61 s) |
+| **Total wall clock** | **405 s — under 7 minutes** |
+
+| Folder | Size |
+| --- | ---: |
+| 5 original photos | 3,125,477 bytes |
+| 5 artifacts | **9,018 bytes** |
+| Ratio | **347:1** (99.71% smaller) |
+
+Roughly **80 seconds per photo** for the full round trip, almost all of it model time. Compression
+is the cheap half; painting the picture back costs three times as much and needs a service you do
+not control.
+
+And at the end of it you have five pictures that are not your photographs.
+
 ## Fidelity profiles
 
 | Profile | Intended preservation | Artifact budget |
@@ -388,7 +494,7 @@ uv run python -m build
 ```
 
 The suite is offline and injects fake providers. Live Ollama and image-generation runs are manual
-demo steps, not CI dependencies. Current suite: **47 tests, 93.4% branch-aware coverage**.
+demo steps, not CI dependencies. Current suite: **59 tests, 94.0% branch-aware coverage**.
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs all five gates on Python 3.14 for
 every push and pull request.

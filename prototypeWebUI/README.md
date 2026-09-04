@@ -97,17 +97,18 @@ One real run, `survey/sources/cat-on-grass.jpg`, `balanced` profile:
 | --- | ---: |
 | Uploaded | 799,983 bytes |
 | Re-encoded for the model (1536 px long edge) | 544,589 bytes |
-| Semantic artifact | **1,134 bytes** |
-| Ratio | **480:1** |
-| Encode time | ~29 s |
-| Generation time | ~3 s |
+| Semantic artifact | **1,341 bytes** |
+| Ratio | **406:1** |
+| Encode time | ~13 s (warm model) |
+| Generation time | ~3 s (Pollinations) / ~40 s (Codex) |
 
 The result was recognisably a tabby cat lying on green grass, and just as recognisably **a
 different cat**. Which is the entire point.
 
 Note the ratio is quoted against the *re-encoded* bytes the model actually saw, not the original
-upload. Quoting it against the 800 KB original would inflate it to 705:1 by taking credit for a
-plain JPEG resize.
+upload. Quoting it against the 800 KB original would inflate it to 597:1 by taking credit for a
+plain JPEG resize. The artifact includes the 209-byte format header
+([`docs/format.md`](../docs/format.md)); encode time varies with how warm the model is.
 
 ## Endpoints
 

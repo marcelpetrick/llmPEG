@@ -82,7 +82,7 @@ C4Component
     Component(guard, "Image guard", "encoder.py + Pillow", "Checks type, byte/pixel limits, dimensions, and source digest")
     Component(adapter, "Vision adapter", "providers.py", "Calls Ollama with a strict JSON schema and fidelity-specific instructions")
     Component(codec, "Artifact builder", "encoder.py", "Converts extracted fields into a validated artifact")
-    Component(model, "Artifact model", "artifact.py", "Validates schema, enforces byte budget, and writes canonical JSON atomically")
+    Component(model, "Artifact model", "artifact.py", "Writes the versioned header, validates the schema, enforces the byte budget, and writes canonical JSON atomically")
     Component(renderer, "Prompt renderer", "encoder.py", "Expands the artifact into a model-neutral generation brief")
     Component(metrics, "Metric engine", "evaluation.py", "Measures aspect, dHash, histogram, edges, palette, layout, and text recall")
     Component(report, "Survey renderer", "survey.py", "Combines evidence into interactive static HTML")
