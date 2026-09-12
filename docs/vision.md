@@ -88,7 +88,9 @@ dimensions, generation prompt, critical verbatim text, normalized composition re
 and model provenance. It does not embed the source image. Canonical compact JSON makes byte counts
 stable. The header is 228 bytes; migrated artifacts grew by 209 bytes after the obsolete 19-byte
 `schema_version` field was removed. Every reported ratio includes the full header. See
-[format.md](format.md).
+[format.md](format.md). The same artifact may be stored in an optional deterministic gzip envelope
+(`.llmpeg.json.gz`); its ratio is charged on the compressed file, while the budgets below still
+apply to the canonical JSON.
 
 Budgets are deliberately tied to source size:
 

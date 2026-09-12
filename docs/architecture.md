@@ -94,7 +94,7 @@ C4Component
     Component(guard, "Image guard", "encoder.py + Pillow", "Checks type, byte/pixel limits, dimensions, and source digest")
     Component(adapter, "Vision adapter", "providers.py", "Calls Ollama with a strict JSON schema and fidelity-specific instructions")
     Component(codec, "Artifact builder", "encoder.py", "Converts extracted fields into a validated artifact")
-    Component(model, "Artifact model", "artifact.py", "Writes the versioned header, validates the schema, enforces the byte budget, and writes canonical JSON atomically")
+    Component(model, "Artifact model", "artifact.py", "Writes the versioned header, validates the schema, enforces the byte budget, and writes canonical JSON, plain or gzip-wrapped, atomically")
     Component(renderer, "Prompt renderer", "encoder.py", "Expands the artifact into a model-neutral generation brief")
     Component(generator, "Generator adapters", "generators.py", "Runs ComfyUI first and falls back to Codex only when unavailable")
     Component(metrics, "Metric engine", "evaluation.py", "Measures aspect, dHash, histogram, edges, palette, layout, and text recall")
@@ -110,7 +110,7 @@ C4Component
   Rel(adapter, ollama, "Schema-constrained request")
   Rel(adapter, codec, "Structured description")
   Rel(codec, model, "Constructs and validates")
-  Rel(model, evidence, "Atomic canonical write")
+  Rel(model, evidence, "Atomic canonical write, optionally gzip")
   Rel(cli, renderer, "reconstruct")
   Rel(renderer, model, "Reads")
   Rel(renderer, evidence, "Writes prompt")
@@ -145,7 +145,7 @@ sequenceDiagram
   C->>C: Validate type, size, pixels, and source hash
   C->>V: Image + strict identity-landmark schema
   V-->>C: Description, regions, palette, style, avoid-list
-  C->>A: Validate budget and atomically persist
+  C->>A: Validate budget and atomically persist (plain or --gzip)
   Note over A: Original pixels are not embedded
   U->>C: reconstruct artifact
   C-->>U: Text prompt
@@ -173,7 +173,7 @@ UI is a local prototype, not a hardened network service.
 
 | Property | What the architecture guarantees | What it cannot guarantee |
 | --- | --- | --- |
-| Portability | Artifact and rendered prompt are plain UTF-8 JSON/text | Future models interpret the prompt identically |
+| Portability | Artifact and rendered prompt are plain UTF-8 JSON/text; the optional gzip envelope opens with standard `gunzip` | Future models interpret the prompt identically |
 | Reproducibility | Source hash, dimensions, profile, model, seed, and temperature are recorded | A generator recreates identical pixels or identity |
 | Safety | Inputs are bounded; artifacts validate; writes are atomic; source is never deleted | A prompt captures every visually important detail |
 | Evaluation | Deterministic metrics expose coarse structural drift; HTML collects human judgment | Proxy scores equal perceptual or identity similarity |

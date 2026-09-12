@@ -90,6 +90,7 @@ Doing this to a photo you took yourself makes the point faster than any table be
 | Semantic artifact | 1,206 bytes |
 | **Compression ratio** | **663:1** |
 | Size reduction | 99.85% |
+| Same artifact in the optional gzip envelope | 686 bytes, 1,166:1 |
 | Visual proxy score | 0.595 (pass, `balanced`) |
 | Layout score | 0.706 (pass) |
 | dHash similarity | 0.500 |
@@ -330,6 +331,7 @@ llmPEG 1.0 (lpg1)
 written by: llmpeg/0.3.1
 needs reader: llmpeg >= 0.1.0
 decoder: text-to-image model; lossy; non-deterministic; not bundled
+envelope: none (1206 bytes on disk)
 conforms: yes
 ```
 
@@ -353,6 +355,22 @@ overhead and it is charged against every ratio in this README: the cat went from
 37:1 to **35:1** when the header landed. All 17 checked-in artifacts were migrated and every
 published figure re-measured, because the alternative — quoting the old ratios against the new
 files — is exactly the kind of accounting this project exists to make fun of.
+
+**Optional gzip envelope.** The JSON is text, so it compresses. `llmpeg encode --gzip` stores the
+same canonical artifact inside one deterministic gzip member, `photo.jpg.llmpeg.json.gz`, and every
+command reads either form — recognised by gzip's signature, not the file name. `gunzip` gives back
+the plain artifact byte for byte. Measured on all 17 checked-in artifacts
+([`docs/gzip-measurement.json`](docs/gzip-measurement.json)):
+
+| Stored as | Total bytes | The cat | The news article |
+| --- | ---: | ---: | ---: |
+| Plain `.llmpeg.json` | 48,817 | 1,206 bytes, 663:1 | 3,543 bytes, 35:1 |
+| `.llmpeg.json.gz` | **21,801** (44.7%) | 686 bytes, **1,166:1** | 1,662 bytes, **74:1** |
+
+The ratio is charged on the compressed file, gzip's own 18 bytes included, while the profile budget
+still applies to the uncompressed JSON — compression shrinks the file, it does not let the encoder
+keep more. None of this changes a single invented pixel: a smaller description of the wrong cat is
+still the wrong cat.
 
 Files written before the header existed remain readable and upgrade on read. Full specification,
 including the body schema and the canonical serialization rules, in
@@ -391,6 +409,7 @@ Point it at your vision server once, then the everyday commands take no flags at
 export OLLAMA_VISION_HOST=http://your-ollama-server:11434
 
 uv run llmpeg encode photo.jpg               # -> photo.jpg.llmpeg.json; reports bytes and ratio
+uv run llmpeg encode photo.jpg --gzip        # -> photo.jpg.llmpeg.json.gz; same artifact, gzipped
 uv run llmpeg reconstruct photo.jpg.llmpeg.json > photo.prompt.txt
 uv run llmpeg generate photo.jpg.llmpeg.json # -> photo.jpg.reconstructed.png
 uv run llmpeg verify photo.jpg.llmpeg.json
@@ -398,8 +417,9 @@ uv run llmpeg inspect photo.jpg.llmpeg.json
 ```
 
 `encode` writes `<whole file name>.llmpeg.json` beside the image and prints the ratio, so the
-common case needs no `--output` and no follow-up command. `reconstruct` writes the prompt to
-stdout so it pipes. `generate` asks the sibling ComfyUI checkout first and uses the logged-in
+common case needs no `--output` and no follow-up command. With `--gzip` it writes the
+`.llmpeg.json.gz` envelope instead; every other command accepts either file. `reconstruct` writes
+the prompt to stdout so it pipes. `generate` asks the sibling ComfyUI checkout first and uses the logged-in
 Codex CLI only when that adapter or service is unavailable. `evaluate` finds the artifact the same
 way:
 

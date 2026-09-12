@@ -95,13 +95,55 @@ The header costs **228 bytes**. Migrating an old artifact also removed the 19-by
 `"schema_version":1,` field it replaced, so existing files grew by **209 bytes net**. That is real
 overhead and it is charged honestly against every compression ratio this project reports.
 
+## Optional gzip envelope
+
+Since llmpeg 0.4.0 an artifact may also be stored inside a single gzip member (RFC 1952),
+conventionally named `photo.jpg.llmpeg.json.gz` — the name `gzip photo.jpg.llmpeg.json` produces.
+`llmpeg encode --gzip` writes one; every command that reads an artifact accepts either form.
+
+- **The JSON inside is unchanged.** Decompressing yields exactly the canonical bytes described
+  above, header first, still format 1.0. `gunzip` turns an envelope back into a plain artifact,
+  and `gzip` turns a plain artifact into a readable envelope.
+- **Recognised by content, not by name.** A file that starts with gzip's signature `1f 8b` is an
+  envelope; anything else is parsed as JSON.
+- **Deterministic when llmPEG writes it.** Compression level 9, `mtime` 0, no stored file name, so
+  the same artifact always produces the same bytes. Envelopes written by other tools, with a name
+  or timestamp in their gzip header, read the same.
+- **Bounded.** A reader refuses an envelope that inflates beyond 8 MiB, and reports corrupt,
+  truncated, or trailing data as an error.
+- **The budget is charged on the JSON.** A profile's byte budget applies to the canonical JSON,
+  not to the envelope, so compression shrinks what is stored without letting the encoder keep
+  more description.
+- **Ratios are charged on the stored file.** `inspect` divides the source size by the bytes on
+  disk: the format header, the body, and gzip's 18 bytes of header and trailer.
+
+**Why this is not a format version bump.** No field is added, removed, or reinterpreted, so the
+JSON contract and the compatibility rules above hold unchanged. A version number could not have
+warned an older reader anyway: the header sits inside the compressed stream, so gzip's own
+signature at offset zero is what identifies an envelope. Releases before 0.4.0 cannot open one
+directly; `gunzip` it first.
+
+Measured on all 17 checked-in artifacts by `scripts/measure_gzip.py`, recorded in
+[`gzip-measurement.json`](gzip-measurement.json):
+
+| Stored as | Total bytes |
+| --- | ---: |
+| Plain canonical JSON | 48,817 |
+| gzip envelope | **21,801** (44.7%) |
+
+Per file the envelope is 34.2% to 56.9% of the plain size. The shortest artifacts shrink least:
+the 1,206-byte `cat-on-grass` becomes 686 bytes (56.9%), while the 4,173-byte `street-bicycles`
+becomes 1,518 (36.4%). On the same bytes, zstd at level 22 totals 21,790, xz 22,968, and bz2
+23,019. gzip is 11 bytes behind zstd across all 17 files and every system can already read it.
+
 ## Conformance
 
 Two guarantees, both enforced in code rather than documented and hoped for:
 
 **Nothing non-conforming is ever written.** `Artifact.write()` serializes, parses the bytes back,
 and compares — if the round trip is not byte-identical, it raises before touching the disk. A
-malformed artifact cannot reach a file.
+malformed artifact cannot reach a file. For a gzip envelope the check decompresses the bytes about
+to be written, so the envelope is verified too.
 
 **Anything written stays inside its budget.** `enforce_budget()` runs first; over-budget output
 fails rather than silently dropping content to flatter a ratio.
@@ -115,6 +157,7 @@ compatible brands: lpg1
 written by: llmpeg/0.3.1
 needs reader: llmpeg >= 0.1.0
 decoder: text-to-image model; lossy; non-deterministic; not bundled
+envelope: none (1206 bytes on disk)
 profile: balanced
 encoder model: ollama/qwen3-vl:32b-ctx49k
 conforms: yes
@@ -142,8 +185,8 @@ their bodies.
 
 ## What the format deliberately does not do
 
-- **No compression of the JSON itself.** It is meant to be read by a person; gzip belongs at the
-  transport layer.
+- **No compression inside the JSON.** The JSON stays readable by a person. Compression is the
+  optional gzip envelope around it, never a packed field within it.
 - **No embedded thumbnail.** A thumbnail would dominate the artifact and quietly turn a semantic
   codec into a bad image format.
 - **No signature or encryption.** `sha256` identifies the source; it does not authenticate the

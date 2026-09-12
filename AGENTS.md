@@ -36,6 +36,9 @@ Concretely:
 - Every reported ratio includes the 228-byte format header (existing artifacts grew 209 bytes net,
   because migration dropped the 19-byte `schema_version` field). Do not quote a pre-header figure,
   and do not quote a ratio against an original that was downscaled before encoding.
+- A gzip ratio is quoted against the `.llmpeg.json.gz` file as stored, gzip's 18-byte header and
+  trailer included, and always next to the plain figure — never instead of it. Take gzip numbers
+  from `docs/gzip-measurement.json` or a fresh run of `scripts/measure_gzip.py`.
 
 ## Media rule
 
@@ -69,6 +72,7 @@ README, and is not part of the benchmark set. Do not add a second exception.
 | `docs/adversarial.md` | The GAN-shaped refinement loop and why it failed |
 | `docs/effort-evaluation.md` | Measured development-session effort snapshot |
 | `docs/ideas.md` | Unscheduled ideas that require measurement before implementation |
+| `docs/gzip-measurement.json` | Plain and gzip sizes of every checked-in artifact |
 | `scripts/` | Measurement tools: cycle timing, perceptual judge, adversarial loop |
 | `prototypeWebUI/` | Local drag-and-drop demo UI (offline request tests; live providers manual) |
 
@@ -126,6 +130,9 @@ Rules that are easy to break by accident:
 - `Artifact.write()` re-parses its own bytes before writing, so a non-conforming artifact can
   never reach disk. Do not weaken that check to make a test easier.
 - Legacy files (bare `schema_version: 1`, no header) stay readable and upgrade on read.
+- The gzip envelope wraps the canonical JSON **unchanged**. Never add anything to the JSON that only
+  exists in compressed files, and never charge a profile budget on the compressed size — that
+  would let compression buy the encoder extra content.
 - `llmpeg verify <file>` reports conformance and exits non-zero when a file does not conform.
 
 ## Commit messages

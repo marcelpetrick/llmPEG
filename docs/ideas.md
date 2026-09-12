@@ -1,11 +1,7 @@
 # Ideas
 
-## Compress the prompt payload
+Unscheduled ideas that require measurement before implementation.
 
-Explore applying gzip compression to the textual prompt stored as the compressed image payload.
-Because the payload is text, this may reduce artifact size and improve the measured compression
-ratio.
-
-Do not implement this yet. Before changing the format, measure the size reduction across the
-checked-in artifacts, include all container overhead in every ratio, and determine the required
-format-version and compatibility changes.
+No open ideas. The previous entry, compressing the artifact with gzip, was measured and shipped as
+the optional gzip envelope — see [`plan.md` §9](plan.md#9-gzip-envelope) and
+[`format.md`](format.md#optional-gzip-envelope).

@@ -171,7 +171,7 @@ plain JPEG resize. The artifact includes the 228-byte format header
 | --- | --- |
 | `GET /` | the page |
 | `GET /api/config` | model and generator currently configured |
-| `POST /api/encode?profile=balanced` | raw image bytes in, JSON with prompt and stats out |
+| `POST /api/encode?profile=balanced` | raw image bytes in, JSON with prompt and stats out, including plain and gzip artifact sizes and ratios |
 | `POST /api/generate` | `{generator, prompt, width, height, seed}` in, generated image bytes out; actual provider in `X-llmPEG-Generator` |
 
 The upload is the raw file as the request body, avoiding a multipart parser and another runtime
