@@ -8,7 +8,7 @@ import sys
 from collections.abc import Sequence
 from pathlib import Path
 
-from llmpeg.artifact import Artifact, ArtifactError, FidelityProfile
+from llmpeg.artifact import Artifact, ArtifactError, FidelityProfile, envelope_of
 from llmpeg.encoder import (
     DEFAULT_MAX_IMAGE_BYTES,
     DEFAULT_MAX_IMAGE_PIXELS,
@@ -38,7 +38,15 @@ def build_parser() -> argparse.ArgumentParser:
     encode = subparsers.add_parser("encode", help="encode an image with an Ollama vision model")
     encode.add_argument("image", type=Path)
     encode.add_argument(
-        "--output", "-o", type=Path, help="default: <image>.llmpeg.json beside the image"
+        "--output",
+        "-o",
+        type=Path,
+        help="default: <image>.llmpeg.json (or .llmpeg.json.gz with --gzip) beside the image",
+    )
+    encode.add_argument(
+        "--gzip",
+        action="store_true",
+        help="store the artifact inside a deterministic gzip envelope",
     )
     # choices is a sequence of members, not the enum class itself: argparse's
     # "value not in action.choices" is a plain membership test, and StrEnum
@@ -95,7 +103,9 @@ def build_parser() -> argparse.ArgumentParser:
     evaluate.add_argument("source", type=Path)
     evaluate.add_argument("reconstruction", type=Path)
     evaluate.add_argument(
-        "--artifact", type=Path, help="default: <source>.llmpeg.json beside the source"
+        "--artifact",
+        type=Path,
+        help="default: <source>.llmpeg.json beside the source, else <source>.llmpeg.json.gz",
     )
     evaluate.add_argument("--ocr-text", type=Path)
     evaluate.add_argument("--output", "-o", type=Path)
@@ -113,7 +123,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
         if args.command == "encode":
-            output = args.output or artifact_path_for(args.image)
+            output = args.output or artifact_path_for(args.image, compressed=args.gzip)
             provider = OllamaVisionProvider(args.host, args.model, args.timeout)
             artifact = encode_image(
                 args.image,
@@ -122,10 +132,11 @@ def main(argv: Sequence[str] | None = None) -> int:
                 max_image_bytes=args.max_image_bytes,
                 max_image_pixels=args.max_image_pixels,
             )
-            artifact.write(output, overwrite=args.overwrite)
-            size = len(artifact.to_bytes())
-            ratio = artifact.source.byte_size / size
-            print(f"wrote {output} ({size:,} bytes, {ratio:.0f}:1)")
+            artifact.write(output, overwrite=args.overwrite, compress=args.gzip)
+            stored = artifact.to_gzip_bytes() if args.gzip else artifact.to_bytes()
+            ratio = artifact.source.byte_size / len(stored)
+            envelope = ", gzip" if args.gzip else ""
+            print(f"wrote {output} ({len(stored):,} bytes{envelope}, {ratio:.0f}:1)")
         elif args.command == "reconstruct":
             artifact = Artifact.read(args.artifact)
             prompt = render_generation_prompt(artifact)
@@ -166,28 +177,34 @@ def main(argv: Sequence[str] | None = None) -> int:
                 )
             print(f"wrote {output} (generator: {result.provider})")
         elif args.command == "inspect":
-            artifact = Artifact.read(args.artifact)
-            artifact_size = len(artifact.to_bytes())
+            artifact, stored = Artifact.read_stored(args.artifact)
+            # Ratios are charged on the bytes actually on disk, envelope included, never on a
+            # re-serialization that could differ from the file.
+            artifact_size = len(stored)
             source_size = artifact.source.byte_size
             print(f"profile: {artifact.profile.value}")
             print(f"source: {source_size} bytes ({artifact.source.width}x{artifact.source.height})")
             print(f"artifact: {artifact_size} bytes")
+            print(
+                f"envelope: {envelope_of(stored)} (canonical JSON {len(artifact.to_bytes())} bytes)"
+            )
             print(f"size ratio: {source_size / artifact_size:.2f}:1")
             print(f"saved: {(1 - artifact_size / source_size) * 100:.2f}%")
             print(f"encoder: {artifact.provenance.provider}/{artifact.provenance.model}")
         elif args.command == "verify":
-            artifact = Artifact.read(args.artifact)
+            artifact, stored = Artifact.read_stored(args.artifact)
             header = artifact.header
             print(f"{header.magic} {header.format_version} ({header.major_brand})")
             print(f"compatible brands: {', '.join(header.compatible_brands)}")
             print(f"written by: {header.encoder}")
             print(f"needs reader: llmpeg >= {header.min_reader_version}")
             print(f"decoder: {header.decoder}")
+            print(f"envelope: {envelope_of(stored)} ({len(stored)} bytes on disk)")
             print(f"profile: {artifact.profile.value}")
             print(f"encoder model: {artifact.provenance.provider}/{artifact.provenance.model}")
             print("conforms: yes")
         elif args.command == "evaluate":
-            artifact = Artifact.read(args.artifact or artifact_path_for(args.source))
+            artifact = Artifact.read(args.artifact or existing_artifact_path_for(args.source))
             ocr_text = args.ocr_text.read_text(encoding="utf-8") if args.ocr_text else None
             report = evaluate_with_artifact(
                 args.source, args.reconstruction, artifact, ocr_text=ocr_text
@@ -213,20 +230,38 @@ def main(argv: Sequence[str] | None = None) -> int:
     return 0
 
 
-def artifact_path_for(image: Path) -> Path:
+PLAIN_SUFFIX = ".llmpeg.json"
+GZIP_SUFFIX = ".llmpeg.json.gz"
+
+
+def artifact_path_for(image: Path, *, compressed: bool = False) -> Path:
     """Return the artifact path beside an image: photo.jpg -> photo.jpg.llmpeg.json.
 
     The whole original name is kept and `.llmpeg.json` is appended rather than replacing the
     extension, so `photo.jpg` and `photo.png` in one folder cannot collide on a single artifact.
-    It also keeps the source obvious from the artifact's name alone.
+    It also keeps the source obvious from the artifact's name alone. A gzip envelope adds `.gz`,
+    the name `gzip photo.jpg.llmpeg.json` would produce.
     """
-    return image.parent / f"{image.name}.llmpeg.json"
+    return image.parent / f"{image.name}{GZIP_SUFFIX if compressed else PLAIN_SUFFIX}"
+
+
+def existing_artifact_path_for(image: Path) -> Path:
+    """Return the plain artifact beside an image, or its gzip form when only that exists."""
+    plain = artifact_path_for(image)
+    compressed = artifact_path_for(image, compressed=True)
+    return compressed if not plain.exists() and compressed.exists() else plain
 
 
 def generated_path_for(artifact: Path) -> Path:
     """Return the default generated-image path beside an artifact."""
-    suffix = ".llmpeg.json"
-    source_name = artifact.name[: -len(suffix)] if artifact.name.endswith(suffix) else artifact.stem
+    source_name = next(
+        (
+            artifact.name[: -len(suffix)]
+            for suffix in (GZIP_SUFFIX, PLAIN_SUFFIX)
+            if artifact.name.endswith(suffix)
+        ),
+        artifact.stem,
+    )
     return artifact.parent / f"{source_name}.reconstructed.png"
 
 

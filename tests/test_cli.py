@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
@@ -7,7 +8,7 @@ from unittest.mock import patch
 import pytest
 
 from llmpeg.artifact import Artifact, SourceInfo, source_digest
-from llmpeg.cli import artifact_path_for, generated_path_for, main
+from llmpeg.cli import artifact_path_for, existing_artifact_path_for, generated_path_for, main
 from llmpeg.generators import GeneratedImage
 
 
@@ -168,11 +169,67 @@ def test_artifact_path_keeps_the_whole_filename(name: str, expected: str) -> Non
     ("name", "expected"),
     [
         ("photo.jpg.llmpeg.json", "photo.jpg.reconstructed.png"),
+        ("photo.jpg.llmpeg.json.gz", "photo.jpg.reconstructed.png"),
         ("artifact.json", "artifact.reconstructed.png"),
     ],
 )
 def test_generated_path_preserves_the_source_name(name: str, expected: str) -> None:
     assert generated_path_for(Path(name)).name == expected
+
+
+def test_encode_gzip_writes_the_envelope_and_reports_its_ratio(
+    artifact: Artifact, sample_image: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    expected = sample_image.parent / f"{sample_image.name}.llmpeg.json.gz"
+    with patch("llmpeg.cli.encode_image", return_value=artifact):
+        assert main(["encode", str(sample_image), "--gzip"]) == 0
+    stored = expected.read_bytes()
+    assert stored == artifact.to_gzip_bytes()
+    ratio = artifact.source.byte_size / len(stored)
+    assert f"({len(stored):,} bytes, gzip, {ratio:.0f}:1)" in capsys.readouterr().out
+    assert artifact_path_for(Path("photo.jpg"), compressed=True).name == "photo.jpg.llmpeg.json.gz"
+
+
+def test_inspect_and_verify_charge_the_bytes_on_disk(
+    artifact: Artifact, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    packed = tmp_path / "photo.jpg.llmpeg.json.gz"
+    artifact.write(packed, compress=True)
+    stored = len(packed.read_bytes())
+    canonical = len(artifact.to_bytes())
+
+    assert main(["inspect", str(packed)]) == 0
+    out = capsys.readouterr().out
+    assert f"artifact: {stored} bytes" in out
+    assert f"envelope: gzip (canonical JSON {canonical} bytes)" in out
+    assert f"size ratio: {artifact.source.byte_size / stored:.2f}:1" in out
+
+    assert main(["verify", str(packed)]) == 0
+    out = capsys.readouterr().out
+    assert f"envelope: gzip ({stored} bytes on disk)" in out
+    assert "conforms: yes" in out
+
+    # A valid but non-canonical plain file is charged at its real size, not a re-serialization.
+    pretty = tmp_path / "pretty.llmpeg.json"
+    pretty.write_text(json.dumps(artifact.to_dict(), indent=2), encoding="utf-8")
+    assert main(["inspect", str(pretty)]) == 0
+    out = capsys.readouterr().out
+    assert f"artifact: {pretty.stat().st_size} bytes" in out
+    assert "envelope: none" in out
+
+
+def test_evaluate_finds_a_gzip_artifact_beside_the_source(
+    artifact: Artifact, sample_image: Path
+) -> None:
+    raw = sample_image.read_bytes()
+    stored = replace(
+        artifact,
+        source=SourceInfo(160, 120, len(raw), "image/png", source_digest(raw)),
+    )
+    assert existing_artifact_path_for(sample_image).name == "sample.png.llmpeg.json"
+    stored.write(artifact_path_for(sample_image, compressed=True), compress=True)
+    assert existing_artifact_path_for(sample_image).name == "sample.png.llmpeg.json.gz"
+    assert main(["evaluate", str(sample_image), str(sample_image)]) in {0, 1, 3}
 
 
 def test_generate_cli_prefers_comfyui(
