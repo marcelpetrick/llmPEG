@@ -13,7 +13,7 @@ from pathlib import Path
 import pytest
 from PIL import Image
 
-from llmpeg.artifact import ArtifactError
+from llmpeg.artifact import Artifact, ArtifactError, FidelityProfile
 from prototypeWebUI import server as web
 
 
@@ -104,6 +104,22 @@ def test_generate_route_reports_fallback_generator(
         assert response.read() == b"generated"
         assert response.headers["X-llmPEG-Generator"] == "codex"
         assert response.headers["Access-Control-Expose-Headers"] == "X-llmPEG-Generator"
+
+
+def test_encode_reports_plain_and_gzip_sizes(
+    artifact: Artifact, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(web.CONFIG, "vision_host", "http://vision.test:11434")
+    monkeypatch.setattr(web, "encode_image", lambda _path, _provider, _profile: artifact)
+    buffer = io.BytesIO()
+    Image.new("RGB", (64, 48), "navy").save(buffer, format="PNG")
+
+    result = web.encode(buffer.getvalue(), FidelityProfile.BALANCED)
+
+    assert result["artifact_bytes"] == len(artifact.to_bytes())
+    assert result["artifact_gzip_bytes"] == len(artifact.to_gzip_bytes())
+    assert result["gzip_ratio"] == round(result["encoded_bytes"] / len(artifact.to_gzip_bytes()), 1)
+    assert '["Ratio (gzip)", `${data.gzip_ratio}:1`]' in web.INDEX.read_text(encoding="utf-8")
 
 
 def test_encode_rejects_non_image_upload(web_server: str, monkeypatch: pytest.MonkeyPatch) -> None:

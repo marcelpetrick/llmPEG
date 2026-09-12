@@ -110,6 +110,7 @@ def encode(raw: bytes, profile: FidelityProfile) -> dict[str, Any]:
         path.write_bytes(prepared)
         artifact = encode_image(path, provider, profile)
     artifact_bytes = len(artifact.to_bytes())
+    gzip_bytes = len(artifact.to_gzip_bytes())
     return {
         **info,
         "profile": profile.value,
@@ -119,6 +120,8 @@ def encode(raw: bytes, profile: FidelityProfile) -> dict[str, Any]:
         "artifact": json.loads(artifact.to_bytes().decode("utf-8")),
         "artifact_bytes": artifact_bytes,
         "ratio": round(info["encoded_bytes"] / artifact_bytes, 1),
+        "artifact_gzip_bytes": gzip_bytes,
+        "gzip_ratio": round(info["encoded_bytes"] / gzip_bytes, 1),
     }
 
 

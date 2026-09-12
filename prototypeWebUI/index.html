@@ -392,6 +392,8 @@ function showStats(data) {
     ["Source for ratio", `${data.encoded_bytes.toLocaleString()} B`],
     ["Artifact", `${data.artifact_bytes.toLocaleString()} B`],
     ["Ratio", `${data.ratio}:1 (${percent}%)`],
+    ["Artifact (gzip)", `${data.artifact_gzip_bytes.toLocaleString()} B`],
+    ["Ratio (gzip)", `${data.gzip_ratio}:1`],
     ["Profile", data.profile],
   ];
   $("stats").replaceChildren(...rows.map(([label, value]) => {
