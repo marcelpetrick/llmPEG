@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import gzip
 import json
+import shutil
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -9,12 +12,80 @@ from llmpeg.artifact import (
     FORMAT_MAJOR,
     FORMAT_MINOR,
     FORMAT_VERSION,
+    GZIP_MAGIC,
     Artifact,
     ArtifactError,
     FidelityProfile,
     UnsupportedFormatError,
+    envelope_of,
     source_digest,
 )
+
+
+def test_gzip_envelope_round_trips_deterministically(artifact: Artifact, tmp_path: Path) -> None:
+    path = tmp_path / "result.llmpeg.json.gz"
+    artifact.write(path, compress=True)
+    stored = path.read_bytes()
+
+    assert stored.startswith(GZIP_MAGIC)
+    assert stored[4:8] == b"\0\0\0\0"  # zero mtime: the same artifact gives the same bytes
+    assert stored == artifact.to_gzip_bytes() == artifact.to_gzip_bytes()
+    assert gzip.decompress(stored) == artifact.to_bytes()
+    assert Artifact.read(path) == artifact
+    assert Artifact.read_stored(path) == (artifact, stored)
+    assert envelope_of(stored) == "gzip"
+    assert envelope_of(artifact.to_bytes()) == "none"
+
+
+def test_gzip_written_by_other_tools_is_readable(artifact: Artifact) -> None:
+    """A stored mtime or file name, as plain `gzip` writes, does not affect reading."""
+    wrapped = gzip.compress(artifact.to_bytes(), compresslevel=1, mtime=1_700_000_000)
+    assert Artifact.from_file_bytes(wrapped) == artifact
+
+
+@pytest.mark.skipif(shutil.which("gzip") is None, reason="gzip CLI not installed")
+def test_gzip_envelope_interoperates_with_the_gzip_cli(artifact: Artifact, tmp_path: Path) -> None:
+    path = tmp_path / "cli.llmpeg.json.gz"
+    artifact.write(path, compress=True)
+    inflated = subprocess.run(["gzip", "-dc", str(path)], capture_output=True, check=True)
+    assert inflated.stdout == artifact.to_bytes()
+
+    packed = subprocess.run(
+        ["gzip", "-9", "-c"], input=artifact.to_bytes(), capture_output=True, check=True
+    )
+    assert Artifact.from_file_bytes(packed.stdout) == artifact
+
+
+def test_gzip_envelope_rejects_corrupt_and_oversized_data(
+    artifact: Artifact, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    wrapped = artifact.to_gzip_bytes()
+    with pytest.raises(ArtifactError, match="corrupt gzip envelope"):
+        Artifact.from_file_bytes(wrapped[:-6])
+    with pytest.raises(ArtifactError, match="corrupt gzip envelope"):
+        Artifact.from_file_bytes(wrapped + b"trailing garbage")
+    corrupted = bytearray(wrapped)
+    corrupted[-8] ^= 0xFF  # CRC-32 of the inflated data
+    with pytest.raises(ArtifactError, match="corrupt gzip envelope"):
+        Artifact.from_file_bytes(bytes(corrupted))
+    with pytest.raises(ArtifactError, match="cannot read artifact"):
+        Artifact.from_file_bytes(gzip.compress(wrapped))  # gzip inside gzip is not an artifact
+
+    monkeypatch.setattr("llmpeg.artifact.MAX_ARTIFACT_BYTES", 64)
+    with pytest.raises(ArtifactError, match="inflates beyond 64 bytes"):
+        Artifact.from_file_bytes(wrapped)
+
+
+def test_gzip_does_not_relax_the_budget(artifact: Artifact, tmp_path: Path) -> None:
+    """The budget is charged on the canonical JSON, so compressible padding still fails."""
+    data = artifact.to_dict()
+    data["profile"] = "gist"
+    data["source"]["byte_size"] = 1
+    data["generation_prompt"] = "x" * 2000
+    oversized = Artifact.from_dict(data)
+    assert len(oversized.to_gzip_bytes()) < FidelityProfile.GIST.budget(1)
+    with pytest.raises(ArtifactError, match="budget"):
+        oversized.write(tmp_path / "oversized.llmpeg.json.gz", compress=True)
 
 
 def test_profile_budgets_and_invalid_source() -> None:

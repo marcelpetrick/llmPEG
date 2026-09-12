@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+import gzip
 import hashlib
+import io
 import json
 import math
 import os
 import re
 import tempfile
+import zlib
 from dataclasses import asdict, dataclass
 from enum import StrEnum
 from pathlib import Path
@@ -40,6 +43,17 @@ DECODER_REQUIREMENT = "text-to-image model; lossy; non-deterministic; not bundle
 
 # Artifacts written before the header existed carried a bare `schema_version: 1`.
 LEGACY_SCHEMA_VERSION = 1
+
+# An artifact may be stored inside one gzip member (RFC 1952). The reader recognises the
+# envelope by gzip's own two-byte signature, never by file name, and the JSON inside is the
+# unchanged canonical artifact, so `gunzip` turns it back into a plain `.llmpeg.json`.
+GZIP_MAGIC = b"\x1f\x8b"
+# Level 9 with a zero mtime and no stored file name keeps the envelope byte-stable.
+GZIP_LEVEL = 9
+# The most canonical JSON a reader inflates. The largest budget reachable under the encoder's
+# default 25 MiB image limit is under 4 MiB; the cap stops a tiny hostile file inflating
+# without bound.
+MAX_ARTIFACT_BYTES = 8 * 1024 * 1024
 
 FORMAT_VERSION_PATTERN = re.compile(r"^(\d+)\.(\d+)$")
 HEX_COLOR = re.compile(r"^#[0-9a-fA-F]{6}$")
@@ -275,6 +289,14 @@ class Artifact:
         ordered.update({key: _deep_sorted(data[key]) for key in sorted(data)})
         return json.dumps(ordered, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
 
+    def to_gzip_bytes(self) -> bytes:
+        """Wrap the canonical JSON in one deterministic gzip member.
+
+        Decompressing it yields exactly `to_bytes()`. The profile budget still applies to that
+        JSON: gzip shrinks what is stored, it does not let the encoder keep more content.
+        """
+        return gzip.compress(self.to_bytes(), compresslevel=GZIP_LEVEL, mtime=0)
+
     def enforce_budget(self) -> None:
         """Raise when the canonical artifact exceeds its profile's size budget."""
         actual = len(self.to_bytes())
@@ -284,14 +306,16 @@ class Artifact:
                 f"artifact is {actual} bytes; {self.profile.value} budget is {budget} bytes"
             )
 
-    def write(self, path: Path, *, overwrite: bool = False) -> None:
+    def write(self, path: Path, *, overwrite: bool = False, compress: bool = False) -> None:
         """Atomically write an artifact without overwriting by default.
 
         The serialized bytes are parsed back before anything touches the disk, so
         the tool can never emit a file that does not conform to its own format.
+        With `compress`, the file is the gzip envelope from `to_gzip_bytes()`.
         """
         self.enforce_budget()
-        _verify_round_trip(self)
+        payload = self.to_gzip_bytes() if compress else self.to_bytes()
+        _verify_round_trip(self, payload)
         path = path.resolve()
         path.parent.mkdir(parents=True, exist_ok=True)
         if path.exists() and not overwrite:
@@ -299,7 +323,7 @@ class Artifact:
         handle, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
         try:
             with os.fdopen(handle, "wb") as stream:
-                stream.write(self.to_bytes())
+                stream.write(payload)
                 stream.flush()
                 os.fsync(stream.fileno())
             if path.exists() and not overwrite:
@@ -402,15 +426,48 @@ class Artifact:
         return artifact
 
     @classmethod
-    def read(cls, path: Path) -> Self:
-        """Read a UTF-8 JSON artifact from disk."""
+    def from_file_bytes(cls, data: bytes) -> Self:
+        """Parse stored artifact bytes: plain UTF-8 JSON or JSON inside a gzip envelope."""
         try:
-            data = json.loads(path.read_text(encoding="utf-8"))
-        except (OSError, UnicodeError, json.JSONDecodeError) as error:
-            raise ArtifactError(f"cannot read artifact {path}: {error}") from error
-        if not isinstance(data, dict):
+            value = json.loads(unwrap_envelope(data).decode("utf-8"))
+        except (UnicodeError, json.JSONDecodeError) as error:
+            raise ArtifactError(f"cannot read artifact: {error}") from error
+        if not isinstance(value, dict):
             raise ArtifactError("artifact root must be a JSON object")
-        return cls.from_dict(data)
+        return cls.from_dict(value)
+
+    @classmethod
+    def read_stored(cls, path: Path) -> tuple[Self, bytes]:
+        """Read an artifact from disk together with the exact bytes it occupies there."""
+        try:
+            data = path.read_bytes()
+        except OSError as error:
+            raise ArtifactError(f"cannot read artifact {path}: {error}") from error
+        return cls.from_file_bytes(data), data
+
+    @classmethod
+    def read(cls, path: Path) -> Self:
+        """Read a plain or gzip-wrapped artifact from disk."""
+        return cls.read_stored(path)[0]
+
+
+def envelope_of(data: bytes) -> str:
+    """Name the storage envelope of artifact bytes: `gzip` or `none`."""
+    return "gzip" if data.startswith(GZIP_MAGIC) else "none"
+
+
+def unwrap_envelope(data: bytes) -> bytes:
+    """Return the JSON inside a gzip envelope, or the bytes unchanged when there is none."""
+    if not data.startswith(GZIP_MAGIC):
+        return data
+    try:
+        with gzip.GzipFile(fileobj=io.BytesIO(data)) as stream:
+            inflated = stream.read(MAX_ARTIFACT_BYTES + 1)
+    except (OSError, EOFError, zlib.error) as error:
+        raise ArtifactError(f"corrupt gzip envelope: {error}") from error
+    if len(inflated) > MAX_ARTIFACT_BYTES:
+        raise ArtifactError(f"gzip envelope inflates beyond {MAX_ARTIFACT_BYTES} bytes")
+    return inflated
 
 
 def source_digest(content: bytes) -> str:
@@ -478,12 +535,12 @@ def _string_tuple(value: Any, name: str) -> tuple[str, ...]:
     )
 
 
-def _verify_round_trip(artifact: Artifact) -> None:
-    """Fail before writing if the encoded bytes do not parse back identically."""
+def _verify_round_trip(artifact: Artifact, payload: bytes) -> None:
+    """Fail before writing if the stored bytes do not parse back to the same artifact."""
     encoded = artifact.to_bytes()
     try:
-        reparsed = Artifact.from_dict(json.loads(encoded.decode("utf-8")))
-    except (ArtifactError, UnicodeDecodeError, json.JSONDecodeError) as error:
+        reparsed = Artifact.from_file_bytes(payload)
+    except ArtifactError as error:
         raise ArtifactError(f"refusing to write a non-conforming artifact: {error}") from error
     if reparsed.to_bytes() != encoded:
         raise ArtifactError("refusing to write an artifact that does not round-trip")
