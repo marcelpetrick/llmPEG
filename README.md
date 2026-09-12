@@ -313,7 +313,7 @@ and it comes first in the file:
   "format_version":"1.0",
   "major_brand":"lpg1",
   "compatible_brands":["lpg1"],
-  "encoder":"llmpeg/0.3.1",
+  "encoder":"llmpeg/0.4.0",
   "min_reader_version":"0.1.0",
   "decoder":"text-to-image model; lossy; non-deterministic; not bundled"
 }, ...}
@@ -328,7 +328,7 @@ $ head -c 40 photo.jpg.llmpeg.json
 
 $ llmpeg verify photo.jpg.llmpeg.json
 llmPEG 1.0 (lpg1)
-written by: llmpeg/0.3.1
+written by: llmpeg/0.4.0
 needs reader: llmpeg >= 0.1.0
 decoder: text-to-image model; lossy; non-deterministic; not bundled
 envelope: none (1206 bytes on disk)
@@ -626,7 +626,7 @@ uv run python -m build
 ```
 
 The suite is offline and injects fake providers. Live Ollama and image-generation runs are manual
-demo steps, not CI dependencies. Current suite: **123 tests, 96.4% branch-aware coverage**.
+demo steps, not CI dependencies. Current suite: **133 tests, 96.5% branch-aware coverage**.
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs all five gates on Python 3.14 for
 every push and pull request.
@@ -640,13 +640,13 @@ Pushing a `v*` tag runs [`.github/workflows/release.yml`](.github/workflows/rele
 builds an sdist and a wheel with `uv build`, checks them with twine, and attaches both to a
 generated GitHub Release.
 
-The current release is [`v0.3.1`](https://github.com/marcelpetrick/llmPEG/releases/tag/v0.3.1).
+The current release is [`v0.4.0`](https://github.com/marcelpetrick/llmPEG/releases/tag/v0.4.0).
 
 There is no PyPI upload: the distribution name `llmpeg` is already registered there by an
 unrelated project, so installing is done from a release artifact or from a checkout:
 
 ```bash
-uv pip install llmpeg-0.3.1-py3-none-any.whl   # from a GitHub Release
+uv pip install llmpeg-0.4.0-py3-none-any.whl   # from a GitHub Release
 uv pip install .                               # from a clone
 ```
 

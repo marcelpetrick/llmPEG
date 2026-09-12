@@ -137,7 +137,7 @@ def generate_pollinations(prompt: str, width: int, height: int, seed: int) -> by
         url,
         headers={
             "Authorization": f"Bearer {CONFIG.pollinations_api_key}",
-            "User-Agent": "llmPEG-prototype/0.3.1",
+            "User-Agent": "llmPEG-prototype/0.4.0",
         },
     )
     with urllib.request.urlopen(request, timeout=CONFIG.timeout) as response:
@@ -256,7 +256,7 @@ def generation_request(payload: object) -> tuple[str, str, int, int, int]:
 class Handler(BaseHTTPRequestHandler):
     """Minimal framework-free router for the page and its API."""
 
-    server_version = "llmPEGPrototype/0.3.1"
+    server_version = "llmPEGPrototype/0.4.0"
 
     def log_message(self, format: str, *args: Any) -> None:
         sys.stderr.write(f"{self.address_string()} {format % args}\n")
