@@ -1,0 +1,192 @@
+{
+  "alternatives_total_bytes": {
+    "bz2_level_9": 23019,
+    "gzip_level_9": 21801,
+    "xz_preset_9_extreme": 22968,
+    "zstd_level_22": 21790
+  },
+  "artifact_count": 17,
+  "cases": [
+    {
+      "artifact": "examples/news-article.llmpeg.json",
+      "gzip_bytes": 1662,
+      "gzip_fraction": 0.469,
+      "gzip_ratio": 74.4,
+      "plain_bytes": 3543,
+      "plain_ratio": 34.9,
+      "profile": "detailed",
+      "source_bytes": 123585
+    },
+    {
+      "artifact": "survey/artifacts/amsterdam-market-expanded.llmpeg.json",
+      "gzip_bytes": 1456,
+      "gzip_fraction": 0.465,
+      "gzip_ratio": 509.7,
+      "plain_bytes": 3129,
+      "plain_ratio": 237.2,
+      "profile": "detailed",
+      "source_bytes": 742058
+    },
+    {
+      "artifact": "survey/artifacts/astronaut-crew-expanded.llmpeg.json",
+      "gzip_bytes": 1505,
+      "gzip_fraction": 0.432,
+      "gzip_ratio": 425.3,
+      "plain_bytes": 3485,
+      "plain_ratio": 183.6,
+      "profile": "detailed",
+      "source_bytes": 640005
+    },
+    {
+      "artifact": "survey/artifacts/cat-monochrome-detailed.llmpeg.json",
+      "gzip_bytes": 1372,
+      "gzip_fraction": 0.424,
+      "gzip_ratio": 252.1,
+      "plain_bytes": 3233,
+      "plain_ratio": 107.0,
+      "profile": "detailed",
+      "source_bytes": 345840
+    },
+    {
+      "artifact": "survey/artifacts/cat-monochrome.llmpeg.json",
+      "gzip_bytes": 717,
+      "gzip_fraction": 0.53,
+      "gzip_ratio": 482.3,
+      "plain_bytes": 1354,
+      "plain_ratio": 255.4,
+      "profile": "balanced",
+      "source_bytes": 345840
+    },
+    {
+      "artifact": "survey/artifacts/cat-on-grass-detailed.llmpeg.json",
+      "gzip_bytes": 1214,
+      "gzip_fraction": 0.425,
+      "gzip_ratio": 659.0,
+      "plain_bytes": 2856,
+      "plain_ratio": 280.1,
+      "profile": "detailed",
+      "source_bytes": 799983
+    },
+    {
+      "artifact": "survey/artifacts/cat-on-grass.llmpeg.json",
+      "gzip_bytes": 686,
+      "gzip_fraction": 0.569,
+      "gzip_ratio": 1166.2,
+      "plain_bytes": 1206,
+      "plain_ratio": 663.3,
+      "profile": "balanced",
+      "source_bytes": 799983
+    },
+    {
+      "artifact": "survey/artifacts/cat-on-keyboard-detailed.llmpeg.json",
+      "gzip_bytes": 1197,
+      "gzip_fraction": 0.474,
+      "gzip_ratio": 511.7,
+      "plain_bytes": 2524,
+      "plain_ratio": 242.6,
+      "profile": "detailed",
+      "source_bytes": 612448
+    },
+    {
+      "artifact": "survey/artifacts/cat-on-keyboard.llmpeg.json",
+      "gzip_bytes": 778,
+      "gzip_fraction": 0.513,
+      "gzip_ratio": 787.2,
+      "plain_bytes": 1518,
+      "plain_ratio": 403.5,
+      "profile": "balanced",
+      "source_bytes": 612448
+    },
+    {
+      "artifact": "survey/artifacts/dogs-beach-expanded.llmpeg.json",
+      "gzip_bytes": 1343,
+      "gzip_fraction": 0.454,
+      "gzip_ratio": 396.9,
+      "plain_bytes": 2961,
+      "plain_ratio": 180.0,
+      "profile": "detailed",
+      "source_bytes": 533079
+    },
+    {
+      "artifact": "survey/artifacts/food-table-expanded.llmpeg.json",
+      "gzip_bytes": 1132,
+      "gzip_fraction": 0.506,
+      "gzip_ratio": 335.7,
+      "plain_bytes": 2237,
+      "plain_ratio": 169.9,
+      "profile": "detailed",
+      "source_bytes": 379957
+    },
+    {
+      "artifact": "survey/artifacts/kitchen-table-expanded.llmpeg.json",
+      "gzip_bytes": 1103,
+      "gzip_fraction": 0.342,
+      "gzip_ratio": 496.8,
+      "plain_bytes": 3223,
+      "plain_ratio": 170.0,
+      "profile": "detailed",
+      "source_bytes": 548012
+    },
+    {
+      "artifact": "survey/artifacts/living-room-expanded.llmpeg.json",
+      "gzip_bytes": 1587,
+      "gzip_fraction": 0.435,
+      "gzip_ratio": 158.6,
+      "plain_bytes": 3648,
+      "plain_ratio": 69.0,
+      "profile": "detailed",
+      "source_bytes": 251650
+    },
+    {
+      "artifact": "survey/artifacts/mountain-hikers-expanded.llmpeg.json",
+      "gzip_bytes": 1289,
+      "gzip_fraction": 0.494,
+      "gzip_ratio": 620.6,
+      "plain_bytes": 2608,
+      "plain_ratio": 306.8,
+      "profile": "detailed",
+      "source_bytes": 800010
+    },
+    {
+      "artifact": "survey/artifacts/street-bicycles-expanded.llmpeg.json",
+      "gzip_bytes": 1518,
+      "gzip_fraction": 0.364,
+      "gzip_ratio": 855.8,
+      "plain_bytes": 4173,
+      "plain_ratio": 311.3,
+      "profile": "detailed",
+      "source_bytes": 1299141
+    },
+    {
+      "artifact": "survey/artifacts/train-platform-expanded.llmpeg.json",
+      "gzip_bytes": 1743,
+      "gzip_fraction": 0.444,
+      "gzip_ratio": 191.3,
+      "plain_bytes": 3930,
+      "plain_ratio": 84.8,
+      "profile": "detailed",
+      "source_bytes": 333386
+    },
+    {
+      "artifact": "survey/artifacts/workspace-books-expanded.llmpeg.json",
+      "gzip_bytes": 1499,
+      "gzip_fraction": 0.47,
+      "gzip_ratio": 361.1,
+      "plain_bytes": 3189,
+      "plain_ratio": 169.7,
+      "profile": "detailed",
+      "source_bytes": 541310
+    }
+  ],
+  "largest_gzip_fraction": 0.569,
+  "method": "Sizes are whole stored files: canonical JSON with its 228-byte header, and the same bytes in a gzip member written by Artifact.to_gzip_bytes() (level 9, zero mtime, no file name; 18 bytes of gzip header and trailer). Ratios divide the recorded source byte size by those file sizes.",
+  "smallest_gzip_fraction": 0.342,
+  "totals": {
+    "gzip_bytes": 21801,
+    "gzip_fraction": 0.447,
+    "gzip_ratio": 445.3,
+    "plain_bytes": 48817,
+    "plain_ratio": 198.9,
+    "source_bytes": 9708735
+  }
+}
