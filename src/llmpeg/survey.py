@@ -82,6 +82,9 @@ def render_survey(manifest_path: Path) -> str:
 
     cards = "\n".join(_render_case(case) for case in cases)
     survey_ids = json.dumps([case["id"] for case in cases]).replace("</", "<\\/")
+    # Every survey on one origin shares localStorage, and save() stores only this page's cases,
+    # so each survey needs its own key or rating one page erases the ratings on another.
+    storage_key = json.dumps(f"llmpeg-survey-v2:{title}").replace("</", "<\\/")
     return _page(
         title=title,
         date=_string(manifest, "date"),
@@ -97,6 +100,7 @@ def render_survey(manifest_path: Path) -> str:
         comparison=comparison,
         cards=cards,
         survey_ids=survey_ids,
+        storage_key=storage_key,
     )
 
 
@@ -230,5 +234,5 @@ def _page(**values: Any) -> str:
 {cards}
 <div class="actions"><button id="export">Export my ratings</button><button class="secondary" id="reset">Reset</button></div>
 <footer><p><strong>Method.</strong> Sources were encoded by Ollama/Qwen3-VL into canonical llmPEG JSON. Each reconstruction used the resulting text prompt only. Metrics are deterministic structural proxies: dHash, RGB histogram, edge density, aspect ratio, and symmetric dominant-palette distance. They are not CLIP scores or human judgments. Ratings stay in this browser until exported.</p></footer></main>
-<script>const ids={survey_ids},key="llmpeg-cat-survey-v1";function collect(){{const out={{created_at:new Date().toISOString(),ratings:{{}}}};for(const id of ids){{const box=document.querySelector(`[data-case="${{id}}"]`),item={{}};box.querySelectorAll("input:checked").forEach(x=>item[x.name.slice(id.length+1)]=Number(x.value));item.comment=box.querySelector("textarea").value;out.ratings[id]=item}}return out}}function save(){{localStorage.setItem(key,JSON.stringify(collect()))}}document.addEventListener("change",save);document.addEventListener("input",save);try{{const old=JSON.parse(localStorage.getItem(key)||"null");if(old?.ratings)for(const [id,item] of Object.entries(old.ratings)){{for(const [field,value] of Object.entries(item)){{if(field==="comment")document.querySelector(`[name="${{id}}-comment"]`).value=value;else{{const input=document.querySelector(`[name="${{id}}-${{field}}"] [value="${{value}}"]`)||document.querySelector(`input[name="${{id}}-${{field}}"][value="${{value}}"]`);if(input)input.checked=true}}}}}}}}catch(e){{console.warn(e)}}document.getElementById("export").onclick=()=>{{const blob=new Blob([JSON.stringify(collect(),null,2)],{{type:"application/json"}}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="llmpeg-survey-response.json";a.click();URL.revokeObjectURL(a.href)}};document.getElementById("reset").onclick=()=>{{localStorage.removeItem(key);document.querySelectorAll("input").forEach(x=>x.checked=false);document.querySelectorAll("textarea").forEach(x=>x.value="")}};</script></body></html>
+<script>const ids={survey_ids},key={storage_key},legacyKey="llmpeg-cat-survey-v1";function collect(){{const out={{created_at:new Date().toISOString(),ratings:{{}}}};for(const id of ids){{const box=document.querySelector(`[data-case="${{id}}"]`),item={{}};box.querySelectorAll("input:checked").forEach(x=>item[x.name.slice(id.length+1)]=Number(x.value));item.comment=box.querySelector("textarea").value;out.ratings[id]=item}}return out}}function save(){{localStorage.setItem(key,JSON.stringify(collect()))}}document.addEventListener("change",save);document.addEventListener("input",save);try{{const old=JSON.parse(localStorage.getItem(key)||localStorage.getItem(legacyKey)||"null");if(old?.ratings)for(const [id,item] of Object.entries(old.ratings)){{if(!ids.includes(id))continue;for(const [field,value] of Object.entries(item)){{if(field==="comment")document.querySelector(`[name="${{id}}-comment"]`).value=value;else{{const input=document.querySelector(`[name="${{id}}-${{field}}"] [value="${{value}}"]`)||document.querySelector(`input[name="${{id}}-${{field}}"][value="${{value}}"]`);if(input)input.checked=true}}}}}}}}catch(e){{console.warn(e)}}document.getElementById("export").onclick=()=>{{const blob=new Blob([JSON.stringify(collect(),null,2)],{{type:"application/json"}}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="llmpeg-survey-response.json";a.click();URL.revokeObjectURL(a.href)}};document.getElementById("reset").onclick=()=>{{localStorage.removeItem(key);document.querySelectorAll("input").forEach(x=>x.checked=false);document.querySelectorAll("textarea").forEach(x=>x.value="")}};</script></body></html>
 """.format(**values)

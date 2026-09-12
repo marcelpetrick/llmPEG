@@ -87,6 +87,21 @@ def test_survey_intro_makes_no_claim_the_cases_do_not_support(
     assert "1 of 1 sources have unverified provenance." in render_survey(manifest)
 
 
+def test_each_survey_keeps_its_ratings_under_its_own_storage_key(
+    tmp_path: Path, artifact: Artifact
+) -> None:
+    manifest = _manifest(tmp_path, artifact)
+    first = render_survey(manifest)
+    data = _load_manifest(manifest)
+    data["title"] = "Another survey"
+    _save(manifest, data)
+    second = render_survey(manifest)
+
+    assert 'key="llmpeg-survey-v2:Cats & compression"' in first
+    assert 'key="llmpeg-survey-v2:Another survey"' in second
+    assert "if(!ids.includes(id))continue" in first
+
+
 def test_render_survey_compares_baseline(tmp_path: Path, artifact: Artifact) -> None:
     manifest = _manifest(tmp_path, artifact)
     data = json.loads(manifest.read_text(encoding="utf-8"))
