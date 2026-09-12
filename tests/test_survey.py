@@ -72,6 +72,21 @@ def test_render_survey_is_interactive_and_escaped(tmp_path: Path, artifact: Arti
     assert "<code>balanced</code> profile" in output
 
 
+def test_survey_intro_makes_no_claim_the_cases_do_not_support(
+    tmp_path: Path, artifact: Artifact
+) -> None:
+    manifest = _manifest(tmp_path, artifact)
+    output = render_survey(manifest)
+    assert "cat images" not in output
+    assert "public-domain" not in output
+    assert "unverified provenance" not in output
+
+    data = _load_manifest(manifest)
+    data["cases"][0]["credit"]["license"] = "Provenance not verified — see EXPANDED.md"
+    _save(manifest, data)
+    assert "1 of 1 sources have unverified provenance." in render_survey(manifest)
+
+
 def test_render_survey_compares_baseline(tmp_path: Path, artifact: Artifact) -> None:
     manifest = _manifest(tmp_path, artifact)
     data = json.loads(manifest.read_text(encoding="utf-8"))

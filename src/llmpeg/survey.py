@@ -10,6 +10,9 @@ from typing import Any
 
 from llmpeg.artifact import Artifact, ArtifactError
 
+# Manifests mark a source whose licence could not be traced with this prefix.
+UNVERIFIED_LICENSE_PREFIX = "Provenance not verified"
+
 
 def render_survey(manifest_path: Path) -> str:
     """Render a manifest and its local results as one portable HTML document."""
@@ -70,6 +73,13 @@ def render_survey(manifest_path: Path) -> str:
             "Use the three-way comparisons below to judge identity directly.</p>"
         )
 
+    # The intro is derived from the cases rather than hard-coded, so a survey of
+    # non-cat scenes or of sources without a traced licence cannot claim otherwise.
+    unverified = sum(_credit_license(case).startswith(UNVERIFIED_LICENSE_PREFIX) for case in cases)
+    provenance = (
+        f" {unverified} of {len(cases)} sources have unverified provenance." if unverified else ""
+    )
+
     cards = "\n".join(_render_case(case) for case in cases)
     survey_ids = json.dumps([case["id"] for case in cases]).replace("</", "<\\/")
     return _page(
@@ -83,6 +93,7 @@ def render_survey(manifest_path: Path) -> str:
         layout_mean=layout_mean,
         palette_mean=palette_mean,
         dhash_mean=dhash_mean,
+        provenance=provenance,
         comparison=comparison,
         cards=cards,
         survey_ids=survey_ids,
@@ -162,6 +173,13 @@ def _render_case(case: dict[str, Any]) -> str:
 </article>"""
 
 
+def _credit_license(case: dict[str, Any]) -> str:
+    credit = case.get("credit")
+    if not isinstance(credit, dict):
+        raise ArtifactError(f"survey credit missing for {case.get('id', 'unknown')}")
+    return _string(credit, "license")
+
+
 def _metric(label: str, value: float, lower_is_better: bool) -> str:
     width = (1 - value if lower_is_better else value) * 100
     return f"""<div class="metric"><span>{html.escape(label)}</span><strong>{value:.3f}</strong><div class="bar"><i style="width:{width:.1f}%"></i></div></div>"""
@@ -205,7 +223,7 @@ def _page(**values: Any) -> str:
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{title}</title><style>
 :root{{--ink:#17202a;--muted:#667085;--paper:#f6f4ef;--card:#fff;--navy:#102a43;--blue:#2878b5;--mint:#32a071;--line:#ddd8ce}}*{{box-sizing:border-box}}body{{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 ui-sans-serif,system-ui,sans-serif}}header{{background:var(--navy);color:white;padding:64px max(24px,calc((100% - 1180px)/2)) 54px}}header p{{max-width:760px;color:#d9e7f2;font-size:1.08rem}}h1{{font-size:clamp(2.4rem,6vw,5rem);line-height:.98;margin:.2em 0}}main{{max-width:1180px;margin:auto;padding:36px 24px 72px}}.summary{{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:-65px;margin-bottom:36px}}.summary div{{background:var(--card);padding:18px;border-radius:14px;box-shadow:0 8px 25px #102a4315}}.summary span,.eyebrow{{display:block;color:var(--muted);font-size:.73rem;font-weight:750;letter-spacing:.08em;text-transform:uppercase}}.summary strong{{font-size:1.65rem}}.finding{{border-left:5px solid var(--blue);padding:14px 20px;background:#eaf3f9;border-radius:0 10px 10px 0;margin:0 0 16px}}.comparison{{padding:14px 20px;background:#fff7d6;border-radius:10px;margin:0 0 36px}}.case{{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;margin:24px 0;box-shadow:0 12px 35px #243b5310}}.case-head{{display:flex;justify-content:space-between;gap:20px;align-items:start}}h2{{margin:.15em 0 .7em;font-size:1.7rem}}.status{{background:#dff5e9;color:#17663f;border-radius:999px;padding:6px 12px;font-weight:800;font-size:.78rem}}.status.fail{{background:#fee2e2;color:#991b1b}}.status.incomplete{{background:#fff7d6;color:#854d0e}}.pair{{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}}figure{{margin:0}}.image-frame{{background:#e8e6e0;aspect-ratio:4/3;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center}}img{{width:100%;height:100%;object-fit:contain}}figcaption{{font-weight:750;padding:7px 2px}}.metrics{{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}}.metric{{font-size:.82rem}}.metric strong{{float:right}}.bar{{height:7px;background:#e8e9eb;border-radius:9px;clear:both;overflow:hidden;margin-top:6px}}.bar i{{display:block;height:100%;background:var(--mint)}}.compression,.delta{{color:var(--muted)}}details{{border-top:1px solid var(--line);padding-top:13px}}summary{{cursor:pointer;font-weight:700}}pre{{white-space:pre-wrap;background:#101b26;color:#e7edf2;padding:16px;border-radius:10px;max-height:340px;overflow:auto}}a{{color:#176b9c}}.questions{{margin-top:20px;background:#f8fafb;border-radius:14px;padding:18px}}h3{{margin-top:0}}fieldset{{border:0;padding:0;margin:15px 0}}legend{{font-weight:650}}.scale{{display:flex;gap:7px;margin-top:7px}}.scale input{{position:absolute;opacity:0}}.scale span{{display:grid;place-items:center;width:38px;height:34px;border:1px solid #b9c2ca;border-radius:8px;cursor:pointer;background:white}}.scale input:checked+span{{background:var(--blue);color:white;border-color:var(--blue)}}small{{color:var(--muted)}}.comment{{display:grid;gap:6px;font-weight:650}}textarea{{font:inherit;padding:9px;border:1px solid #b9c2ca;border-radius:8px}}.credit{{font-size:.78rem;color:var(--muted);margin-bottom:0}}.actions{{position:sticky;bottom:12px;display:flex;gap:10px;justify-content:center;margin-top:30px}}button{{border:0;border-radius:999px;padding:12px 20px;font-weight:750;cursor:pointer;background:var(--navy);color:white}}button.secondary{{background:white;color:var(--navy);border:1px solid var(--line)}}footer{{color:var(--muted);font-size:.85rem;margin-top:36px}}@media(max-width:800px){{.summary{{grid-template-columns:repeat(2,1fr);margin-top:-45px}}.pair,.metrics{{grid-template-columns:1fr}}header{{padding-top:42px}}}}
-</style></head><body><header><span class="eyebrow">EXPLORATORY BENCHMARK · {date}</span><h1>{title}</h1><p>Can a compact semantic description preserve what matters in a photograph? {count} public-domain cat images were encoded with the same vision model and <code>{profile}</code> profile, then reconstructed by Codex image generation from text alone.</p></header><main>
+</style></head><body><header><span class="eyebrow">EXPLORATORY BENCHMARK · {date}</span><h1>{title}</h1><p>Can a compact semantic description preserve what matters in a photograph? {count} source images were encoded with the same vision model and <code>{profile}</code> profile, then reconstructed by Codex image generation from text alone.{provenance}</p></header><main>
 <section class="summary"><div><span>Cases passed</span><strong>{pass_count}/{count}</strong></div><div><span>Mean visual proxy</span><strong>{visual_mean:.3f}</strong></div><div><span>Mean layout</span><strong>{layout_mean:.3f}</strong></div><div><span>Mean palette distance</span><strong>{palette_mean:.3f}</strong></div><div><span>Mean dHash</span><strong>{dhash_mean:.3f}</strong></div></section>
 <p class="finding"><strong>Finding: {quality} semantic quality.</strong> {pass_count}/{count} cases meet the <code>{profile}</code> proxy thresholds; mean dHash is {dhash_mean:.3f}. These structural metrics do not prove identity preservation, so inspect and rate each pair below. With n={count}, this is a product probe—not a population estimate.</p>
 {comparison}
