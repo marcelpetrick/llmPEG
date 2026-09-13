@@ -136,6 +136,45 @@ def test_encode_rejects_non_image_upload(web_server: str, monkeypatch: pytest.Mo
     assert json.load(caught.value)["error"] == "uploaded data is not a supported image"
 
 
+def _png(width: int, height: int) -> bytes:
+    buffer = io.BytesIO()
+    Image.new("RGB", (width, height), "navy").save(buffer, format="PNG")
+    return buffer.getvalue()
+
+
+def _rejected_upload(web_server: str, data: bytes) -> urllib.error.HTTPError:
+    request = urllib.request.Request(
+        f"{web_server}/api/encode",
+        data=data,
+        method="POST",
+        headers={"Content-Type": "image/png"},
+    )
+    with pytest.raises(urllib.error.HTTPError) as caught:
+        urllib.request.urlopen(request)
+    return caught.value
+
+
+def test_encode_refuses_too_many_pixels_before_decoding(
+    web_server: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(web.CONFIG, "vision_host", "http://vision.test:11434")
+    monkeypatch.setattr(web, "DEFAULT_MAX_IMAGE_PIXELS", 1000)
+    error = _rejected_upload(web_server, _png(64, 48))
+    assert error.code == 400
+    assert json.load(error)["error"] == "image has 3072 pixels; limit is 1000 pixels"
+
+
+def test_encode_answers_a_decompression_bomb(
+    web_server: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(web.CONFIG, "vision_host", "http://vision.test:11434")
+    # Pillow raises DecompressionBombError above twice this limit; 3072 > 2000.
+    monkeypatch.setattr(Image, "MAX_IMAGE_PIXELS", 1000)
+    error = _rejected_upload(web_server, _png(64, 48))
+    assert error.code == 400
+    assert json.load(error)["error"].startswith("image too large:")
+
+
 def test_generation_request_accepts_ui_values() -> None:
     assert web.generation_request(
         {

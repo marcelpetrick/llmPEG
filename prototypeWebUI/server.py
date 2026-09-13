@@ -38,7 +38,7 @@ from PIL import Image, UnidentifiedImageError
 
 from llmpeg import generators as generator_adapters
 from llmpeg.artifact import ArtifactError, FidelityProfile
-from llmpeg.encoder import encode_image, render_generation_prompt
+from llmpeg.encoder import DEFAULT_MAX_IMAGE_PIXELS, encode_image, render_generation_prompt
 from llmpeg.providers import OllamaVisionProvider
 
 HERE = Path(__file__).resolve().parent
@@ -81,6 +81,13 @@ def downscale(raw: bytes, max_edge: int = MAX_EDGE) -> tuple[bytes, dict[str, An
     """Flatten to RGB and shrink the long edge, returning JPEG bytes and what changed."""
     with Image.open(io.BytesIO(raw)) as opened:
         original = (opened.width, opened.height)
+        # Checked before decoding: convert() materialises every pixel, so a small, highly
+        # compressed upload would otherwise claim its full memory before encode_image's limit.
+        pixels = original[0] * original[1]
+        if pixels > DEFAULT_MAX_IMAGE_PIXELS:
+            raise ArtifactError(
+                f"image has {pixels} pixels; limit is {DEFAULT_MAX_IMAGE_PIXELS} pixels"
+            )
         image = opened.convert("RGB")
         if max(image.size) > max_edge:
             image.thumbnail((max_edge, max_edge), Image.Resampling.LANCZOS)
@@ -358,6 +365,9 @@ class Handler(BaseHTTPRequestHandler):
             self._send_json(400, {"error": f"bad request: {error}"})
         except UnidentifiedImageError:
             self._send_json(400, {"error": "uploaded data is not a supported image"})
+        except Image.DecompressionBombError as error:
+            # Not an OSError or ValueError: uncaught, it dropped the connection with no response.
+            self._send_json(400, {"error": f"image too large: {error}"})
         except (OSError, urllib.error.URLError) as error:
             self._send_json(502, {"error": f"upstream failed: {error}"})
 
