@@ -16,6 +16,8 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Any, Self
 
+from llmpeg._version import __version__
+
 HEADER_KEY = "llmpeg"
 MAGIC = "llmPEG"
 
@@ -34,7 +36,7 @@ MAJOR_BRAND = "lpg1"
 COMPATIBLE_BRANDS: tuple[str, ...] = ("lpg1",)
 
 CODEC_NAME = "llmpeg"
-CODEC_VERSION = "0.4.0"
+CODEC_VERSION = __version__
 MIN_READER_VERSION = "0.1.0"
 
 # Stated plainly so nobody mistakes this container for something self-contained:

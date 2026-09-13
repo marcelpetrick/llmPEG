@@ -101,6 +101,11 @@ run in CI. Never record the endpoint host in their output — model name only.
 Current baseline: **133 tests, 96.5% branch coverage**. Update this line when it changes — a stale
 self-measurement is the most embarrassing possible bug in a project about honest measurement.
 
+The release version lives only in `src/llmpeg/_version.py`; packaging, the artifact header, and
+the prototype server read it from there. A bump edits that file plus the version examples in
+`README.md` and `docs/format.md` — `tests/test_version.py` fails if any of them is missed. Never
+retype the version as a literal in code.
+
 ## Testing
 
 The suite is fully offline and injects fake providers via `tests/conftest.py`. Live Ollama calls
