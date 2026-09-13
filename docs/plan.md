@@ -115,12 +115,12 @@ The pattern across all three: absolute 1–5 scores from a vision model collapse
 forced choice is the common fix.
 
 **Closed since:** the four ungenerated benchmark cases were generated, transcribed and evaluated,
-completing the study at `n=10` (9 pass, 1 fail); two of their four missing Commons records were
-recovered and verified by exact perceptual-hash match.
+completing the study at `n=10` (9 pass, 1 fail); all four missing Commons records were recovered
+and verified by exact perceptual-hash match — `kitchen-table` and `living-room` last, on
+2026-09-13, against their full-resolution CC0 originals.
 
 Still open: calibrate the judge against real human ratings; rebuild the critic as a pairwise
-forced choice; trace the Commons records for `kitchen-table` and `living-room`; add a precision
-counterpart to `critical_text_recall` so invented text is penalised.
+forced choice; add a precision counterpart to `critical_text_recall` so invented text is penalised.
 
 ## 7. Format, packaging, and ergonomics
 
@@ -218,12 +218,6 @@ every gzip figure in the documentation matches `gzip-measurement.json`.
 ## Open work
 
 Nothing below is done. Each item says why it is still open.
-
-### Blocked on provenance
-
-- [ ] Trace the Wikimedia Commons records for `kitchen-table` and `living-room`. Three search
-      passes verified by perceptual hash failed; they are labelled unverified in the gallery and
-      must be traced before the benchmark is published anywhere asserting licensing.
 
 ### Measurement quality
 

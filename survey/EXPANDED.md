@@ -88,23 +88,38 @@ from each file's own Commons record, not assumed.
 | dogs-beach | Mark Galer | CC0 1.0 | [Two dogs playing on the beach](https://commons.wikimedia.org/wiki/File:Two_dogs_playing_on_the_beach_(Unsplash).jpg) |
 | mountain-hikers | Galen Crout | CC0 1.0 | [Adventurous Mountain Hikes](https://commons.wikimedia.org/wiki/File:Adventurous_Mountain_Hikes_(Unsplash).jpg) |
 | street-bicycles | Retired electrician | CC0 1.0 | [Moscow, Nizhnyaya Krasnokholmskaya Street bicycles](https://commons.wikimedia.org/wiki/File:Moscow,_Nizhnyaya_Krasnokholmskaya_Street_bicycles_May_2023_01.jpg) |
-| kitchen-table | **unknown** | **not verified** | not yet traced |
-| living-room | **unknown** | **not verified** | not yet traced |
+| kitchen-table | Clem Onojeghuo | CC0 1.0 | [Kitchen table](https://commons.wikimedia.org/wiki/File:Kitchen_table_(Unsplash).jpg) |
+| living-room | Atilla Taskiran | CC0 1.0 | [Living room furniture](https://commons.wikimedia.org/wiki/File:Living_room_furniture_(Unsplash).jpg) |
 
-### How the last two attributions were recovered, and why two are still missing
+### How the last four attributions were recovered
 
 The Commons URLs for four sources were never recorded when they were downloaded. Rather than guess,
 they were searched for on Commons and each candidate was **verified by perceptual hash** against
 the local copy — a match only counts at a dHash similarity of 1.000, meaning the same photograph.
 
-Two were recovered that way: `mountain-hikers` and `street-bicycles`, both exact matches.
+`mountain-hikers` and `street-bicycles` were recovered that way first, both exact matches.
 
-Three search passes failed to find `kitchen-table` and `living-room`; the best candidates scored
-0.56–0.64, which is noise. They are labelled **unverified** in the gallery rather than being
-quietly credited or quietly removed, because the honest failure is more useful than either. They
-must be traced before this benchmark is published anywhere that asserts licensing, and the
-[`AGENTS.md`](../AGENTS.md) media rule stands: no further image enters this repository without
-recorded provenance.
+Three keyword passes failed to find `kitchen-table` and `living-room` (best candidates 0.56–0.64,
+which is noise), so both were labelled **unverified** in the gallery until 2026-09-13. A search
+restricted to CC0-licensed files then found both on Commons. Each full-resolution original was
+resized to the local copy's dimensions and compared:
+
+| Case | Commons original | dHash | Mean abs. pixel difference (R, G, B of 255) |
+| --- | --- | ---: | ---: |
+| kitchen-table | 5616×3373, 12,747,722 bytes | 1.000 | 1.77, 1.27, 1.75 |
+| living-room | 3264×4896, 5,034,979 bytes | 1.000 | 0.84, 0.79, 0.89 |
+
+Both are exact matches, and the residual differences are what resizing and JPEG re-encoding leave
+behind. Because the photographs are the same, their encodes, reconstructions and evaluations above
+are unchanged.
+
+One caveat applies to every Unsplash-sourced case here, these two included. Unsplash published
+these photos under CC0 and later replaced CC0 with its own licence, so Commons tags all six files
+with its *discontinued free license* notice; a CC0 dedication cannot be revoked, and the files
+remain in Commons' CC-Zero category. Five of the six, `kitchen-table` and `living-room` among them,
+are also still marked *review needed*, meaning no Commons reviewer has yet confirmed the licence
+against the original Unsplash page. The [`AGENTS.md`](../AGENTS.md) media rule stands: no further
+image enters this repository without recorded provenance.
 
 Benchmark copies were resized to at most 1920 pixels on the longest edge for tractable local
 processing. Sources are otherwise unmodified, and their SHA-256 hashes are embedded in the

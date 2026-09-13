@@ -171,9 +171,9 @@ Established scopes: `codec` (encoder/artifact/providers), `survey`, `architectur
 
 ## Known issues
 
-- Two expanded-benchmark sources (`kitchen-table`, `living-room`) have no traced Commons record.
-  Three search passes verified by perceptual hash failed to find them, so they are labelled
-  unverified in the gallery. Trace them before publishing anything that asserts their licensing.
+- Six expanded-benchmark sources are CC0 files from Unsplash's former CC0 catalogue. Commons tags
+  them *discontinued free license*, and five are still awaiting its licence review. Do not claim a
+  reviewed licence for them.
 - `critical_text_recall` measures recall only: invented text is not penalised, and duplicate
   expected strings all match one rendered occurrence. Do not quote it as text fidelity.
 - Whether `visual_proxy_score` tracks human perception is **unresolved** (`docs/metrics.md`). A

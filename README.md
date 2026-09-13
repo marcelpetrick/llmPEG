@@ -277,21 +277,21 @@ View the checked-in comparisons directly on GitHub Pages:
 ## Media and licensing
 
 The project requires every benchmark and survey image to be freely licensed, with attribution
-read from its source record rather than guessed. The three cat images and eight traced expanded
-images meet that rule; two older expanded images remain explicitly unverified:
+read from its source record rather than guessed. All thirteen benchmark images meet that rule:
 
 | Set | Images | Licensing |
 | --- | ---: | --- |
 | Cat survey | 3 | Public domain dedication — [per-case credits](survey/README.md) |
-| Expanded scene benchmark | 10 (8 traced, 2 unverified) | CC0 1.0 and NASA public domain — [per-case credits](survey/EXPANDED.md#sources-and-licensing) |
+| Expanded scene benchmark | 10, all traced | CC0 1.0 and NASA public domain — [per-case credits](survey/EXPANDED.md#sources-and-licensing) |
 
 Sources are stored unmodified apart from being resized to at most 1920 px on the longest edge, and
 every artifact embeds its source's SHA-256 hash.
 
-Two expanded-benchmark sources (`kitchen-table`, `living-room`) have **no traced Commons record**.
-Their URLs were never recorded, and three search passes verified by perceptual hash failed to find
-them, so they are labelled unverified in the gallery rather than credited on a guess. They must be
-traced before this benchmark is published anywhere that asserts licensing.
+Two expanded-benchmark sources, `kitchen-table` and `living-room`, were labelled unverified for a
+while because their Commons URLs were never recorded. Both have since been found as CC0 files and
+verified by perceptual hash against the full-resolution originals (dHash 1.000), so the published
+results needed no change. Six expanded sources come from Unsplash's former CC0 catalogue, and
+Commons has not yet reviewed the licence of five of them — [details](survey/EXPANDED.md#how-the-last-four-attributions-were-recovered).
 
 One further exception, stated plainly: `media/newsArticle.jpg` is **not** free-licensed media. It is the
 third-party satirical image that motivated the project, reproduced here for commentary and as a

@@ -132,10 +132,10 @@
       "prompt": "prompts/kitchen-table-expanded.txt",
       "result": "results/kitchen-table-expanded.json",
       "credit": {
-        "author": "Unknown",
-        "license": "Provenance not verified \u2014 see EXPANDED.md",
-        "license_url": "https://commons.wikimedia.org/wiki/Commons:Licensing",
-        "source_url": "https://commons.wikimedia.org/w/index.php?search=&title=Special:MediaSearch&type=image"
+        "author": "Clem Onojeghuo",
+        "license": "CC0 1.0 Universal (public domain dedication)",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Kitchen_table_(Unsplash).jpg"
       }
     },
     {
@@ -147,10 +147,10 @@
       "prompt": "prompts/living-room-expanded.txt",
       "result": "results/living-room-expanded.json",
       "credit": {
-        "author": "Unknown",
-        "license": "Provenance not verified \u2014 see EXPANDED.md",
-        "license_url": "https://commons.wikimedia.org/wiki/Commons:Licensing",
-        "source_url": "https://commons.wikimedia.org/w/index.php?search=&title=Special:MediaSearch&type=image"
+        "author": "Atilla Taskiran",
+        "license": "CC0 1.0 Universal (public domain dedication)",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Living_room_furniture_(Unsplash).jpg"
       }
     }
   ]
