@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import base64
 import io
 import json
-import subprocess
 import threading
 import urllib.error
 import urllib.request
@@ -14,6 +14,7 @@ import pytest
 from PIL import Image
 
 from llmpeg.artifact import Artifact, ArtifactError, FidelityProfile
+from llmpeg.providers import DEFAULT_OLLAMA_VISION_HOST, DEFAULT_VISION_MODEL
 from prototypeWebUI import server as web
 
 
@@ -30,7 +31,13 @@ def web_server() -> Iterator[str]:
         thread.join()
 
 
-def test_file_page_targets_local_backend_without_unsafe_html() -> None:
+def _png(width: int = 64, height: int = 48, color: str = "navy") -> bytes:
+    buffer = io.BytesIO()
+    Image.new("RGB", (width, height), color).save(buffer, format="PNG")
+    return buffer.getvalue()
+
+
+def test_page_is_local_only_and_adds_automatic_rating() -> None:
     page = web.INDEX.read_text(encoding="utf-8")
     assert 'location.protocol === "file:" ? "http://127.0.0.1:8000"' in page
     assert ".innerHTML" not in page
@@ -38,25 +45,32 @@ def test_file_page_targets_local_backend_without_unsafe_html() -> None:
     assert "IMAGE <small>your source</small>" in page
     assert "PROMPT <small>editable text</small>" in page
     assert "NEW IMAGE <small>invented pixels</small>" in page
-    assert "performance.now()" in page
-    assert "Usually about 40 seconds" in page
-    assert 'id="generator"' in page
-    assert '<option value="comfyui">ComfyUI (Codex fallback)</option>' in page
-    assert "ComfyUI unavailable (Codex fallback)" in page
-    assert "generator: requestedGenerator" in page
-    assert 'res.headers.get("X-llmPEG-Generator")' in page
+    assert "local Qwen-Image-2.1" in page
+    assert 'id="generator"' not in page
+    assert "Codex" not in page
+    assert "Pollinations" not in page
+    assert "Automatic1111" not in page
+    assert 'request("/api/rate"' in page
+    assert "not a human rating or proof" in page
+    assert "semantic_spreads" in page
     assert 'id="theme"' in page
     assert 'data-theme="dark"' in page
     assert 'localStorage.setItem("llmpeg-theme", theme)' in page
 
 
-def test_config_defaults_to_codex(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.delenv("LLMPEG_GENERATOR", raising=False)
-    assert web.Config().generator == "codex"
+def test_config_defaults_to_local_qwen(monkeypatch: pytest.MonkeyPatch) -> None:
+    for name in ("OLLAMA_VISION_HOST", "LLMPEG_MODEL", "LLMPEG_COMFYUI_HOST"):
+        monkeypatch.delenv(name, raising=False)
+    config = web.Config()
+    assert config.vision_host == DEFAULT_OLLAMA_VISION_HOST
+    assert config.model == DEFAULT_VISION_MODEL
+    assert config.comfyui_host == "http://127.0.0.1:8188"
+    assert config.rating_repeats == 3
 
 
 def test_config_allows_file_origin(web_server: str, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(web.CONFIG, "vision_host", "http://vision.test:11434")
+    monkeypatch.setattr(web, "comfyui_reachable", lambda: True)
     request = urllib.request.Request(
         f"{web_server}/api/config", headers={"Origin": web.FILE_ORIGIN}
     )
@@ -65,7 +79,9 @@ def test_config_allows_file_origin(web_server: str, monkeypatch: pytest.MonkeyPa
         assert response.headers["Access-Control-Allow-Origin"] == web.FILE_ORIGIN
     assert payload["vision_host"] == "http://vision.test:11434"
     assert payload["vision_configured"] is True
-    assert payload["generators"] == ["codex", "comfyui", "pollinations", "local"]
+    assert payload["generator"] == "comfyui/qwen-image-2.1"
+    assert payload["comfyui_reachable"] is True
+    assert payload["rating_repeats"] == web.CONFIG.rating_repeats
 
 
 def test_preflight_allows_file_page_posts(web_server: str) -> None:
@@ -85,36 +101,35 @@ def test_preflight_allows_file_page_posts(web_server: str) -> None:
         assert response.headers["Access-Control-Allow-Private-Network"] == "true"
 
 
-def test_generate_route_reports_fallback_generator(
+def test_generate_route_uses_only_local_qwen(
     web_server: str, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    monkeypatch.setattr(
-        web,
-        "generate",
-        lambda _generator, _prompt, _width, _height, _seed: (b"generated", "codex"),
-    )
+    calls: list[tuple[str, int, int]] = []
+
+    def generate(prompt: str, resolution: int, seed: int) -> bytes:
+        calls.append((prompt, resolution, seed))
+        return _png()
+
+    monkeypatch.setattr(web, "generate_comfyui", generate)
     request = urllib.request.Request(
         f"{web_server}/api/generate",
-        data=json.dumps({"generator": "comfyui", "prompt": "cat"}).encode(),
+        data=json.dumps({"prompt": "cat", "width": 768, "height": 768, "seed": 7}).encode(),
         method="POST",
         headers={"Content-Type": "application/json", "Origin": web.FILE_ORIGIN},
     )
 
     with urllib.request.urlopen(request) as response:
-        assert response.read() == b"generated"
-        assert response.headers["X-llmPEG-Generator"] == "codex"
+        assert response.read().startswith(b"\x89PNG")
+        assert response.headers["X-llmPEG-Generator"] == "comfyui/qwen-image-2.1"
         assert response.headers["Access-Control-Expose-Headers"] == "X-llmPEG-Generator"
+    assert calls == [("cat", 768, 7)]
 
 
 def test_encode_reports_plain_and_gzip_sizes(
     artifact: Artifact, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    monkeypatch.setattr(web.CONFIG, "vision_host", "http://vision.test:11434")
     monkeypatch.setattr(web, "encode_image", lambda _path, _provider, _profile: artifact)
-    buffer = io.BytesIO()
-    Image.new("RGB", (64, 48), "navy").save(buffer, format="PNG")
-
-    result = web.encode(buffer.getvalue(), FidelityProfile.BALANCED)
+    result = web.encode(_png(), FidelityProfile.DETAILED)
 
     assert result["artifact_bytes"] == len(artifact.to_bytes())
     assert result["artifact_gzip_bytes"] == len(artifact.to_gzip_bytes())
@@ -122,8 +137,7 @@ def test_encode_reports_plain_and_gzip_sizes(
     assert '["Ratio (gzip)", `${data.gzip_ratio}:1`]' in web.INDEX.read_text(encoding="utf-8")
 
 
-def test_encode_rejects_non_image_upload(web_server: str, monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(web.CONFIG, "vision_host", "http://vision.test:11434")
+def test_encode_rejects_non_image_upload(web_server: str) -> None:
     request = urllib.request.Request(
         f"{web_server}/api/encode",
         data=b"not an image",
@@ -134,12 +148,6 @@ def test_encode_rejects_non_image_upload(web_server: str, monkeypatch: pytest.Mo
         urllib.request.urlopen(request)
     assert caught.value.code == 400
     assert json.load(caught.value)["error"] == "uploaded data is not a supported image"
-
-
-def _png(width: int, height: int) -> bytes:
-    buffer = io.BytesIO()
-    Image.new("RGB", (width, height), "navy").save(buffer, format="PNG")
-    return buffer.getvalue()
 
 
 def _rejected_upload(web_server: str, data: bytes) -> urllib.error.HTTPError:
@@ -157,9 +165,8 @@ def _rejected_upload(web_server: str, data: bytes) -> urllib.error.HTTPError:
 def test_encode_refuses_too_many_pixels_before_decoding(
     web_server: str, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    monkeypatch.setattr(web.CONFIG, "vision_host", "http://vision.test:11434")
     monkeypatch.setattr(web, "DEFAULT_MAX_IMAGE_PIXELS", 1000)
-    error = _rejected_upload(web_server, _png(64, 48))
+    error = _rejected_upload(web_server, _png())
     assert error.code == 400
     assert json.load(error)["error"] == "image has 3072 pixels; limit is 1000 pixels"
 
@@ -167,24 +174,16 @@ def test_encode_refuses_too_many_pixels_before_decoding(
 def test_encode_answers_a_decompression_bomb(
     web_server: str, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    monkeypatch.setattr(web.CONFIG, "vision_host", "http://vision.test:11434")
-    # Pillow raises DecompressionBombError above twice this limit; 3072 > 2000.
     monkeypatch.setattr(Image, "MAX_IMAGE_PIXELS", 1000)
-    error = _rejected_upload(web_server, _png(64, 48))
+    error = _rejected_upload(web_server, _png())
     assert error.code == 400
     assert json.load(error)["error"].startswith("image too large:")
 
 
 def test_generation_request_accepts_ui_values() -> None:
     assert web.generation_request(
-        {
-            "generator": "comfyui",
-            "prompt": "a tabby cat",
-            "width": 1024,
-            "height": 1024,
-            "seed": 42,
-        }
-    ) == ("comfyui", "a tabby cat", 1024, 1024, 42)
+        {"prompt": "a tabby cat", "width": 1024, "height": 1024, "seed": 42}
+    ) == ("a tabby cat", 1024, 42)
 
 
 @pytest.mark.parametrize(
@@ -195,7 +194,8 @@ def test_generation_request_accepts_ui_values() -> None:
         {"prompt": "cat", "width": "wide"},
         {"prompt": "cat", "width": 128},
         {"prompt": "cat", "height": 2048},
-        {"prompt": "cat", "generator": "mystery"},
+        {"prompt": "cat", "width": 768, "height": 1024},
+        {"prompt": "cat", "width": 1000, "height": 1000},
         {"prompt": "x" * (web.MAX_PROMPT_CHARS + 1)},
     ],
 )
@@ -204,128 +204,82 @@ def test_generation_request_rejects_invalid_values(payload: object) -> None:
         web.generation_request(payload)
 
 
-def test_unknown_generator_fails_closed(monkeypatch: pytest.MonkeyPatch) -> None:
-    with pytest.raises(ArtifactError, match="unsupported generator"):
-        web.generate("mystery", "cat", 1024, 1024, 42)
+def test_comfyui_wrapper_passes_runtime_configuration(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[tuple[object, ...]] = []
+    monkeypatch.setattr(web.CONFIG, "comfyui_host", "http://comfy.test")
+    monkeypatch.setattr(web.CONFIG, "timeout", 99.0)
+    def generate(*args: object) -> bytes:
+        calls.append(args)
+        return b"image"
+
+    monkeypatch.setattr("llmpeg.generators.generate_comfyui", generate)
+    assert web.generate_comfyui("cat", 1024, 7) == b"image"
+    assert calls == [("cat", 1024, 7, "http://comfy.test", 99.0)]
 
 
-def test_comfyui_generator_runs_checkout_script(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    script = tmp_path / "generate_image.sh"
-    script.write_text("#!/usr/bin/env bash\n", encoding="utf-8")
-    commands: list[list[str]] = []
-
-    def run(command: list[str], **_kwargs: object) -> subprocess.CompletedProcess[str]:
-        commands.append(command)
-        Image.new("RGB", (8, 8), "purple").save(command[2])
-        return subprocess.CompletedProcess(command, 0, command[2], "")
-
-    monkeypatch.setattr(web.CONFIG, "comfyui_script", script)
-    monkeypatch.setattr("llmpeg.generators.subprocess.run", run)
-
-    generated = web.generate_comfyui("a purple cat", 1024, 1024, 7)
-
-    assert generated.startswith(b"\x89PNG\r\n\x1a\n")
-    assert commands[0][0] == str(script)
-    assert commands[0][1] == "a purple cat"
-    assert commands[0][2].endswith("out.png")
-
-
-def test_unavailable_comfyui_falls_back_to_codex(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    monkeypatch.setattr(web.CONFIG, "comfyui_script", tmp_path / "missing.sh")
-    monkeypatch.setattr(
-        web, "generate_codex", lambda _prompt, _width, _height, _seed: b"codex-image"
+def test_rating_request_decodes_images_and_validates_metadata() -> None:
+    source = _png()
+    reconstruction = _png(color="purple")
+    result = web.rating_request(
+        {
+            "source": base64.b64encode(source).decode(),
+            "reconstruction": base64.b64encode(reconstruction).decode(),
+            "prompt": " cat ",
+            "critical_text": ["CAT"],
+        }
     )
+    assert result == (source, reconstruction, "cat", ("CAT",))
 
-    assert web.generate("comfyui", "cat", 1024, 1024, 42) == (b"codex-image", "codex")
+
+@pytest.mark.parametrize(
+    "payload",
+    [
+        [],
+        {},
+        {"prompt": "cat", "source": "!", "reconstruction": "!"},
+        {"prompt": "cat", "source": "eA==", "reconstruction": "eA==", "critical_text": "x"},
+        {
+            "prompt": "cat",
+            "source": "eA==",
+            "reconstruction": "eA==",
+            "critical_text": ["x" * 601],
+        },
+    ],
+)
+def test_rating_request_rejects_invalid_values(payload: object) -> None:
+    with pytest.raises(ArtifactError):
+        web.rating_request(payload)
 
 
-def test_reachable_comfyui_workflow_error_does_not_fallback(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    script = tmp_path / "generate_image.sh"
-    script.write_text("#!/usr/bin/env bash\n", encoding="utf-8")
+def test_rate_route_returns_local_rating(web_server: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    source = _png()
+    reconstruction = _png(color="purple")
+    expected: dict[str, object] = {"method": "experimental", "verdict": "partial"}
+    calls: list[tuple[bytes, bytes, str, tuple[str, ...]]] = []
 
-    def fail(command: list[str], **_kwargs: object) -> subprocess.CompletedProcess[str]:
-        raise subprocess.CalledProcessError(1, command, stderr="workflow failed")
+    def rate(
+        first: bytes, second: bytes, prompt: str, critical: tuple[str, ...]
+    ) -> dict[str, object]:
+        calls.append((first, second, prompt, critical))
+        return expected
 
-    monkeypatch.setattr(web.CONFIG, "comfyui_script", script)
-    monkeypatch.setattr("llmpeg.generators.comfyui_reachable", lambda _host, _timeout: True)
-    monkeypatch.setattr("llmpeg.generators.subprocess.run", fail)
-    monkeypatch.setattr(
-        web,
-        "generate_codex",
-        lambda _prompt, _width, _height, _seed: pytest.fail("Codex must not run"),
+    monkeypatch.setattr(web, "rate_reconstruction", rate)
+    request = urllib.request.Request(
+        f"{web_server}/api/rate",
+        data=json.dumps(
+            {
+                "source": base64.b64encode(source).decode(),
+                "reconstruction": base64.b64encode(reconstruction).decode(),
+                "prompt": "cat",
+                "critical_text": ["CAT"],
+            }
+        ).encode(),
+        method="POST",
+        headers={"Content-Type": "application/json"},
     )
-
-    with pytest.raises(ArtifactError, match="workflow failed"):
-        web.generate("comfyui", "cat", 1024, 1024, 42)
-
-
-def test_pollinations_generator_requires_api_key(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(web.CONFIG, "pollinations_api_key", "")
-    with pytest.raises(ArtifactError, match="POLLINATIONS_API_KEY"):
-        web.generate_pollinations("cat", 1024, 768, 42)
-
-
-def test_pollinations_generator_uses_current_authenticated_endpoint(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    requests: list[urllib.request.Request] = []
-
-    def urlopen(request: urllib.request.Request, timeout: float) -> io.BytesIO:
-        requests.append(request)
-        assert timeout == web.CONFIG.timeout
-        return io.BytesIO(b"image")
-
-    monkeypatch.setattr(web.CONFIG, "pollinations_api_key", "secret")
-    monkeypatch.setattr("prototypeWebUI.server.urllib.request.urlopen", urlopen)
-
-    assert web.generate_pollinations("a cat", 1024, 768, 42) == b"image"
-    assert len(requests) == 1
-    request = requests[0]
-    assert request.full_url.startswith("https://gen.pollinations.ai/image/a%20cat?")
-    assert "model=flux" in request.full_url
-    assert "width=1024" in request.full_url
-    assert "height=768" in request.full_url
-    assert "seed=42" in request.full_url
-    assert request.get_header("Authorization") == "Bearer secret"
-
-
-def test_codex_generator_explicitly_invokes_imagegen(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    command_seen: list[str] = []
-    prompt_seen: list[str] = []
-
-    def run(command: list[str], **_kwargs: object) -> subprocess.CompletedProcess[str]:
-        command_seen.extend(command)
-        work = Path(command[command.index("-C") + 1])
-        prompt_seen.append((work / "prompt.txt").read_text(encoding="utf-8"))
-        Image.new("RGB", (8, 8), "navy").save(work / "out.png")
-        return subprocess.CompletedProcess(command, 0, "DONE", "")
-
-    monkeypatch.setattr("llmpeg.generators.shutil.which", lambda _name: "/usr/bin/codex")
-    monkeypatch.setattr("llmpeg.generators.subprocess.run", run)
-
-    generated = web.generate_codex("a tabby cat on grass", 1024, 1024, 42)
-
-    assert generated.startswith(b"\x89PNG\r\n\x1a\n")
-    assert prompt_seen == ["a tabby cat on grass"]
-    assert "--ephemeral" in command_seen
-    assert "image_generation" in command_seen
-    assert "$imagegen" in command_seen[-1]
-    assert "untrusted data" in command_seen[-1]
-    assert "./out.png" in command_seen[-1]
-
-
-def test_codex_generator_requires_installed_cli(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr("llmpeg.generators.shutil.which", lambda _name: None)
-    with pytest.raises(ArtifactError, match="not on PATH"):
-        web.generate_codex("cat", 1024, 1024, 42)
+    with urllib.request.urlopen(request) as response:
+        assert json.load(response) == expected
+    assert calls == [(source, reconstruction, "cat", ("CAT",))]
 
 
 def test_index_exists_in_prototype_directory() -> None:

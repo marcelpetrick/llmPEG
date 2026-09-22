@@ -118,6 +118,9 @@
                background:var(--panel-soft);color:var(--ink)}
   #seed{width:96px}
   .hint{margin:12px 0 0;color:var(--dim);font-size:.82rem}
+  .rating-summary{margin:0 0 12px;font-size:1rem;font-weight:750}
+  .rating-note{margin:0;color:var(--dim);font-size:.82rem}
+  .rating-list{margin:10px 0 0;padding-left:20px;color:var(--dim);font-size:.86rem}
   .status{min-height:24px;margin:13px 2px 0;color:var(--dim);font-size:.88rem}
   .status:not(:empty){padding:9px 12px;border-radius:10px;background:var(--panel-soft)}
   .status.err{background:var(--danger-soft);color:var(--danger)}
@@ -163,8 +166,8 @@
       image model to invent the pixels again.</p>
   </div>
   <div class="lossy"><strong>Totally lossy.</strong> The regenerated picture merely resembles
-    yours. Faces, text, counts, and fine detail can change. Your prompt goes to the configured
-    generator.</div>
+    yours. Faces, text, counts, and fine detail can change. Encoding and generation use your local
+    Ollama and ComfyUI services.</div>
   <div class="workflow" aria-label="Workflow: image to prompt to new image">
     <span class="step">IMAGE <small>your source</small></span>
     <span class="arrow" aria-hidden="true">&rarr;</span>
@@ -188,8 +191,8 @@
       <label class="field" for="profile">Fidelity
         <select id="profile">
           <option value="gist">gist &mdash; smallest</option>
-          <option value="balanced" selected>balanced</option>
-          <option value="detailed">detailed &mdash; most faithful</option>
+          <option value="balanced">balanced</option>
+          <option value="detailed" selected>detailed &mdash; most faithful</option>
         </select>
       </label>
     </div>
@@ -204,7 +207,7 @@
     <div class="card">
       <div class="card-head">
         <h2><span class="eyebrow">Input</span> Source image</h2>
-        <span class="privacy">sent to Ollama</span>
+        <span class="privacy">sent to local Ollama</span>
       </div>
       <div class="media-frame">
         <img id="src" alt="" class="hidden">
@@ -215,7 +218,7 @@
     <div class="card">
       <div class="card-head">
         <h2><span class="eyebrow">Output</span> New image</h2>
-        <span class="privacy">generated from text only</span>
+        <span class="privacy">local Qwen-Image-2.1, text only</span>
       </div>
       <div class="media-frame">
         <img id="out" alt="" class="hidden">
@@ -233,14 +236,6 @@
     <div class="card-body">
       <textarea id="prompt" spellcheck="false" aria-label="Editable image-generation prompt"></textarea>
       <div class="row">
-        <label class="field" for="generator">Generator
-          <select id="generator">
-            <option value="codex">Codex imagegen</option>
-            <option value="comfyui">ComfyUI (Codex fallback)</option>
-            <option value="pollinations">Pollinations</option>
-            <option value="local">Automatic1111 / Forge</option>
-          </select>
-        </label>
         <label class="field" for="size">Target size
           <select id="size">
             <option value="768">768 &times; 768</option>
@@ -256,6 +251,23 @@
       <p id="genhint" class="hint">You can edit every word before generating.</p>
     </div>
   </div>
+
+  <div class="card" id="ratingcard" hidden>
+    <div class="card-head">
+      <h2><span class="eyebrow">Check</span> Experimental automatic rating</h2>
+      <span class="privacy">local Qwen-VL + deterministic proxies</span>
+    </div>
+    <div class="card-body">
+      <p id="ratingsummary" class="rating-summary"></p>
+      <p class="rating-note">This is an uncalibrated diagnostic, not a human rating or proof of
+        fidelity. Repeat spread is shown because vision-model judgments can be unstable.</p>
+      <table id="ratingstats"></table>
+      <p class="hint"><strong>Largest reported differences</strong></p>
+      <ul id="ratingdifferences" class="rating-list"></ul>
+      <p class="hint"><strong>Prompt details to improve</strong></p>
+      <ul id="ratingimprovements" class="rating-list"></ul>
+    </div>
+  </div>
 </main>
 
 <footer>
@@ -265,9 +277,8 @@
 
 <script>
 const $ = (id) => document.getElementById(id);
-let chosen = null, lastPrompt = "";
+let chosen = null, lastPrompt = "", lastArtifact = null, lastGeneratedBlob = null;
 let backendReady = false, backendProblem = "", sourceUrl = null, outputUrl = null;
-let generatorName = "";
 const apiRoot = location.protocol === "file:" ? "http://127.0.0.1:8000" : "";
 
 function darkThemeActive() {
@@ -343,15 +354,10 @@ async function loadConfig() {
     if (!response.ok) throw new Error(await responseError(response));
     const config = await response.json();
     backendReady = config.vision_configured;
-    generatorName = config.generator;
-    if (config.generators.includes(config.generator)) $("generator").value = config.generator;
-    if (!config.comfyui_script_available) {
-      $("generator").querySelector('[value="comfyui"]').textContent =
-        "ComfyUI unavailable (Codex fallback)";
-    }
     backendProblem = backendReady ? "" : "Its Ollama vision host is not configured.";
     $("cfg").textContent = `vision: ${config.model} via ${config.vision_host || "not configured"}` +
-      ` · generator: ${config.generator}`;
+      ` · generator: ${config.generator}` +
+      (config.comfyui_reachable ? " (ready)" : " (start ComfyUI before generation)");
     $("genhint").textContent = `${generationEstimate()} You can edit every word first.`;
     if (!backendReady) {
       say("The backend is running, but its Ollama vision host is not configured.", "err");
@@ -413,18 +419,79 @@ function showStats(data) {
 }
 
 function generationEstimate() {
-  if (generatorName === "codex") return "Usually about 40 seconds; it can take several minutes.";
-  if (generatorName === "pollinations") return "Usually about 3 seconds.";
-  if (generatorName === "comfyui") {
-    return "Runs locally; first use may spend up to two minutes starting ComfyUI. Codex is the fallback.";
-  }
-  return "The time depends on your local generator.";
+  return "Runs locally with Qwen-Image-2.1 and can take several minutes.";
 }
 
-$("generator").addEventListener("change", () => {
-  generatorName = $("generator").value;
-  $("genhint").textContent = `${generationEstimate()} You can edit every word first.`;
-});
+function blobBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Could not read an image for rating."));
+    reader.onload = () => resolve(String(reader.result).split(",", 2)[1]);
+    reader.readAsDataURL(blob);
+  });
+}
+
+function replaceList(id, values) {
+  const items = (values.length ? values : ["None reported."]).map(value => {
+    const item = document.createElement("li");
+    item.textContent = value;
+    return item;
+  });
+  $(id).replaceChildren(...items);
+}
+
+function showRating(data) {
+  const unstable = data.unstable ? " — unstable across repeats" : "";
+  $("ratingsummary").textContent =
+    `${data.verdict.toUpperCase()} · semantic median ${data.semantic_median}/100${unstable}`;
+  const labels = {
+    subject_fidelity: "Subjects, counts, actions",
+    identity_fidelity: "Identity attributes",
+    composition_fidelity: "Composition",
+    text_fidelity: "Visible text",
+    style_fidelity: "Style, color, lighting",
+  };
+  const rows = Object.entries(labels).map(([name, label]) => [
+    label,
+    `${data.semantic_medians[name]}/100 (spread ${data.semantic_spreads[name]})`,
+  ]);
+  rows.push(
+    ["Structural proxy", data.deterministic.visual_proxy_score],
+    ["Layout proxy", data.deterministic.layout_score],
+    ["Palette distance", `${data.deterministic.palette_distance} (lower is closer)`],
+  );
+  $("ratingstats").replaceChildren(...rows.map(([label, value]) => {
+    const row = document.createElement("tr");
+    const key = document.createElement("td");
+    const result = document.createElement("td");
+    key.textContent = label;
+    result.textContent = value;
+    row.append(key, result);
+    return row;
+  }));
+  replaceList("ratingdifferences", data.differences);
+  replaceList("ratingimprovements", data.prompt_improvements);
+  $("ratingcard").hidden = false;
+}
+
+async function rateGeneratedImage(prompt) {
+  const [source, reconstruction] = await Promise.all([
+    blobBase64(chosen),
+    blobBase64(lastGeneratedBlob),
+  ]);
+  const response = await request("/api/rate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      source,
+      reconstruction,
+      prompt,
+      critical_text: lastArtifact?.critical_text || [],
+    }),
+  });
+  if (!response.ok) throw new Error(await responseError(response));
+  showRating(await response.json());
+}
 
 const drop = $("drop");
 drop.addEventListener("click", () => $("file").click());
@@ -461,6 +528,7 @@ $("analyze").addEventListener("click", async () => {
     if (!res.ok) throw new Error(await responseError(res));
     const data = await res.json();
     lastPrompt = data.prompt;
+    lastArtifact = data.artifact;
     $("prompt").value = data.prompt;
     $("promptcard").hidden = false;
     showStats(data);
@@ -483,33 +551,41 @@ $("generate").addEventListener("click", async () => {
   say(`Generating from text alone${edited}… ${generationEstimate()}`, "busy");
   try {
     const size = parseInt($("size").value, 10);
-    const requestedGenerator = $("generator").value;
     const res = await request("/api/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt, width: size, height: size,
-                             seed: parseInt($("seed").value, 10) || 42,
-                             generator: requestedGenerator }),
+                             seed: parseInt($("seed").value, 10) || 42 }),
     });
     if (!res.ok) throw new Error(await responseError(res));
-    const usedGenerator = res.headers.get("X-llmPEG-Generator") || requestedGenerator;
-    const fallback = usedGenerator !== requestedGenerator;
+    const usedGenerator = res.headers.get("X-llmPEG-Generator") || "local Qwen-Image-2.1";
     const blob = await res.blob();
+    lastGeneratedBlob = blob;
     if (outputUrl) URL.revokeObjectURL(outputUrl);
     outputUrl = URL.createObjectURL(blob);
     const elapsed = ((performance.now() - started) / 1000).toFixed(1);
     $("out").onload = () => {
       $("outhint").textContent = `This is a new ${$("out").naturalWidth}×${
-        $("out").naturalHeight} image from ${usedGenerator}. Generation took ${elapsed} seconds.${
-        fallback ? ` ${requestedGenerator} was unavailable, so ${usedGenerator} was used.` : ""} It is not your photo.`;
+        $("out").naturalHeight} image from ${usedGenerator}. Generation took ${elapsed} seconds. ` +
+        "It is not your photo.";
       $("outhint").classList.remove("hidden");
     };
     $("out").src = outputUrl;
     $("out").alt = "Image regenerated from the editable text prompt";
     $("out").classList.remove("hidden");
     $("outempty").classList.add("hidden");
-    say(`Done in ${elapsed} seconds with ${usedGenerator}${fallback ? " (fallback)" : ""}. ` +
+    say(`Done in ${elapsed} seconds with ${usedGenerator}. ` +
       "Compare them — then notice what changed.", "ok");
+    $("ratingcard").hidden = true;
+    say(`Generated in ${elapsed} seconds. Running the local automatic comparison…`, "busy");
+    try {
+      await rateGeneratedImage(prompt);
+      say(`Generated in ${elapsed} seconds. Automatic rating: ${
+        $("ratingsummary").textContent}.`, "ok");
+    } catch (ratingError) {
+      say(`Generated in ${elapsed} seconds, but automatic rating failed: ${ratingError.message}`,
+          "err");
+    }
   } catch (err) {
     const elapsed = ((performance.now() - started) / 1000).toFixed(1);
     say(`Generation failed after ${elapsed} seconds: ${err.message}`, "err");
@@ -520,7 +596,7 @@ $("generate").addEventListener("click", async () => {
 });
 
 $("reset").addEventListener("click", () => {
-  chosen = null; lastPrompt = "";
+  chosen = null; lastPrompt = ""; lastArtifact = null; lastGeneratedBlob = null;
   if (sourceUrl) URL.revokeObjectURL(sourceUrl);
   if (outputUrl) URL.revokeObjectURL(outputUrl);
   sourceUrl = null; outputUrl = null;
@@ -529,6 +605,7 @@ $("reset").addEventListener("click", () => {
   $("out").removeAttribute("src");
   $("out").onload = null;
   ["src", "out", "stats"].forEach(id => $(id).classList.add("hidden"));
+  $("ratingcard").hidden = true;
   $("sourcehint").classList.remove("hidden");
   $("outempty").classList.remove("hidden");
   $("outhint").classList.add("hidden");

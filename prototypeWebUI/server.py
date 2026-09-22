@@ -6,8 +6,7 @@ handle alone:
 * the Ollama vision endpoint usually lives on another machine on the LAN, which a page
   served from localhost cannot call directly (CORS, and mixed content over HTTPS);
 * downscaling is done with Pillow's LANCZOS filter, which is better than a canvas resize;
-* image generation is proxied so one interface can drive Codex, Pollinations, or a local
-  Stable Diffusion server.
+* image generation is proxied to local ComfyUI with the bundled Qwen-Image-2.1 workflow.
 
 Nothing here is hardened. It binds to 127.0.0.1, it has no authentication, and it is a
 prototype for one person on one laptop. Do not expose it.
@@ -22,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import binascii
 import io
 import json
 import os
@@ -40,12 +40,18 @@ from llmpeg import __version__
 from llmpeg import generators as generator_adapters
 from llmpeg.artifact import ArtifactError, FidelityProfile
 from llmpeg.encoder import DEFAULT_MAX_IMAGE_PIXELS, encode_image, render_generation_prompt
-from llmpeg.providers import OllamaVisionProvider
+from llmpeg.providers import (
+    DEFAULT_OLLAMA_VISION_HOST,
+    DEFAULT_VISION_MODEL,
+    OllamaVisionProvider,
+)
+from llmpeg.rating import MAX_RATING_IMAGE_BYTES, OllamaSimilarityRater
 
 HERE = Path(__file__).resolve().parent
 INDEX = HERE / "index.html"
 
 MAX_UPLOAD_BYTES = 40 * 1024 * 1024
+MAX_RATING_REQUEST_BYTES = 2 * ((MAX_RATING_IMAGE_BYTES * 4 + 2) // 3) + 100_000
 MAX_EDGE = 1536
 JPEG_QUALITY = 92
 MAX_PROMPT_CHARS = 20_000
@@ -53,26 +59,20 @@ MIN_GENERATION_EDGE = 256
 MAX_GENERATION_EDGE = 1536
 FILE_ORIGIN = "null"
 
-POLLINATIONS = "https://gen.pollinations.ai/image/"
-GENERATORS = ("codex", "comfyui", "pollinations", "local")
-DEFAULT_COMFYUI_SCRIPT = HERE.parent.parent / "ComfyUI" / "generate_image.sh"
-ComfyUIUnavailable = generator_adapters.GeneratorUnavailable
-
 
 class Config:
     """Runtime configuration read once from the environment."""
 
     def __init__(self) -> None:
-        self.vision_host = os.environ.get("OLLAMA_VISION_HOST", "")
-        self.model = os.environ.get("LLMPEG_MODEL", "qwen3-vl:32b-ctx49k")
-        self.generator = os.environ.get("LLMPEG_GENERATOR", "codex")
-        self.pollinations_api_key = os.environ.get("POLLINATIONS_API_KEY", "")
-        self.comfyui_script = Path(
-            os.environ.get("LLMPEG_COMFYUI_SCRIPT", str(DEFAULT_COMFYUI_SCRIPT))
-        ).expanduser()
-        self.comfyui_host = os.environ.get("LLMPEG_COMFYUI_HOST", "http://127.0.0.1:8188")
-        self.sd_host = os.environ.get("LLMPEG_SD_HOST", "http://127.0.0.1:7860")
-        self.timeout = float(os.environ.get("LLMPEG_TIMEOUT", "600"))
+        self.vision_host = os.environ.get("OLLAMA_VISION_HOST", DEFAULT_OLLAMA_VISION_HOST)
+        self.model = os.environ.get("LLMPEG_MODEL", DEFAULT_VISION_MODEL)
+        self.comfyui_host = os.environ.get(
+            "LLMPEG_COMFYUI_HOST", generator_adapters.DEFAULT_COMFYUI_HOST
+        )
+        self.timeout = float(
+            os.environ.get("LLMPEG_TIMEOUT", str(generator_adapters.DEFAULT_GENERATION_TIMEOUT))
+        )
+        self.rating_repeats = int(os.environ.get("LLMPEG_RATING_REPEATS", "3"))
 
 
 CONFIG = Config()
@@ -133,77 +133,20 @@ def encode(raw: bytes, profile: FidelityProfile) -> dict[str, Any]:
     }
 
 
-def generate_pollinations(prompt: str, width: int, height: int, seed: int) -> bytes:
-    """Fetch one image from Pollinations. The prompt leaves this machine."""
-    if not CONFIG.pollinations_api_key:
-        raise ArtifactError("POLLINATIONS_API_KEY is required for the Pollinations generator")
-    query = urllib.parse.urlencode(
-        {"model": "flux", "width": width, "height": height, "seed": seed}
-    )
-    url = f"{POLLINATIONS}{urllib.parse.quote(prompt, safe='')}?{query}"
-    request = urllib.request.Request(
-        url,
-        headers={
-            "Authorization": f"Bearer {CONFIG.pollinations_api_key}",
-            "User-Agent": f"llmPEG-prototype/{__version__}",
-        },
-    )
-    with urllib.request.urlopen(request, timeout=CONFIG.timeout) as response:
-        return bytes(response.read())
-
-
-def generate_local(prompt: str, width: int, height: int, seed: int) -> bytes:
-    """Call a local Automatic1111-compatible `/sdapi/v1/txt2img` server.
-
-    Untested in the environment this prototype was written in: no local Stable Diffusion
-    server was reachable. Treat it as a starting point rather than a working path.
-    """
-    payload = json.dumps(
-        {
-            "prompt": prompt,
-            "width": width,
-            "height": height,
-            "seed": seed,
-            "steps": 25,
-            "sampler_name": "DPM++ 2M",
-        }
-    ).encode("utf-8")
-    request = urllib.request.Request(
-        CONFIG.sd_host.rstrip("/") + "/sdapi/v1/txt2img",
-        payload,
-        {"Content-Type": "application/json"},
-    )
-    with urllib.request.urlopen(request, timeout=CONFIG.timeout) as response:
-        body = json.load(response)
-    images = body.get("images") or []
-    if not images:
-        raise ArtifactError("local generator returned no images")
-    return base64.b64decode(images[0])
-
-
 def comfyui_reachable() -> bool:
     """Return whether the ComfyUI service answers its lightweight health endpoint."""
     return generator_adapters.comfyui_reachable(CONFIG.comfyui_host, CONFIG.timeout)
 
 
-def generate_comfyui(prompt: str, width: int, height: int, seed: int) -> bytes:
-    """Generate through the local ComfyUI checkout's self-starting shell adapter."""
-    del width, height, seed  # The selected ComfyUI workflow owns these settings.
+def generate_comfyui(prompt: str, resolution: int, seed: int) -> bytes:
+    """Generate through local ComfyUI with the bundled Qwen-Image-2.1 workflow."""
     return generator_adapters.generate_comfyui(
         prompt,
-        CONFIG.comfyui_script,
+        resolution,
+        seed,
         CONFIG.comfyui_host,
         CONFIG.timeout,
     )
-
-
-def generate_codex(prompt: str, width: int, height: int, seed: int) -> bytes:
-    """Drive the Codex CLI's built-in image tool through its ``$imagegen`` skill.
-
-    The shared adapter gives Codex only the prompt and asks it to save ``out.png``.
-    """
-    del seed  # the built-in image tool exposes no seed
-    return generator_adapters.generate_codex(prompt, width, height, CONFIG.timeout)
 
 
 def image_media_type(data: bytes) -> str:
@@ -215,24 +158,7 @@ def image_media_type(data: bytes) -> str:
     return "image/jpeg"
 
 
-def generate(generator: str, prompt: str, width: int, height: int, seed: int) -> tuple[bytes, str]:
-    """Dispatch to the requested generator and report the provider actually used."""
-    if generator == "local":
-        return generate_local(prompt, width, height, seed), generator
-    if generator == "codex":
-        return generate_codex(prompt, width, height, seed), generator
-    if generator == "pollinations":
-        return generate_pollinations(prompt, width, height, seed), generator
-    if generator == "comfyui":
-        try:
-            return generate_comfyui(prompt, width, height, seed), generator
-        except ComfyUIUnavailable as error:
-            sys.stderr.write(f"{error}; falling back to Codex\n")
-            return generate_codex(prompt, width, height, seed), "codex"
-    raise ArtifactError(f"unsupported generator: {generator}")
-
-
-def generation_request(payload: object) -> tuple[str, str, int, int, int]:
+def generation_request(payload: object) -> tuple[str, int, int]:
     """Validate and normalize an image-generation request."""
     if not isinstance(payload, dict):
         raise ArtifactError("request body must be a JSON object")
@@ -241,9 +167,6 @@ def generation_request(payload: object) -> tuple[str, str, int, int, int]:
         raise ArtifactError("a prompt is required")
     if len(prompt) > MAX_PROMPT_CHARS:
         raise ArtifactError(f"prompt exceeds {MAX_PROMPT_CHARS} characters")
-    generator = str(payload.get("generator") or CONFIG.generator)
-    if generator not in GENERATORS:
-        raise ArtifactError(f"unsupported generator: {generator}")
     try:
         width = int(payload.get("width", 1024))
         height = int(payload.get("height", 1024))
@@ -258,7 +181,65 @@ def generation_request(payload: object) -> tuple[str, str, int, int, int]:
         raise ArtifactError(
             f"height must be between {MIN_GENERATION_EDGE} and {MAX_GENERATION_EDGE}"
         )
-    return generator, prompt, width, height, seed
+    if width != height:
+        raise ArtifactError("Qwen-Image-2.1 generation requires equal width and height")
+    if width % 16:
+        raise ArtifactError("Qwen-Image-2.1 resolution must be divisible by 16")
+    return prompt, width, seed
+
+
+def rating_request(payload: object) -> tuple[bytes, bytes, str, tuple[str, ...]]:
+    """Validate and decode one source/reconstruction rating request."""
+    if not isinstance(payload, dict):
+        raise ArtifactError("request body must be a JSON object")
+    prompt = str(payload.get("prompt") or "").strip()
+    if not prompt:
+        raise ArtifactError("a prompt is required")
+    if len(prompt) > MAX_PROMPT_CHARS:
+        raise ArtifactError(f"prompt exceeds {MAX_PROMPT_CHARS} characters")
+    critical = payload.get("critical_text", [])
+    if (
+        not isinstance(critical, list)
+        or len(critical) > 16
+        or any(not isinstance(item, str) or len(item) > 600 for item in critical)
+    ):
+        raise ArtifactError("critical_text must contain at most 16 strings of 600 characters")
+    return (
+        _decode_rating_image(payload.get("source"), "source"),
+        _decode_rating_image(payload.get("reconstruction"), "reconstruction"),
+        prompt,
+        tuple(critical),
+    )
+
+
+def _decode_rating_image(value: object, label: str) -> bytes:
+    if not isinstance(value, str) or not value:
+        raise ArtifactError(f"{label} image must be base64 text")
+    if len(value) > (MAX_RATING_IMAGE_BYTES * 4 + 2) // 3 + 4:
+        raise ArtifactError(f"{label} image exceeds {MAX_RATING_IMAGE_BYTES} decoded bytes")
+    try:
+        data = base64.b64decode(value, validate=True)
+    except (ValueError, binascii.Error) as error:
+        raise ArtifactError(f"{label} image is not valid base64") from error
+    if len(data) > MAX_RATING_IMAGE_BYTES:
+        raise ArtifactError(f"{label} image exceeds {MAX_RATING_IMAGE_BYTES} decoded bytes")
+    return data
+
+
+def rate_reconstruction(
+    source: bytes,
+    reconstruction: bytes,
+    prompt: str,
+    critical_text: tuple[str, ...],
+) -> dict[str, Any]:
+    """Run the experimental local multi-signal rating."""
+    rater = OllamaSimilarityRater(
+        CONFIG.vision_host,
+        CONFIG.model,
+        CONFIG.timeout,
+        CONFIG.rating_repeats,
+    )
+    return rater.rate(source, reconstruction, prompt, critical_text).to_dict()
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -292,12 +273,12 @@ class Handler(BaseHTTPRequestHandler):
     def _send_json(self, status: int, payload: dict[str, Any]) -> None:
         self._send(status, json.dumps(payload).encode("utf-8"), "application/json")
 
-    def _body(self) -> bytes:
+    def _body(self, limit: int = MAX_UPLOAD_BYTES) -> bytes:
         length = int(self.headers.get("Content-Length") or 0)
         if length <= 0:
             raise ArtifactError("empty request body")
-        if length > MAX_UPLOAD_BYTES:
-            raise ArtifactError(f"upload exceeds {MAX_UPLOAD_BYTES} bytes")
+        if length > limit:
+            raise ArtifactError(f"upload exceeds {limit} bytes")
         body = bytes(self.rfile.read(length))
         if len(body) != length:
             raise ArtifactError("incomplete request body")
@@ -328,11 +309,11 @@ class Handler(BaseHTTPRequestHandler):
             self._send_json(
                 200,
                 {
-                    "generator": CONFIG.generator,
-                    "generators": list(GENERATORS),
-                    "comfyui_script_available": CONFIG.comfyui_script.is_file(),
+                    "generator": "comfyui/qwen-image-2.1",
+                    "comfyui_reachable": comfyui_reachable(),
                     "model": CONFIG.model,
-                    "vision_configured": bool(CONFIG.vision_host),
+                    "rating_repeats": CONFIG.rating_repeats,
+                    "vision_configured": True,
                     "vision_host": CONFIG.vision_host,
                 },
             )
@@ -344,19 +325,28 @@ class Handler(BaseHTTPRequestHandler):
         try:
             if route == "/api/encode":
                 query = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
-                name = (query.get("profile") or ["balanced"])[0]
+                name = (query.get("profile") or ["detailed"])[0]
                 self._send_json(200, encode(self._body(), FidelityProfile(name)))
                 return
             if route == "/api/generate":
-                generator, prompt, width, height, seed = generation_request(
+                prompt, resolution, seed = generation_request(
                     json.loads(self._body().decode("utf-8"))
                 )
-                image, used_generator = generate(generator, prompt, width, height, seed)
+                image = generate_comfyui(prompt, resolution, seed)
                 self._send(
                     200,
                     image,
                     image_media_type(image),
-                    {"X-llmPEG-Generator": used_generator},
+                    {"X-llmPEG-Generator": "comfyui/qwen-image-2.1"},
+                )
+                return
+            if route == "/api/rate":
+                source, reconstruction, prompt, critical_text = rating_request(
+                    json.loads(self._body(MAX_RATING_REQUEST_BYTES).decode("utf-8"))
+                )
+                self._send_json(
+                    200,
+                    rate_reconstruction(source, reconstruction, prompt, critical_text),
                 )
                 return
             self._send_json(404, {"error": "not found"})
@@ -382,19 +372,13 @@ def main(argv: list[str] | None = None) -> int:
         default=CONFIG.vision_host,
         help="Ollama base URL (defaults to OLLAMA_VISION_HOST)",
     )
-    parser.add_argument(
-        "--generator",
-        choices=GENERATORS,
-        default=CONFIG.generator,
-        help="image generator (defaults to LLMPEG_GENERATOR or codex)",
-    )
     args = parser.parse_args(argv)
     CONFIG.vision_host = args.vision_host.rstrip("/")
-    CONFIG.generator = args.generator
 
-    if not CONFIG.vision_host:
-        print("warning: OLLAMA_VISION_HOST is not set; encoding will fail", file=sys.stderr)
-    print(f"llmPEG prototype on http://{args.host}:{args.port}  (generator: {CONFIG.generator})")
+    print(
+        f"llmPEG prototype on http://{args.host}:{args.port}  "
+        "(generator: local ComfyUI/Qwen-Image-2.1)"
+    )
     server = ThreadingHTTPServer((args.host, args.port), Handler)
     try:
         server.serve_forever()
