@@ -9,7 +9,7 @@ import pytest
 
 from llmpeg.artifact import Artifact, SourceInfo, source_digest
 from llmpeg.cli import artifact_path_for, existing_artifact_path_for, generated_path_for, main
-from llmpeg.generators import GeneratedImage
+from llmpeg.generators import GeneratorUnavailable
 
 
 def test_reconstruct_inspect_and_evaluate_cli(
@@ -128,14 +128,16 @@ def test_verify_reports_conformance_and_rejects_foreign_json(
 def test_encode_defaults_the_output_beside_the_image(
     artifact: Artifact, sample_image: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    """`llmpeg encode photo.jpg` needs no flags and writes photo.llmpeg.json."""
-    expected = sample_image.parent / f"{sample_image.name}.llmpeg.json"
-    with patch("llmpeg.cli.encode_image", return_value=artifact):
+    """The quality-first path is detailed semantic data in a gzip envelope."""
+    expected = sample_image.parent / f"{sample_image.name}.llmpeg.json.gz"
+    with patch("llmpeg.cli.encode_image", return_value=artifact) as encode:
         assert main(["encode", str(sample_image)]) == 0
-    assert expected.exists()
+    assert expected.read_bytes() == artifact.to_gzip_bytes()
+    assert encode.call_args.args[2].value == "detailed"
     out = capsys.readouterr().out
     assert str(expected) in out
-    assert ":1" in out  # the ratio is reported without needing `inspect`
+    assert "plain" in out and "gzip" in out
+    assert out.count(":1") == 2
 
 
 def test_evaluate_defaults_the_artifact_beside_the_source(
@@ -185,9 +187,23 @@ def test_encode_gzip_writes_the_envelope_and_reports_its_ratio(
         assert main(["encode", str(sample_image), "--gzip"]) == 0
     stored = expected.read_bytes()
     assert stored == artifact.to_gzip_bytes()
-    ratio = artifact.source.byte_size / len(stored)
-    assert f"({len(stored):,} bytes, gzip, {ratio:.0f}:1)" in capsys.readouterr().out
+    plain = artifact.to_bytes()
+    out = capsys.readouterr().out
+    assert f"plain {len(plain):,} bytes, {artifact.source.byte_size / len(plain):.0f}:1" in out
+    assert f"gzip {len(stored):,} bytes, {artifact.source.byte_size / len(stored):.0f}:1" in out
     assert artifact_path_for(Path("photo.jpg"), compressed=True).name == "photo.jpg.llmpeg.json.gz"
+
+
+def test_encode_plain_opts_out_of_the_default_envelope(
+    artifact: Artifact, sample_image: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    expected = sample_image.parent / f"{sample_image.name}.llmpeg.json"
+    with patch("llmpeg.cli.encode_image", return_value=artifact):
+        assert main(["encode", str(sample_image), "--plain"]) == 0
+    assert expected.read_bytes() == artifact.to_bytes()
+    out = capsys.readouterr().out
+    assert "plain" in out
+    assert "gzip" not in out
 
 
 def test_inspect_and_verify_charge_the_bytes_on_disk(
@@ -232,66 +248,52 @@ def test_evaluate_finds_a_gzip_artifact_beside_the_source(
     assert main(["evaluate", str(sample_image), str(sample_image)]) in {0, 1, 3}
 
 
-def test_generate_cli_prefers_comfyui(
+def test_generate_cli_uses_local_qwen_comfyui(
     artifact: Artifact, tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
     artifact_path = tmp_path / "photo.jpg.llmpeg.json"
     artifact.write(artifact_path)
     output = tmp_path / "generated.png"
-    result = GeneratedImage(b"generated", "comfyui")
-
-    with patch("llmpeg.cli.generate_prefer_comfyui", return_value=result) as generate:
-        assert main(["generate", str(artifact_path), "-o", str(output)]) == 0
-
-    assert output.read_bytes() == b"generated"
-    assert "generator: comfyui" in capsys.readouterr().out
-    assert "Primary request" in generate.call_args.args[0]
-    assert generate.call_args.args[1:3] == (160, 120)
-
-
-def test_generate_cli_reports_codex_fallback(
-    artifact: Artifact, tmp_path: Path, capsys: pytest.CaptureFixture[str]
-) -> None:
-    artifact_path = tmp_path / "photo.llmpeg.json"
-    artifact.write(artifact_path)
-    result = GeneratedImage(b"generated", "codex", "service offline")
-
-    with patch("llmpeg.cli.generate_prefer_comfyui", return_value=result):
-        assert main(["generate", str(artifact_path)]) == 0
-
-    captured = capsys.readouterr()
-    assert "generator: codex" in captured.out
-    assert "ComfyUI unavailable (service offline)" in captured.err
-    assert (tmp_path / "photo.reconstructed.png").read_bytes() == b"generated"
-
-
-def test_generate_cli_can_select_codex(
-    artifact: Artifact, tmp_path: Path, capsys: pytest.CaptureFixture[str]
-) -> None:
-    artifact_path = tmp_path / "artifact.json"
-    artifact.write(artifact_path)
-    output = tmp_path / "generated.png"
-
-    with patch("llmpeg.cli.generate_codex", return_value=b"codex") as generate:
+    with patch("llmpeg.cli.generate_comfyui", return_value=b"generated") as generate:
         assert (
             main(
                 [
                     "generate",
                     str(artifact_path),
-                    "--generator",
-                    "codex",
-                    "--timeout",
-                    "12",
                     "-o",
                     str(output),
+                    "--resolution",
+                    "768",
+                    "--seed",
+                    "7",
+                    "--timeout",
+                    "12",
+                    "--comfyui-host",
+                    "http://comfy.test",
                 ]
             )
             == 0
         )
 
-    assert output.read_bytes() == b"codex"
-    assert generate.call_args.args[1:] == (160, 120, 12.0)
-    assert "generator: codex" in capsys.readouterr().out
+    assert output.read_bytes() == b"generated"
+    assert "local ComfyUI/Qwen-Image-2.1" in capsys.readouterr().out
+    assert "Primary request" in generate.call_args.args[0]
+    assert generate.call_args.args[1:] == (768, 7, "http://comfy.test", 12.0)
+
+
+def test_generate_cli_fails_closed_without_comfyui(
+    artifact: Artifact, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    artifact_path = tmp_path / "photo.llmpeg.json"
+    artifact.write(artifact_path)
+    with patch(
+        "llmpeg.cli.generate_comfyui",
+        side_effect=GeneratorUnavailable("local ComfyUI is unavailable"),
+    ):
+        assert main(["generate", str(artifact_path)]) == 2
+
+    assert "local ComfyUI is unavailable" in capsys.readouterr().err
+    assert not (tmp_path / "photo.reconstructed.png").exists()
 
 
 def test_generate_cli_checks_overwrite_before_generation(
@@ -302,7 +304,7 @@ def test_generate_cli_checks_overwrite_before_generation(
     output = tmp_path / "generated.png"
     output.write_bytes(b"keep")
 
-    with patch("llmpeg.cli.generate_prefer_comfyui") as generate:
+    with patch("llmpeg.cli.generate_comfyui") as generate:
         assert main(["generate", str(artifact_path), "-o", str(output)]) == 2
 
     generate.assert_not_called()

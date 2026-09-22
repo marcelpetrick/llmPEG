@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import io
 import json
+import urllib.error
+from email.message import Message
 from typing import Any
 from unittest.mock import patch
 
@@ -35,8 +38,11 @@ def test_ollama_provider_request_and_fenced_json(description: dict[str, Any]) ->
     assert body["messages"][0]["images"] == ["aW1hZ2U="]
     assert "/no_think" in body["messages"][0]["content"]
     assert body["think"] is False
+    assert body["keep_alive"] == 0
+    assert body["options"]["num_ctx"] == 8192
     assert body["format"]["properties"]["palette"]["maxItems"] == 8
-    assert provider.provenance.model == "qwen3-vl:32b-ctx49k"
+    assert body["format"]["properties"]["generation_prompt"]["maxLength"] < 2000
+    assert provider.provenance.model == "qwen3.5:4b"
 
 
 @pytest.mark.parametrize(
@@ -66,6 +72,23 @@ def test_ollama_provider_wraps_network_error() -> None:
     with (
         patch("urllib.request.urlopen", side_effect=OSError("offline")),
         pytest.raises(ArtifactError, match="request failed"),
+    ):
+        OllamaVisionProvider("http://vision.test").describe(
+            b"image", "image/png", FidelityProfile.GIST
+        )
+
+
+def test_ollama_http_error_includes_response_detail() -> None:
+    error = urllib.error.HTTPError(
+        "http://vision.test/api/chat",
+        400,
+        "Bad Request",
+        Message(),
+        io.BytesIO(b'{"error":"unsupported schema"}'),
+    )
+    with (
+        patch("urllib.request.urlopen", side_effect=error),
+        pytest.raises(ArtifactError, match=r"400.*unsupported schema"),
     ):
         OllamaVisionProvider("http://vision.test").describe(
             b"image", "image/png", FidelityProfile.GIST

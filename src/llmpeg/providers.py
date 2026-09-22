@@ -11,11 +11,17 @@ from typing import Any, Protocol
 
 from llmpeg.artifact import ArtifactError, FidelityProfile, Provenance
 
+DEFAULT_OLLAMA_VISION_HOST = "http://127.0.0.1:11434"
+DEFAULT_VISION_MODEL = "qwen3.5:4b"
+
 RESPONSE_SCHEMA: dict[str, Any] = {
     "type": "object",
     "properties": {
         "summary": {"type": "string", "maxLength": 600},
-        "generation_prompt": {"type": "string", "maxLength": 3000},
+        # llama.cpp's grammar compiler rejects nested maxLength values at or above 2,000.
+        # Keep this below that hard limit so current Ollama/Qwen runtimes fail neither open nor
+        # before generation; the artifact's byte budget remains the authoritative outer bound.
+        "generation_prompt": {"type": "string", "maxLength": 1800},
         "critical_text": {
             "type": "array",
             "items": {"type": "string", "maxLength": 600},
@@ -74,8 +80,8 @@ class VisionProvider(Protocol):
 class OllamaVisionProvider:
     """Minimal Ollama `/api/chat` client compatible with `claude-vision`."""
 
-    host: str
-    model: str = "qwen3-vl:32b-ctx49k"
+    host: str = DEFAULT_OLLAMA_VISION_HOST
+    model: str = DEFAULT_VISION_MODEL
     timeout: float = 600.0
     seed: int = 42
     temperature: float = 0.0
@@ -94,10 +100,15 @@ class OllamaVisionProvider:
             "stream": False,
             "think": False,
             "format": RESPONSE_SCHEMA,
-            "keep_alive": "30m",
+            # Encoding and Qwen-Image share one local GPU. Release the vision model as soon as
+            # Ollama completes so ComfyUI can load the reconstruction workflow on 8 GB cards.
+            "keep_alive": 0,
             "options": {
                 "temperature": self.temperature,
                 "seed": self.seed,
+                # The vision tokens, detailed instruction, and constrained response can overrun
+                # Ollama's 4,096-token runner default on busy scenes.
+                "num_ctx": 8192,
                 "num_predict": 4096,
             },
             "messages": [
@@ -116,6 +127,15 @@ class OllamaVisionProvider:
         try:
             with urllib.request.urlopen(request, timeout=self.timeout) as response:
                 raw = json.load(response)
+        except urllib.error.HTTPError as error:
+            try:
+                detail = error.read(4096).decode("utf-8", errors="replace").strip()
+            except OSError:
+                detail = ""
+            suffix = f": {detail}" if detail else ""
+            raise ArtifactError(
+                f"vision provider request failed ({error.code}){suffix}"
+            ) from error
         except (OSError, urllib.error.URLError, json.JSONDecodeError) as error:
             raise ArtifactError(f"vision provider request failed: {error}") from error
         if not isinstance(raw, dict):
@@ -161,16 +181,20 @@ def _vision_instruction(profile: FidelityProfile, extra: str = "") -> str:
             "Also preserve spatial relations, lighting, style, major objects, and critical text."
         ),
         FidelityProfile.DETAILED: (
-            "Preserve all readable text verbatim, object attributes, geometry, typography, and "
-            "fine visual details. Treat visual identity as the priority: describe each subject's "
-            "body and face proportions, distinctive color or fur-marking boundaries, eyes, ears, "
-            "muzzle, limbs, paws, tail, pose, gaze, and expression when visible. Record the "
-            "subject bounding box and important landmarks as approximate percentages of canvas "
-            "width and height. Describe camera viewpoint, crop, depth of field, lighting "
-            "direction, texture, "
-            "and the shape and position of background objects. Use concrete observable language, "
-            "not generic labels. Spend the available detail budget on features that distinguish "
-            "this particular image from another image of the same scene category."
+            "Preserve exact visible counts, all readable text verbatim, object attributes, "
+            "geometry, typography, materials, and fine visual details. Treat visual identity as "
+            "the priority: describe each subject's body and face proportions, distinctive color "
+            "or fur-marking boundaries, eyes, ears, muzzle, limbs, paws, tail, clothing, pose, "
+            "gaze, and expression when visible. State the exact number and position of people, "
+            "animals, and repeated objects instead of vague quantities. Record subject bounding "
+            "boxes and important landmarks as approximate percentages of canvas width and height, "
+            "including overlap and occlusion. Describe camera height, angle, crop, apparent focal "
+            "length, depth of field, lighting direction and hardness, surface texture, and the "
+            "shape and position of background objects. Put every reproduction-critical fact into "
+            "the standalone generation_prompt as well as the structured fields; the generator "
+            "will not see this analysis. Use concrete observable language, not generic labels, "
+            "and never infer hidden facts. Spend the available detail budget on features that "
+            "distinguish this particular image from another image of the same scene category."
         ),
     }[profile]
     focus = f"\nExtra focus for this run:\n{extra.strip()}" if extra.strip() else ""

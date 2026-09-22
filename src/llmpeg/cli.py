@@ -18,12 +18,16 @@ from llmpeg.encoder import (
 from llmpeg.evaluation import evaluate_with_artifact
 from llmpeg.generators import (
     DEFAULT_COMFYUI_HOST,
-    GeneratedImage,
-    default_comfyui_script,
-    generate_codex,
-    generate_prefer_comfyui,
+    DEFAULT_GENERATION_TIMEOUT,
+    DEFAULT_QWEN_RESOLUTION,
+    DEFAULT_QWEN_SEED,
+    generate_comfyui,
 )
-from llmpeg.providers import OllamaVisionProvider
+from llmpeg.providers import (
+    DEFAULT_OLLAMA_VISION_HOST,
+    DEFAULT_VISION_MODEL,
+    OllamaVisionProvider,
+)
 from llmpeg.survey import write_survey
 
 
@@ -41,24 +45,33 @@ def build_parser() -> argparse.ArgumentParser:
         "--output",
         "-o",
         type=Path,
-        help="default: <image>.llmpeg.json (or .llmpeg.json.gz with --gzip) beside the image",
+        help="default: <image>.llmpeg.json.gz beside the image",
     )
-    encode.add_argument(
+    envelope = encode.add_mutually_exclusive_group()
+    envelope.add_argument(
         "--gzip",
+        dest="gzip",
         action="store_true",
-        help="store the artifact inside a deterministic gzip envelope",
+        default=True,
+        help="store in the deterministic gzip envelope (default)",
+    )
+    envelope.add_argument(
+        "--plain",
+        dest="gzip",
+        action="store_false",
+        help="store canonical JSON without the gzip envelope",
     )
     # choices is a sequence of members, not the enum class itself: argparse's
     # "value not in action.choices" is a plain membership test, and StrEnum
     # members compare equal to their string values.
     encode.add_argument(
-        "--profile", choices=list(FidelityProfile), default=FidelityProfile.BALANCED
+        "--profile", choices=list(FidelityProfile), default=FidelityProfile.DETAILED
     )
     encode.add_argument(
         "--host",
-        default=os.environ.get("OLLAMA_VISION_HOST", "http://127.0.0.1:11434"),
+        default=os.environ.get("OLLAMA_VISION_HOST", DEFAULT_OLLAMA_VISION_HOST),
     )
-    encode.add_argument("--model", default="qwen3-vl:32b-ctx49k")
+    encode.add_argument("--model", default=os.environ.get("LLMPEG_MODEL", DEFAULT_VISION_MODEL))
     encode.add_argument("--timeout", type=float, default=600.0)
     encode.add_argument("--max-image-bytes", type=int, default=DEFAULT_MAX_IMAGE_BYTES)
     encode.add_argument("--max-image-pixels", type=int, default=DEFAULT_MAX_IMAGE_PIXELS)
@@ -72,25 +85,19 @@ def build_parser() -> argparse.ArgumentParser:
     reconstruct.add_argument("--overwrite", action="store_true")
 
     generate = subparsers.add_parser(
-        "generate", help="render an artifact as a new image via ComfyUI, with Codex fallback"
+        "generate", help="render an artifact locally with Qwen-Image-2.1 via ComfyUI"
     )
     generate.add_argument("artifact", type=Path)
     generate.add_argument(
         "--output", "-o", type=Path, help="default: <source-name>.reconstructed.png"
     )
-    generate.add_argument("--generator", choices=("comfyui", "codex"), default="comfyui")
-    generate.add_argument(
-        "--comfyui-script",
-        type=Path,
-        default=Path(
-            os.environ.get("LLMPEG_COMFYUI_SCRIPT", str(default_comfyui_script()))
-        ).expanduser(),
-    )
     generate.add_argument(
         "--comfyui-host",
         default=os.environ.get("LLMPEG_COMFYUI_HOST", DEFAULT_COMFYUI_HOST),
     )
-    generate.add_argument("--timeout", type=float, default=600.0)
+    generate.add_argument("--resolution", type=int, default=DEFAULT_QWEN_RESOLUTION)
+    generate.add_argument("--seed", type=int, default=DEFAULT_QWEN_SEED)
+    generate.add_argument("--timeout", type=float, default=DEFAULT_GENERATION_TIMEOUT)
     generate.add_argument("--overwrite", action="store_true")
 
     inspect = subparsers.add_parser("inspect", help="show artifact sizes and provenance")
@@ -133,10 +140,19 @@ def main(argv: Sequence[str] | None = None) -> int:
                 max_image_pixels=args.max_image_pixels,
             )
             artifact.write(output, overwrite=args.overwrite, compress=args.gzip)
-            stored = artifact.to_gzip_bytes() if args.gzip else artifact.to_bytes()
-            ratio = artifact.source.byte_size / len(stored)
-            envelope = ", gzip" if args.gzip else ""
-            print(f"wrote {output} ({len(stored):,} bytes{envelope}, {ratio:.0f}:1)")
+            plain = artifact.to_bytes()
+            if args.gzip:
+                stored = artifact.to_gzip_bytes()
+                print(
+                    f"wrote {output} (plain {len(plain):,} bytes, "
+                    f"{artifact.source.byte_size / len(plain):.0f}:1; gzip {len(stored):,} bytes, "
+                    f"{artifact.source.byte_size / len(stored):.0f}:1)"
+                )
+            else:
+                print(
+                    f"wrote {output} (plain {len(plain):,} bytes, "
+                    f"{artifact.source.byte_size / len(plain):.0f}:1)"
+                )
         elif args.command == "reconstruct":
             artifact = Artifact.read(args.artifact)
             prompt = render_generation_prompt(artifact)
@@ -150,32 +166,15 @@ def main(argv: Sequence[str] | None = None) -> int:
             output = args.output or generated_path_for(args.artifact)
             _check_overwrite(output, overwrite=args.overwrite)
             prompt = render_generation_prompt(artifact)
-            if args.generator == "codex":
-                result = GeneratedImage(
-                    generate_codex(
-                        prompt,
-                        artifact.source.width,
-                        artifact.source.height,
-                        args.timeout,
-                    ),
-                    "codex",
-                )
-            else:
-                result = generate_prefer_comfyui(
-                    prompt,
-                    artifact.source.width,
-                    artifact.source.height,
-                    args.comfyui_script,
-                    args.comfyui_host,
-                    args.timeout,
-                )
-            _write_bytes(output, result.data, overwrite=args.overwrite)
-            if result.fallback_reason:
-                print(
-                    f"ComfyUI unavailable ({result.fallback_reason}); used Codex fallback",
-                    file=sys.stderr,
-                )
-            print(f"wrote {output} (generator: {result.provider})")
+            generated = generate_comfyui(
+                prompt,
+                args.resolution,
+                args.seed,
+                args.comfyui_host,
+                args.timeout,
+            )
+            _write_bytes(output, generated, overwrite=args.overwrite)
+            print(f"wrote {output} (generator: local ComfyUI/Qwen-Image-2.1)")
         elif args.command == "inspect":
             artifact, stored = Artifact.read_stored(args.artifact)
             # Ratios are charged on the bytes actually on disk, envelope included, never on a
