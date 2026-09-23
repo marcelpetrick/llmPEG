@@ -1,6 +1,6 @@
 # Qwen comparison pages and 0.5.1 release plan
 
-Status: **in progress**
+Status: **implementation and review complete; release pending**
 
 Started: 2026-09-23
 Target release: **0.5.1**
@@ -46,8 +46,8 @@ generation. Existing measurements and images will not be relabelled as Qwen-Imag
 - [x] Add offline tests for required/escaped technology metadata, custom labels/findings, Qwen
       manifest traceability, and Pages publication layout.
 - [x] Regenerate all comparison pages and verify that every referenced local asset exists.
-- [ ] Run formatting, Ruff, strict mypy, the full branch-coverage suite, and package build.
-- [ ] Review the complete diff against the release base with the `reviewBranch` procedure, fix all
+- [x] Run formatting, Ruff, strict mypy, the full branch-coverage suite, and package build.
+- [x] Review the complete diff against the release base with the `reviewBranch` procedure, fix all
       confirmed findings, and rerun the full gate.
 - [x] Bump the single package version and enforced documentation examples to 0.5.1.
 - [ ] Commit logical units with Conventional Commit messages, push, tag `v0.5.1`, publish the
@@ -77,3 +77,10 @@ generation. Existing measurements and images will not be relabelled as Qwen-Imag
   0.5.1. Missing metadata now renders an explicit “Not recorded” message while malformed supplied
   metadata still fails closed. Each case also exposes the encoder version stored in its artifact
   header, preserving the measured `llmpeg/0.4.2` and `llmpeg/0.5.0` provenance of the two Qwen runs.
+- **2026-09-23 — final review and release gate complete.** `reviewBranch` resolved the release base
+  as `origin/master @ 7a0cfed` and reviewed 42 changed files (+703/−72 at `32be475`). After fixing
+  gzip evidence visibility, authoritative-report links, and legacy-manifest compatibility, no Code
+  or Architecture findings remain. The definitive gate passed with 46 files formatted, Ruff clean,
+  strict mypy clean across 28 source files, 171 tests at 95.42% branch-aware coverage, a 183 KiB
+  sdist, a 62 KiB wheel, and both distributions accepted by Twine. Push, Pages deployment, tag,
+  release, and public URL verification remain.
