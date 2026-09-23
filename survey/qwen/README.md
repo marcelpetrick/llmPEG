@@ -6,7 +6,8 @@ with tone experiments in [`tone-sweep/`](tone-sweep/README.md) and
 published page and kept as evidence.
 
 This directory contains the two creator/rater runs that `survey/qwen.html` used to show. Both
-source photographs are existing public-domain survey sources; their credits are copied into each authoritative `report.json` and into `survey/qwen-manifest.json`.
+source photographs are existing public-domain survey sources; their credits are copied into each
+authoritative `report.json` and into `survey/qwen-manifest.json`.
 
 ## Measured pipeline
 

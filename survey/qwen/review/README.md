@@ -36,8 +36,8 @@ mean blue):
 
 **The tone instruction did not fix saturation.** The keyboard cat is as saturated as before the
 change (78.5–88.4 in the creator/rater holdout run, `docs/tone-review-plan.md`), the grass cat
-overshoots by 37, and all three renders are darker than their sources. See [`docs/tone.md`](../../../docs/tone.md) for the follow-up sweep
-and what did move the numbers.
+overshoots by 37, and all three renders are darker than their sources. See
+[`docs/tone.md`](../../../docs/tone.md) for the follow-up sweep and what did move the numbers.
 
 The composition-region fix did hold: the 11 regions across the three artifacts are distinct
 percentage boxes, and none repeats the instruction's former example box.

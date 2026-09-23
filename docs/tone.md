@@ -82,14 +82,15 @@ other sources before it goes into the pipeline.
 
 ## Why the positive prompt fails: a hypothesis, not a finding
 
-The review prompts were never rendered *without* the tone line, so its effect is not isolated:
-the earlier runs also used different artifacts. What follows is untested; treat it as a direction
-for the next experiment. Qwen-Image-2.1 conditions on a text encoder that reads the prompt as a
-description of *content*. Numbers such as "mean saturation 48/255" probably carry no visual meaning for it, and negated instructions ("do not boost
-saturation") are a known weak spot of text-to-image conditioning: the tokens `boost saturation`
-are still in the prompt. The negative prompt, by contrast, is the one channel the sampler actively
-steers away from. The model's prior for "a photo of a cat" also looks like modern, well-lit stock
-photography, which is darker, punchier, and more saturated than these public-domain snapshots.
+The review prompts were never rendered *without* the tone line, so its effect is not isolated: the
+earlier runs also used different artifacts. What follows is untested; treat it as a direction for
+the next experiment. Qwen-Image-2.1 conditions on a text encoder that reads the prompt as a
+description of *content*. Numbers such as "mean saturation 48/255" probably carry no visual meaning
+for it, and negated instructions ("do not boost saturation") are a known weak spot of text-to-image
+conditioning: the tokens `boost saturation` are still in the prompt. The negative prompt, by
+contrast, is the one channel the sampler actively steers away from. The model's prior for "a photo
+of a cat" also looks like modern, well-lit stock photography, which is darker, punchier, and more
+saturated than these public-domain snapshots.
 
 Two cheap checks would test this: remove the negated sentence and keep only the descriptive words;
 and replace the numbers with plain descriptors ("muted, faded, washed-out colours").
