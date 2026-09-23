@@ -118,7 +118,7 @@
     "resolution": 512,
     "seed": 42
   },
-  "llmpeg_version": "0.4.2",
+  "llmpeg_version": "0.5.0",
   "objective": "pixels-only pairwise prompt refinement with order reversal and deterministic regression guards; not calibrated to human ratings",
   "rating_repeats": 3,
   "rounds": [
