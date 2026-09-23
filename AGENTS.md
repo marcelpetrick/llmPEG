@@ -64,7 +64,7 @@ README, and is not part of the benchmark set. Do not add a second exception.
 | `src/llmpeg/survey.py` | HTML survey report generation (embedded CSS/JS, `E501` exempt) |
 | `src/llmpeg/cli.py` | `llmpeg` console entry point |
 | `examples/` | The flagship news-article demo: artifact, prompt, reconstruction, evaluation |
-| `survey/` | Reproduction surveys, sources, prompts, artifacts, results |
+| `survey/` | Reproduction surveys, sources, prompts, artifacts, results, local Qwen evidence |
 | `docs/vision.md` | Product vision and fidelity contract |
 | `docs/plan.md` | Delivery plan and review record |
 | `docs/architecture.md` | C4 diagrams, system context down to components |

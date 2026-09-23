@@ -240,7 +240,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", type=Path, default=DEFAULT_SOURCE)
-    parser.add_argument("--output-dir", type=Path, default=REPO / "docs/creator-rater")
+    parser.add_argument("--output-dir", type=Path, default=REPO / "survey/qwen/creator-rater")
     parser.add_argument("--rounds", type=int, default=1)
     parser.add_argument(
         "--ollama-host",

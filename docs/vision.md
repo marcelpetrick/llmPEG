@@ -167,7 +167,8 @@ preferences to be re-derived each session.
 - Expose repeated-trial spread. Pairwise prompt tuning must reverse candidate order and reject a
   challenger when the two choices disagree or a passing deterministic guard regresses.
 - Human calibration remains open work. The first local experiment is evidence about one source,
-  not a general quality claim; see [`creator-rater/report.json`](creator-rater/report.json).
+  not a general quality claim; see
+  [`../survey/qwen/creator-rater/report.json`](../survey/qwen/creator-rater/report.json).
 
 ## Principles and non-goals
 

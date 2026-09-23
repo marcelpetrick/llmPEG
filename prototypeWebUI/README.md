@@ -87,7 +87,8 @@ and [`../docs/metrics.md`](../docs/metrics.md).
 On 2026-09-22 the live acceptance run exercised all four routes with `qwen3.5:4b`, ComfyUI 0.37.0,
 and Qwen-Image-2.1. `/api/generate` returned a valid 256×256 PNG with the concrete generator header;
 the rating completed three trials. The audited 512-pixel creator/rater run and its freely licensed
-source credit are checked in under [`../docs/creator-rater/`](../docs/creator-rater/).
+source credit are checked in under
+[`../survey/qwen/creator-rater/`](../survey/qwen/creator-rater/).
 
 The tests are offline. They inject provider responses and never require a GPU, model, network,
 credential, or running service.

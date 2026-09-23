@@ -1,8 +1,12 @@
-# Cat reconstruction survey
+# Historical cat reconstruction survey
 
 This is a reproducible, exploratory `n=3` llmPEG quality survey. Open `index.html` directly in
 a browser. Human ratings are stored only in that browser's `localStorage` until the reviewer uses
 **Export my ratings**.
+
+This run predates the local Qwen-Image-2.1 generator. It used `qwen3-vl:32b-ctx49k` for encoding
+and Codex built-in image generation for reconstruction. The current local-Qwen evidence and its
+public landing page are documented under [`qwen/`](qwen/README.md).
 
 ## Sources and licenses
 

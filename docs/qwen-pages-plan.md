@@ -21,31 +21,31 @@ generation. Existing measurements and images will not be relabelled as Qwen-Imag
 
 ### 1. Evidence and metadata
 
-- [ ] Move the two local Qwen creator/rater evidence sets under `survey/` so the static Pages site
+- [x] Move the two local Qwen creator/rater evidence sets under `survey/` so the static Pages site
       can publish the original source links, prompts, artifacts, reports, and generated images
       without duplicated files or network-dependent image URLs.
-- [ ] Add a Qwen comparison manifest and small derived metric records whose values point back to
+- [x] Add a Qwen comparison manifest and small derived metric records whose values point back to
       the authoritative creator/rater reports.
-- [ ] Add structured manifest metadata for encoding technology and reconstruction technology.
-- [ ] Add the historical technology metadata to every existing manifest without changing any
+- [x] Add structured manifest metadata for encoding technology and reconstruction technology.
+- [x] Add the historical technology metadata to every existing manifest without changing any
       historical artifact, reconstruction, or metric.
 
 ### 2. HTML comparison experience
 
-- [ ] Render a prominent two-stage technology panel on every survey page.
-- [ ] Label the second stage “reconstruction (not decompression)” and state that only rendered
+- [x] Render a prominent two-stage technology panel on every survey page.
+- [x] Label the second stage “reconstruction (not decompression)” and state that only rendered
       text crosses into the image generator.
-- [ ] Support truthful per-case image labels and findings so the Qwen page can distinguish source,
+- [x] Support truthful per-case image labels and findings so the Qwen page can distinguish source,
       baseline, and challenger, and visibly report rejected/inconclusive tuning rounds.
-- [ ] Generate and check in the Qwen comparison HTML from the manifest.
-- [ ] Make the Qwen page the GitHub Pages landing page while retaining explicit historical URLs.
+- [x] Generate and check in the Qwen comparison HTML from the manifest.
+- [x] Make the Qwen page the GitHub Pages landing page while retaining explicit historical URLs.
 
 ### 3. Documentation and verification
 
-- [ ] Update README, evidence links, Pages instructions, repository layout, and local-model history.
-- [ ] Add offline tests for required/escaped technology metadata, custom labels/findings, Qwen
+- [x] Update README, evidence links, Pages instructions, repository layout, and local-model history.
+- [x] Add offline tests for required/escaped technology metadata, custom labels/findings, Qwen
       manifest traceability, and Pages publication layout.
-- [ ] Regenerate all comparison pages and verify that every referenced local asset exists.
+- [x] Regenerate all comparison pages and verify that every referenced local asset exists.
 - [ ] Run formatting, Ruff, strict mypy, the full branch-coverage suite, and package build.
 - [ ] Review the complete diff against the release base with the `reviewBranch` procedure, fix all
       confirmed findings, and rerun the full gate.
@@ -60,3 +60,10 @@ generation. Existing measurements and images will not be relabelled as Qwen-Imag
   generation. The two measured local Qwen-Image-2.1 runs are stored separately under
   `docs/creator-rater/` and `docs/creator-rater-holdout/`, so the public comparison does not expose
   them. The survey renderer currently has no structured technology metadata.
+- **2026-09-23 — Qwen comparison implemented and visually inspected.** Moved the two evidence sets
+  under `survey/qwen/`, added traceable derived result records and a Qwen manifest, made the new
+  generated page the Pages landing file, and preserved historical URLs. The generic renderer now
+  requires and escapes explicit encoding/reconstruction technology, custom image labels, and
+  per-case measured outcomes. Focused tests passed, all six page images returned HTTP 200, and
+  Chromium screenshots at 1440×1400 and 390×844 confirmed responsive rendering. Full gates,
+  release review, version bump, and publication remain.

@@ -10,6 +10,8 @@ from llmpeg.artifact import Artifact, ArtifactError
 from llmpeg.cli import main
 from llmpeg.survey import render_survey, write_survey
 
+REPO = Path(__file__).parents[1]
+
 
 def _manifest(tmp_path: Path, artifact: Artifact) -> Path:
     artifact_path = tmp_path / "artifact.json"
@@ -78,7 +80,7 @@ def test_render_survey_is_interactive_and_escaped(tmp_path: Path, artifact: Arti
     assert "A &lt;cat&gt; &amp; a keyboard" in output
     assert "Export my ratings" in output
     assert "localStorage" in output
-    assert "1/1 cases meet" in output
+    assert "1/1 cases are marked pass" in output
     assert "<code>balanced</code> profile" in output
     assert "Compression · semantic encoding" in output
     assert "Reconstruction · not decompression" in output
@@ -282,3 +284,58 @@ def test_survey_rejects_invalid_baseline_references(tmp_path: Path, artifact: Ar
     _save(manifest, data)
     with pytest.raises(ArtifactError, match="baseline metrics missing"):
         render_survey(manifest)
+
+
+def test_qwen_comparison_is_local_and_traceable_to_authoritative_reports() -> None:
+    manifest_path = REPO / "survey/qwen-manifest.json"
+    manifest = _load_manifest(manifest_path)
+    output = render_survey(manifest_path)
+
+    assert "Local Ollama / qwen3.5:4b" in output
+    assert "Local ComfyUI / Qwen-Image-2.1" in output
+    assert "Qwen-Image-2.1 baseline" in output
+    assert "Qwen-Image-2.1 challenger" in output
+    assert output.count("Challenger rejected.") == 2
+    assert "Codex built-in" not in output
+
+    for case in manifest["cases"]:
+        for field in (
+            "source",
+            "baseline_reconstruction",
+            "reconstruction",
+            "artifact",
+            "prompt",
+            "result",
+            "baseline_result",
+        ):
+            assert (manifest_path.parent / case[field]).is_file(), (
+                f"missing {field} for {case['id']}"
+            )
+
+        evidence_dir = (manifest_path.parent / case["result"]).parent
+        report = _load_manifest(evidence_dir / "report.json")
+        result = _load_manifest(manifest_path.parent / case["result"])
+        baseline_result = _load_manifest(manifest_path.parent / case["baseline_result"])
+        assert report["encoder"] == {
+            "model": "qwen3.5:4b",
+            "profile": "detailed",
+            "provider": "ollama",
+        }
+        assert report["generator"] == {
+            "model": "qwen-image-2.1",
+            "provider": "comfyui",
+            "resolution": 512,
+            "seed": 42,
+        }
+        assert result["metrics"] == report["rounds"][0]["rating"]["deterministic"]
+        assert baseline_result["metrics"] == report["baseline"]["rating"]["deterministic"]
+        assert result["status"] == "rejected"
+        assert report["rounds"][0]["accepted"] is False
+        assert report["rounds"][0]["pairwise"]["consistent"] is False
+
+
+def test_pages_workflow_makes_qwen_comparison_the_landing_page() -> None:
+    workflow = (REPO / ".github/workflows/pages.yml").read_text(encoding="utf-8")
+    assert "cp -R survey/. _site/" in workflow
+    assert "cp survey/index.html _site/balanced.html" in workflow
+    assert "cp survey/qwen.html _site/index.html" in workflow

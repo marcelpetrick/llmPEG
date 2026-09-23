@@ -227,13 +227,14 @@ verdict. Automatic ratings may guide experiments, but cannot be promoted to huma
 - **2026-09-22 — first live creator/rater images recorded.** The public-domain monochrome-cat run
   produced a baseline and challenger. Its semantic median fell from 85 to 80 while
   `visual_proxy_score` rose from 0.632194 to 0.700023, demonstrating why the signals cannot be
-  collapsed into a generic improvement claim. Raw evidence is under `docs/creator-rater/`.
+  collapsed into a generic improvement claim. Raw evidence is under
+  `survey/qwen/creator-rater/`.
 - **2026-09-23 — live Web UI and holdout complete.** All four API routes ran against loopback
   Ollama and ComfyUI; generation returned a valid 256×256 PNG and rating completed three trials.
   The first keyboard-cat holdout attempt failed closed on truncated JSON under Ollama's 4,096-token
   runner context. An 8,192-token encode request completed the rerun. Both order-swapped judgments
   initially appeared to prefer the baseline; raw evidence is under
-  `docs/creator-rater-holdout/`.
+  `survey/qwen/creator-rater-holdout/`.
 - **2026-09-23 — clean-room review removed prompt leakage from pairwise judging.** The first A/B
   implementation supplied candidate prompts, and its reasons visibly judged prompt wording rather
   than only reconstructed pixels. Pixels-only reruns chose the second-presented image in both

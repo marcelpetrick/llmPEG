@@ -1,0 +1,15 @@
+{
+  "status": "rejected",
+  "metrics": {
+    "aspect_similarity": 0.75,
+    "critical_text_recall": 1.0,
+    "dhash_similarity": 0.59375,
+    "edge_similarity": 0.950317,
+    "histogram_similarity": 0.530558,
+    "layout_score": 0.724158,
+    "palette_distance": 0.100979,
+    "visual_proxy_score": 0.669543
+  },
+  "source_report": "report.json#rounds[0].rating.deterministic",
+  "note": "Derived display record; the challenger was rejected because the pixels-only order-swapped pairwise judgments were inconsistent."
+}

@@ -1,0 +1,15 @@
+{
+  "status": "incomplete",
+  "metrics": {
+    "aspect_similarity": 0.75,
+    "critical_text_recall": 1.0,
+    "dhash_similarity": 0.5,
+    "edge_similarity": 0.973877,
+    "histogram_similarity": 0.625407,
+    "layout_score": 0.679663,
+    "palette_distance": 0.100388,
+    "visual_proxy_score": 0.669898
+  },
+  "source_report": "report.json#baseline.rating.deterministic",
+  "note": "Derived display record; report.json is authoritative."
+}

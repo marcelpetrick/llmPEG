@@ -1,0 +1,60 @@
+{
+  "title": "Local Qwen-Image-2.1 Reconstruction Evidence",
+  "date": "2026-09-23",
+  "profile": "detailed",
+  "comparison_label": "Qwen baseline → Qwen challenger",
+  "technology": {
+    "encoding": {
+      "name": "Local Ollama / qwen3.5:4b",
+      "detail": "The local vision model received the source image and wrote a detailed gzip-wrapped llmPEG text artifact with temperature 0, seed 42, and /no_think."
+    },
+    "reconstruction": {
+      "name": "Local ComfyUI / Qwen-Image-2.1",
+      "detail": "The local GPU workflow received only rendered text and generated a 512×512 image with seed 42, 30 steps, CFG 3.5, Euler sampling, and the simple scheduler."
+    }
+  },
+  "cases": [
+    {
+      "id": "qwen-monochrome-cat",
+      "name": "Monochrome cat · creator/rater experiment",
+      "source": "sources/cat-monochrome.jpg",
+      "source_label": "Original source",
+      "baseline_reconstruction": "qwen/creator-rater/baseline.png",
+      "baseline_label": "Qwen-Image-2.1 baseline",
+      "reconstruction": "qwen/creator-rater/challenger-1.png",
+      "reconstruction_label": "Qwen-Image-2.1 challenger",
+      "artifact": "qwen/creator-rater/challenger-1.llmpeg.json.gz",
+      "prompt": "qwen/creator-rater/challenger-1.prompt.txt",
+      "result": "qwen/creator-rater/challenger-1-result.json",
+      "baseline_result": "qwen/creator-rater/baseline-result.json",
+      "finding": "Challenger rejected. The two pixels-only A/B judgments preferred whichever image appeared second, so the order-swapped logical verdicts disagreed; semantic median also fell from 85 to 80.",
+      "credit": {
+        "author": "Barmanru",
+        "license": "Public domain dedication",
+        "license_url": "https://commons.wikimedia.org/wiki/File:Cat_bw-photo.jpg#Licensing",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Cat_bw-photo.jpg"
+      }
+    },
+    {
+      "id": "qwen-keyboard-cat-holdout",
+      "name": "Keyboard cat · untouched holdout",
+      "source": "sources/cat-on-keyboard.jpg",
+      "source_label": "Original source",
+      "baseline_reconstruction": "qwen/creator-rater-holdout/baseline.png",
+      "baseline_label": "Qwen-Image-2.1 baseline",
+      "reconstruction": "qwen/creator-rater-holdout/challenger-1.png",
+      "reconstruction_label": "Qwen-Image-2.1 challenger",
+      "artifact": "qwen/creator-rater-holdout/challenger-1.llmpeg.json.gz",
+      "prompt": "qwen/creator-rater-holdout/challenger-1.prompt.txt",
+      "result": "qwen/creator-rater-holdout/challenger-1-result.json",
+      "baseline_result": "qwen/creator-rater-holdout/baseline-result.json",
+      "finding": "Challenger rejected. The order-swapped pixels-only verdicts disagreed, the deterministic proxy was effectively unchanged (0.669898 to 0.669543), and semantic median fell from 75 to 70.",
+      "credit": {
+        "author": "Remedios44",
+        "license": "Public domain dedication",
+        "license_url": "https://commons.wikimedia.org/wiki/File:Wikipedians_cat.jpg#Licensing",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Wikipedians_cat.jpg"
+      }
+    }
+  ]
+}

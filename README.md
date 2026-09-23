@@ -136,10 +136,29 @@ you keep the artifact and regenerate on demand; model weights and compute are no
 
 ## Benchmarks
 
-### Cat survey (`n=3`, `balanced`)
+### Local Qwen-Image-2.1 comparison (`n=2`, `detailed`)
+
+The [public comparison landing page](https://marcelpetrick.github.io/llmPEG/) shows the two
+checked-in local runs as original source → Qwen baseline → Qwen challenger. Its technology panel
+records both measured stages:
+
+- **Compression / semantic encoding:** local Ollama with `qwen3.5:4b` receives the source and
+  writes the detailed gzip-wrapped llmPEG artifact.
+- **Reconstruction (not decompression):** local ComfyUI with Qwen-Image-2.1 receives only the
+  rendered text and generates a new 512×512 image on the GPU.
+
+Both challenger rounds were rejected. The pixels-only pairwise judge preferred the
+second-presented candidate in each order, so it produced inconsistent logical verdicts; the page
+keeps that failure visible rather than presenting the challenger as an improvement. The page is
+generated from [`survey/qwen-manifest.json`](survey/qwen-manifest.json), while the complete raw
+trials and settings remain authoritative under [`survey/qwen/`](survey/qwen/README.md).
+
+### Historical cat survey (`n=3`, `balanced`)
 
 Open [`survey/index.html`](survey/index.html) for interactive comparisons with machine metrics,
-exact prompts, source/license links, 1–5 human-rating controls, and JSON export.
+exact prompts, source/license links, 1–5 human-rating controls, and JSON export. This older run
+used `qwen3-vl:32b-ctx49k` for encoding and Codex built-in image generation for reconstruction;
+the generated page labels that provenance explicitly.
 
 | Aggregate | Result |
 | --- | ---: |
@@ -267,11 +286,13 @@ Regenerate any survey page after changing a manifest or result:
 uv run llmpeg survey survey/manifest.json --output survey/index.html --overwrite
 uv run llmpeg survey survey/detailed-manifest.json --output survey/detailed.html --overwrite
 uv run llmpeg survey survey/expanded-manifest.json --output survey/expanded.html --overwrite
+uv run llmpeg survey survey/qwen-manifest.json --output survey/qwen.html --overwrite
 ```
 
 View the checked-in comparisons directly on GitHub Pages:
 
-- [Detailed cat survey](https://marcelpetrick.github.io/llmPEG/)
+- [Local Qwen-Image-2.1 comparison](https://marcelpetrick.github.io/llmPEG/)
+- [Historical detailed cat survey](https://marcelpetrick.github.io/llmPEG/detailed.html)
 - [Balanced cat survey](https://marcelpetrick.github.io/llmPEG/balanced.html)
 - [Expanded scene survey](https://marcelpetrick.github.io/llmPEG/expanded.html)
 
@@ -610,7 +631,7 @@ metrics. A creator-versus-rater script uses order-reversed pairwise judgments pl
 regression guards. Both checked-in runs rejected their challengers after the pixels-only judge
 showed presentation-order bias, so this loop still has no trustworthy improvement gradient;
 inspect the prompts, images, licence credit, and raw trials in
-[`docs/creator-rater/report.json`](docs/creator-rater/report.json).
+[`survey/qwen/creator-rater/report.json`](survey/qwen/creator-rater/report.json).
 
 ## Development
 

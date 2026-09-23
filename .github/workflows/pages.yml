@@ -37,7 +37,7 @@ jobs:
           mkdir _site
           cp -R survey/. _site/
           cp survey/index.html _site/balanced.html
-          cp survey/detailed.html _site/index.html
+          cp survey/qwen.html _site/index.html
 
       - name: Upload survey site
         uses: actions/upload-pages-artifact@v5.0.0
