@@ -84,8 +84,8 @@ other sources before it goes into the pipeline.
 
 The review prompts were never rendered *without* the tone line, so its effect is not isolated:
 the earlier runs also used different artifacts. What follows is untested; treat it as a direction
-for the next experiment. Qwen-Image-2.1 conditions on a text encoder that reads the prompt as a description of *content*. Numbers such as "mean saturation
-48/255" probably carry no visual meaning for it, and negated instructions ("do not boost
+for the next experiment. Qwen-Image-2.1 conditions on a text encoder that reads the prompt as a
+description of *content*. Numbers such as "mean saturation 48/255" probably carry no visual meaning for it, and negated instructions ("do not boost
 saturation") are a known weak spot of text-to-image conditioning: the tokens `boost saturation`
 are still in the prompt. The negative prompt, by contrast, is the one channel the sampler actively
 steers away from. The model's prior for "a photo of a cat" also looks like modern, well-lit stock
@@ -94,9 +94,28 @@ photography, which is darker, punchier, and more saturated than these public-dom
 Two cheap checks would test this: remove the negated sentence and keep only the descriptive words;
 and replace the numbers with plain descriptors ("muted, faded, washed-out colours").
 
-## Status
+## Status (2026-09-23)
 
-- The published review page (`survey/qwen.html`) shows the **default** pipeline renders, because
-  that is what `llmpeg` produces today. The hand-tuned negatives are evidence only.
-- Whether any of this reads as better to a person is unmeasured. The colour/lighting rating is the
-  test.
+Done and committed locally:
+
+- The composition-region fix holds: the 11 regions across the three review artifacts are distinct
+  percentage boxes, and none repeats the instruction's former example box.
+- The tone fix does not: see the tables above.
+- `survey/qwen.html` shows one **default**-pipeline reconstruction per source from
+  `survey/qwen/review/`, because that is what `llmpeg` produces today. The hand-tuned negatives are
+  evidence only. The page title changed, so ratings stored in a browser for the old page don't carry
+  over.
+- `generate_comfyui` accepts keyword-only `cfg` and `extra_negative` overrides, and
+  `scripts/tone_sweep.py` reproduces the sweep.
+
+Open, in order:
+
+1. **Is tone really not controllable from the positive prompt?** Isolate it: the same artifact with
+   the tone line removed, without the negated sentence, with words instead of numbers, and with the
+   tone moved to the front of the prompt. Check what the ComfyUI text-encode node does with a long
+   prompt, and what others report about Qwen-Image and saturation.
+2. If negatives remain the only lever, derive them from the artifact's measured tone with a rule,
+   and measure that rule on sources it was not tuned on.
+3. Release decision: format 1.1 is reader-visible and fits 0.6.0.
+4. Ask for another human rating. Whether any of this reads as better to a person is unmeasured,
+   and the colour/lighting score is the test.
