@@ -71,6 +71,7 @@ README, and is not part of the benchmark set. Do not add a second exception.
 | `docs/format.md` | Normative spec for the `.llmpeg.json` container and its header |
 | `docs/metrics.md` | Whether the metrics track a human eye (they do not) |
 | `docs/adversarial.md` | The GAN-shaped refinement loop and why it failed |
+| `docs/tone.md` | Why prompt-side tone control fails for Qwen-Image; measured sweep |
 | `docs/effort-evaluation.md` | Measured development-session effort snapshot |
 | `docs/ideas.md` | Unscheduled ideas that require measurement before implementation |
 | `docs/gzip-measurement.json` | Plain and gzip sizes of every checked-in artifact |
@@ -185,3 +186,7 @@ Established scopes: `codec` (encoder/artifact/providers), `survey`, `architectur
 - The adversarial critic returns a constant verdict, so the refinement loop has no gradient
   (`docs/adversarial.md`). Rebuild it as a pairwise forced choice before trusting any round.
 - The vision-model judge has never been calibrated against real human ratings.
+- Qwen-Image ignores the prompt's `Tone:` line: reconstructions come back darker and, for colour
+  sources, more saturated than measured, and lowering CFG does not help (`docs/tone.md`). Hand-
+  picked negative terms moved saturation toward the source on two cases; that is tuning on the
+  test set, not yet a pipeline rule.

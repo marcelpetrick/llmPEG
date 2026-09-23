@@ -1,5 +1,21 @@
 # Tone fix and single review page — status and remaining plan
 
+## Update, later on 2026-09-23
+
+The GPU came back, and steps 1–6 below are done. Findings are in [`tone.md`](tone.md):
+
+- **Step 2, regions:** fixed. All 11 regions are distinct percentage boxes, and none copies the
+  example box.
+- **Step 4, tone:** **not fixed.** Saturation is unchanged for the keyboard cat (88) and high for
+  the grass cat (126 vs. 89), and all renders are darker than their sources. Lowering CFG did not
+  help. Hand-picked negative terms did move the numbers, but they are not yet a pipeline rule.
+- **Step 5, page:** `survey/qwen.html` now shows one default-pipeline reconstruction per source
+  from `survey/qwen/review/`, under a new title so old browser-stored ratings don't carry over.
+- **Blocker and push warning:** resolved. The published page is now the new review page.
+
+Encoding used local Ollama at `127.0.0.1:11434`, which has `qwen3.5:4b`; the remote host
+doesn't. Steps 7 (release) and 8 (another human rating) remain open.
+
 Started 2026-09-23 from the human survey response for the local Qwen-Image-2.1 page. Work stopped
 part-way: the code is committed, but no new reconstructions exist yet because the GPU was down.
 
