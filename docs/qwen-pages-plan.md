@@ -72,3 +72,8 @@ generation. Existing measurements and images will not be relabelled as Qwen-Imag
   only to a derived metric record. The renderer now reports the plain ratio and the measured gzip
   stored ratio side by side and links each case's authoritative creator/rater report. Focused
   formatting, lint, strict typing, and 20 survey tests pass after regeneration.
+- **2026-09-23 — compatibility review fix complete.** Review against `origin/master` found that
+  requiring the new technology object would reject otherwise-valid manifests created before
+  0.5.1. Missing metadata now renders an explicit “Not recorded” message while malformed supplied
+  metadata still fails closed. Each case also exposes the encoder version stored in its artifact
+  header, preserving the measured `llmpeg/0.4.2` and `llmpeg/0.5.0` provenance of the two Qwen runs.

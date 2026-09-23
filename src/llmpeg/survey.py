@@ -21,10 +21,16 @@ def render_survey(manifest_path: Path) -> str:
     title = _string(manifest, "title")
     profile = _string(manifest, "profile")
     technology = manifest.get("technology")
-    if not isinstance(technology, dict):
+    if technology is None:
+        encoding_name = reconstruction_name = "Not recorded"
+        encoding_detail = reconstruction_detail = (
+            "This manifest predates structured technology provenance."
+        )
+    elif not isinstance(technology, dict):
         raise ArtifactError("survey technology must be an object")
-    encoding_name, encoding_detail = _technology_stage(technology, "encoding")
-    reconstruction_name, reconstruction_detail = _technology_stage(technology, "reconstruction")
+    else:
+        encoding_name, encoding_detail = _technology_stage(technology, "encoding")
+        reconstruction_name, reconstruction_detail = _technology_stage(technology, "reconstruction")
     cases_value = manifest.get("cases")
     if not isinstance(cases_value, list) or not cases_value:
         raise ArtifactError("survey cases must be a non-empty array")
@@ -45,6 +51,7 @@ def render_survey(manifest_path: Path) -> str:
         case["metrics"] = metrics
         case["status"] = _string(result, "status")
         case["artifact_bytes"] = len(artifact.to_bytes())
+        case["artifact_encoder"] = artifact.header.encoder
         case["stored_artifact_bytes"] = len(stored_artifact)
         case["artifact_envelope"] = envelope_of(stored_artifact)
         case["source_bytes"] = artifact.source.byte_size
@@ -176,7 +183,8 @@ def _render_case(case: dict[str, Any]) -> str:
     )
     plain_ratio = (
         f"<strong>{case['ratio']:.1f}:1</strong> plain artifact ratio · "
-        f"{case['source_bytes']:,} → {case['artifact_bytes']:,} bytes"
+        f"{case['source_bytes']:,} → {case['artifact_bytes']:,} bytes · "
+        f"written by {html.escape(str(case['artifact_encoder']))}"
     )
     stored_ratio = ""
     if case["artifact_envelope"] == "gzip":

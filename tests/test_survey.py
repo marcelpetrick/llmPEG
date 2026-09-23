@@ -183,7 +183,7 @@ def test_survey_rejects_bad_manifest(tmp_path: Path) -> None:
 @pytest.mark.parametrize(
     ("mutation", "message"),
     [
-        (lambda data: data.pop("technology"), "technology must be an object"),
+        (lambda data: data.__setitem__("technology", "ollama"), "technology must be an object"),
         (
             lambda data: data["technology"].__setitem__("encoding", "ollama"),
             "technology encoding must be an object",
@@ -215,6 +215,20 @@ def test_survey_rejects_non_string_optional_copy(tmp_path: Path, artifact: Artif
     _save(manifest, data)
     with pytest.raises(ArtifactError, match="field finding must be a string"):
         render_survey(manifest)
+
+
+def test_survey_preserves_old_manifests_with_unknown_technology(
+    tmp_path: Path, artifact: Artifact
+) -> None:
+    manifest = _manifest(tmp_path, artifact)
+    data = _load_manifest(manifest)
+    del data["technology"]
+    _save(manifest, data)
+
+    output = render_survey(manifest)
+
+    assert output.count("Not recorded") == 6
+    assert output.count("This manifest predates structured technology provenance.") == 2
 
 
 def _load_manifest(path: Path) -> dict[str, Any]:
@@ -313,6 +327,8 @@ def test_qwen_comparison_is_local_and_traceable_to_authoritative_reports() -> No
     assert "Qwen-Image-2.1 baseline" in output
     assert "Qwen-Image-2.1 challenger" in output
     assert output.count("Challenger rejected.") == 2
+    assert "written by llmpeg/0.4.2" in output
+    assert "written by llmpeg/0.5.0" in output
     assert "Codex built-in" not in output
 
     for case in manifest["cases"]:
