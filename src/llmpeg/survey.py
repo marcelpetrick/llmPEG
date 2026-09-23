@@ -20,6 +20,11 @@ def render_survey(manifest_path: Path) -> str:
     root = manifest_path.parent
     title = _string(manifest, "title")
     profile = _string(manifest, "profile")
+    technology = manifest.get("technology")
+    if not isinstance(technology, dict):
+        raise ArtifactError("survey technology must be an object")
+    encoding_name, encoding_detail = _technology_stage(technology, "encoding")
+    reconstruction_name, reconstruction_detail = _technology_stage(technology, "reconstruction")
     cases_value = manifest.get("cases")
     if not isinstance(cases_value, list) or not cases_value:
         raise ArtifactError("survey cases must be a non-empty array")
@@ -67,8 +72,10 @@ def render_survey(manifest_path: Path) -> str:
             _number(case["baseline_metrics"], "visual_proxy_score") for case in compared
         )
         delta = visual_mean - baseline_mean
+        comparison_label = _optional_string(manifest, "comparison_label", "Baseline → refined")
         comparison = (
-            '<p class="comparison"><strong>Baseline → refined:</strong> mean visual proxy '
+            f'<p class="comparison"><strong>{html.escape(comparison_label)}:</strong> '
+            "mean visual proxy "
             f"{baseline_mean:.3f} → {visual_mean:.3f} ({delta:+.3f}). "
             "Use the three-way comparisons below to judge identity directly.</p>"
         )
@@ -86,9 +93,13 @@ def render_survey(manifest_path: Path) -> str:
     # so each survey needs its own key or rating one page erases the ratings on another.
     storage_key = json.dumps(f"llmpeg-survey-v2:{title}").replace("</", "<\\/")
     return _page(
-        title=title,
-        date=_string(manifest, "date"),
-        profile=profile,
+        title=html.escape(title),
+        date=html.escape(_string(manifest, "date")),
+        profile=html.escape(profile),
+        encoding_name=html.escape(encoding_name),
+        encoding_detail=html.escape(encoding_detail),
+        reconstruction_name=html.escape(reconstruction_name),
+        reconstruction_detail=html.escape(reconstruction_detail),
         count=len(cases),
         pass_count=pass_count,
         quality=quality,
@@ -124,24 +135,30 @@ def _render_case(case: dict[str, Any]) -> str:
     reconstruction = html.escape(_string(case, "reconstruction"), quote=True)
     prompt = html.escape(_string(case, "prompt"), quote=True)
     result = html.escape(_string(case, "result"), quote=True)
+    source_label = html.escape(_optional_string(case, "source_label", "Source"))
+    reconstruction_label = html.escape(
+        _optional_string(case, "reconstruction_label", "Refined prompt-only reconstruction")
+    )
     figures = (
         f'<figure><div class="image-frame"><img src="{source}" alt="Source: '
-        f'{html.escape(_string(case, "name"), quote=True)}"></div><figcaption>Source</figcaption>'
+        f'{html.escape(_string(case, "name"), quote=True)}"></div>'
+        f"<figcaption>{source_label}</figcaption>"
         "</figure>"
     )
     baseline = case.get("baseline_reconstruction")
     if baseline is not None:
         if not isinstance(baseline, str) or not baseline:
             raise ArtifactError(f"survey baseline_reconstruction invalid for {case_id}")
+        baseline_label = html.escape(_optional_string(case, "baseline_label", "Balanced baseline"))
         figures += (
             f'<figure><div class="image-frame"><img src="{html.escape(baseline, quote=True)}" '
             f'alt="Balanced baseline: {html.escape(_string(case, "name"), quote=True)}"></div>'
-            "<figcaption>Balanced baseline</figcaption></figure>"
+            f"<figcaption>{baseline_label}</figcaption></figure>"
         )
     figures += (
         f'<figure><div class="image-frame"><img src="{reconstruction}" '
         f'alt="Prompt-only reconstruction: {html.escape(_string(case, "name"), quote=True)}">'
-        "</div><figcaption>Refined prompt-only reconstruction</figcaption></figure>"
+        f"</div><figcaption>{reconstruction_label}</figcaption></figure>"
     )
     delta = ""
     if "baseline_metrics" in case:
@@ -149,6 +166,12 @@ def _render_case(case: dict[str, Any]) -> str:
         after = _number(metrics, "visual_proxy_score")
         delta = f'<p class="delta"><strong>Visual proxy change:</strong> {before:.3f} → {after:.3f} ({after - before:+.3f})</p>'
     delta_line = f"  {delta}\n" if delta else ""
+    finding = _optional_string(case, "finding", "")
+    finding_line = (
+        f'  <p class="case-finding"><strong>Measured outcome:</strong> {html.escape(finding)}</p>\n'
+        if finding
+        else ""
+    )
     status = html.escape(str(case["status"]).lower(), quote=True)
     return f"""
 <article class="case" id="{case_id}">
@@ -163,7 +186,7 @@ def _render_case(case: dict[str, Any]) -> str:
     {_metric("dHash", _number(metrics, "dhash_similarity"), False)}
     {_metric("Palette distance", _number(metrics, "palette_distance"), True)}
   </div>
-{delta_line}  <p class="compression"><strong>{case["ratio"]:.1f}:1</strong> artifact ratio · {case["source_bytes"]:,} → {case["artifact_bytes"]:,} bytes</p>
+{delta_line}{finding_line}  <p class="compression"><strong>{case["ratio"]:.1f}:1</strong> artifact ratio · {case["source_bytes"]:,} → {case["artifact_bytes"]:,} bytes</p>
   <details><summary>Prompt and machine-readable result</summary><pre>{html.escape(str(case["prompt_text"]))}</pre><p><a href="{prompt}">Prompt</a> · <a href="{result}">Evaluation JSON</a></p></details>
   <section class="questions" data-case="{case_id}">
     <h3>Your assessment</h3>
@@ -215,6 +238,20 @@ def _string(data: dict[str, Any], key: str) -> str:
     return value
 
 
+def _optional_string(data: dict[str, Any], key: str, default: str) -> str:
+    value = data.get(key, default)
+    if not isinstance(value, str):
+        raise ArtifactError(f"survey field {key} must be a string")
+    return value
+
+
+def _technology_stage(technology: dict[str, Any], key: str) -> tuple[str, str]:
+    stage = technology.get(key)
+    if not isinstance(stage, dict):
+        raise ArtifactError(f"survey technology {key} must be an object")
+    return _string(stage, "name"), _string(stage, "detail")
+
+
 def _number(data: dict[str, Any], key: str) -> float:
     value = data.get(key)
     if isinstance(value, bool) or not isinstance(value, int | float):
@@ -226,13 +263,14 @@ def _page(**values: Any) -> str:
     return """<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{title}</title><style>
-:root{{--ink:#17202a;--muted:#667085;--paper:#f6f4ef;--card:#fff;--navy:#102a43;--blue:#2878b5;--mint:#32a071;--line:#ddd8ce}}*{{box-sizing:border-box}}body{{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 ui-sans-serif,system-ui,sans-serif}}header{{background:var(--navy);color:white;padding:64px max(24px,calc((100% - 1180px)/2)) 54px}}header p{{max-width:760px;color:#d9e7f2;font-size:1.08rem}}h1{{font-size:clamp(2.4rem,6vw,5rem);line-height:.98;margin:.2em 0}}main{{max-width:1180px;margin:auto;padding:36px 24px 72px}}.summary{{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:-65px;margin-bottom:36px}}.summary div{{background:var(--card);padding:18px;border-radius:14px;box-shadow:0 8px 25px #102a4315}}.summary span,.eyebrow{{display:block;color:var(--muted);font-size:.73rem;font-weight:750;letter-spacing:.08em;text-transform:uppercase}}.summary strong{{font-size:1.65rem}}.finding{{border-left:5px solid var(--blue);padding:14px 20px;background:#eaf3f9;border-radius:0 10px 10px 0;margin:0 0 16px}}.comparison{{padding:14px 20px;background:#fff7d6;border-radius:10px;margin:0 0 36px}}.case{{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;margin:24px 0;box-shadow:0 12px 35px #243b5310}}.case-head{{display:flex;justify-content:space-between;gap:20px;align-items:start}}h2{{margin:.15em 0 .7em;font-size:1.7rem}}.status{{background:#dff5e9;color:#17663f;border-radius:999px;padding:6px 12px;font-weight:800;font-size:.78rem}}.status.fail{{background:#fee2e2;color:#991b1b}}.status.incomplete{{background:#fff7d6;color:#854d0e}}.pair{{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}}figure{{margin:0}}.image-frame{{background:#e8e6e0;aspect-ratio:4/3;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center}}img{{width:100%;height:100%;object-fit:contain}}figcaption{{font-weight:750;padding:7px 2px}}.metrics{{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}}.metric{{font-size:.82rem}}.metric strong{{float:right}}.bar{{height:7px;background:#e8e9eb;border-radius:9px;clear:both;overflow:hidden;margin-top:6px}}.bar i{{display:block;height:100%;background:var(--mint)}}.compression,.delta{{color:var(--muted)}}details{{border-top:1px solid var(--line);padding-top:13px}}summary{{cursor:pointer;font-weight:700}}pre{{white-space:pre-wrap;background:#101b26;color:#e7edf2;padding:16px;border-radius:10px;max-height:340px;overflow:auto}}a{{color:#176b9c}}.questions{{margin-top:20px;background:#f8fafb;border-radius:14px;padding:18px}}h3{{margin-top:0}}fieldset{{border:0;padding:0;margin:15px 0}}legend{{font-weight:650}}.scale{{display:flex;gap:7px;margin-top:7px}}.scale input{{position:absolute;opacity:0}}.scale span{{display:grid;place-items:center;width:38px;height:34px;border:1px solid #b9c2ca;border-radius:8px;cursor:pointer;background:white}}.scale input:checked+span{{background:var(--blue);color:white;border-color:var(--blue)}}small{{color:var(--muted)}}.comment{{display:grid;gap:6px;font-weight:650}}textarea{{font:inherit;padding:9px;border:1px solid #b9c2ca;border-radius:8px}}.credit{{font-size:.78rem;color:var(--muted);margin-bottom:0}}.actions{{position:sticky;bottom:12px;display:flex;gap:10px;justify-content:center;margin-top:30px}}button{{border:0;border-radius:999px;padding:12px 20px;font-weight:750;cursor:pointer;background:var(--navy);color:white}}button.secondary{{background:white;color:var(--navy);border:1px solid var(--line)}}footer{{color:var(--muted);font-size:.85rem;margin-top:36px}}@media(max-width:800px){{.summary{{grid-template-columns:repeat(2,1fr);margin-top:-45px}}.pair,.metrics{{grid-template-columns:1fr}}header{{padding-top:42px}}}}
-</style></head><body><header><span class="eyebrow">EXPLORATORY BENCHMARK · {date}</span><h1>{title}</h1><p>Can a compact semantic description preserve what matters in a photograph? {count} source images were encoded with the same vision model and <code>{profile}</code> profile, then reconstructed by Codex image generation from text alone.{provenance}</p></header><main>
+:root{{--ink:#17202a;--muted:#667085;--paper:#f6f4ef;--card:#fff;--navy:#102a43;--blue:#2878b5;--mint:#32a071;--line:#ddd8ce}}*{{box-sizing:border-box}}body{{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 ui-sans-serif,system-ui,sans-serif}}header{{background:var(--navy);color:white;padding:64px max(24px,calc((100% - 1180px)/2)) 54px}}header p{{max-width:860px;color:#d9e7f2;font-size:1.08rem}}h1{{font-size:clamp(2.4rem,6vw,5rem);line-height:.98;margin:.2em 0}}main{{max-width:1180px;margin:auto;padding:36px 24px 72px}}.technology{{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:stretch;margin:0 0 24px}}.technology article{{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}}.technology strong{{display:block;font-size:1.12rem;margin:.2em 0}}.technology p{{margin:.35em 0 0;color:var(--muted)}}.technology .arrow{{display:grid;place-items:center;color:var(--blue);font-weight:850}}.boundary{{grid-column:1/-1;background:#eaf3f9;border-left:5px solid var(--blue);border-radius:0 10px 10px 0;padding:12px 16px;margin:0}}.summary{{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:-65px;margin-bottom:36px}}.summary div{{background:var(--card);padding:18px;border-radius:14px;box-shadow:0 8px 25px #102a4315}}.summary span,.eyebrow{{display:block;color:var(--muted);font-size:.73rem;font-weight:750;letter-spacing:.08em;text-transform:uppercase}}.summary strong{{font-size:1.65rem}}.finding{{border-left:5px solid var(--blue);padding:14px 20px;background:#eaf3f9;border-radius:0 10px 10px 0;margin:0 0 16px}}.comparison,.case-finding{{padding:14px 20px;background:#fff7d6;border-radius:10px;margin:0 0 24px}}.case{{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;margin:24px 0;box-shadow:0 12px 35px #243b5310}}.case-head{{display:flex;justify-content:space-between;gap:20px;align-items:start}}h2{{margin:.15em 0 .7em;font-size:1.7rem}}.status{{background:#dff5e9;color:#17663f;border-radius:999px;padding:6px 12px;font-weight:800;font-size:.78rem}}.status.fail,.status.rejected{{background:#fee2e2;color:#991b1b}}.status.incomplete{{background:#fff7d6;color:#854d0e}}.pair{{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}}figure{{margin:0}}.image-frame{{background:#e8e6e0;aspect-ratio:4/3;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center}}img{{width:100%;height:100%;object-fit:contain}}figcaption{{font-weight:750;padding:7px 2px}}.metrics{{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}}.metric{{font-size:.82rem}}.metric strong{{float:right}}.bar{{height:7px;background:#e8e9eb;border-radius:9px;clear:both;overflow:hidden;margin-top:6px}}.bar i{{display:block;height:100%;background:var(--mint)}}.compression,.delta{{color:var(--muted)}}details{{border-top:1px solid var(--line);padding-top:13px}}summary{{cursor:pointer;font-weight:700}}pre{{white-space:pre-wrap;background:#101b26;color:#e7edf2;padding:16px;border-radius:10px;max-height:340px;overflow:auto}}a{{color:#176b9c}}.questions{{margin-top:20px;background:#f8fafb;border-radius:14px;padding:18px}}h3{{margin-top:0}}fieldset{{border:0;padding:0;margin:15px 0}}legend{{font-weight:650}}.scale{{display:flex;gap:7px;margin-top:7px}}.scale input{{position:absolute;opacity:0}}.scale span{{display:grid;place-items:center;width:38px;height:34px;border:1px solid #b9c2ca;border-radius:8px;cursor:pointer;background:white}}.scale input:checked+span{{background:var(--blue);color:white;border-color:var(--blue)}}small{{color:var(--muted)}}.comment{{display:grid;gap:6px;font-weight:650}}textarea{{font:inherit;padding:9px;border:1px solid #b9c2ca;border-radius:8px}}.credit{{font-size:.78rem;color:var(--muted);margin-bottom:0}}.actions{{position:sticky;bottom:12px;display:flex;gap:10px;justify-content:center;margin-top:30px}}button{{border:0;border-radius:999px;padding:12px 20px;font-weight:750;cursor:pointer;background:var(--navy);color:white}}button.secondary{{background:white;color:var(--navy);border:1px solid var(--line)}}footer{{color:var(--muted);font-size:.85rem;margin-top:36px}}@media(max-width:800px){{.summary{{grid-template-columns:repeat(2,1fr);margin-top:-45px}}.technology{{grid-template-columns:1fr}}.technology .arrow{{transform:rotate(90deg)}}.pair,.metrics{{grid-template-columns:1fr}}header{{padding-top:42px}}}}
+</style></head><body><header><span class="eyebrow">EXPLORATORY BENCHMARK · {date}</span><h1>{title}</h1><p>Can a compact semantic description preserve what matters in a photograph? {count} source images were encoded with <strong>{encoding_name}</strong> and the <code>{profile}</code> profile, then reconstructed from text with <strong>{reconstruction_name}</strong>.{provenance}</p></header><main>
 <section class="summary"><div><span>Cases passed</span><strong>{pass_count}/{count}</strong></div><div><span>Mean visual proxy</span><strong>{visual_mean:.3f}</strong></div><div><span>Mean layout</span><strong>{layout_mean:.3f}</strong></div><div><span>Mean palette distance</span><strong>{palette_mean:.3f}</strong></div><div><span>Mean dHash</span><strong>{dhash_mean:.3f}</strong></div></section>
+<section class="technology" aria-label="Technology used"><article><span class="eyebrow">Compression · semantic encoding</span><strong>{encoding_name}</strong><p>{encoding_detail}</p></article><div class="arrow" aria-hidden="true">TEXT ONLY →</div><article><span class="eyebrow">Reconstruction · not decompression</span><strong>{reconstruction_name}</strong><p>{reconstruction_detail}</p></article><p class="boundary"><strong>Model boundary:</strong> the image generator received the rendered text prompt only. It never received the source image or source pixels.</p></section>
 <p class="finding"><strong>Finding: {quality} semantic quality.</strong> {pass_count}/{count} cases meet the <code>{profile}</code> proxy thresholds; mean dHash is {dhash_mean:.3f}. These structural metrics do not prove identity preservation, so inspect and rate each pair below. With n={count}, this is a product probe—not a population estimate.</p>
 {comparison}
 {cards}
 <div class="actions"><button id="export">Export my ratings</button><button class="secondary" id="reset">Reset</button></div>
-<footer><p><strong>Method.</strong> Sources were encoded by Ollama/Qwen3-VL into canonical llmPEG JSON. Each reconstruction used the resulting text prompt only. Metrics are deterministic structural proxies: dHash, RGB histogram, edge density, aspect ratio, and symmetric dominant-palette distance. They are not CLIP scores or human judgments. Ratings stay in this browser until exported.</p></footer></main>
+<footer><p><strong>Method.</strong> Sources were encoded by {encoding_name} into canonical llmPEG JSON. Each reconstruction used {reconstruction_name} with the resulting text prompt only. Metrics are deterministic structural proxies: dHash, RGB histogram, edge density, aspect ratio, and symmetric dominant-palette distance. They are not CLIP scores or human judgments. Ratings stay in this browser until exported.</p></footer></main>
 <script>const ids={survey_ids},key={storage_key},legacyKey="llmpeg-cat-survey-v1";function collect(){{const out={{created_at:new Date().toISOString(),ratings:{{}}}};for(const id of ids){{const box=document.querySelector(`[data-case="${{id}}"]`),item={{}};box.querySelectorAll("input:checked").forEach(x=>item[x.name.slice(id.length+1)]=Number(x.value));item.comment=box.querySelector("textarea").value;out.ratings[id]=item}}return out}}function save(){{localStorage.setItem(key,JSON.stringify(collect()))}}document.addEventListener("change",save);document.addEventListener("input",save);try{{const old=JSON.parse(localStorage.getItem(key)||localStorage.getItem(legacyKey)||"null");if(old?.ratings)for(const [id,item] of Object.entries(old.ratings)){{if(!ids.includes(id))continue;for(const [field,value] of Object.entries(item)){{if(field==="comment")document.querySelector(`[name="${{id}}-comment"]`).value=value;else{{const input=document.querySelector(`[name="${{id}}-${{field}}"] [value="${{value}}"]`)||document.querySelector(`input[name="${{id}}-${{field}}"][value="${{value}}"]`);if(input)input.checked=true}}}}}}}}catch(e){{console.warn(e)}}document.getElementById("export").onclick=()=>{{const blob=new Blob([JSON.stringify(collect(),null,2)],{{type:"application/json"}}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="llmpeg-survey-response.json";a.click();URL.revokeObjectURL(a.href)}};document.getElementById("reset").onclick=()=>{{localStorage.removeItem(key);document.querySelectorAll("input").forEach(x=>x.checked=false);document.querySelectorAll("textarea").forEach(x=>x.value="")}};</script></body></html>
 """.format(**values)

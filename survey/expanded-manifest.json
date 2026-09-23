@@ -2,6 +2,16 @@
   "title": "llmPEG Expanded Scene Benchmark",
   "date": "2026-09-04",
   "profile": "detailed",
+  "technology": {
+    "encoding": {
+      "name": "Ollama / qwen3-vl:32b-ctx49k",
+      "detail": "The vision model received the source image and wrote a detailed llmPEG text artifact with temperature 0 and seed 42."
+    },
+    "reconstruction": {
+      "name": "Codex built-in image generation",
+      "detail": "The historical hosted generator received only the rendered artifact prompt; its underlying image-model version was not exposed."
+    }
+  },
   "cases": [
     {
       "id": "astronaut-crew-expanded",

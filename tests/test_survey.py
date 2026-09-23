@@ -36,6 +36,16 @@ def _manifest(tmp_path: Path, artifact: Artifact) -> Path:
                 "title": "Cats & compression",
                 "date": "2026-09-03",
                 "profile": "balanced",
+                "technology": {
+                    "encoding": {
+                        "name": "Local <vision> model",
+                        "detail": "Source image → text & structure",
+                    },
+                    "reconstruction": {
+                        "name": "Local image generator",
+                        "detail": "Rendered text only → new pixels",
+                    },
+                },
                 "cases": [
                     {
                         "id": "cat-one",
@@ -70,6 +80,11 @@ def test_render_survey_is_interactive_and_escaped(tmp_path: Path, artifact: Arti
     assert "localStorage" in output
     assert "1/1 cases meet" in output
     assert "<code>balanced</code> profile" in output
+    assert "Compression · semantic encoding" in output
+    assert "Reconstruction · not decompression" in output
+    assert "Local &lt;vision&gt; model" in output
+    assert "Source image → text &amp; structure" in output
+    assert "source image or source pixels" in output
 
 
 def test_survey_intro_makes_no_claim_the_cases_do_not_support(
@@ -108,12 +123,20 @@ def test_render_survey_compares_baseline(tmp_path: Path, artifact: Artifact) -> 
     case = data["cases"][0]
     case["baseline_reconstruction"] = "baseline.png"
     case["baseline_result"] = "result.json"
+    case["source_label"] = "Original <source>"
+    case["baseline_label"] = "Qwen baseline"
+    case["reconstruction_label"] = "Qwen challenger"
+    case["finding"] = "Rejected: A/B order was <inconsistent>."
+    data["comparison_label"] = "Baseline → challenger"
     manifest.write_text(json.dumps(data), encoding="utf-8")
 
     output = render_survey(manifest)
 
-    assert "Baseline → refined" in output
-    assert "Balanced baseline" in output
+    assert "Baseline → challenger" in output
+    assert "Original &lt;source&gt;" in output
+    assert "Qwen baseline" in output
+    assert "Qwen challenger" in output
+    assert "Rejected: A/B order was &lt;inconsistent&gt;." in output
     assert "(+0.000)" in output
 
 
@@ -129,8 +152,49 @@ def test_write_survey_and_cli(tmp_path: Path, artifact: Artifact) -> None:
 
 def test_survey_rejects_bad_manifest(tmp_path: Path) -> None:
     manifest = tmp_path / "bad.json"
-    manifest.write_text('{"title":"x","date":"x","profile":"x","cases":[]}')
+    manifest.write_text(
+        '{"title":"x","date":"x","profile":"x","technology":'
+        '{"encoding":{"name":"x","detail":"x"},'
+        '"reconstruction":{"name":"x","detail":"x"}},"cases":[]}'
+    )
     with pytest.raises(ArtifactError, match="non-empty"):
+        render_survey(manifest)
+
+
+@pytest.mark.parametrize(
+    ("mutation", "message"),
+    [
+        (lambda data: data.pop("technology"), "technology must be an object"),
+        (
+            lambda data: data["technology"].__setitem__("encoding", "ollama"),
+            "technology encoding must be an object",
+        ),
+        (
+            lambda data: data["technology"]["reconstruction"].__setitem__("detail", ""),
+            "field detail must be a non-empty string",
+        ),
+    ],
+)
+def test_survey_rejects_invalid_technology_metadata(
+    tmp_path: Path,
+    artifact: Artifact,
+    mutation: Any,
+    message: str,
+) -> None:
+    manifest = _manifest(tmp_path, artifact)
+    data = _load_manifest(manifest)
+    mutation(data)
+    _save(manifest, data)
+    with pytest.raises(ArtifactError, match=message):
+        render_survey(manifest)
+
+
+def test_survey_rejects_non_string_optional_copy(tmp_path: Path, artifact: Artifact) -> None:
+    manifest = _manifest(tmp_path, artifact)
+    data = _load_manifest(manifest)
+    data["cases"][0]["finding"] = 42
+    _save(manifest, data)
+    with pytest.raises(ArtifactError, match="field finding must be a string"):
         render_survey(manifest)
 
 
