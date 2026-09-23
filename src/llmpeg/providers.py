@@ -210,13 +210,18 @@ Return ONLY one valid JSON object with exactly these fields:
   "generation_prompt": "standalone generator-ready description with identity landmarks",
   "critical_text": ["exact visible strings worth preserving"],
   "composition": [{{
-    "region": "normalized area or approximate x/y/w/h percentages",
+    "region": "x A-B%, y C-D%",
     "description": "visible content, geometry, landmark positions, and relationships"
   }}],
   "palette": ["#RRGGBB"],
-  "style": "medium and visual treatment",
+  "style": "medium, camera viewpoint, lens and depth of field, light direction and hardness",
   "avoid": ["specific identity, geometry, or content errors to avoid"]
 }}
+Composition: give 3 to 6 regions that together cover the frame, main subject first. Each region
+is exactly "x A-B%, y C-D%", measured from the left and top edges, followed by what occupies it.
+Style: record observable camera and light facts only, never mood, symbolism, or intent.
+Exposure, contrast, and saturation are measured from the pixels separately, so do not estimate
+them and do not call the image vintage, cinematic, vibrant, or HDR unless that is unmistakable.
 Describe only what is visible; never infer a name, breed, backstory, or hidden feature. Make the
 generation_prompt self-contained rather than referring to this image or the analysis. Do not wrap
 the JSON in Markdown.{focus}"""

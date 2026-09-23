@@ -114,6 +114,13 @@ def test_profile_instructions_differ() -> None:
     assert "percentages" in _vision_instruction(FidelityProfile.DETAILED)
 
 
+def test_instruction_fixes_region_format_and_leaves_tone_to_pixels() -> None:
+    instruction = _vision_instruction(FidelityProfile.DETAILED)
+    assert 'exactly "x A-B%, y C-D%"' in instruction
+    assert "measured from the pixels separately" in instruction
+    assert "never mood, symbolism, or intent" in instruction
+
+
 def test_ollama_accepts_valid_json_from_thinking_field(description: dict[str, Any]) -> None:
     response = Response({"message": {"content": "", "thinking": json.dumps(description)}})
     with patch("urllib.request.urlopen", return_value=response):
