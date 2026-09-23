@@ -317,55 +317,33 @@ def test_survey_rejects_invalid_baseline_references(tmp_path: Path, artifact: Ar
         render_survey(manifest)
 
 
-def test_qwen_comparison_is_local_and_traceable_to_authoritative_reports() -> None:
+def test_qwen_review_is_local_and_traceable_to_the_review_report() -> None:
     manifest_path = REPO / "survey/qwen-manifest.json"
     manifest = _load_manifest(manifest_path)
     output = render_survey(manifest_path)
+    report = _load_manifest(REPO / "survey/qwen/review/report.json")
+    by_case = {case["case"]: case for case in report["cases"]}
 
     assert "Local Ollama / qwen3.5:4b" in output
     assert "Local ComfyUI / Qwen-Image-2.1" in output
-    assert "Qwen-Image-2.1 baseline" in output
-    assert "Qwen-Image-2.1 challenger" in output
-    assert output.count("Challenger rejected.") == 2
-    assert "written by llmpeg/0.4.2" in output
-    assert "written by llmpeg/0.5.0" in output
+    assert "baseline" not in output.lower()
     assert "Codex built-in" not in output
+    assert report["encoder"] == "ollama/qwen3.5:4b"
+    assert report["resolution"] == 512
+    assert report["seed"] == 42
+    assert [case["id"] for case in manifest["cases"]] == [f"qwen-review-{name}" for name in by_case]
 
     for case in manifest["cases"]:
-        for field in (
-            "source",
-            "baseline_reconstruction",
-            "reconstruction",
-            "artifact",
-            "prompt",
-            "result",
-            "baseline_result",
-            "report",
-        ):
+        for field in ("source", "reconstruction", "artifact", "prompt", "result", "report"):
             assert (manifest_path.parent / case[field]).is_file(), (
                 f"missing {field} for {case['id']}"
             )
-
-        evidence_dir = (manifest_path.parent / case["result"]).parent
-        report = _load_manifest(evidence_dir / "report.json")
+        measured = by_case[case["id"].removeprefix("qwen-review-")]
         result = _load_manifest(manifest_path.parent / case["result"])
-        baseline_result = _load_manifest(manifest_path.parent / case["baseline_result"])
-        assert report["encoder"] == {
-            "model": "qwen3.5:4b",
-            "profile": "detailed",
-            "provider": "ollama",
-        }
-        assert report["generator"] == {
-            "model": "qwen-image-2.1",
-            "provider": "comfyui",
-            "resolution": 512,
-            "seed": 42,
-        }
-        assert result["metrics"] == report["rounds"][0]["rating"]["deterministic"]
-        assert baseline_result["metrics"] == report["baseline"]["rating"]["deterministic"]
-        assert result["status"] == "rejected"
-        assert report["rounds"][0]["accepted"] is False
-        assert report["rounds"][0]["pairwise"]["consistent"] is False
+        assert result["status"] == measured["status"]
+        source, rendered = measured["source_tone"], measured["reconstruction_tone"]
+        for key in ("luminance", "contrast", "saturation"):
+            assert f"{key} {source[key]} → {rendered[key]}" in case["finding"]
 
 
 def test_pages_workflow_publishes_only_the_qwen_review_page() -> None:

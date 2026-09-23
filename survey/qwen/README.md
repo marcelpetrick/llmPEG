@@ -1,8 +1,12 @@
 # Local Qwen-Image-2.1 comparison evidence
 
-This directory contains the two checked-in runs shown by `survey/qwen.html`, the GitHub Pages
-landing comparison. Both source photographs are existing public-domain survey sources; their
-credits are copied into each authoritative `report.json` and into `survey/qwen-manifest.json`.
+`survey/qwen.html` now shows the single-reconstruction review in [`review/`](review/README.md),
+with tone experiments in [`tone-sweep/`](tone-sweep/README.md) and
+[`docs/tone.md`](../../docs/tone.md). The two creator/rater runs below are **superseded** as the
+published page and kept as evidence.
+
+This directory contains the two creator/rater runs that `survey/qwen.html` used to show. Both
+source photographs are existing public-domain survey sources; their credits are copied into each authoritative `report.json` and into `survey/qwen-manifest.json`.
 
 ## Measured pipeline
 

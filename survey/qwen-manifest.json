@@ -1,12 +1,11 @@
 {
-  "title": "Local Qwen-Image-2.1 Reconstruction Evidence",
+  "title": "Local Qwen-Image-2.1 Review",
   "date": "2026-09-23",
   "profile": "detailed",
-  "comparison_label": "Qwen baseline → Qwen challenger",
   "technology": {
     "encoding": {
       "name": "Local Ollama / qwen3.5:4b",
-      "detail": "The local vision model received the source image and wrote a detailed gzip-wrapped llmPEG text artifact with temperature 0, seed 42, and /no_think."
+      "detail": "The local vision model received the source image and wrote a detailed gzip-wrapped llmPEG 1.1 artifact, including pixel-measured tone, with temperature 0, seed 42, and /no_think."
     },
     "reconstruction": {
       "name": "Local ComfyUI / Qwen-Image-2.1",
@@ -15,20 +14,17 @@
   },
   "cases": [
     {
-      "id": "qwen-monochrome-cat",
-      "name": "Monochrome cat · creator/rater experiment",
+      "id": "qwen-review-cat-monochrome",
+      "name": "Monochrome cat portrait",
       "source": "sources/cat-monochrome.jpg",
       "source_label": "Original source",
-      "baseline_reconstruction": "qwen/creator-rater/baseline.png",
-      "baseline_label": "Qwen-Image-2.1 baseline",
-      "reconstruction": "qwen/creator-rater/challenger-1.png",
-      "reconstruction_label": "Qwen-Image-2.1 challenger",
-      "artifact": "qwen/creator-rater/challenger-1.llmpeg.json.gz",
-      "prompt": "qwen/creator-rater/challenger-1.prompt.txt",
-      "result": "qwen/creator-rater/challenger-1-result.json",
-      "baseline_result": "qwen/creator-rater/baseline-result.json",
-      "report": "qwen/creator-rater/report.json",
-      "finding": "Challenger rejected. The two pixels-only A/B judgments preferred whichever image appeared second, so the order-swapped logical verdicts disagreed; semantic median also fell from 85 to 80.",
+      "reconstruction": "qwen/review/cat-monochrome.png",
+      "reconstruction_label": "Qwen-Image-2.1 reconstruction",
+      "artifact": "qwen/review/cat-monochrome.llmpeg.json.gz",
+      "prompt": "qwen/review/cat-monochrome.prompt.txt",
+      "result": "qwen/review/cat-monochrome-result.json",
+      "report": "qwen/review/report.json",
+      "finding": "Measured tone, source → reconstruction: luminance 125 → 67, contrast 61 → 62, saturation 0 → 11 (0–255). The prompt's tone line did not stop the generator darkening the image or, for colour sources, raising saturation.",
       "credit": {
         "author": "Barmanru",
         "license": "Public domain dedication",
@@ -37,25 +33,41 @@
       }
     },
     {
-      "id": "qwen-keyboard-cat-holdout",
-      "name": "Keyboard cat · untouched holdout",
+      "id": "qwen-review-cat-on-keyboard",
+      "name": "Kitten sleeping on a keyboard",
       "source": "sources/cat-on-keyboard.jpg",
       "source_label": "Original source",
-      "baseline_reconstruction": "qwen/creator-rater-holdout/baseline.png",
-      "baseline_label": "Qwen-Image-2.1 baseline",
-      "reconstruction": "qwen/creator-rater-holdout/challenger-1.png",
-      "reconstruction_label": "Qwen-Image-2.1 challenger",
-      "artifact": "qwen/creator-rater-holdout/challenger-1.llmpeg.json.gz",
-      "prompt": "qwen/creator-rater-holdout/challenger-1.prompt.txt",
-      "result": "qwen/creator-rater-holdout/challenger-1-result.json",
-      "baseline_result": "qwen/creator-rater-holdout/baseline-result.json",
-      "report": "qwen/creator-rater-holdout/report.json",
-      "finding": "Challenger rejected. The order-swapped pixels-only verdicts disagreed, the deterministic proxy was effectively unchanged (0.669898 to 0.669543), and semantic median fell from 75 to 70.",
+      "reconstruction": "qwen/review/cat-on-keyboard.png",
+      "reconstruction_label": "Qwen-Image-2.1 reconstruction",
+      "artifact": "qwen/review/cat-on-keyboard.llmpeg.json.gz",
+      "prompt": "qwen/review/cat-on-keyboard.prompt.txt",
+      "result": "qwen/review/cat-on-keyboard-result.json",
+      "report": "qwen/review/report.json",
+      "finding": "Measured tone, source → reconstruction: luminance 148 → 111, contrast 55 → 46, saturation 48 → 88 (0–255). The prompt's tone line did not stop the generator darkening the image or, for colour sources, raising saturation.",
       "credit": {
         "author": "Remedios44",
         "license": "Public domain dedication",
         "license_url": "https://commons.wikimedia.org/wiki/File:Wikipedians_cat.jpg#Licensing",
         "source_url": "https://commons.wikimedia.org/wiki/File:Wikipedians_cat.jpg"
+      }
+    },
+    {
+      "id": "qwen-review-cat-on-grass",
+      "name": "Cat stretched on grass",
+      "source": "sources/cat-on-grass.jpg",
+      "source_label": "Original source",
+      "reconstruction": "qwen/review/cat-on-grass.png",
+      "reconstruction_label": "Qwen-Image-2.1 reconstruction",
+      "artifact": "qwen/review/cat-on-grass.llmpeg.json.gz",
+      "prompt": "qwen/review/cat-on-grass.prompt.txt",
+      "result": "qwen/review/cat-on-grass-result.json",
+      "report": "qwen/review/report.json",
+      "finding": "Measured tone, source → reconstruction: luminance 158 → 124, contrast 24 → 33, saturation 89 → 126 (0–255). The prompt's tone line did not stop the generator darkening the image or, for colour sources, raising saturation.",
+      "credit": {
+        "author": "Clavecin",
+        "license": "Public domain dedication",
+        "license_url": "https://commons.wikimedia.org/wiki/File:Cat_full_length.jpg#Licensing",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Cat_full_length.jpg"
       }
     }
   ]
