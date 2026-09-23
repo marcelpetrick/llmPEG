@@ -30,6 +30,19 @@ path = "src/llmpeg/_version.py"
 [tool.hatch.build.targets.wheel]
 packages = ["src/llmpeg"]
 
+[tool.hatch.build.targets.sdist]
+include = [
+  "/LICENSE",
+  "/README.md",
+  "/docs",
+  "/prototypeWebUI",
+  "/pyproject.toml",
+  "/scripts",
+  "/src",
+  "/tests",
+  "/uv.lock",
+]
+
 [tool.uv]
 required-version = "==0.12.17"
 # The version is read from _version.py, so a bump must rebuild the installed metadata.

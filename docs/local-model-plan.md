@@ -248,5 +248,12 @@ verdict. Automatic ratings may guide experiments, but cannot be promoted to huma
   Web model-call serialization, experiment output preflight, and an insufficient CLI privacy
   notice. No Code or Architecture findings remain. The definitive gate passed: 44 files formatted,
   Ruff clean, strict mypy clean across 28 source files, 163 tests passed at 95.40% branch-aware
-  coverage, and both 0.5.0 distributions built successfully. Push, tag, and release verification
-  remain.
+  coverage, and both 0.5.0 distributions built successfully.
+- **2026-09-23 — release asset audit found and corrected an oversized sdist.** The first published
+  0.5.0 source archive was 142 MiB because Hatch's default file selection included tracked survey
+  reconstructions and presentation videos. The sdist now explicitly contains source, tests,
+  measurement tools, prototype code, documentation, lock file, and package metadata while large
+  repository media remains available from GitHub's source archive. A clean build from the corrected
+  sdist produced a 2.4 MiB source archive and a 60 KiB wheel; neither `media/` nor `survey/` was
+  packaged. Replacing the initial tag assets and verifying the corrected release are the remaining
+  release steps.
