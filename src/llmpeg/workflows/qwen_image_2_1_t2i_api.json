@@ -33,7 +33,7 @@
     "inputs": {
       "clip": ["2", 0],
       "prompt": "",
-      "negative_prompt": "blurry, low quality, watermark, jpeg artifacts, deformed hands, extra limbs",
+      "negative_prompt": "blurry, low quality, watermark, jpeg artifacts, deformed hands, extra limbs, oversaturated, overexposed, HDR, excessive contrast, glow",
       "resolution": 1024
     }
   },
