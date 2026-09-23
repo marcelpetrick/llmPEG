@@ -49,7 +49,7 @@ generation. Existing measurements and images will not be relabelled as Qwen-Imag
 - [ ] Run formatting, Ruff, strict mypy, the full branch-coverage suite, and package build.
 - [ ] Review the complete diff against the release base with the `reviewBranch` procedure, fix all
       confirmed findings, and rerun the full gate.
-- [ ] Bump the single package version and enforced documentation examples to 0.5.1.
+- [x] Bump the single package version and enforced documentation examples to 0.5.1.
 - [ ] Commit logical units with Conventional Commit messages, push, tag `v0.5.1`, publish the
       GitHub release, and verify both release assets and public comparison URLs.
 
