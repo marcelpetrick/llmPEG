@@ -1,6 +1,6 @@
 # Qwen comparison pages and 0.5.1 release plan
 
-Status: **implementation and review complete; release pending**
+Status: **complete**
 
 Started: 2026-09-23
 Target release: **0.5.1**
@@ -50,7 +50,7 @@ generation. Existing measurements and images will not be relabelled as Qwen-Imag
 - [x] Review the complete diff against the release base with the `reviewBranch` procedure, fix all
       confirmed findings, and rerun the full gate.
 - [x] Bump the single package version and enforced documentation examples to 0.5.1.
-- [ ] Commit logical units with Conventional Commit messages, push, tag `v0.5.1`, publish the
+- [x] Commit logical units with Conventional Commit messages, push, tag `v0.5.1`, publish the
       GitHub release, and verify both release assets and public comparison URLs.
 
 ## Progress log
@@ -84,3 +84,10 @@ generation. Existing measurements and images will not be relabelled as Qwen-Imag
   strict mypy clean across 28 source files, 171 tests at 95.42% branch-aware coverage, a 183 KiB
   sdist, a 62 KiB wheel, and both distributions accepted by Twine. Push, Pages deployment, tag,
   release, and public URL verification remain.
+- **2026-09-23 — v0.5.1 published and verified.** CI and Pages passed on release commit `b0303f0`;
+  the Qwen comparison, four generated images, two authoritative reports, and all three historical
+  page URLs returned HTTP 200. The annotated `v0.5.1` tag and GitHub release point to that commit.
+  Downloading the published assets independently confirmed version 0.5.1, archive integrity, a
+  62,767-byte wheel, a 187,428-byte sdist, and exclusion of large `media/` and `survey/` content
+  from the Python source distribution. This completion note intentionally follows the immutable
+  release tag as a documentation-only commit.
