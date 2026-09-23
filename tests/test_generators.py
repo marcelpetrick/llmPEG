@@ -125,7 +125,8 @@ def test_generate_comfyui_submits_polls_and_fetches(
             return Response(png_bytes())
         if url.endswith("/free"):
             assert isinstance(request, urllib.request.Request)
-            assert json.loads(request.data or b"") == {
+            assert isinstance(request.data, bytes)
+            assert json.loads(request.data) == {
                 "unload_models": True,
                 "free_memory": True,
             }
@@ -328,9 +329,7 @@ def test_execution_error_and_image_parsing_fail_closed() -> None:
             {
                 "status": {
                     "status_str": "error",
-                    "messages": [
-                        ["execution_error", {"exception_type": "TypeError"}]
-                    ],
+                    "messages": [["execution_error", {"exception_type": "TypeError"}]],
                 }
             }
         )

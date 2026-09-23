@@ -208,6 +208,7 @@ def test_comfyui_wrapper_passes_runtime_configuration(monkeypatch: pytest.Monkey
     calls: list[tuple[object, ...]] = []
     monkeypatch.setattr(web.CONFIG, "comfyui_host", "http://comfy.test")
     monkeypatch.setattr(web.CONFIG, "timeout", 99.0)
+
     def generate(*args: object) -> bytes:
         calls.append(args)
         return b"image"

@@ -133,9 +133,7 @@ class OllamaVisionProvider:
             except OSError:
                 detail = ""
             suffix = f": {detail}" if detail else ""
-            raise ArtifactError(
-                f"vision provider request failed ({error.code}){suffix}"
-            ) from error
+            raise ArtifactError(f"vision provider request failed ({error.code}){suffix}") from error
         except (OSError, urllib.error.URLError, json.JSONDecodeError) as error:
             raise ArtifactError(f"vision provider request failed: {error}") from error
         if not isinstance(raw, dict):
