@@ -24,6 +24,7 @@ DEFAULT_QWEN_SEED = 42
 MIN_QWEN_RESOLUTION = 256
 MAX_QWEN_RESOLUTION = 1536
 MAX_GENERATED_IMAGE_BYTES = 100 * 1024 * 1024
+MAX_COMFYUI_JSON_BYTES = 1024 * 1024
 POLL_INTERVAL_SECONDS = 1.0
 WORKFLOW_RESOURCE = "workflows/qwen_image_2_1_t2i_api.json"
 
@@ -182,7 +183,10 @@ def _request_json(url: str, payload: object | None, timeout: float) -> object:
     request = urllib.request.Request(url, data=data, headers=headers)
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:
-            return json.load(response)
+            data = response.read(MAX_COMFYUI_JSON_BYTES + 1)
+        if len(data) > MAX_COMFYUI_JSON_BYTES:
+            raise ArtifactError(f"ComfyUI JSON response exceeds {MAX_COMFYUI_JSON_BYTES} bytes")
+        return json.loads(data)
     except urllib.error.HTTPError as error:
         detail = _http_error_detail(error)
         raise ArtifactError(f"ComfyUI request failed ({error.code}){detail}") from error

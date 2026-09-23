@@ -30,6 +30,7 @@ RATING_FIELDS = (
 MAX_RATING_REPEATS = 5
 MAX_RATING_IMAGE_BYTES = 40 * 1024 * 1024
 RATER_MAX_EDGE = 1024
+MAX_RATER_RESPONSE_BYTES = 1024 * 1024
 
 RATING_SCHEMA: dict[str, Any] = {
     "type": "object",
@@ -292,12 +293,15 @@ class OllamaSimilarityRater:
         )
         try:
             with urllib.request.urlopen(request, timeout=self.timeout) as response:
-                raw = json.load(response)
+                raw = _bounded_response_json(response, "similarity rater")
         except (OSError, urllib.error.URLError, json.JSONDecodeError) as error:
             raise ArtifactError(f"similarity rater request failed: {error}") from error
         result = _ollama_content(raw, "similarity rater")
         try:
-            scores = tuple(int(result[name]) for name in RATING_FIELDS)
+            values = tuple(result[name] for name in RATING_FIELDS)
+            if any(not isinstance(value, int) or isinstance(value, bool) for value in values):
+                raise TypeError("scores must be integers")
+            scores = tuple(values)
             differences = _string_tuple(result["differences"], "differences")
             improvements = _string_tuple(result["prompt_improvements"], "prompt_improvements")
         except (KeyError, TypeError, ValueError) as error:
@@ -346,6 +350,8 @@ class OllamaSimilarityRater:
         reason = result.get("reason")
         if preferred not in ("A", "B", "tie") or not isinstance(reason, str):
             raise ArtifactError("pairwise rater response violates its schema")
+        if len(reason) > 900:
+            raise ArtifactError("pairwise rater reason exceeds 900 characters")
         logical: Literal["baseline", "challenger", "tie"]
         logical = "tie" if preferred == "tie" else order[0 if preferred == "A" else 1]
         return PairwiseTrial(order, logical, reason.strip())
@@ -358,7 +364,7 @@ class OllamaSimilarityRater:
         )
         try:
             with urllib.request.urlopen(request, timeout=self.timeout) as response:
-                raw = json.load(response)
+                raw = _bounded_response_json(response, label)
         except (OSError, urllib.error.URLError, json.JSONDecodeError) as error:
             raise ArtifactError(f"{label} request failed: {error}") from error
         return _ollama_content(raw, label)
@@ -385,6 +391,13 @@ def _prepare_image(data: bytes, label: str) -> str:
     except (Image.DecompressionBombError, UnidentifiedImageError, OSError) as error:
         raise ArtifactError(f"{label} is not a supported image: {error}") from error
     return base64.b64encode(output.getvalue()).decode("ascii")
+
+
+def _bounded_response_json(response: Any, label: str) -> object:
+    data = response.read(MAX_RATER_RESPONSE_BYTES + 1)
+    if len(data) > MAX_RATER_RESPONSE_BYTES:
+        raise ArtifactError(f"{label} response exceeds {MAX_RATER_RESPONSE_BYTES} bytes")
+    return json.loads(data)
 
 
 def _deterministic_metrics(source: bytes, reconstruction: bytes) -> Metrics:
@@ -432,6 +445,10 @@ def _ollama_content(raw: object, label: str) -> dict[str, Any]:
 def _string_tuple(value: object, field: str) -> tuple[str, ...]:
     if not isinstance(value, list) or any(not isinstance(item, str) for item in value):
         raise ArtifactError(f"similarity rater {field} must be a string array")
+    if len(value) > 8 or any(len(item) > 300 for item in value):
+        raise ArtifactError(
+            f"similarity rater {field} must contain at most 8 strings of 300 characters"
+        )
     return tuple(item.strip() for item in value if item.strip())
 
 

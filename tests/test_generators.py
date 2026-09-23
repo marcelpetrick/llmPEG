@@ -298,6 +298,16 @@ def test_request_helpers_report_transport_and_json_failures(
         _request_json("http://comfy.test/history/job", None, 5)
 
 
+def test_request_json_bounds_response_bytes(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("llmpeg.generators.MAX_COMFYUI_JSON_BYTES", 4)
+    monkeypatch.setattr(
+        "llmpeg.generators.urllib.request.urlopen",
+        lambda *_args, **_kwargs: Response(b'{"ok":true}'),
+    )
+    with pytest.raises(ArtifactError, match="JSON response exceeds 4 bytes"):
+        _request_json("http://comfy.test/history/job", None, 5)
+
+
 def test_image_fetch_reports_http_detail(monkeypatch: pytest.MonkeyPatch) -> None:
     error = urllib.error.HTTPError(
         "http://comfy.test/view",

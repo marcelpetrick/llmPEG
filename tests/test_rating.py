@@ -172,6 +172,10 @@ def test_string_tuple_validates_and_strips() -> None:
     assert _string_tuple([" one ", ""], "items") == ("one",)
     with pytest.raises(ArtifactError, match="string array"):
         _string_tuple([1], "items")
+    with pytest.raises(ArtifactError, match="at most 8"):
+        _string_tuple(["x"] * 9, "items")
+    with pytest.raises(ArtifactError, match="300 characters"):
+        _string_tuple(["x" * 301], "items")
 
 
 @pytest.mark.parametrize(

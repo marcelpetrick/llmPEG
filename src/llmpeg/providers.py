@@ -13,6 +13,7 @@ from llmpeg.artifact import ArtifactError, FidelityProfile, Provenance
 
 DEFAULT_OLLAMA_VISION_HOST = "http://127.0.0.1:11434"
 DEFAULT_VISION_MODEL = "qwen3.5:4b"
+MAX_VISION_RESPONSE_BYTES = 1024 * 1024
 
 RESPONSE_SCHEMA: dict[str, Any] = {
     "type": "object",
@@ -126,7 +127,12 @@ class OllamaVisionProvider:
         )
         try:
             with urllib.request.urlopen(request, timeout=self.timeout) as response:
-                raw = json.load(response)
+                data = response.read(MAX_VISION_RESPONSE_BYTES + 1)
+            if len(data) > MAX_VISION_RESPONSE_BYTES:
+                raise ArtifactError(
+                    f"vision provider response exceeds {MAX_VISION_RESPONSE_BYTES} bytes"
+                )
+            raw = json.loads(data)
         except urllib.error.HTTPError as error:
             try:
                 detail = error.read(4096).decode("utf-8", errors="replace").strip()

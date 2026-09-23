@@ -95,6 +95,17 @@ def test_ollama_http_error_includes_response_detail() -> None:
         )
 
 
+def test_ollama_bounds_response_bytes(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("llmpeg.providers.MAX_VISION_RESPONSE_BYTES", 4)
+    with (
+        patch("urllib.request.urlopen", return_value=Response({"message": {"content": "x"}})),
+        pytest.raises(ArtifactError, match="response exceeds 4 bytes"),
+    ):
+        OllamaVisionProvider("http://vision.test").describe(
+            b"image", "image/png", FidelityProfile.GIST
+        )
+
+
 def test_profile_instructions_differ() -> None:
     assert "subjects" in _vision_instruction(FidelityProfile.GIST)
     assert "spatial" in _vision_instruction(FidelityProfile.BALANCED)
