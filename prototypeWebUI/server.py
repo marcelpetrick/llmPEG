@@ -27,6 +27,7 @@ import json
 import os
 import sys
 import tempfile
+import threading
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -76,6 +77,7 @@ class Config:
 
 
 CONFIG = Config()
+MODEL_EXECUTION_LOCK = threading.Lock()
 
 
 def downscale(raw: bytes, max_edge: int = MAX_EDGE) -> tuple[bytes, dict[str, Any]]:
@@ -326,13 +328,17 @@ class Handler(BaseHTTPRequestHandler):
             if route == "/api/encode":
                 query = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
                 name = (query.get("profile") or ["detailed"])[0]
-                self._send_json(200, encode(self._body(), FidelityProfile(name)))
+                body = self._body()
+                with MODEL_EXECUTION_LOCK:
+                    result = encode(body, FidelityProfile(name))
+                self._send_json(200, result)
                 return
             if route == "/api/generate":
                 prompt, resolution, seed = generation_request(
                     json.loads(self._body().decode("utf-8"))
                 )
-                image = generate_comfyui(prompt, resolution, seed)
+                with MODEL_EXECUTION_LOCK:
+                    image = generate_comfyui(prompt, resolution, seed)
                 self._send(
                     200,
                     image,
@@ -344,10 +350,9 @@ class Handler(BaseHTTPRequestHandler):
                 source, reconstruction, prompt, critical_text = rating_request(
                     json.loads(self._body(MAX_RATING_REQUEST_BYTES).decode("utf-8"))
                 )
-                self._send_json(
-                    200,
-                    rate_reconstruction(source, reconstruction, prompt, critical_text),
-                )
+                with MODEL_EXECUTION_LOCK:
+                    result = rate_reconstruction(source, reconstruction, prompt, critical_text)
+                self._send_json(200, result)
                 return
             self._send_json(404, {"error": "not found"})
         except ArtifactError as error:
