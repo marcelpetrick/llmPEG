@@ -8,7 +8,7 @@ import statistics
 from pathlib import Path
 from typing import Any
 
-from llmpeg.artifact import Artifact, ArtifactError
+from llmpeg.artifact import Artifact, ArtifactError, envelope_of
 
 # Manifests mark a source whose licence could not be traced with this prefix.
 UNVERIFIED_LICENSE_PREFIX = "Provenance not verified"
@@ -37,7 +37,7 @@ def render_survey(manifest_path: Path) -> str:
         case_id = _string(case, "id")
         result = _read_object(root / _string(case, "result"))
         artifact_path = root / _string(case, "artifact")
-        artifact = Artifact.read(artifact_path)
+        artifact, stored_artifact = Artifact.read_stored(artifact_path)
         prompt = (root / _string(case, "prompt")).read_text(encoding="utf-8")
         metrics = result.get("metrics")
         if not isinstance(metrics, dict):
@@ -45,6 +45,8 @@ def render_survey(manifest_path: Path) -> str:
         case["metrics"] = metrics
         case["status"] = _string(result, "status")
         case["artifact_bytes"] = len(artifact.to_bytes())
+        case["stored_artifact_bytes"] = len(stored_artifact)
+        case["artifact_envelope"] = envelope_of(stored_artifact)
         case["source_bytes"] = artifact.source.byte_size
         case["ratio"] = artifact.source.byte_size / len(artifact.to_bytes())
         case["prompt_text"] = prompt
@@ -172,6 +174,23 @@ def _render_case(case: dict[str, Any]) -> str:
         if finding
         else ""
     )
+    plain_ratio = (
+        f"<strong>{case['ratio']:.1f}:1</strong> plain artifact ratio · "
+        f"{case['source_bytes']:,} → {case['artifact_bytes']:,} bytes"
+    )
+    stored_ratio = ""
+    if case["artifact_envelope"] == "gzip":
+        gzip_ratio = case["source_bytes"] / case["stored_artifact_bytes"]
+        stored_ratio = (
+            f" · <strong>{gzip_ratio:.1f}:1</strong> gzip stored ratio · "
+            f"{case['stored_artifact_bytes']:,} bytes on disk"
+        )
+    report_link = ""
+    report = case.get("report")
+    if report is not None:
+        if not isinstance(report, str) or not report:
+            raise ArtifactError(f"survey report invalid for {case_id}")
+        report_link = f' · <a href="{html.escape(report, quote=True)}">Full experiment report</a>'
     status = html.escape(str(case["status"]).lower(), quote=True)
     return f"""
 <article class="case" id="{case_id}">
@@ -186,8 +205,8 @@ def _render_case(case: dict[str, Any]) -> str:
     {_metric("dHash", _number(metrics, "dhash_similarity"), False)}
     {_metric("Palette distance", _number(metrics, "palette_distance"), True)}
   </div>
-{delta_line}{finding_line}  <p class="compression"><strong>{case["ratio"]:.1f}:1</strong> artifact ratio · {case["source_bytes"]:,} → {case["artifact_bytes"]:,} bytes</p>
-  <details><summary>Prompt and machine-readable result</summary><pre>{html.escape(str(case["prompt_text"]))}</pre><p><a href="{prompt}">Prompt</a> · <a href="{result}">Evaluation JSON</a></p></details>
+{delta_line}{finding_line}  <p class="compression">{plain_ratio}{stored_ratio}</p>
+  <details><summary>Prompt and machine-readable result</summary><pre>{html.escape(str(case["prompt_text"]))}</pre><p><a href="{prompt}">Prompt</a> · <a href="{result}">Evaluation JSON</a>{report_link}</p></details>
   <section class="questions" data-case="{case_id}">
     <h3>Your assessment</h3>
     {_rating(case_id, "subject", "Subject and action preserved")}

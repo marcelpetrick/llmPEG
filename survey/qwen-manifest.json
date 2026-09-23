@@ -27,6 +27,7 @@
       "prompt": "qwen/creator-rater/challenger-1.prompt.txt",
       "result": "qwen/creator-rater/challenger-1-result.json",
       "baseline_result": "qwen/creator-rater/baseline-result.json",
+      "report": "qwen/creator-rater/report.json",
       "finding": "Challenger rejected. The two pixels-only A/B judgments preferred whichever image appeared second, so the order-swapped logical verdicts disagreed; semantic median also fell from 85 to 80.",
       "credit": {
         "author": "Barmanru",
@@ -48,6 +49,7 @@
       "prompt": "qwen/creator-rater-holdout/challenger-1.prompt.txt",
       "result": "qwen/creator-rater-holdout/challenger-1-result.json",
       "baseline_result": "qwen/creator-rater-holdout/baseline-result.json",
+      "report": "qwen/creator-rater-holdout/report.json",
       "finding": "Challenger rejected. The order-swapped pixels-only verdicts disagreed, the deterministic proxy was effectively unchanged (0.669898 to 0.669543), and semantic median fell from 75 to 70.",
       "credit": {
         "author": "Remedios44",

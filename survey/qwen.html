@@ -22,7 +22,7 @@
   </div>
   <p class="delta"><strong>Visual proxy change:</strong> 0.632 → 0.700 (+0.068)</p>
   <p class="case-finding"><strong>Measured outcome:</strong> Challenger rejected. The two pixels-only A/B judgments preferred whichever image appeared second, so the order-swapped logical verdicts disagreed; semantic median also fell from 85 to 80.</p>
-  <p class="compression"><strong>179.0:1</strong> artifact ratio · 345,840 → 1,932 bytes</p>
+  <p class="compression"><strong>179.0:1</strong> plain artifact ratio · 345,840 → 1,932 bytes · <strong>319.3:1</strong> gzip stored ratio · 1,083 bytes on disk</p>
   <details><summary>Prompt and machine-readable result</summary><pre>Create a new image from this semantic description.
 
 Primary request: Black-and-white medium shot of a domestic shorthair cat with dark tabby markings and white fur, positioned in an outdoor setting. The cat is facing forward-left (three-quarter view) rather than strict profile, looking directly at the camera with visible eyes and ears perked up. It has a distinct white blaze running down its forehead between the ears to the nose. A large patch of dark tabby fur covers the back and sides; the chest, front legs, paws, muzzle, cheeks, and belly are predominantly white. The cat is sitting upright on all fours with tail tucked or resting behind. Background consists of scattered leaves, debris mixed with grass rather than uniform blades.
@@ -39,7 +39,7 @@ Constraints: preserve every described landmark, hierarchy, and spatial relations
 unlisted subject, object, marking, or decoration.
 This is a semantic reconstruction, not the original.
 Avoid: strict profile view only, no white blaze on forehead, uniform grass background; extra logos; watermarks; invented claims.
-</pre><p><a href="qwen/creator-rater/challenger-1.prompt.txt">Prompt</a> · <a href="qwen/creator-rater/challenger-1-result.json">Evaluation JSON</a></p></details>
+</pre><p><a href="qwen/creator-rater/challenger-1.prompt.txt">Prompt</a> · <a href="qwen/creator-rater/challenger-1-result.json">Evaluation JSON</a> · <a href="qwen/creator-rater/report.json">Full experiment report</a></p></details>
   <section class="questions" data-case="qwen-monochrome-cat">
     <h3>Your assessment</h3>
     <fieldset><legend>Subject and action preserved</legend><div class="scale"><label><input type="radio" name="qwen-monochrome-cat-subject" value="1"><span>1</span></label><label><input type="radio" name="qwen-monochrome-cat-subject" value="2"><span>2</span></label><label><input type="radio" name="qwen-monochrome-cat-subject" value="3"><span>3</span></label><label><input type="radio" name="qwen-monochrome-cat-subject" value="4"><span>4</span></label><label><input type="radio" name="qwen-monochrome-cat-subject" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>
@@ -65,7 +65,7 @@ Avoid: strict profile view only, no white blaze on forehead, uniform grass backg
   </div>
   <p class="delta"><strong>Visual proxy change:</strong> 0.670 → 0.670 (-0.000)</p>
   <p class="case-finding"><strong>Measured outcome:</strong> Challenger rejected. The order-swapped pixels-only verdicts disagreed, the deterministic proxy was effectively unchanged (0.669898 to 0.669543), and semantic median fell from 75 to 70.</p>
-  <p class="compression"><strong>263.2:1</strong> artifact ratio · 612,448 → 2,327 bytes</p>
+  <p class="compression"><strong>263.2:1</strong> plain artifact ratio · 612,448 → 2,327 bytes · <strong>484.5:1</strong> gzip stored ratio · 1,264 bytes on disk</p>
   <details><summary>Prompt and machine-readable result</summary><pre>Create a new image from this semantic description.
 
 Primary request: medium resolution digital photo. A small brown and white tabby kitten is curled up asleep directly on the keys of an off-white plastic computer keyboard. The cat&#x27;s head rests near the &#x27;N&#x27; key while one paw covers a portion of the spacebar area; its eyes are closed in deep sleep, ears perked but relaxed against the fur. Soft shadows fall beneath the body from above-left lighting direction. Visible texture includes fine tabby stripes on back and legs, white chest patch, pink inner ear visible at angle, small black nose tip, and paws with dark claws tucked under soft paw pads.
@@ -86,7 +86,7 @@ Constraints: preserve every described landmark, hierarchy, and spatial relations
 unlisted subject, object, marking, or decoration.
 This is a semantic reconstruction, not the original.
 Avoid: high-resolution sharpness or motion blur absence since original image exhibits slight graininess consistent with lower-quality sensor capture, inverted lighting direction causing shadows above cat instead of below it as observed in actual scene; extra logos; watermarks; invented claims.
-</pre><p><a href="qwen/creator-rater-holdout/challenger-1.prompt.txt">Prompt</a> · <a href="qwen/creator-rater-holdout/challenger-1-result.json">Evaluation JSON</a></p></details>
+</pre><p><a href="qwen/creator-rater-holdout/challenger-1.prompt.txt">Prompt</a> · <a href="qwen/creator-rater-holdout/challenger-1-result.json">Evaluation JSON</a> · <a href="qwen/creator-rater-holdout/report.json">Full experiment report</a></p></details>
   <section class="questions" data-case="qwen-keyboard-cat-holdout">
     <h3>Your assessment</h3>
     <fieldset><legend>Subject and action preserved</legend><div class="scale"><label><input type="radio" name="qwen-keyboard-cat-holdout-subject" value="1"><span>1</span></label><label><input type="radio" name="qwen-keyboard-cat-holdout-subject" value="2"><span>2</span></label><label><input type="radio" name="qwen-keyboard-cat-holdout-subject" value="3"><span>3</span></label><label><input type="radio" name="qwen-keyboard-cat-holdout-subject" value="4"><span>4</span></label><label><input type="radio" name="qwen-keyboard-cat-holdout-subject" value="5"><span>5</span></label></div><small>1 = not preserved · 5 = strongly preserved</small></fieldset>

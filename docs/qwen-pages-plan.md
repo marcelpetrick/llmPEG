@@ -67,3 +67,8 @@ generation. Existing measurements and images will not be relabelled as Qwen-Imag
   per-case measured outcomes. Focused tests passed, all six page images returned HTTP 200, and
   Chromium screenshots at 1440×1400 and 390×844 confirmed responsive rendering. Full gates,
   release review, version bump, and publication remain.
+- **2026-09-23 — first self-review fixes complete.** The initial page showed only canonical JSON
+  bytes even though both displayed artifacts are stored in gzip envelopes, and its details linked
+  only to a derived metric record. The renderer now reports the plain ratio and the measured gzip
+  stored ratio side by side and links each case's authoritative creator/rater report. Focused
+  formatting, lint, strict typing, and 20 survey tests pass after regeneration.

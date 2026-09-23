@@ -142,6 +142,23 @@ def test_render_survey_compares_baseline(tmp_path: Path, artifact: Artifact) -> 
     assert "(+0.000)" in output
 
 
+def test_render_survey_reports_plain_and_gzip_sizes(tmp_path: Path, artifact: Artifact) -> None:
+    manifest = _manifest(tmp_path, artifact)
+    compressed = tmp_path / "artifact.llmpeg.json.gz"
+    artifact.write(compressed, compress=True)
+    data = _load_manifest(manifest)
+    data["cases"][0]["artifact"] = compressed.name
+    data["cases"][0]["report"] = "full-report.json"
+    _save(manifest, data)
+
+    output = render_survey(manifest)
+
+    assert "plain artifact ratio" in output
+    assert "gzip stored ratio" in output
+    assert f"{compressed.stat().st_size:,} bytes on disk" in output
+    assert '<a href="full-report.json">Full experiment report</a>' in output
+
+
 def test_write_survey_and_cli(tmp_path: Path, artifact: Artifact) -> None:
     manifest = _manifest(tmp_path, artifact)
     output = tmp_path / "index.html"
@@ -307,6 +324,7 @@ def test_qwen_comparison_is_local_and_traceable_to_authoritative_reports() -> No
             "prompt",
             "result",
             "baseline_result",
+            "report",
         ):
             assert (manifest_path.parent / case[field]).is_file(), (
                 f"missing {field} for {case['id']}"
