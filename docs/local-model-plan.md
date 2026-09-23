@@ -1,6 +1,6 @@
 # Local Qwen model integration plan
 
-Status: **in progress**
+Status: **implementation and review complete; release pending**
 
 Started: 2026-09-22
 Target release: **0.5.0**
@@ -189,7 +189,7 @@ verdict. Automatic ratings may guide experiments, but cannot be promoted to huma
       integration record; do not rewrite historical measurements as if Qwen produced them.
 - [x] State the Qwen-Image-2.1 non-commercial runtime licence and that weights are not bundled.
 - [x] Bump the single release version to 0.5.0 and update every enforced example.
-- [ ] Update the measured test-count/coverage statements only from the final gate output.
+- [x] Update the measured test-count/coverage statements only from the final gate output.
 
 ### 8. Verification and self-review
 
@@ -198,10 +198,10 @@ verdict. Automatic ratings may guide experiments, but cannot be promoted to huma
       through llmPEG; verify returned media type, dimensions, and image validity.
 - [x] Exercise the prototype's `/api/config`, `/api/encode`, `/api/generate`, and `/api/rate`
       routes locally.
-- [ ] Run formatting, lint, strict mypy, the full coverage suite, and package build.
-- [ ] Review the complete change set for local-only enforcement, prompt/source leakage, timeout and
+- [x] Run formatting, lint, strict mypy, the full coverage suite, and package build.
+- [x] Review the complete change set for local-only enforcement, prompt/source leakage, timeout and
       queue handling, concurrency, path leakage, package contents, stale docs, and misleading claims.
-- [ ] Fix every review finding, rerun the full gate, and commit only green logical units.
+- [x] Fix every review finding, rerun the full gate, and commit only green logical units.
 
 ## Progress log
 
@@ -243,3 +243,10 @@ verdict. Automatic ratings may guide experiments, but cannot be promoted to huma
 - **2026-09-23 — intermediate implementation commits complete.** Committed the local codec path as
   `f20c67a` and the Web/rating path as `7e7d03a`, each after its focused offline tests and lint
   checks. Documentation, the final five-gate run, review, and release remain.
+- **2026-09-23 — clean-room review and final gate complete.** Review against the 0.4.2 release
+  baseline found and fixed prompt leakage in A/B judging, unbounded model JSON responses, missing
+  Web model-call serialization, experiment output preflight, and an insufficient CLI privacy
+  notice. No Code or Architecture findings remain. The definitive gate passed: 44 files formatted,
+  Ruff clean, strict mypy clean across 28 source files, 163 tests passed at 95.40% branch-aware
+  coverage, and both 0.5.0 distributions built successfully. Push, tag, and release verification
+  remain.
