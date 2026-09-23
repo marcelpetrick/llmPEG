@@ -46,20 +46,21 @@ measured file sizes rather than the motivating article’s hypothetical numbers.
 
 ## MVP outcome
 
-The MVP is a Python package and command-line tool that can:
+The product is a Python package, command-line tool, and localhost prototype that can:
 
 1. inspect an image with a vision model and encode the result into a versioned JSON prompt
    artifact;
 2. validate that artifact, report its byte size, and calculate the measured size ratio;
 3. turn the artifact into a generator-ready prompt;
-4. evaluate a reconstructed image with transparent, repeatable structural metrics; and
-5. run fully offline tests by substituting deterministic fake providers.
+4. generate a new image through local ComfyUI/Qwen-Image-2.1;
+5. compare it with transparent structural proxies and repeated local semantic judgments; and
+6. run fully offline tests by substituting deterministic fake providers.
 
-Real providers live behind small interfaces. The encoder targets an Ollama vision endpoint.
-Generation can be performed through the CLI, interactively, or through the prototype Web UI. The
-CLI tries the sibling ComfyUI checkout first and falls back to Codex when it is unavailable; the
-Web UI additionally supports Pollinations and an unverified Automatic1111-compatible path. The
-core codec remains generator-neutral and fully testable without network access or credentials.
+Real providers live behind small interfaces. Encoding and experimental similarity rating target
+local Ollama with `qwen3.5:4b`. Generation has one fail-closed local path: a bundled
+Qwen-Image-2.1 workflow submitted directly to ComfyUI. Hosted and unverified fallback adapters are
+not active product paths. The core artifact and prompt remain generator-neutral, and the whole
+suite stays testable without a network, GPU, model, or credentials.
 
 ## Fidelity contract
 
@@ -88,9 +89,9 @@ dimensions, generation prompt, critical verbatim text, normalized composition re
 and model provenance. It does not embed the source image. Canonical compact JSON makes byte counts
 stable. The header is 228 bytes; migrated artifacts grew by 209 bytes after the obsolete 19-byte
 `schema_version` field was removed. Every reported ratio includes the full header. See
-[format.md](format.md). The same artifact may be stored in an optional deterministic gzip envelope
-(`.llmpeg.json.gz`); its ratio is charged on the compressed file, while the budgets below still
-apply to the canonical JSON.
+[format.md](format.md). New encodes default to a deterministic gzip envelope
+(`.llmpeg.json.gz`); `--plain` opts out. Its ratio is charged on the compressed file, while the
+budgets below still apply to the canonical JSON.
 
 Budgets are deliberately tied to source size:
 
@@ -134,7 +135,8 @@ preferences to be re-derived each session.
 
 ### Documentation
 
-- A **mermaid data-flow diagram for non-technical readers**, compression through "decompression".
+- A **mermaid data-flow diagram for non-technical readers**, encoding through semantic
+  reconstruction.
 - A **copy-pasteable folder round trip**: convert a whole folder of photos, restore it, with real
   wall-clock timing so a new user knows what they are in for.
 - Benchmarks report **how long a full cycle takes** and **how close the result is**.
@@ -151,11 +153,21 @@ preferences to be re-derived each session.
 
 ### Method
 
-- Prefer generation already available to the user. Pollinations now requires a key and credits;
-  the Codex CLI's built-in tool uses the logged-in session when available.
+- Keep the active model path local: Ollama/Qwen for encoding and rating, ComfyUI/Qwen-Image-2.1
+  for generation. Fail closed instead of switching to a hosted provider.
 - Improvement work is **iterative and auditable**: every claim traceable to a checked-in record a
   reader can recompute, and **negative results published as prominently as positive ones**.
-- Use **smaller models for parallel agent work** where it is applicable.
+
+### Automatic comparison
+
+- Do not describe any automatic rating as human perception. SSIM-style structure, learned
+  perceptual distance, and semantic model judgments measure different things.
+- Keep deterministic metrics unchanged and visible beside five semantic dimensions: subject,
+  identity, composition, text, and style.
+- Expose repeated-trial spread. Pairwise prompt tuning must reverse candidate order and reject a
+  challenger when the two choices disagree or a passing deterministic guard regresses.
+- Human calibration remains open work. The first local experiment is evidence about one source,
+  not a general quality claim; see [`creator-rater/report.json`](creator-rater/report.json).
 
 ## Principles and non-goals
 

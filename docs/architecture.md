@@ -15,8 +15,8 @@ C4Context
   title llmPEG — semantic image reconstruction
   Person(reviewer, "Reviewer", "Encodes images and judges whether regenerated meaning is sufficient")
   System(llmpeg, "llmPEG", "Produces portable semantic artifacts, prompts, metrics, and surveys")
-  System_Ext(vision, "Vision model", "Qwen3-VL behind the local claude-vision/Ollama setup")
-  System_Ext(generator, "Image generator", "Creates a new image from rendered text only")
+  System_Ext(vision, "Local vision model", "Qwen3.5 behind Ollama for encoding and comparison")
+  System_Ext(generator, "Local image generator", "Qwen-Image-2.1 through ComfyUI; sees rendered text only")
 
   Rel(reviewer, llmpeg, "Encodes, reconstructs, inspects, evaluates", "CLI / HTML")
   Rel(llmpeg, vision, "Sends source image and strict extraction schema", "Ollama /api/chat")
@@ -42,26 +42,26 @@ C4Container
     Container(core, "Codec core", "Python", "Validates images and creates canonical semantic artifacts")
     Container(eval, "Evaluation harness", "Python / Pillow", "Computes deterministic structural proxy metrics")
     Container(survey, "Survey renderer", "Python", "Builds a portable interactive HTML report")
-    Container(web, "Prototype Web UI", "HTML / CSS / JavaScript", "Runs the image → prompt → new-image demonstration")
-    Container(webBackend, "Prototype backend", "Python HTTP server", "Downscales uploads and proxies model calls")
+    Container(web, "Prototype Web UI", "HTML / CSS / JavaScript", "Runs image → prompt → new image → experimental rating")
+    Container(webBackend, "Prototype backend", "Python HTTP server", "Bounds uploads and coordinates local model calls")
     ContainerDb(files, "Experiment evidence", "JSON, text, PNG/JPEG", "Sources, artifacts, prompts, reconstructions, metrics, manifests")
     Container(html, "Static survey", "HTML/CSS/JS", "Side-by-side inspection, browser-local ratings, JSON export")
   }
 
-  System_Ext(ollama, "Ollama + Qwen3-VL", "Non-deterministic semantic extraction boundary")
-  System_Ext(imagegen, "Image generators", "Codex, ComfyUI, Pollinations, or Automatic1111-compatible server")
+  System_Ext(ollama, "Ollama + Qwen3.5", "Local non-deterministic extraction and rating boundary")
+  System_Ext(imagegen, "ComfyUI + Qwen-Image-2.1", "Local non-deterministic generation boundary")
 
   Rel(user, cli, "Runs")
   Rel(user, web, "Drops an image and reviews the prompt")
-  Rel(web, webBackend, "Encode and generate requests", "HTTP on localhost")
+  Rel(web, webBackend, "Encode, generate, and rate requests", "HTTP on localhost")
   Rel(cli, core, "Invokes")
   Rel(webBackend, core, "Invokes")
   Rel(core, ollama, "Image + extraction contract", "HTTP/JSON")
-  Rel(webBackend, ollama, "Downscaled image + extraction contract", "HTTP/JSON")
-  Rel(webBackend, imagegen, "Editable prompt only", "CLI or HTTP")
+  Rel(webBackend, ollama, "Images + strict extraction/rating contracts", "HTTP/JSON")
+  Rel(webBackend, imagegen, "Editable prompt only", "Local HTTP")
   Rel(imagegen, webBackend, "Generated image")
   Rel(core, files, "Writes canonical .llmpeg.json and prompt")
-  Rel(cli, imagegen, "Rendered prompt only; ComfyUI first, Codex fallback", "Shell / CLI")
+  Rel(cli, imagegen, "Rendered prompt only; fail closed", "Local HTTP")
   Rel(files, imagegen, "Prompt only — never source pixels")
   Rel(imagegen, files, "Writes reconstruction PNG")
   Rel(cli, eval, "Invokes")
@@ -79,9 +79,10 @@ C4Container
 ```
 
 The model calls are trust boundaries: provenance records the encoder configuration, but llmPEG
-cannot make model output deterministic. The prototype sends a downscaled copy to Ollama and sends
-only the resulting editable prompt to its configured generator. Validation, canonical JSON,
-budgets, prompt rendering, proxy evaluation, and HTML rendering are local and testable.
+cannot make model output deterministic. The prototype sends a bounded copy to local Ollama and
+only the resulting editable prompt to local ComfyUI. Its rating step sends source and generated
+images to Ollama, never to the generator. Validation, canonical JSON, budgets, prompt rendering,
+proxy evaluation, and HTML rendering are local and testable.
 
 ## 3. Codec components
 
@@ -96,13 +97,14 @@ C4Component
     Component(codec, "Artifact builder", "encoder.py", "Converts extracted fields into a validated artifact")
     Component(model, "Artifact model", "artifact.py", "Writes the versioned header, validates the schema, enforces the byte budget, and writes canonical JSON, plain or gzip-wrapped, atomically")
     Component(renderer, "Prompt renderer", "encoder.py", "Expands the artifact into a model-neutral generation brief")
-    Component(generator, "Generator adapters", "generators.py", "Runs ComfyUI first and falls back to Codex only when unavailable")
+    Component(generator, "Qwen generator adapter", "generators.py", "Runs one bundled ComfyUI workflow and fails closed")
     Component(metrics, "Metric engine", "evaluation.py", "Measures aspect, dHash, histogram, edges, palette, layout, and text recall")
+    Component(rater, "Similarity rater", "rating.py", "Repeats local semantic comparisons and order-reversed A/B judgments")
     Component(report, "Survey renderer", "survey.py", "Combines evidence into interactive static HTML")
   }
 
-  Container_Ext(ollama, "Qwen3-VL", "Vision model")
-  Container_Ext(imagegen, "Image generators", "ComfyUI or Codex")
+  Container_Ext(ollama, "Qwen3.5", "Local Ollama vision model")
+  Container_Ext(imagegen, "Qwen-Image-2.1", "Local ComfyUI image model")
   ContainerDb_Ext(evidence, "Evidence files", "Image, JSON, text, HTML")
 
   Rel(cli, guard, "encode")
@@ -120,6 +122,9 @@ C4Component
   Rel(generator, evidence, "Writes new image")
   Rel(cli, metrics, "evaluate")
   Rel(metrics, evidence, "Reads pair; writes result")
+  Rel(rater, ollama, "Source + reconstruction under strict schema")
+  Rel(rater, metrics, "Keeps deterministic metric vector separate")
+  Rel(rater, evidence, "Writes auditable trials and A/B verdicts")
   Rel(cli, report, "survey")
   Rel(report, evidence, "Reads manifest; writes HTML")
 
@@ -135,9 +140,9 @@ sequenceDiagram
   autonumber
   actor U as Experimenter
   participant C as llmPEG CLI
-  participant V as Qwen3-VL
-  participant A as .llmpeg.json
-  participant G as Image generator
+  participant V as Ollama / Qwen3.5
+  participant A as .llmpeg.json.gz
+  participant G as ComfyUI / Qwen-Image-2.1
   participant E as Evaluator
   participant H as HTML survey
 
@@ -145,14 +150,14 @@ sequenceDiagram
   C->>C: Validate type, size, pixels, and source hash
   C->>V: Image + strict identity-landmark schema
   V-->>C: Description, regions, palette, style, avoid-list
-  C->>A: Validate budget and atomically persist (plain or --gzip)
+  C->>A: Validate canonical budget and atomically persist (gzip default)
   Note over A: Original pixels are not embedded
   U->>C: reconstruct artifact
   C-->>U: Text prompt
   U->>C: generate artifact
-  C->>G: Text prompt only (ComfyUI first)
+  C->>G: Text prompt only (local, fail closed)
   G-->>C: Novel reconstruction PNG
-  C-->>U: Output path and actual provider
+  C-->>U: Output path and concrete local provider
   U->>C: evaluate source + reconstruction + artifact
   C->>E: Verified source pair
   E-->>A: Structural metrics and threshold checks
@@ -161,13 +166,13 @@ sequenceDiagram
   H-->>U: Visual inspection + human ratings export
 ```
 
-The CLI's optional `generate` command uses ComfyUI first and falls back to Codex only when its
-adapter or service is unavailable. A reachable workflow failure remains an error. The Web UI wraps
-the same core sequence in two localhost requests: `/api/encode` returns the
-artifact and rendered prompt, then `/api/generate` sends that prompt to Codex, ComfyUI,
-Pollinations, or an Automatic1111-compatible server. ComfyUI runs through the sibling checkout's
-self-starting shell adapter and falls back to Codex only when its service is unavailable. The Web
-UI is a local prototype, not a hardened network service.
+The CLI's `generate` command has one path: direct local ComfyUI HTTP with the bundled
+Qwen-Image-2.1 workflow. Unreachable services, workflow errors, invalid images, and model-release
+errors remain visible; no hosted fallback runs. The Web UI exposes the same adapter through
+`/api/generate`. `/api/rate` combines unchanged deterministic metrics with three local semantic
+trials; its result is explicitly uncalibrated. Ollama and ComfyUI release their models between
+phases so the workloads can share an 8 GB GPU. The Web UI remains a localhost prototype, not a
+hardened network service.
 
 ## Architectural consequences
 
@@ -176,7 +181,7 @@ UI is a local prototype, not a hardened network service.
 | Portability | Artifact and rendered prompt are plain UTF-8 JSON/text; the optional gzip envelope opens with standard `gunzip` | Future models interpret the prompt identically |
 | Reproducibility | Source hash, dimensions, profile, model, seed, and temperature are recorded | A generator recreates identical pixels or identity |
 | Safety | Inputs are bounded; artifacts validate; writes are atomic; source is never deleted | A prompt captures every visually important detail |
-| Evaluation | Deterministic metrics expose coarse structural drift; HTML collects human judgment | Proxy scores equal perceptual or identity similarity |
+| Evaluation | Deterministic metrics, repeat spread, raw semantic trials, and human survey exports remain separate and inspectable | Any automatic score equals human perceptual or identity similarity |
 | Compression | Stored artifacts remain far smaller than source photographs | Regenerated PNGs, model weights, and compute are free |
 
 The central design choice is intentional: **the `.llmpeg.json` artifact is a semantic memory, not a

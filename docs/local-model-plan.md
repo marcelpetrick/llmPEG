@@ -1,7 +1,8 @@
 # Local Qwen model integration plan
 
-Status: **in progress**  
-Started: 2026-09-22  
+Status: **in progress**
+
+Started: 2026-09-22
 Target release: **0.5.0**
 
 This is the living implementation record for making both model boundaries local by default:
@@ -110,92 +111,92 @@ verdict. Automatic ratings may guide experiments, but cannot be promoted to huma
 
 ### 1. Shared configuration and local vision encoding
 
-- [ ] Centralize the default Ollama host and vision model.
-- [ ] Make CLI and prototype default to local Ollama plus `qwen3.5:4b`.
-- [ ] Default encoding to the detailed profile and `.llmpeg.json.gz`; retain an explicit plain
+- [x] Centralize the default Ollama host and vision model.
+- [x] Make CLI and prototype default to local Ollama plus `qwen3.5:4b`.
+- [x] Default encoding to the detailed profile and `.llmpeg.json.gz`; retain an explicit plain
       option and keep all profile budgets charged against canonical JSON.
-- [ ] Keep the upload/privacy boundary visible and preserve exact model provenance in artifacts.
-- [ ] Strengthen the detailed extraction instruction around exact counts, subject-specific visual
+- [x] Keep the upload/privacy boundary visible and preserve exact model provenance in artifacts.
+- [x] Strengthen the detailed extraction instruction around exact counts, subject-specific visual
       identity, normalized geometry, readable text, camera, lighting, materials, and negative
       constraints without inventing hidden facts.
-- [ ] Update provider, CLI, and Web UI tests for the new defaults.
+- [x] Update provider, CLI, and Web UI tests for the new defaults.
 
 ### 2. Qwen-Image-2.1 ComfyUI adapter
 
-- [ ] Add the inspected API workflow to the Python package.
-- [ ] Submit a copied workflow with request-specific prompt, square resolution, seed, and a unique
+- [x] Add the inspected API workflow to the Python package.
+- [x] Submit a copied workflow with request-specific prompt, square resolution, seed, and a unique
       output prefix; never mutate shared template state.
-- [ ] Poll history to completion with one total timeout, surface ComfyUI execution errors, fetch
+- [x] Poll history to completion with one total timeout, surface ComfyUI execution errors, fetch
       the first generated image, and validate it with Pillow.
-- [ ] Distinguish an unreachable service from a reachable workflow failure without falling back.
-- [ ] Test successful submission/poll/view, queued responses, timeouts, malformed responses,
+- [x] Distinguish an unreachable service from a reachable workflow failure without falling back.
+- [x] Test successful submission/poll/view, queued responses, timeouts, malformed responses,
       server errors, missing images, and invalid image bytes entirely offline.
-- [ ] Verify the workflow JSON is present in both sdist and wheel.
+- [x] Verify the workflow JSON is present in both sdist and wheel.
 
 ### 3. CLI behavior
 
-- [ ] Make `llmpeg generate` ComfyUI/Qwen-only.
-- [ ] Remove provider selection and shell-script flags; add resolution and seed controls.
-- [ ] Check overwrite before submitting expensive work and report the concrete local generator.
-- [ ] Preserve `reconstruct` as the prompt-only operation.
+- [x] Make `llmpeg generate` ComfyUI/Qwen-only.
+- [x] Remove provider selection and shell-script flags; add resolution and seed controls.
+- [x] Check overwrite before submitting expensive work and report the concrete local generator.
+- [x] Preserve `reconstruct` as the prompt-only operation.
 
 ### 4. Prototype Web UI behavior
 
-- [ ] Remove hosted and unverified generator implementations and configuration.
-- [ ] Remove the generator selector and fallback messaging from HTML/JavaScript.
-- [ ] Send every generation request to local Qwen-Image-2.1 through the shared adapter.
-- [ ] Report local Ollama/ComfyUI readiness and make privacy text accurately say where data goes.
-- [ ] Retain prompt editing, resolution, seed, elapsed time, output dimensions, CORS behavior, and
+- [x] Remove hosted and unverified generator implementations and configuration.
+- [x] Remove the generator selector and fallback messaging from HTML/JavaScript.
+- [x] Send every generation request to local Qwen-Image-2.1 through the shared adapter.
+- [x] Report local Ollama/ComfyUI readiness and make privacy text accurately say where data goes.
+- [x] Retain prompt editing, resolution, seed, elapsed time, output dimensions, CORS behavior, and
       bounded request validation.
-- [ ] Update offline backend and page-contract tests.
+- [x] Update offline backend and page-contract tests.
 
 ### 5. Automatic reconstruction rating in the Web UI
 
-- [ ] Add a local semantic-comparison provider that sends source and reconstruction together to
+- [x] Add a local semantic-comparison provider that sends source and reconstruction together to
       Qwen-VL under a strict schema, never to the image generator.
-- [ ] Rate subject/count, identity attributes, composition, critical text, and style/color
+- [x] Rate subject/count, identity attributes, composition, critical text, and style/color
       separately; require concrete differences and prompt-improvement suggestions.
-- [ ] Run repeated deterministic judgments and report medians plus spread/disagreement instead of
+- [x] Run repeated deterministic judgments and report medians plus spread/disagreement instead of
       presenting a single unstable model answer as ground truth.
-- [ ] Combine this report with existing deterministic metrics as a transparent vector. Do not
+- [x] Combine this report with existing deterministic metrics as a transparent vector. Do not
       reweight or rename the existing `visual_proxy_score`, whose human validity is unresolved.
-- [ ] Add `/api/rate` and automatically invoke it after Web UI generation using the selected
+- [x] Add `/api/rate` and automatically invoke it after Web UI generation using the selected
       source, returned reconstruction, artifact, and rendered prompt.
-- [ ] Bound and validate both uploaded images and all model output; cover the full route offline.
-- [ ] Label the result "experimental automatic rating" and link its limitations and method.
+- [x] Bound and validate both uploaded images and all model output; cover the full route offline.
+- [x] Label the result "experimental automatic rating" and link its limitations and method.
 
 ### 6. Creator-versus-rater refinement
 
-- [ ] Add a reproducible measurement script that starts from a source, detailed artifact, and
+- [x] Add a reproducible measurement script that starts from a source, detailed artifact, and
       baseline reconstruction; saves every prompt, artifact size, rating, pairwise verdict, and
       output path needed to audit a round.
-- [ ] Ask local Qwen-VL to revise only observable description fields using the source and miss
+- [x] Ask local Qwen-VL to revise only observable description fields using the source and miss
       report, then enforce the normal artifact schema and uncompressed byte budget.
-- [ ] Generate the challenger through the same Qwen-Image-2.1 workflow and seed.
-- [ ] Compare baseline/challenger twice with A/B order reversed. Accept only two consistent
+- [x] Generate the challenger through the same Qwen-Image-2.1 workflow and seed.
+- [x] Compare baseline/challenger twice with A/B order reversed. Accept only two consistent
       challenger choices and no deterministic threshold regression; otherwise keep the baseline.
-- [ ] Run the loop on freely licensed checked-in sources, record failures as failures, and use
+- [x] Run the loop on freely licensed checked-in sources, record failures as failures, and use
       repeated findings to improve the general encoder instruction rather than overfit one image.
-- [ ] Re-run an untouched holdout after any instruction change. Do not claim an improvement unless
+- [x] Re-run an untouched holdout after any instruction change. Do not claim an improvement unless
       the checked-in evidence supports it.
 
 ### 7. Documentation and release
 
-- [ ] Update README, product vision, architecture diagrams, delivery plan, and prototype guide.
-- [ ] Replace current-provider claims while keeping old benchmark provenance intact: historical
+- [x] Update README, product vision, architecture diagrams, delivery plan, and prototype guide.
+- [x] Replace current-provider claims while keeping old benchmark provenance intact: historical
       artifacts and measurements must still name the models/generators that actually produced them.
-- [ ] Replace the obsolete current ComfyUI smoke evidence with a reproducible Qwen-Image-2.1
+- [x] Replace the obsolete current ComfyUI smoke evidence with a reproducible Qwen-Image-2.1
       integration record; do not rewrite historical measurements as if Qwen produced them.
-- [ ] State the Qwen-Image-2.1 non-commercial runtime licence and that weights are not bundled.
-- [ ] Bump the single release version to 0.5.0 and update every enforced example.
+- [x] State the Qwen-Image-2.1 non-commercial runtime licence and that weights are not bundled.
+- [x] Bump the single release version to 0.5.0 and update every enforced example.
 - [ ] Update the measured test-count/coverage statements only from the final gate output.
 
 ### 8. Verification and self-review
 
-- [ ] Run a manual local Ollama encoding smoke with `qwen3.5:4b` into temporary output.
-- [ ] Start local ComfyUI through the established Qwen setup and run a temporary Qwen generation
+- [x] Run a manual local Ollama encoding smoke with `qwen3.5:4b` into temporary output.
+- [x] Start local ComfyUI through the established Qwen setup and run a temporary Qwen generation
       through llmPEG; verify returned media type, dimensions, and image validity.
-- [ ] Exercise the prototype's `/api/config`, `/api/encode`, `/api/generate`, and `/api/rate`
+- [x] Exercise the prototype's `/api/config`, `/api/encode`, `/api/generate`, and `/api/rate`
       routes locally.
 - [ ] Run formatting, lint, strict mypy, the full coverage suite, and package build.
 - [ ] Review the complete change set for local-only enforcement, prompt/source leakage, timeout and
@@ -212,5 +213,33 @@ verdict. Automatic ratings may guide experiments, but cannot be promoted to huma
 - **2026-09-22 — similarity research and plan revision complete.** Reviewed SSIM, LPIPS, DISTS,
   and DreamSim primary publications; added experimental Web UI rating, quality-first gzip encode
   defaults, and an order-swapped creator-versus-rater loop with deterministic regression guards.
-- **2026-09-22 — implementation not started.** The earlier generator patch did not apply; this
-  revised document is the execution order and all unchecked items remain pending.
+- **2026-09-22 — local generator and CLI complete.** Replaced subprocess and hosted fallback code
+  with a direct, bounded ComfyUI client and bundled Qwen-Image-2.1 workflow; added detailed/gzip
+  encode defaults, richer extraction instructions, and offline adapter/CLI coverage. Confirmed the
+  workflow resource is present in both built distributions.
+- **2026-09-22 — live integration defects found and fixed.** A stale shell
+  `OLLAMA_VISION_HOST` first sent the smoke request to an old LAN address; rerunning with loopback
+  isolated that configuration issue. Ollama then exposed llama.cpp's grammar failure for a nested
+  string `maxLength` of 3,000, so the bound is now 1,800 and HTTP response bodies remain visible.
+  The local encode completed in 19.4 seconds at 1,594 canonical bytes and 930 stored gzip bytes.
+  Ollama's 30-minute model residency also starved ComfyUI on the 8 GB GPU; each phase now releases
+  its model allocation before the next local service runs.
+- **2026-09-22 — first live creator/rater images recorded.** The public-domain monochrome-cat run
+  produced a baseline and challenger. Its semantic median fell from 85 to 80 while
+  `visual_proxy_score` rose from 0.632194 to 0.700023, demonstrating why the signals cannot be
+  collapsed into a generic improvement claim. Raw evidence is under `docs/creator-rater/`.
+- **2026-09-23 — live Web UI and holdout complete.** All four API routes ran against loopback
+  Ollama and ComfyUI; generation returned a valid 256×256 PNG and rating completed three trials.
+  The first keyboard-cat holdout attempt failed closed on truncated JSON under Ollama's 4,096-token
+  runner context. An 8,192-token encode request completed the rerun. Both order-swapped judgments
+  initially appeared to prefer the baseline; raw evidence is under
+  `docs/creator-rater-holdout/`.
+- **2026-09-23 — clean-room review removed prompt leakage from pairwise judging.** The first A/B
+  implementation supplied candidate prompts, and its reasons visibly judged prompt wording rather
+  than only reconstructed pixels. Pixels-only reruns chose the second-presented image in both
+  experiments, producing split logical verdicts after order reversal. Both challengers are now
+  rejected as inconsistent; the tuning loop has not demonstrated a trustworthy improvement
+  gradient.
+- **2026-09-23 — intermediate implementation commits complete.** Committed the local codec path as
+  `f20c67a` and the Web/rating path as `7e7d03a`, each after its focused offline tests and lint
+  checks. Documentation, the final five-gate run, review, and release remain.

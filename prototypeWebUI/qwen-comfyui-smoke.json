@@ -1,0 +1,32 @@
+{
+  "date": "2026-09-22",
+  "provider": "ComfyUI",
+  "provider_version": "0.37.0",
+  "model": "qwen-image-2.1",
+  "workflow": "src/llmpeg/workflows/qwen_image_2_1_t2i_api.json",
+  "settings": {
+    "cache_device": "cpu",
+    "cache_dtype": "int8",
+    "cfg": 3.5,
+    "resolution": 512,
+    "sampler": "euler",
+    "scheduler": "simple",
+    "seed": 42,
+    "steps": 30
+  },
+  "elapsed_seconds": 60.9,
+  "output": {
+    "media_type": "image/png",
+    "width": 512,
+    "height": 512,
+    "byte_size": 589163,
+    "sha256": "57af148d4e79cbad25eedf815a55e4f8981f19559c57bff39d03f3f5f7d16fcc"
+  },
+  "gpu_handoff": {
+    "comfyui_process_vram_after_free_mib": 202,
+    "endpoint": "POST /free",
+    "result": "pass"
+  },
+  "result": "pass",
+  "notes": "Manual CLI smoke against the installed local workflow. The temporary image is not checked in; the hash, dimensions and whole-file size were measured before removal. The older comfyui-smoke.json remains historical Flux evidence."
+}
