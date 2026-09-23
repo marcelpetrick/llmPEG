@@ -1,0 +1,85 @@
+{
+  "cases": [
+    {
+      "artifact": "cat-monochrome.llmpeg.json.gz",
+      "artifact_gzip_bytes": 1374,
+      "artifact_plain_bytes": 2529,
+      "case": "cat-monochrome",
+      "encode_seconds": 21.0,
+      "generate_seconds": 67.1,
+      "prompt": "cat-monochrome.prompt.txt",
+      "reconstruction": "cat-monochrome.png",
+      "reconstruction_tone": {
+        "contrast": 62,
+        "luminance": 67,
+        "saturation": 11,
+        "warmth": -1
+      },
+      "result": "cat-monochrome-result.json",
+      "source_bytes": 345840,
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "status": "pass"
+    },
+    {
+      "artifact": "cat-on-keyboard.llmpeg.json.gz",
+      "artifact_gzip_bytes": 1273,
+      "artifact_plain_bytes": 2300,
+      "case": "cat-on-keyboard",
+      "encode_seconds": 35.8,
+      "generate_seconds": 67.1,
+      "prompt": "cat-on-keyboard.prompt.txt",
+      "reconstruction": "cat-on-keyboard.png",
+      "reconstruction_tone": {
+        "contrast": 46,
+        "luminance": 111,
+        "saturation": 88,
+        "warmth": 40
+      },
+      "result": "cat-on-keyboard-result.json",
+      "source_bytes": 612448,
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      },
+      "status": "incomplete"
+    },
+    {
+      "artifact": "cat-on-grass.llmpeg.json.gz",
+      "artifact_gzip_bytes": 1531,
+      "artifact_plain_bytes": 2875,
+      "case": "cat-on-grass",
+      "encode_seconds": 32.8,
+      "generate_seconds": 67.1,
+      "prompt": "cat-on-grass.prompt.txt",
+      "reconstruction": "cat-on-grass.png",
+      "reconstruction_tone": {
+        "contrast": 33,
+        "luminance": 124,
+        "saturation": 126,
+        "warmth": 47
+      },
+      "result": "cat-on-grass-result.json",
+      "source_bytes": 799983,
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      },
+      "status": "fail"
+    }
+  ],
+  "encoder": "ollama/qwen3.5:4b",
+  "generator": "local ComfyUI/Qwen-Image-2.1",
+  "llmpeg_version": "0.5.1",
+  "profile": "detailed",
+  "resolution": 512,
+  "seed": 42
+}
