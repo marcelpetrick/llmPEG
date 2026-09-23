@@ -3,8 +3,8 @@
 The page itself is static HTML. This backend exists for three reasons a browser cannot
 handle alone:
 
-* the Ollama vision endpoint usually lives on another machine on the LAN, which a page
-  served from localhost cannot call directly (CORS, and mixed content over HTTPS);
+* the local Ollama vision endpoint cannot be called reliably from a page opened through
+  ``file://`` because of CORS and private-network request rules;
 * downscaling is done with Pillow's LANCZOS filter, which is better than a canvas resize;
 * image generation is proxied to local ComfyUI with the bundled Qwen-Image-2.1 workflow.
 
@@ -12,8 +12,7 @@ Nothing here is hardened. It binds to 127.0.0.1, it has no authentication, and i
 prototype for one person on one laptop. Do not expose it.
 
 Usage:
-    export OLLAMA_VISION_HOST=http://your-ollama-host:11434
-    uv run python prototypeWebUI/server.py
+    uv run python prototypeWebUI/server.py --vision-host http://127.0.0.1:11434
     # then open http://127.0.0.1:8000
 """
 
