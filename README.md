@@ -5,7 +5,7 @@
 [![Python 3.14](https://img.shields.io/badge/Python-3.14-3776ab.svg)](https://www.python.org/)
 [![Ruff](https://img.shields.io/badge/lint-ruff-261230.svg)](https://docs.astral.sh/ruff/)
 [![mypy strict](https://img.shields.io/badge/types-mypy%20strict-2a6db2.svg)](https://mypy-lang.org/)
-[![Coverage 95.4%](https://img.shields.io/badge/coverage-95.4%25-brightgreen.svg)](#development)
+[![Coverage 95.7%](https://img.shields.io/badge/coverage-95.7%25-brightgreen.svg)](#development)
 
 **llmPEG** — the *LLM Photo Expert Group*, after JPEG's **J**oint **P**hotographic **E**xperts
 **G**roup. In JPEG the codec is an algorithm. Here the codec is a **large language model**: one
@@ -289,12 +289,10 @@ uv run llmpeg survey survey/expanded-manifest.json --output survey/expanded.html
 uv run llmpeg survey survey/qwen-manifest.json --output survey/qwen.html --overwrite
 ```
 
-View the checked-in comparisons directly on GitHub Pages:
-
-- [Local Qwen-Image-2.1 comparison](https://marcelpetrick.github.io/llmPEG/)
-- [Historical detailed cat survey](https://marcelpetrick.github.io/llmPEG/detailed.html)
-- [Balanced cat survey](https://marcelpetrick.github.io/llmPEG/balanced.html)
-- [Expanded scene survey](https://marcelpetrick.github.io/llmPEG/expanded.html)
+GitHub Pages publishes exactly one review page, the
+[local Qwen-Image-2.1 review](https://marcelpetrick.github.io/llmPEG/): one reconstruction per
+source, rated side by side with the original. The historical survey pages above stay in the
+repository as evidence and open locally, but are no longer published.
 
 ## Media and licensing
 
@@ -644,7 +642,7 @@ uv run python -m build
 ```
 
 The suite is offline and injects fake providers. Live Ollama and image-generation runs are manual
-demo steps, not CI dependencies. Current suite: **171 tests, 95.4% branch-aware coverage**.
+demo steps, not CI dependencies. Current suite: **182 tests, 95.7% branch-aware coverage**.
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs all five gates on Python 3.14 for
 every push and pull request.

@@ -368,8 +368,11 @@ def test_qwen_comparison_is_local_and_traceable_to_authoritative_reports() -> No
         assert report["rounds"][0]["pairwise"]["consistent"] is False
 
 
-def test_pages_workflow_makes_qwen_comparison_the_landing_page() -> None:
+def test_pages_workflow_publishes_only_the_qwen_review_page() -> None:
     workflow = (REPO / ".github/workflows/pages.yml").read_text(encoding="utf-8")
     assert "cp -R survey/. _site/" in workflow
-    assert "cp survey/index.html _site/balanced.html" in workflow
-    assert "cp survey/qwen.html _site/index.html" in workflow
+    assert "rm _site/*.html" in workflow
+    assert workflow.index("rm _site/*.html") < workflow.index(
+        "cp survey/qwen.html _site/index.html"
+    )
+    assert "balanced.html" not in workflow
