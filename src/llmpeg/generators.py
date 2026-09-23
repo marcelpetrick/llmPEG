@@ -50,8 +50,14 @@ def generate_comfyui(
     timeout: float = DEFAULT_GENERATION_TIMEOUT,
     *,
     poll_interval: float = POLL_INTERVAL_SECONDS,
+    cfg: float | None = None,
+    extra_negative: str = "",
 ) -> bytes:
-    """Render one square image with the bundled Qwen-Image-2.1 ComfyUI workflow."""
+    """Render one square image with the bundled Qwen-Image-2.1 ComfyUI workflow.
+
+    ``cfg`` replaces the workflow's guidance scale and ``extra_negative`` is appended to its
+    negative prompt; both exist for measured tone experiments and default to the workflow as-is.
+    """
     prompt = prompt.strip()
     if not prompt:
         raise ArtifactError("generation prompt is empty")
@@ -65,12 +71,14 @@ def generate_comfyui(
         raise ArtifactError("generation timeout must be positive")
     if poll_interval <= 0:
         raise ArtifactError("ComfyUI poll interval must be positive")
+    if cfg is not None and cfg <= 0:
+        raise ArtifactError("cfg must be positive")
 
     base = host.rstrip("/")
     if not comfyui_reachable(base, timeout):
         raise GeneratorUnavailable(f"local ComfyUI is unavailable at {base}")
 
-    workflow = _qwen_workflow(prompt, resolution, seed)
+    workflow = _qwen_workflow(prompt, resolution, seed, cfg=cfg, extra_negative=extra_negative)
     deadline = time.monotonic() + timeout
     submitted = _request_json(
         base + "/prompt",
@@ -93,7 +101,14 @@ def generate_comfyui(
     return validated
 
 
-def _qwen_workflow(prompt: str, resolution: int, seed: int) -> dict[str, Any]:
+def _qwen_workflow(
+    prompt: str,
+    resolution: int,
+    seed: int,
+    *,
+    cfg: float | None = None,
+    extra_negative: str = "",
+) -> dict[str, Any]:
     """Return an isolated workflow with only request-specific values changed."""
     resource = resources.files("llmpeg").joinpath(WORKFLOW_RESOURCE)
     try:
@@ -109,6 +124,10 @@ def _qwen_workflow(prompt: str, resolution: int, seed: int) -> dict[str, Any]:
         workflow["5"]["inputs"]["resolution"] = resolution
         workflow["6"]["inputs"]["seed"] = seed
         workflow["8"]["inputs"]["filename_prefix"] = f"llmpeg/{uuid.uuid4().hex}"
+        if cfg is not None:
+            workflow["6"]["inputs"]["cfg"] = cfg
+        if extra_negative.strip():
+            workflow["5"]["inputs"]["negative_prompt"] += ", " + extra_negative.strip()
     except (KeyError, TypeError) as error:  # pragma: no cover - structure is unit-tested
         raise ArtifactError("bundled Qwen workflow has an unexpected structure") from error
     return workflow

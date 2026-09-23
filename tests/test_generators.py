@@ -100,6 +100,17 @@ def test_qwen_workflow_matches_the_local_runtime(monkeypatch: pytest.MonkeyPatch
     assert workflow["8"]["inputs"]["filename_prefix"] == "llmpeg/abc"
 
 
+def test_qwen_workflow_applies_tone_experiment_overrides() -> None:
+    default = _qwen_workflow("cat", 512, 42)
+    workflow = _qwen_workflow("cat", 512, 42, cfg=1.5, extra_negative=" sepia, tint ")
+
+    assert workflow["6"]["inputs"]["cfg"] == 1.5
+    assert workflow["5"]["inputs"]["negative_prompt"] == (
+        default["5"]["inputs"]["negative_prompt"] + ", sepia, tint"
+    )
+    assert _qwen_workflow("cat", 512, 42, extra_negative="  ")["5"] == default["5"]
+
+
 def test_generate_comfyui_submits_polls_and_fetches(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -172,6 +183,11 @@ def test_generate_comfyui_validates_request(
 ) -> None:
     with pytest.raises(ArtifactError, match=message):
         generate_comfyui(prompt, resolution, seed, timeout=timeout, poll_interval=poll_interval)
+
+
+def test_generate_comfyui_rejects_non_positive_cfg() -> None:
+    with pytest.raises(ArtifactError, match="cfg must be positive"):
+        generate_comfyui("cat", 1024, 42, cfg=0)
 
 
 def test_generate_comfyui_fails_closed_when_local_service_is_down(
