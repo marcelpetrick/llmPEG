@@ -332,7 +332,7 @@ and it comes first in the file:
 ```json
 {"llmpeg":{
   "magic":"llmPEG",
-  "format_version":"1.0",
+  "format_version":"1.1",
   "major_brand":"lpg1",
   "compatible_brands":["lpg1"],
   "encoder":"llmpeg/0.5.1",

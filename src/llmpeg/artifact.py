@@ -26,7 +26,7 @@ MAGIC = "llmPEG"
 # a higher minor and ignores fields it does not know, the way PNG lets decoders
 # skip ancillary chunks.
 FORMAT_MAJOR = 1
-FORMAT_MINOR = 0
+FORMAT_MINOR = 1
 FORMAT_VERSION = f"{FORMAT_MAJOR}.{FORMAT_MINOR}"
 
 # Brands follow the ISO base media file format idea used by AVIF and HEIF: the
@@ -208,6 +208,24 @@ class Region:
 
 
 @dataclass(frozen=True)
+class Tone:
+    """Global exposure and colour statistics measured from the source pixels, not described.
+
+    Every value is an integer on a 0-255 scale: mean Rec. 601 luminance, luminance standard
+    deviation, and mean HSV saturation. `warmth` is mean red minus mean blue, -255 to 255.
+    """
+
+    luminance: int
+    contrast: int
+    saturation: int
+    warmth: int
+
+
+# Format 1.1 added the optional `tone` object.
+TONE_FORMAT = (1, 1)
+
+
+@dataclass(frozen=True)
 class Provenance:
     """Encoder settings needed to understand or reproduce an encoding."""
 
@@ -232,6 +250,7 @@ class Artifact:
     style: str
     avoid: tuple[str, ...]
     provenance: Provenance
+    tone: Tone | None = None
 
     def validate(self) -> None:
         """Validate all invariants of the current schema."""
@@ -265,6 +284,15 @@ class Artifact:
             raise ArtifactError("composition regions and descriptions must not be empty")
         if any(not HEX_COLOR.fullmatch(color) for color in self.palette):
             raise ArtifactError("palette entries must use #RRGGBB")
+        if self.tone is not None:
+            if self.header.version_tuple < TONE_FORMAT:
+                raise ArtifactError(f"tone requires format 1.1, got {self.header.format_version}")
+            for name, value in asdict(self.tone).items():
+                if type(value) is not int:
+                    raise ArtifactError(f"tone.{name} must be an integer")
+                low = -255 if name == "warmth" else 0
+                if not low <= value <= 255:
+                    raise ArtifactError(f"tone.{name} must be between {low} and 255")
 
     def to_dict(self) -> dict[str, Any]:
         """Return the JSON-ready representation."""
@@ -277,6 +305,9 @@ class Artifact:
         data["composition"] = [asdict(region) for region in self.composition]
         data["palette"] = list(self.palette)
         data["avoid"] = list(self.avoid)
+        if self.tone is None:
+            # Optional since 1.1; omitted rather than null so 1.0 artifacts round-trip unchanged.
+            del data["tone"]
         return data
 
     def to_bytes(self) -> bytes:
@@ -374,7 +405,8 @@ class Artifact:
                 for key, value in data.items()
                 if key not in {HEADER_KEY, "schema_version"}
             }
-            missing, extra = required - set(body), set(body) - required
+            optional = {"tone"} if header.version_tuple >= TONE_FORMAT else set()
+            missing, extra = required - set(body), set(body) - required - optional
             if missing or (extra and header.is_strict()):
                 raise ArtifactError(
                     f"artifact keys mismatch; missing={sorted(missing)}, extra={sorted(extra)}"
@@ -395,6 +427,16 @@ class Artifact:
                         _require_string(region["region"], f"composition[{index}].region"),
                         _require_string(region["description"], f"composition[{index}].description"),
                     )
+                )
+            tone: Tone | None = None
+            if "tone" in body and "tone" in optional:
+                tone_data = _require_mapping(data["tone"], "tone")
+                _require_keys(tone_data, {"luminance", "contrast", "saturation", "warmth"}, "tone")
+                tone = Tone(
+                    _require_integer(tone_data["luminance"], "tone.luminance"),
+                    _require_integer(tone_data["contrast"], "tone.contrast"),
+                    _require_integer(tone_data["saturation"], "tone.saturation"),
+                    _require_integer(tone_data["warmth"], "tone.warmth"),
                 )
             artifact = cls(
                 header=header,
@@ -419,6 +461,7 @@ class Artifact:
                     _optional_integer(provenance["seed"], "provenance.seed"),
                     _optional_number(provenance["temperature"], "provenance.temperature"),
                 ),
+                tone=tone,
             )
         except (KeyError, TypeError, ValueError) as error:
             if isinstance(error, ArtifactError):

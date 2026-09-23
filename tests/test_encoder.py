@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
 import pytest
+from PIL import Image
 
-from llmpeg.artifact import ArtifactError, FidelityProfile, Provenance
-from llmpeg.encoder import encode_image, render_generation_prompt
+from llmpeg.artifact import Artifact, ArtifactError, FidelityProfile, Provenance, Tone
+from llmpeg.encoder import describe_tone, encode_image, measure_tone, render_generation_prompt
 
 
 class FakeProvider:
@@ -35,6 +37,39 @@ def test_encode_and_render(sample_image: Path, description: dict[str, Any]) -> N
     assert "left: white rectangle" in prompt
     assert "Maximize resemblance" in prompt
     assert "add no" in prompt
+    assert artifact.tone == measure_tone(Image.open(sample_image))
+    assert "Tone: " in prompt
+    assert "do not brighten" in prompt
+
+
+def test_tone_is_measured_from_pixels() -> None:
+    gray = measure_tone(Image.new("L", (64, 64), 128))
+    assert gray == Tone(luminance=128, contrast=0, saturation=0, warmth=0)
+    orange = measure_tone(Image.new("RGB", (64, 64), (255, 128, 0)))
+    assert orange.saturation == 255
+    assert orange.warmth == 255
+
+
+def test_tone_is_described_in_words_and_numbers() -> None:
+    monochrome = describe_tone(Tone(luminance=125, contrast=61, saturation=0, warmth=0))
+    assert monochrome.startswith("mid-tone exposure (mean luminance 125/255), moderate contrast")
+    assert "strictly black-and-white" in monochrome
+    assert "white balance" not in monochrome
+    warm = describe_tone(Tone(luminance=148, contrast=55, saturation=48, warmth=30))
+    assert "natural, moderate colour with a warm white balance" in warm
+    assert "cool" in describe_tone(Tone(40, 80, 200, -40))
+    assert "dark, low-key" in describe_tone(Tone(40, 80, 200, -40))
+    assert "very bright, high-key" in describe_tone(Tone(230, 20, 10, 0))
+    assert "low, soft contrast" in describe_tone(Tone(230, 20, 10, 0))
+    assert "neutral white balance" in describe_tone(Tone(230, 20, 10, 0))
+
+
+def test_artifact_without_tone_renders_the_pre_1_1_prompt(artifact: Artifact) -> None:
+    assert artifact.tone is None
+    prompt = render_generation_prompt(artifact)
+    assert "Tone:" not in prompt
+    toned = replace(artifact, tone=Tone(100, 50, 20, 0))
+    assert "Tone: moderately dark exposure" in render_generation_prompt(toned)
 
 
 def test_encode_rejects_input_errors(

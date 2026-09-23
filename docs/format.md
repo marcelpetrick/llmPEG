@@ -1,6 +1,6 @@
 # The `.llmpeg.json` container format
 
-Version **1.0**. This document is the normative description of the file llmPEG writes.
+Version **1.1**. This document is the normative description of the file llmPEG writes.
 
 A conventional image format starts with a signature so a reader can answer two questions before
 parsing anything: *is this mine?* and *can my version read it?* PNG opens with an eight-byte
@@ -18,7 +18,7 @@ Every artifact begins with a single `llmpeg` object:
 ```json
 {"llmpeg":{
   "magic":"llmPEG",
-  "format_version":"1.0",
+  "format_version":"1.1",
   "major_brand":"lpg1",
   "compatible_brands":["lpg1"],
   "encoder":"llmpeg/0.5.1",
@@ -64,7 +64,8 @@ Consequences for anyone extending the format:
 
 ## Body
 
-After the header, the body carries the semantic payload. Every field is required at 1.0:
+After the header, the body carries the semantic payload. Every field is required except `tone`,
+which is optional and was added in 1.1:
 
 | Field | Type | Meaning |
 | --- | --- | --- |
@@ -78,6 +79,16 @@ After the header, the body carries the semantic payload. Every field is required
 | `style` | string | Medium and visual treatment. |
 | `avoid` | array | Errors a generator should not make. |
 | `provenance` | object | `provider`, `model`, `seed`, `temperature` of the encoding run. |
+| `tone` | object | Optional, 1.1+. `luminance`, `contrast`, `saturation`, `warmth` measured from the source pixels. |
+
+`tone` is the only body field computed from pixels rather than written by the vision model. All
+four values are integers: mean Rec. 601 luminance, luminance standard deviation, and mean HSV
+saturation, each 0–255, and `warmth` as mean red minus mean blue, −255 to 255. They are global
+statistics of a 256-pixel thumbnail, about 70 bytes of JSON, and describe grading only — nothing
+about where anything is. The prompt renderer turns them into words and asks the generator not to
+brighten, add contrast, or boost saturation, because reviewers found Qwen-Image-2.1
+reconstructions over-saturated without them. A file that declares 1.0 and carries `tone` does
+not conform; 1.0 files without it read and round-trip unchanged.
 
 **The body never contains image bytes.** `source.sha256` identifies the original so an evaluation
 can prove it is comparing against the right file; it does not let anyone recover it.
@@ -103,7 +114,7 @@ Since llmpeg 0.5.0, `llmpeg encode` writes this envelope by default and `--plain
 command that reads an artifact accepts either form.
 
 - **The JSON inside is unchanged.** Decompressing yields exactly the canonical bytes described
-  above, header first, still format 1.0. `gunzip` turns an envelope back into a plain artifact,
+  above, header first, at the artifact's own format version. `gunzip` turns an envelope back into a plain artifact,
   and `gzip` turns a plain artifact into a readable envelope.
 - **Recognised by content, not by name.** A file that starts with gzip's signature `1f 8b` is an
   envelope; anything else is parsed as JSON.
@@ -176,7 +187,7 @@ format depends on the file name — `magic` is the identifier — so any name is
 ## Legacy files
 
 Artifacts written before the header existed carried a bare `schema_version: 1` and no `llmpeg`
-object. They are still readable: the reader recognises them, upgrades them to 1.0 in memory, and
+object. They are still readable: the reader recognises them, upgrades them to the current format in memory, and
 records `encoder: "llmpeg/unknown"` because the writing version was never stored. Writing such an
 artifact emits current-format bytes, so the upgrade is one-way and automatic.
 

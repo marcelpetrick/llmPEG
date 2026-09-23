@@ -4,6 +4,7 @@ import gzip
 import json
 import shutil
 import subprocess
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -16,6 +17,7 @@ from llmpeg.artifact import (
     Artifact,
     ArtifactError,
     FidelityProfile,
+    Tone,
     UnsupportedFormatError,
     envelope_of,
     source_digest,
@@ -259,3 +261,48 @@ def test_header_rejects_missing_fields(artifact: Artifact) -> None:
     del data["llmpeg"]["min_reader_version"]
     with pytest.raises(ArtifactError, match="header keys missing"):
         Artifact.from_dict(data)
+
+
+def test_tone_round_trips_from_format_1_1(artifact: Artifact) -> None:
+    toned = replace(artifact, tone=Tone(luminance=148, contrast=55, saturation=48, warmth=-12))
+    parsed = Artifact.from_file_bytes(toned.to_bytes())
+    assert parsed.tone == toned.tone
+    assert json.loads(toned.to_bytes())["tone"] == {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -12,
+    }
+    assert "tone" not in json.loads(artifact.to_bytes())
+
+
+def test_a_format_1_0_artifact_stays_strict_about_tone(artifact: Artifact) -> None:
+    """Tone arrived in 1.1, so a file that claims 1.0 and carries it is not conforming."""
+    old = replace(artifact, header=replace(artifact.header, format_version="1.0"))
+    data = old.to_dict()
+    assert Artifact.from_dict(data).header.format_version == "1.0"
+    data["tone"] = {"luminance": 1, "contrast": 1, "saturation": 1, "warmth": 1}
+    with pytest.raises(ArtifactError, match="keys mismatch"):
+        Artifact.from_dict(data)
+    with pytest.raises(ArtifactError, match=r"requires format 1\.1"):
+        replace(old, tone=Tone(1, 1, 1, 1)).validate()
+
+
+@pytest.mark.parametrize(
+    ("tone", "message"),
+    [
+        ({"luminance": 1, "contrast": 1, "saturation": 1}, "tone keys mismatch"),
+        ({"luminance": 1.5, "contrast": 1, "saturation": 1, "warmth": 0}, "integer"),
+        ({"luminance": 256, "contrast": 1, "saturation": 1, "warmth": 0}, "between 0 and 255"),
+        ({"luminance": 1, "contrast": 1, "saturation": 1, "warmth": -256}, "between -255"),
+        ("bright", "tone must be an object"),
+    ],
+)
+def test_invalid_tone_is_rejected(artifact: Artifact, tone: object, message: str) -> None:
+    data = artifact.to_dict()
+    data["tone"] = tone
+    with pytest.raises(ArtifactError, match=message):
+        Artifact.from_dict(data)
+    if isinstance(tone, dict) and len(tone) == 4:
+        with pytest.raises(ArtifactError, match=message):
+            replace(artifact, tone=Tone(**tone)).validate()

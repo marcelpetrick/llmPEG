@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 import pytest
 
-from llmpeg.artifact import Artifact, SourceInfo, source_digest
+from llmpeg.artifact import FORMAT_VERSION, Artifact, SourceInfo, source_digest
 from llmpeg.cli import artifact_path_for, existing_artifact_path_for, generated_path_for, main
 from llmpeg.generators import GeneratorUnavailable
 
@@ -125,7 +125,7 @@ def test_verify_reports_conformance_and_rejects_foreign_json(
     artifact.write(good)
     assert main(["verify", str(good)]) == 0
     out = capsys.readouterr().out
-    assert "llmPEG 1.0 (lpg1)" in out
+    assert f"llmPEG {FORMAT_VERSION} (lpg1)" in out
     assert "conforms: yes" in out
 
     foreign = tmp_path / "foreign.json"
