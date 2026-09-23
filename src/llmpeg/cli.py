@@ -131,6 +131,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         if args.command == "encode":
             output = args.output or artifact_path_for(args.image, compressed=args.gzip)
+            print(
+                f"encoding with ollama/{args.model} at {args.host}; "
+                "the full image is uploaded to that endpoint",
+                file=sys.stderr,
+            )
             provider = OllamaVisionProvider(args.host, args.model, args.timeout)
             artifact = encode_image(
                 args.image,

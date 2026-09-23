@@ -64,7 +64,12 @@ def test_cli_refuses_overwrite_and_reports_errors(
     assert main(["inspect", str(tmp_path / "missing.json")]) == 2
 
 
-def test_encode_cli(artifact: Artifact, sample_image: Path, tmp_path: Path) -> None:
+def test_encode_cli(
+    artifact: Artifact,
+    sample_image: Path,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
     output = tmp_path / "encoded.json"
     with patch("llmpeg.cli.encode_image", return_value=artifact) as encode:
         assert (
@@ -84,6 +89,10 @@ def test_encode_cli(artifact: Artifact, sample_image: Path, tmp_path: Path) -> N
         )
     assert output.exists()
     assert encode.call_args.args[2].value == "detailed"
+    warning = capsys.readouterr().err
+    assert "ollama/qwen3.5:4b" in warning
+    assert "http://example.test" in warning
+    assert "full image is uploaded" in warning
 
 
 def test_evaluate_cli_returns_status_exit_code(
