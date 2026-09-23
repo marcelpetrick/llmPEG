@@ -21,7 +21,7 @@ Every artifact begins with a single `llmpeg` object:
   "format_version":"1.0",
   "major_brand":"lpg1",
   "compatible_brands":["lpg1"],
-  "encoder":"llmpeg/0.4.2",
+  "encoder":"llmpeg/0.5.0",
   "min_reader_version":"0.1.0",
   "decoder":"text-to-image model; lossy; non-deterministic; not bundled"
 }, ...}
@@ -95,11 +95,12 @@ The header costs **228 bytes**. Migrating an old artifact also removed the 19-by
 `"schema_version":1,` field it replaced, so existing files grew by **209 bytes net**. That is real
 overhead and it is charged honestly against every compression ratio this project reports.
 
-## Optional gzip envelope
+## Gzip envelope
 
 Since llmpeg 0.4.0 an artifact may also be stored inside a single gzip member (RFC 1952),
 conventionally named `photo.jpg.llmpeg.json.gz` — the name `gzip photo.jpg.llmpeg.json` produces.
-`llmpeg encode --gzip` writes one; every command that reads an artifact accepts either form.
+Since llmpeg 0.5.0, `llmpeg encode` writes this envelope by default and `--plain` opts out; every
+command that reads an artifact accepts either form.
 
 - **The JSON inside is unchanged.** Decompressing yields exactly the canonical bytes described
   above, header first, still format 1.0. `gunzip` turns an envelope back into a plain artifact,
@@ -154,7 +155,7 @@ Check any file:
 $ llmpeg verify photo.jpg.llmpeg.json
 llmPEG 1.0 (lpg1)
 compatible brands: lpg1
-written by: llmpeg/0.4.2
+written by: llmpeg/0.5.0
 needs reader: llmpeg >= 0.1.0
 decoder: text-to-image model; lossy; non-deterministic; not bundled
 envelope: none (1206 bytes on disk)

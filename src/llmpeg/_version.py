@@ -4,4 +4,4 @@ Packaging metadata, the artifact header's `encoder` field, and the prototype ser
 this value; `tests/test_version.py` fails when anything else falls out of step with it.
 """
 
-__version__ = "0.4.2"
+__version__ = "0.5.0"

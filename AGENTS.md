@@ -58,7 +58,8 @@ README, and is not part of the benchmark set. Do not add a second exception.
 | `src/llmpeg/artifact.py` | Versioned artifact model, canonical JSON, profile byte budgets |
 | `src/llmpeg/encoder.py` | Image → artifact encoding |
 | `src/llmpeg/providers.py` | Ollama vision client and provider protocols |
-| `src/llmpeg/generators.py` | Optional ComfyUI-first generation and Codex fallback adapters |
+| `src/llmpeg/generators.py` | Fail-closed local ComfyUI/Qwen-Image-2.1 generation adapter |
+| `src/llmpeg/rating.py` | Experimental deterministic + repeated local semantic comparison |
 | `src/llmpeg/evaluation.py` | Deterministic visual proxy metrics |
 | `src/llmpeg/survey.py` | HTML survey report generation (embedded CSS/JS, `E501` exempt) |
 | `src/llmpeg/cli.py` | `llmpeg` console entry point |
@@ -98,7 +99,7 @@ Scripts under `scripts/` are linted and type-checked like the package, but are m
 tools rather than product surface: they may talk to the live Ollama endpoint, and they never
 run in CI. Never record the endpoint host in their output — model name only.
 
-Current baseline: **137 tests, 96.5% branch coverage**. Update this line when it changes — a stale
+Current baseline: **163 tests, 95.4% branch coverage**. Update this line when it changes — a stale
 self-measurement is the most embarrassing possible bug in a project about honest measurement.
 
 The release version lives only in `src/llmpeg/_version.py`; packaging, the artifact header, and
@@ -114,7 +115,7 @@ the network, credentials, or a running model.
 
 ## Encoding behavior
 
-- Default model `qwen3-vl:32b-ctx49k` over Ollama `/api/chat`, `OLLAMA_VISION_HOST`.
+- Default model `qwen3.5:4b` over Ollama `/api/chat`, `OLLAMA_VISION_HOST`.
 - Deterministic settings: temperature `0`, seed `42`, `/no_think`.
 - Source images are never modified or deleted.
 - Output files are never overwritten without `--overwrite`.

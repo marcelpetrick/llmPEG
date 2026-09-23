@@ -5,11 +5,11 @@
 [![Python 3.14](https://img.shields.io/badge/Python-3.14-3776ab.svg)](https://www.python.org/)
 [![Ruff](https://img.shields.io/badge/lint-ruff-261230.svg)](https://docs.astral.sh/ruff/)
 [![mypy strict](https://img.shields.io/badge/types-mypy%20strict-2a6db2.svg)](https://mypy-lang.org/)
-[![Coverage 96.5%](https://img.shields.io/badge/coverage-96.5%25-brightgreen.svg)](#development)
+[![Coverage 95.4%](https://img.shields.io/badge/coverage-95.4%25-brightgreen.svg)](#development)
 
 **llmPEG** — the *LLM Photo Expert Group*, after JPEG's **J**oint **P**hotographic **E**xperts
-**G**roup. In JPEG the codec is an algorithm. Here the codec is a **large language model**: an LLM
-does the compressing, and a second model does the "decompressing".
+**G**roup. In JPEG the codec is an algorithm. Here the codec is a **large language model**: one
+model writes a tiny description, and a second model invents a reconstruction from it.
 
 The joke came first. A satirical article does the rounds every few months — *"teenager compresses
 family photos into AI prompts and deletes the originals, 6 MB down to 200 bytes!"* Deletion has
@@ -56,25 +56,26 @@ Think of it as describing a painting to a friend over the phone, throwing the pa
 years later asking a different artist to paint it back from your description. You get *a*
 painting. You do not get *your* painting.
 
-There is no decompressor. "Decompression" here means an image generator inventing a new picture
-from text — which is why everything below is scored rather than trusted.
+There is no decompressor. Reconstruction means an image generator inventing a new picture from
+text — which is why everything below is scored rather than trusted.
 
 ## Try it on your own photo
 
-[`prototypeWebUI/`](prototypeWebUI/README.md) is a small local web page: drop an image, watch the
-vision model describe it, read the description, then have the Codex CLI paint a new picture from
-those words alone.
+[`prototypeWebUI/`](prototypeWebUI/README.md) is a small local web page: drop an image, watch local
+Ollama/Qwen describe it, read the description, then have local Qwen-Image-2.1 paint a new picture
+from those words alone. The page compares the result with the source using explicit proxy metrics
+and repeated local vision judgments; that experimental rating is not calibrated to human ratings.
 
 ```bash
-export OLLAMA_VISION_HOST=http://your-ollama-host:11434
-uv run python prototypeWebUI/server.py     # then open http://127.0.0.1:8000
+ollama pull qwen3.5:4b
+# Start ComfyUI with the Qwen-Image-2.1 weights described in prototypeWebUI/README.md.
+uv run python prototypeWebUI/server.py \
+  --vision-host http://127.0.0.1:11434     # then open http://127.0.0.1:8000
 ```
 
-Generation defaults to the logged-in Codex CLI and explicitly invokes its `$imagegen` skill.
-The page can switch per request to a sibling ComfyUI checkout, Pollinations with an API key, or an
-Automatic1111-compatible server. The ComfyUI adapter uses its existing self-starting shell script
-and falls back to Codex only when that local service is unavailable. The prompt remains editable
-before generation—the one real perk of a codec whose compressed form is readable.
+Generation has one fail-closed path: the bundled Qwen-Image-2.1 workflow over local ComfyUI HTTP.
+There is no hosted fallback. The prompt remains editable before generation—the one real perk of a
+codec whose compressed form is readable.
 
 Doing this to a photo you took yourself makes the point faster than any table below.
 
@@ -196,13 +197,13 @@ Measured by [`scripts/benchmark_cycle.py`](scripts/benchmark_cycle.py) against a
 | **Compress** (image → artifact) | 78.0 s | 63.5 – 104.7 s |
 | **Render prompt** (artifact → generator prompt) | < 1 ms | — |
 | **Evaluate** (source vs reconstruction) | 0.12 s | 0.11 – 0.13 s |
-| **Decompress** (prompt → new image) | not measured | external generator |
+| **Generate a new image** (prompt → pixels) | not measured | external generator |
 
 The cost is wildly asymmetric. Compressing one photograph costs over a minute of GPU time;
 everything in the core package afterwards is effectively free. The expensive generation step was
 not measured in this benchmark. The prototype can invoke a generator, but that compute remains an
-external cost. A codec whose decompressor is "rent a diffusion model" has an honesty problem with
-the word *compression*, which is the joke.
+external cost. A codec whose reconstruction stage is "rent a diffusion model" has an honesty
+problem with the word *compression*, which is the joke.
 
 **Reproducibility is worse than the ratio suggests.** Re-encoding `cat-on-grass` for this
 benchmark produced a **1,275-byte** artifact where the checked-in run produced **997 bytes** —
@@ -313,7 +314,7 @@ and it comes first in the file:
   "format_version":"1.0",
   "major_brand":"lpg1",
   "compatible_brands":["lpg1"],
-  "encoder":"llmpeg/0.4.2",
+  "encoder":"llmpeg/0.5.0",
   "min_reader_version":"0.1.0",
   "decoder":"text-to-image model; lossy; non-deterministic; not bundled"
 }, ...}
@@ -328,7 +329,7 @@ $ head -c 40 photo.jpg.llmpeg.json
 
 $ llmpeg verify photo.jpg.llmpeg.json
 llmPEG 1.0 (lpg1)
-written by: llmpeg/0.4.2
+written by: llmpeg/0.5.0
 needs reader: llmpeg >= 0.1.0
 decoder: text-to-image model; lossy; non-deterministic; not bundled
 envelope: none (1206 bytes on disk)
@@ -356,7 +357,7 @@ overhead and it is charged against every ratio in this README: the cat went from
 published figure re-measured, because the alternative — quoting the old ratios against the new
 files — is exactly the kind of accounting this project exists to make fun of.
 
-**Optional gzip envelope.** The JSON is text, so it compresses. `llmpeg encode --gzip` stores the
+**Default gzip envelope.** The JSON is text, so it compresses. `llmpeg encode` stores the
 same canonical artifact inside one deterministic gzip member, `photo.jpg.llmpeg.json.gz`, and every
 command reads either form — recognised by gzip's signature, not the file name. `gunzip` gives back
 the plain artifact byte for byte. Measured on all 17 checked-in artifacts
@@ -403,34 +404,30 @@ uv sync --extra dev
 uv run llmpeg --help
 ```
 
-Point it at your vision server once, then the everyday commands take no flags at all:
+With local Ollama and ComfyUI running, the everyday commands take no flags at all:
 
 ```bash
-export OLLAMA_VISION_HOST=http://your-ollama-server:11434
-
-uv run llmpeg encode photo.jpg               # -> photo.jpg.llmpeg.json; reports bytes and ratio
-uv run llmpeg encode photo.jpg --gzip        # -> photo.jpg.llmpeg.json.gz; same artifact, gzipped
-uv run llmpeg reconstruct photo.jpg.llmpeg.json > photo.prompt.txt
-uv run llmpeg generate photo.jpg.llmpeg.json # -> photo.jpg.reconstructed.png
-uv run llmpeg verify photo.jpg.llmpeg.json
-uv run llmpeg inspect photo.jpg.llmpeg.json
+uv run llmpeg encode photo.jpg                    # -> photo.jpg.llmpeg.json.gz
+uv run llmpeg reconstruct photo.jpg.llmpeg.json.gz > photo.prompt.txt
+uv run llmpeg generate photo.jpg.llmpeg.json.gz   # -> photo.jpg.reconstructed.png
+uv run llmpeg verify photo.jpg.llmpeg.json.gz
+uv run llmpeg inspect photo.jpg.llmpeg.json.gz
 ```
 
-`encode` writes `<whole file name>.llmpeg.json` beside the image and prints the ratio, so the
-common case needs no `--output` and no follow-up command. With `--gzip` it writes the
-`.llmpeg.json.gz` envelope instead; every other command accepts either file. `reconstruct` writes
-the prompt to stdout so it pipes. `generate` asks the sibling ComfyUI checkout first and uses the logged-in
-Codex CLI only when that adapter or service is unavailable. `evaluate` finds the artifact the same
-way:
+`encode` defaults to the quality-first `detailed` profile and writes
+`<whole file name>.llmpeg.json.gz` beside the image. It prints plain and stored byte counts and
+ratios together; `--plain` is the explicit opt-out. Every reading command accepts either envelope.
+`reconstruct` writes the prompt to stdout so it pipes. `generate` calls local ComfyUI directly and
+fails if that service or its Qwen workflow fails. `evaluate` finds the artifact the same way:
 
 ```bash
 uv run llmpeg evaluate photo.jpg regenerated.png   # uses photo.jpg.llmpeg.json
 ```
 
-Use `--generator codex` to select Codex directly. Override ComfyUI discovery with
-`--comfyui-script`, `LLMPEG_COMFYUI_SCRIPT`, `--comfyui-host`, or `LLMPEG_COMFYUI_HOST`. Codex's
-built-in image generation produced the checked-in demos; both generator paths receive only the
-rendered text prompt, never the source image.
+Override the local service with `--comfyui-host` or `LLMPEG_COMFYUI_HOST`. The generator receives
+only the rendered text prompt, never the source image. Older checked-in benchmark reconstructions
+retain their actual Codex provenance; changing the active adapter does not rewrite historical
+evidence.
 
 Output files are never overwritten unless `--overwrite` is supplied. Encoding sends the full image
 to the configured Ollama endpoint, so only use a server you trust.
@@ -441,10 +438,11 @@ Everything above has an explicit form, and every default is overridable:
 
 ```bash
 uv run llmpeg encode photo.jpg \
-  --profile detailed \                 # gist | balanced (default) | detailed
+  --profile detailed \                 # gist | balanced | detailed (default)
+  --plain \                            # gzip is the default
   --output artifacts/photo.jpg.llmpeg.json \
   --host http://other-host:11434 \
-  --model qwen3-vl:32b-ctx49k \
+  --model qwen3.5:4b \
   --timeout 600 \
   --max-image-bytes 26214400 \
   --max-image-pixels 50000000 \
@@ -477,20 +475,20 @@ folder. Set the photo directory and trusted Ollama endpoint before running them.
 LLMPEG_PROJECT=/home/mpetrick/repos/llmPEG
 PHOTO_DIR=/path/to/photos
 cd "$PHOTO_DIR"
-export OLLAMA_VISION_HOST=http://your-ollama-host:11434
+export OLLAMA_VISION_HOST=http://127.0.0.1:11434
 mkdir -p llmpeg/artifacts llmpeg/restored
 
 find . -maxdepth 1 -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) -print0 |
   while IFS= read -r -d '' f; do
     n=$(basename "${f#./}")
     uv run --project "$LLMPEG_PROJECT" llmpeg encode "${f#./}" \
-      --output "llmpeg/artifacts/$n.llmpeg.json"
+      --output "llmpeg/artifacts/$n.llmpeg.json.gz"
   done
 
 du -sh llmpeg/artifacts          # compact text artifacts; originals still remain
 ```
 
-`encode` appends `.llmpeg.json` to the **whole** file name, so `photo.jpg` and `photo.png` in one
+`encode` appends `.llmpeg.json.gz` to the **whole** file name, so `photo.jpg` and `photo.png` in one
 folder produce two artifacts instead of one silently overwriting the other. The explicit output
 path places them where the later loops expect them. With no `--overwrite`, re-running stops on an
 existing artifact rather than spending more model time. `find` avoids zsh's unmatched-glob error;
@@ -499,7 +497,7 @@ existing artifact rather than spending more model time. `find` avoids zsh's unma
 ### 2. Check what you actually have
 
 ```bash
-for a in llmpeg/artifacts/*.llmpeg.json; do
+for a in llmpeg/artifacts/*.llmpeg.json.gz; do
   uv run --project "$LLMPEG_PROJECT" llmpeg verify "$a" | head -1  # llmPEG 1.0 (lpg1)
   uv run --project "$LLMPEG_PROJECT" llmpeg inspect "$a" | grep ratio
 done
@@ -520,8 +518,8 @@ by scroll-back accident:
 ```bash
 I_UNDERSTAND_THIS_DELETES_MY_PHOTOS=yes bash -c '
   [ "$I_UNDERSTAND_THIS_DELETES_MY_PHOTOS" = yes ] || exit 1
-  for a in llmpeg/artifacts/*.llmpeg.json; do
-    rm -f -- "$(basename "$a" .llmpeg.json)"   # photo.jpg.llmpeg.json -> photo.jpg
+  for a in llmpeg/artifacts/*.llmpeg.json.gz; do
+    rm -f -- "$(basename "$a" .llmpeg.json.gz)" # photo.jpg.llmpeg.json.gz -> photo.jpg
   done
   echo "originals deleted; only the text remains"
 '
@@ -529,29 +527,20 @@ I_UNDERSTAND_THIS_DELETES_MY_PHOTOS=yes bash -c '
 
 ### 4. Convert back
 
-Generate a new image from each artifact. The CLI renders the text prompt internally, tries the
-sibling ComfyUI adapter first, and falls back to Codex only if that adapter or service is
-unavailable:
+Generate a new image from each artifact. The CLI renders the text prompt internally and sends only
+that text to local ComfyUI. It fails closed if ComfyUI or Qwen-Image-2.1 is unavailable:
 
 ```bash
-for a in llmpeg/artifacts/*.llmpeg.json; do
-  n=$(basename "$a" .llmpeg.json)
+for a in llmpeg/artifacts/*.llmpeg.json.gz; do
+  n=$(basename "$a" .llmpeg.json.gz)
   uv run --project "$LLMPEG_PROJECT" llmpeg generate "$a" \
     --output "llmpeg/restored/$n.png" --overwrite
 done
 ```
 
-The default ComfyUI adapter is discovered at `../ComfyUI/generate_image.sh`. If the repositories
-are elsewhere, pass `--comfyui-script /path/to/generate_image.sh`. To bypass ComfyUI and use the
-[Codex CLI](https://github.com/openai/codex) directly:
-
-```bash
-for a in llmpeg/artifacts/*.llmpeg.json; do
-  n=$(basename "$a" .llmpeg.json)
-  uv run --project "$LLMPEG_PROJECT" llmpeg generate "$a" --generator codex \
-    --output "llmpeg/restored/$n.png" --overwrite
-done
-```
+The exact packaged workflow and required weight names are documented in
+[`prototypeWebUI/README.md`](prototypeWebUI/README.md). The installed Qwen-Image-2.1 weights use
+the non-commercial Qwen Research licence and are not bundled.
 
 `reconstruct` remains available when you want to inspect, edit, or pipe the exact prompt without
 generating an image. There is still no decompressor: every output is a newly invented image.
@@ -576,7 +565,7 @@ A real run over five CC0 photographs (3,125,477 bytes total), `balanced` profile
 | --- | ---: |
 | Compress 5 photos | **101 s** (14–27 s each, mean 20 s) |
 | Render 5 prompts | **< 1 s** |
-| "Decompress" 5 photos | **304 s** (51–69 s each, mean 61 s) |
+| Generate 5 new images | **304 s** (51–69 s each, mean 61 s) |
 | **Total wall clock** | **405 s — under 7 minutes** |
 
 | Folder | Size |
@@ -615,6 +604,14 @@ separately and reports `not_evaluated` when no transcript is supplied.
 The demo transcript was verified by hand because the local Tesseract installation had no language
 data. llmPEG consumes OCR text; it does not ship an OCR engine.
 
+The Web UI adds an explicitly experimental local multi-signal report: five repeated-Qwen semantic
+subscores, their spread, visible differences, prompt suggestions, and the unchanged deterministic
+metrics. A creator-versus-rater script uses order-reversed pairwise judgments plus deterministic
+regression guards. Both checked-in runs rejected their challengers after the pixels-only judge
+showed presentation-order bias, so this loop still has no trustworthy improvement gradient;
+inspect the prompts, images, licence credit, and raw trials in
+[`docs/creator-rater/report.json`](docs/creator-rater/report.json).
+
 ## Development
 
 ```bash
@@ -626,7 +623,7 @@ uv run python -m build
 ```
 
 The suite is offline and injects fake providers. Live Ollama and image-generation runs are manual
-demo steps, not CI dependencies. Current suite: **137 tests, 96.5% branch-aware coverage**.
+demo steps, not CI dependencies. Current suite: **163 tests, 95.4% branch-aware coverage**.
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs all five gates on Python 3.14 for
 every push and pull request.
@@ -640,13 +637,13 @@ Pushing a `v*` tag runs [`.github/workflows/release.yml`](.github/workflows/rele
 builds an sdist and a wheel with `uv build`, checks them with twine, and attaches both to a
 generated GitHub Release.
 
-The current release is [`v0.4.2`](https://github.com/marcelpetrick/llmPEG/releases/tag/v0.4.2).
+The current release is [`v0.5.0`](https://github.com/marcelpetrick/llmPEG/releases/tag/v0.5.0).
 
 There is no PyPI upload: the distribution name `llmpeg` is already registered there by an
 unrelated project, so installing is done from a release artifact or from a checkout:
 
 ```bash
-uv pip install llmpeg-0.4.2-py3-none-any.whl   # from a GitHub Release
+uv pip install llmpeg-0.5.0-py3-none-any.whl   # from a GitHub Release
 uv pip install .                               # from a clone
 ```
 
