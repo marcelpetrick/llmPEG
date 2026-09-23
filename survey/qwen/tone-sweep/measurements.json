@@ -1,0 +1,237 @@
+{
+  "generator": "local ComfyUI/Qwen-Image-2.1",
+  "llmpeg_version": "0.5.1",
+  "prompts": "survey/qwen/review",
+  "resolution": 512,
+  "rows": [
+    {
+      "case": "cat-monochrome",
+      "cfg": 3.5,
+      "extra_negative": "",
+      "image": "cat-monochrome-default.png",
+      "reconstruction_tone": {
+        "contrast": 62,
+        "luminance": 67,
+        "saturation": 11,
+        "warmth": -1
+      },
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "variant": "default"
+    },
+    {
+      "case": "cat-on-keyboard",
+      "cfg": 3.5,
+      "extra_negative": "",
+      "image": "cat-on-keyboard-default.png",
+      "reconstruction_tone": {
+        "contrast": 46,
+        "luminance": 111,
+        "saturation": 88,
+        "warmth": 40
+      },
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      },
+      "variant": "default"
+    },
+    {
+      "case": "cat-on-grass",
+      "cfg": 3.5,
+      "extra_negative": "",
+      "image": "cat-on-grass-default.png",
+      "reconstruction_tone": {
+        "contrast": 33,
+        "luminance": 124,
+        "saturation": 126,
+        "warmth": 47
+      },
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      },
+      "variant": "default"
+    },
+    {
+      "case": "cat-monochrome",
+      "cfg": 2.5,
+      "extra_negative": "",
+      "image": "cat-monochrome-cfg-2.5.png",
+      "reconstruction_tone": {
+        "contrast": 61,
+        "luminance": 68,
+        "saturation": 11,
+        "warmth": -1
+      },
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "variant": "cfg-2.5"
+    },
+    {
+      "case": "cat-on-keyboard",
+      "cfg": 2.5,
+      "extra_negative": "",
+      "image": "cat-on-keyboard-cfg-2.5.png",
+      "reconstruction_tone": {
+        "contrast": 46,
+        "luminance": 110,
+        "saturation": 89,
+        "warmth": 40
+      },
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      },
+      "variant": "cfg-2.5"
+    },
+    {
+      "case": "cat-on-grass",
+      "cfg": 2.5,
+      "extra_negative": "",
+      "image": "cat-on-grass-cfg-2.5.png",
+      "reconstruction_tone": {
+        "contrast": 31,
+        "luminance": 123,
+        "saturation": 137,
+        "warmth": 49
+      },
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      },
+      "variant": "cfg-2.5"
+    },
+    {
+      "case": "cat-monochrome",
+      "cfg": 1.5,
+      "extra_negative": "",
+      "image": "cat-monochrome-cfg-1.5.png",
+      "reconstruction_tone": {
+        "contrast": 61,
+        "luminance": 67,
+        "saturation": 9,
+        "warmth": -1
+      },
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "variant": "cfg-1.5"
+    },
+    {
+      "case": "cat-on-keyboard",
+      "cfg": 1.5,
+      "extra_negative": "",
+      "image": "cat-on-keyboard-cfg-1.5.png",
+      "reconstruction_tone": {
+        "contrast": 51,
+        "luminance": 113,
+        "saturation": 91,
+        "warmth": 42
+      },
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      },
+      "variant": "cfg-1.5"
+    },
+    {
+      "case": "cat-on-grass",
+      "cfg": 1.5,
+      "extra_negative": "",
+      "image": "cat-on-grass-cfg-1.5.png",
+      "reconstruction_tone": {
+        "contrast": 29,
+        "luminance": 117,
+        "saturation": 154,
+        "warmth": 55
+      },
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      },
+      "variant": "cfg-1.5"
+    },
+    {
+      "case": "cat-monochrome",
+      "cfg": 3.5,
+      "extra_negative": "color, colour, tint, sepia, dark, underexposed, studio lighting, professional color grading, vivid colors",
+      "image": "cat-monochrome-tone-negatives.png",
+      "reconstruction_tone": {
+        "contrast": 63,
+        "luminance": 74,
+        "saturation": 12,
+        "warmth": -1
+      },
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "variant": "tone-negatives"
+    },
+    {
+      "case": "cat-on-keyboard",
+      "cfg": 3.5,
+      "extra_negative": "saturated colors, warm color cast, orange tint, dark, underexposed, studio lighting, professional color grading, vivid colors",
+      "image": "cat-on-keyboard-tone-negatives.png",
+      "reconstruction_tone": {
+        "contrast": 46,
+        "luminance": 122,
+        "saturation": 57,
+        "warmth": 27
+      },
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      },
+      "variant": "tone-negatives"
+    },
+    {
+      "case": "cat-on-grass",
+      "cfg": 3.5,
+      "extra_negative": "saturated colors, warm color cast, neon green, dark, underexposed, studio lighting, professional color grading, vivid colors",
+      "image": "cat-on-grass-tone-negatives.png",
+      "reconstruction_tone": {
+        "contrast": 33,
+        "luminance": 141,
+        "saturation": 98,
+        "warmth": 38
+      },
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      },
+      "variant": "tone-negatives"
+    }
+  ],
+  "seed": 42
+}
