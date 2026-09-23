@@ -15,6 +15,7 @@ import time
 from pathlib import Path
 from typing import Any
 
+from llmpeg import __version__
 from llmpeg.artifact import Artifact, ArtifactError, FidelityProfile
 from llmpeg.encoder import encode_image, render_generation_prompt
 from llmpeg.generators import (
@@ -114,8 +115,14 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     output_dir = args.output_dir.resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
     report_path = output_dir / "report.json"
-    if report_path.exists() and not args.overwrite:
-        raise ArtifactError(f"refusing to overwrite existing file: {report_path}")
+    planned = [report_path]
+    for name in ("baseline", *(f"challenger-{index}" for index in range(1, args.rounds + 1))):
+        planned.extend(
+            output_dir / f"{name}{suffix}" for suffix in (".llmpeg.json.gz", ".prompt.txt", ".png")
+        )
+    existing = next((path for path in planned if path.exists()), None)
+    if existing is not None and not args.overwrite:
+        raise ArtifactError(f"refusing to overwrite existing file: {existing}")
 
     rater = OllamaSimilarityRater(
         args.ollama_host,
@@ -180,8 +187,6 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             source_bytes,
             baseline_image,
             challenger_image,
-            baseline_prompt,
-            challenger_prompt,
         )
         regressions = _regressions(baseline_rating, challenger_rating)
         accepted = pairwise.accepted and not regressions
@@ -212,9 +217,10 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
 
     return {
         "date": time.strftime("%Y-%m-%d"),
+        "llmpeg_version": __version__,
         "objective": (
-            "pairwise prompt refinement with order reversal and deterministic regression guards; "
-            "not calibrated to human ratings"
+            "pixels-only pairwise prompt refinement with order reversal and deterministic "
+            "regression guards; not calibrated to human ratings"
         ),
         "source": str(source.relative_to(REPO)),
         "credit": _credit_for(source),

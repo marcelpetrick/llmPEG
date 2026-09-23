@@ -204,8 +204,6 @@ def test_pairwise_rating_reverses_candidate_order(
         image_bytes(),
         image_bytes("navy"),
         image_bytes("purple"),
-        "baseline prompt",
-        "challenger prompt",
     )
 
     assert result.accepted is accepted
@@ -214,8 +212,8 @@ def test_pairwise_rating_reverses_candidate_order(
     assert result.trials[0].order == ("baseline", "challenger")
     assert result.trials[1].order == ("challenger", "baseline")
     assert len(requests[0]["messages"][0]["images"]) == 3
-    assert "baseline prompt" in requests[0]["messages"][0]["content"]
-    assert "challenger prompt" in requests[1]["messages"][0]["content"]
+    assert "Judge the pixels only" in requests[0]["messages"][0]["content"]
+    assert "candidate prompt" in requests[1]["messages"][0]["content"]
     assert [request["keep_alive"] for request in requests] == ["30m", 0]
     assert result.to_dict()["accepted"] is accepted
 
@@ -227,5 +225,5 @@ def test_pairwise_rating_rejects_bad_schema(monkeypatch: pytest.MonkeyPatch) -> 
     )
     with pytest.raises(ArtifactError, match="violates its schema"):
         OllamaSimilarityRater(repeats=1).compare_pairwise(
-            image_bytes(), image_bytes(), image_bytes(), "one", "two"
+            image_bytes(), image_bytes(), image_bytes()
         )

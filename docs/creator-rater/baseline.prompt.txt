@@ -1,0 +1,16 @@
+Create a new image from this semantic description.
+
+Primary request: A vintage, grainy black and white close-up of a domestic shorthair cat with dark tabby markings on its head and back, contrasted by large patches of white fur. The cat is seated in profile facing left, positioned centrally within the frame against a background of out-of-focus grass blades.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: vintage black and white photography with visible film grain and slight vignetting at corners.
+Canvas: 1491x1510 (0.987:1)
+Composition:
+- {0:100}, {25:98}: The cat occupies the majority of the image. Its head is at approximately y=3%, its eyes are centered horizontally, and it faces left (towards x=0%). The body extends to the right edge.
+- {25:100}, {98:76}: The background consists of grass blades scattered across the ground. It is out of focus, creating a soft texture behind and beneath the cat's body.
+Palette: #4a4a4a, #c0c0c0
+Text to render verbatim when possible:
+- none
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: color description (image is monochrome), specific breed identification, inferred backstory; extra logos; watermarks; invented claims.

@@ -1,0 +1,20 @@
+Create a new image from this semantic description.
+
+Primary request: medium resolution digital photo. A small brown and white tabby kitten is curled up asleep directly on the keys of an off-white plastic computer keyboard. The cat's head rests near the 'N' key while one paw covers a portion of the spacebar area; its eyes are closed in deep sleep, ears perked but relaxed against the fur. Soft shadows fall beneath the body from above-left lighting direction. Visible texture includes fine tabby stripes on back and legs, white chest patch, pink inner ear visible at angle, small black nose tip, and paws with dark claws tucked under soft paw pads.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: medium and visual treatment with soft focus around edges due to shallow depth of field effect typical for indoor pet photography.
+Canvas: 2048x1536 (1.333:1)
+Composition:
+- {0,68.5},{147.2,93.5}: Kitten body occupies central-right area; head positioned left-center overlapping keyboard keys.
+- {0,68.5},{147.2,93.5}: Keyboard spans entire lower-left to bottom edge of frame with visible key labels and slight wear marks on surface texture.
+- {0,0},{100,100}: Wooden desk background appears in upper-right corner showing grain pattern under warm ambient light conditions.
+Palette: #8B7355, #F5E6D3, #2C241B
+Text to render verbatim when possible:
+- "\"Esc\""
+- "\"Tab\""
+- "\"Q\" \"W\" \"E\" \"A\" \"S\" \"D\""
+- "\"Z\" \"X\" \"C\""
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: high-resolution sharpness or motion blur absence since original image exhibits slight graininess consistent with lower-quality sensor capture, inverted lighting direction causing shadows above cat instead of below it as observed in actual scene; extra logos; watermarks; invented claims.

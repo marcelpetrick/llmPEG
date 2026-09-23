@@ -1,0 +1,258 @@
+{
+  "baseline": {
+    "artifact": "baseline.llmpeg.json.gz",
+    "artifact_gzip_bytes": 930,
+    "artifact_plain_bytes": 1594,
+    "create_seconds": 130.868,
+    "prompt": "baseline.prompt.txt",
+    "rating": {
+      "deterministic": {
+        "aspect_similarity": 0.987417,
+        "critical_text_recall": 1.0,
+        "dhash_similarity": 0.265625,
+        "edge_similarity": 0.937378,
+        "histogram_similarity": 0.678792,
+        "layout_score": 0.57542,
+        "palette_distance": 0.042067,
+        "visual_proxy_score": 0.632194
+      },
+      "differences": [
+        "Pose: Image 1 shows the cat facing forward/left with a direct gaze; Image 2 is strictly profile view.",
+        "Markings: The white patch on the forehead in Image 1 (blaze) is absent or minimal in Image 2.",
+        "Background texture: Image 1 has scattered leaves and debris mixed with grass; Image 2 shows uniform, dense blades of grass."
+      ],
+      "method": "experimental local multi-signal rating; not calibrated to human ratings",
+      "prompt_improvements": [
+        "Specify 'facing forward' instead of just 'profile facing left'.",
+        "Include detail about the white blaze on the forehead.",
+        "Describe background as 'scattered leaves and debris mixed with grass' rather than uniform blades."
+      ],
+      "semantic_median": 85.0,
+      "semantic_medians": {
+        "composition_fidelity": 70.0,
+        "identity_fidelity": 85.0,
+        "style_fidelity": 60.0,
+        "subject_fidelity": 92.0,
+        "text_fidelity": 100.0
+      },
+      "semantic_spreads": {
+        "composition_fidelity": 0,
+        "identity_fidelity": 0,
+        "style_fidelity": 0,
+        "subject_fidelity": 0,
+        "text_fidelity": 0
+      },
+      "trials": [
+        {
+          "composition_fidelity": 70,
+          "differences": [
+            "Pose: Image 1 shows the cat facing forward/left with a direct gaze; Image 2 is strictly profile view.",
+            "Markings: The white patch on the forehead in Image 1 (blaze) is absent or minimal in Image 2.",
+            "Background texture: Image 1 has scattered leaves and debris mixed with grass; Image 2 shows uniform, dense blades of grass."
+          ],
+          "identity_fidelity": 85,
+          "prompt_improvements": [
+            "Specify 'facing forward' instead of just 'profile facing left'.",
+            "Include detail about the white blaze on the forehead.",
+            "Describe background as 'scattered leaves and debris mixed with grass' rather than uniform blades."
+          ],
+          "seed": 42,
+          "style_fidelity": 60,
+          "subject_fidelity": 92,
+          "text_fidelity": 100
+        },
+        {
+          "composition_fidelity": 70,
+          "differences": [
+            "Pose: Image 1 shows the cat facing forward/left with a direct gaze; Image 2 is strictly profile view.",
+            "Markings: The white patch on the forehead in Image 1 (blaze) is absent or minimal in Image 2.",
+            "Background texture: Image 1 has scattered leaves and debris mixed with grass; Image 2 shows uniform, dense blades of grass."
+          ],
+          "identity_fidelity": 85,
+          "prompt_improvements": [
+            "Specify 'facing forward' instead of just 'profile facing left'.",
+            "Include detail about the white blaze on the forehead.",
+            "Describe background as 'scattered leaves and debris mixed with grass' rather than uniform blades."
+          ],
+          "seed": 43,
+          "style_fidelity": 60,
+          "subject_fidelity": 92,
+          "text_fidelity": 100
+        },
+        {
+          "composition_fidelity": 70,
+          "differences": [
+            "Pose: Image 1 shows the cat facing forward/left with a direct gaze; Image 2 is strictly profile view.",
+            "Markings: The white patch on the forehead in Image 1 (blaze) is absent or minimal in Image 2.",
+            "Background texture: Image 1 has scattered leaves and debris mixed with grass; Image 2 shows uniform, dense blades of grass."
+          ],
+          "identity_fidelity": 85,
+          "prompt_improvements": [
+            "Specify 'facing forward' instead of just 'profile facing left'.",
+            "Include detail about the white blaze on the forehead.",
+            "Describe background as 'scattered leaves and debris mixed with grass' rather than uniform blades."
+          ],
+          "seed": 44,
+          "style_fidelity": 60,
+          "subject_fidelity": 92,
+          "text_fidelity": 100
+        }
+      ],
+      "unstable": false,
+      "verdict": "partial"
+    },
+    "reconstruction": "baseline.png",
+    "reconstruction_bytes": 589163
+  },
+  "credit": {
+    "author": "Barmanru",
+    "license": "Public domain dedication",
+    "license_url": "https://commons.wikimedia.org/wiki/File:Cat_bw-photo.jpg#Licensing",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Cat_bw-photo.jpg"
+  },
+  "date": "2026-09-22",
+  "encoder": {
+    "model": "qwen3.5:4b",
+    "profile": "detailed",
+    "provider": "ollama"
+  },
+  "generator": {
+    "model": "qwen-image-2.1",
+    "provider": "comfyui",
+    "resolution": 512,
+    "seed": 42
+  },
+  "llmpeg_version": "0.4.2",
+  "objective": "pixels-only pairwise prompt refinement with order reversal and deterministic regression guards; not calibrated to human ratings",
+  "rating_repeats": 3,
+  "rounds": [
+    {
+      "accepted": false,
+      "artifact": "challenger-1.llmpeg.json.gz",
+      "artifact_gzip_bytes": 1083,
+      "artifact_plain_bytes": 1932,
+      "create_seconds": 201.67,
+      "deterministic_regressions": [],
+      "focus_instruction": "A previous text-only reconstruction was compared with the source. Reinspect the source yourself and correct these reproduction problems in the structured description. Treat the feedback as fallible hints, never as evidence for a feature you cannot see.\n- Missing prompt detail: Specify 'facing forward' instead of just 'profile facing left'.\n- Missing prompt detail: Include detail about the white blaze on the forehead.\n- Missing prompt detail: Describe background as 'scattered leaves and debris mixed with grass' rather than uniform blades.\n- Previous visible mismatch to re-check: Pose: Image 1 shows the cat facing forward/left with a direct gaze; Image 2 is strictly profile view.\n- Previous visible mismatch to re-check: Markings: The white patch on the forehead in Image 1 (blaze) is absent or minimal in Image 2.\n- Previous visible mismatch to re-check: Background texture: Image 1 has scattered leaves and debris mixed with grass; Image 2 shows uniform, dense blades of grass.",
+      "pairwise": {
+        "accepted": false,
+        "consistent": false,
+        "trials": [
+          {
+            "order": [
+              "baseline",
+              "challenger"
+            ],
+            "preferred": "challenger",
+            "reason": "Candidate B (IMAGE 2) preserves a more coherent and realistic feline subject compared to Candidate A (IMAGE 1). In IMAGE 1, the cat's anatomy is distorted—the head appears unnaturally large relative to the body, and there are significant artifacts that obscure natural features. The texture of the fur also lacks detail due to compression noise. Conversely, Candidate B presents a clear, well-defined cat with accurate proportions and visible whiskers, suggesting superior reconstruction fidelity despite both being monochrome."
+          },
+          {
+            "order": [
+              "challenger",
+              "baseline"
+            ],
+            "preferred": "baseline",
+            "reason": "Candidate B (IMAGE 2) preserves a much clearer and more recognizable version of the source cat compared to Candidate A (IMAGE 1). While both are black-and-white, Candidate A suffers from significant degradation: it is blurry, has high noise/grain, appears overexposed on the left side with blown-out highlights, and lacks fine detail in the fur texture. In contrast, Candidate B presents a sharp image where the cat's features (eyes, ears, whiskers) are distinct, the background leaves are clearly visible, and there is no evidence of severe degradation or artifacts."
+          }
+        ]
+      },
+      "prompt": "challenger-1.prompt.txt",
+      "rating": {
+        "deterministic": {
+          "aspect_similarity": 0.987417,
+          "critical_text_recall": 1.0,
+          "dhash_similarity": 0.453125,
+          "edge_similarity": 0.881348,
+          "histogram_similarity": 0.72349,
+          "layout_score": 0.661736,
+          "palette_distance": 0.065849,
+          "visual_proxy_score": 0.700023
+        },
+        "differences": [
+          "Style mismatch: Image 2 is a sharp, high-contrast digital photograph with uniform lighting; the prompt requested 'vintage black-and-white photography' with grain and soft focus edges (halo effect), which are absent in Image 2.",
+          "Lighting difference: The original image has natural outdoor lighting with shadows on the cat's back. The reconstruction uses flat, even studio-like lighting that lacks depth or shadow definition.",
+          "Texture discrepancy: The prompt specified 'grainy texture' and soft focus; Image 2 displays crisp digital clarity without film grain or atmospheric haze."
+        ],
+        "method": "experimental local multi-signal rating; not calibrated to human ratings",
+        "prompt_improvements": [
+          "Add explicit instruction for vintage aesthetic parameters (e.g., ISO 400, f/5.6 aperture) to enforce the requested 'grainy texture' and soft focus.",
+          "Specify lighting conditions such as 'natural sunlight with dappled shadows on back' or 'overcast diffuse light' instead of defaulting to flat illumination."
+        ],
+        "semantic_median": 80.0,
+        "semantic_medians": {
+          "composition_fidelity": 75.0,
+          "identity_fidelity": 80.0,
+          "style_fidelity": 40.0,
+          "subject_fidelity": 95.0,
+          "text_fidelity": 100.0
+        },
+        "semantic_spreads": {
+          "composition_fidelity": 0,
+          "identity_fidelity": 0,
+          "style_fidelity": 0,
+          "subject_fidelity": 0,
+          "text_fidelity": 0
+        },
+        "trials": [
+          {
+            "composition_fidelity": 75,
+            "differences": [
+              "Style mismatch: Image 2 is a sharp, high-contrast digital photograph with uniform lighting; the prompt requested 'vintage black-and-white photography' with grain and soft focus edges (halo effect), which are absent in Image 2.",
+              "Lighting difference: The original image has natural outdoor lighting with shadows on the cat's back. The reconstruction uses flat, even studio-like lighting that lacks depth or shadow definition.",
+              "Texture discrepancy: The prompt specified 'grainy texture' and soft focus; Image 2 displays crisp digital clarity without film grain or atmospheric haze."
+            ],
+            "identity_fidelity": 80,
+            "prompt_improvements": [
+              "Add explicit instruction for vintage aesthetic parameters (e.g., ISO 400, f/5.6 aperture) to enforce the requested 'grainy texture' and soft focus.",
+              "Specify lighting conditions such as 'natural sunlight with dappled shadows on back' or 'overcast diffuse light' instead of defaulting to flat illumination."
+            ],
+            "seed": 42,
+            "style_fidelity": 40,
+            "subject_fidelity": 95,
+            "text_fidelity": 100
+          },
+          {
+            "composition_fidelity": 75,
+            "differences": [
+              "Style mismatch: Image 2 is a sharp, high-contrast digital photograph with uniform lighting; the prompt requested 'vintage black-and-white photography' with grain and soft focus edges (halo effect), which are absent in Image 2.",
+              "Lighting difference: The original image has natural outdoor lighting with shadows on the cat's back. The reconstruction uses flat, even studio-like lighting that lacks depth or shadow definition.",
+              "Texture discrepancy: The prompt specified 'grainy texture' and soft focus; Image 2 displays crisp digital clarity without film grain or atmospheric haze."
+            ],
+            "identity_fidelity": 80,
+            "prompt_improvements": [
+              "Add explicit instruction for vintage aesthetic parameters (e.g., ISO 400, f/5.6 aperture) to enforce the requested 'grainy texture' and soft focus.",
+              "Specify lighting conditions such as 'natural sunlight with dappled shadows on back' or 'overcast diffuse light' instead of defaulting to flat illumination."
+            ],
+            "seed": 43,
+            "style_fidelity": 40,
+            "subject_fidelity": 95,
+            "text_fidelity": 100
+          },
+          {
+            "composition_fidelity": 75,
+            "differences": [
+              "Style mismatch: Image 2 is a sharp, high-contrast digital photograph with uniform lighting; the prompt requested 'vintage black-and-white photography' with grain and soft focus edges (halo effect), which are absent in Image 2.",
+              "Lighting difference: The original image has natural outdoor lighting with shadows on the cat's back. The reconstruction uses flat, even studio-like lighting that lacks depth or shadow definition.",
+              "Texture discrepancy: The prompt specified 'grainy texture' and soft focus; Image 2 displays crisp digital clarity without film grain or atmospheric haze."
+            ],
+            "identity_fidelity": 80,
+            "prompt_improvements": [
+              "Add explicit instruction for vintage aesthetic parameters (e.g., ISO 400, f/5.6 aperture) to enforce the requested 'grainy texture' and soft focus.",
+              "Specify lighting conditions such as 'natural sunlight with dappled shadows on back' or 'overcast diffuse light' instead of defaulting to flat illumination."
+            ],
+            "seed": 44,
+            "style_fidelity": 40,
+            "subject_fidelity": 95,
+            "text_fidelity": 100
+          }
+        ],
+        "unstable": false,
+        "verdict": "partial"
+      },
+      "reconstruction": "challenger-1.png",
+      "reconstruction_bytes": 651705,
+      "round": 1
+    }
+  ],
+  "source": "survey/sources/cat-monochrome.jpg"
+}

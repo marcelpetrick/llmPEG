@@ -1,0 +1,16 @@
+Create a new image from this semantic description.
+
+Primary request: Black-and-white medium shot of a domestic shorthair cat with dark tabby markings and white fur, positioned in an outdoor setting. The cat is facing forward-left (three-quarter view) rather than strict profile, looking directly at the camera with visible eyes and ears perked up. It has a distinct white blaze running down its forehead between the ears to the nose. A large patch of dark tabby fur covers the back and sides; the chest, front legs, paws, muzzle, cheeks, and belly are predominantly white. The cat is sitting upright on all fours with tail tucked or resting behind. Background consists of scattered leaves, debris mixed with grass rather than uniform blades.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: vintage black-and-white photography, grainy texture, soft focus edges (halo effect), medium depth of field
+Canvas: 1491x1510 (0.987:1)
+Composition:
+- {0:100%, 25%:98%}: Cat occupies central and right portions. Head at top-left (approx x=30-45, y=10), body extends to bottom-right. Ears visible; eyes open looking forward/left.
+- {2:98%, 0:70%}: Ground surface with scattered leaves and debris mixed with grass texture rather than uniform blades of grass.
+Palette: #1a1a1a, #f5f5dc
+Text to render verbatim when possible:
+- none
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: strict profile view only, no white blaze on forehead, uniform grass background; extra logos; watermarks; invented claims.

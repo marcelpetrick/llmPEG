@@ -1,0 +1,254 @@
+{
+  "baseline": {
+    "artifact": "baseline.llmpeg.json.gz",
+    "artifact_gzip_bytes": 1729,
+    "artifact_plain_bytes": 3253,
+    "create_seconds": 241.003,
+    "prompt": "baseline.prompt.txt",
+    "rating": {
+      "deterministic": {
+        "aspect_similarity": 0.75,
+        "critical_text_recall": 1.0,
+        "dhash_similarity": 0.5,
+        "edge_similarity": 0.973877,
+        "histogram_similarity": 0.625407,
+        "layout_score": 0.679663,
+        "palette_distance": 0.100388,
+        "visual_proxy_score": 0.669898
+      },
+      "differences": [
+        "IMAGE 2 displays a significantly higher resolution and sharper focus than the medium-resolution source in IMAGE 1.",
+        "The lighting direction is inverted: IMAGE 1 shows light from above-left casting shadows under the cat's body; IMAGE 2 appears to have more diffuse, even illumination with less distinct shadowing.",
+        "IMAGE 2 lacks visible motion blur or texture degradation present in IMAGE 1."
+      ],
+      "method": "experimental local multi-signal rating; not calibrated to human ratings",
+      "prompt_improvements": [
+        "Specify 'medium resolution digital photo' instead of omitting it entirely; the generator defaulted to high-resolution output despite instructions for medium quality.",
+        "Clarify that shadows should be soft and cast under the cat's body due to above-left lighting, rather than relying on default rendering assumptions."
+      ],
+      "semantic_median": 75.0,
+      "semantic_medians": {
+        "composition_fidelity": 75.0,
+        "identity_fidelity": 90.0,
+        "style_fidelity": 40.0,
+        "subject_fidelity": 85.0,
+        "text_fidelity": 60.0
+      },
+      "semantic_spreads": {
+        "composition_fidelity": 0,
+        "identity_fidelity": 0,
+        "style_fidelity": 0,
+        "subject_fidelity": 0,
+        "text_fidelity": 0
+      },
+      "trials": [
+        {
+          "composition_fidelity": 75,
+          "differences": [
+            "IMAGE 2 displays a significantly higher resolution and sharper focus than the medium-resolution source in IMAGE 1.",
+            "The lighting direction is inverted: IMAGE 1 shows light from above-left casting shadows under the cat's body; IMAGE 2 appears to have more diffuse, even illumination with less distinct shadowing.",
+            "IMAGE 2 lacks visible motion blur or texture degradation present in IMAGE 1."
+          ],
+          "identity_fidelity": 90,
+          "prompt_improvements": [
+            "Specify 'medium resolution digital photo' instead of omitting it entirely; the generator defaulted to high-resolution output despite instructions for medium quality.",
+            "Clarify that shadows should be soft and cast under the cat's body due to above-left lighting, rather than relying on default rendering assumptions."
+          ],
+          "seed": 42,
+          "style_fidelity": 40,
+          "subject_fidelity": 85,
+          "text_fidelity": 60
+        },
+        {
+          "composition_fidelity": 75,
+          "differences": [
+            "IMAGE 2 displays a significantly higher resolution and sharper focus than the medium-resolution source in IMAGE 1.",
+            "The lighting direction is inverted: IMAGE 1 shows light from above-left casting shadows under the cat's body; IMAGE 2 appears to have more diffuse, even illumination with less distinct shadowing.",
+            "IMAGE 2 lacks visible motion blur or texture degradation present in IMAGE 1."
+          ],
+          "identity_fidelity": 90,
+          "prompt_improvements": [
+            "Specify 'medium resolution digital photo' instead of omitting it entirely; the generator defaulted to high-resolution output despite instructions for medium quality.",
+            "Clarify that shadows should be soft and cast under the cat's body due to above-left lighting, rather than relying on default rendering assumptions."
+          ],
+          "seed": 43,
+          "style_fidelity": 40,
+          "subject_fidelity": 85,
+          "text_fidelity": 60
+        },
+        {
+          "composition_fidelity": 75,
+          "differences": [
+            "IMAGE 2 displays a significantly higher resolution and sharper focus than the medium-resolution source in IMAGE 1.",
+            "The lighting direction is inverted: IMAGE 1 shows light from above-left casting shadows under the cat's body; IMAGE 2 appears to have more diffuse, even illumination with less distinct shadowing.",
+            "IMAGE 2 lacks visible motion blur or texture degradation present in IMAGE 1."
+          ],
+          "identity_fidelity": 90,
+          "prompt_improvements": [
+            "Specify 'medium resolution digital photo' instead of omitting it entirely; the generator defaulted to high-resolution output despite instructions for medium quality.",
+            "Clarify that shadows should be soft and cast under the cat's body due to above-left lighting, rather than relying on default rendering assumptions."
+          ],
+          "seed": 44,
+          "style_fidelity": 40,
+          "subject_fidelity": 85,
+          "text_fidelity": 60
+        }
+      ],
+      "unstable": false,
+      "verdict": "partial"
+    },
+    "reconstruction": "baseline.png",
+    "reconstruction_bytes": 511031
+  },
+  "credit": {
+    "author": "Remedios44",
+    "license": "Public domain dedication",
+    "license_url": "https://commons.wikimedia.org/wiki/File:Wikipedians_cat.jpg#Licensing",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Wikipedians_cat.jpg"
+  },
+  "date": "2026-09-23",
+  "encoder": {
+    "model": "qwen3.5:4b",
+    "profile": "detailed",
+    "provider": "ollama"
+  },
+  "generator": {
+    "model": "qwen-image-2.1",
+    "provider": "comfyui",
+    "resolution": 512,
+    "seed": 42
+  },
+  "llmpeg_version": "0.4.2",
+  "objective": "pixels-only pairwise prompt refinement with order reversal and deterministic regression guards; not calibrated to human ratings",
+  "rating_repeats": 3,
+  "rounds": [
+    {
+      "accepted": false,
+      "artifact": "challenger-1.llmpeg.json.gz",
+      "artifact_gzip_bytes": 1264,
+      "artifact_plain_bytes": 2327,
+      "create_seconds": 250.534,
+      "deterministic_regressions": [],
+      "focus_instruction": "A previous text-only reconstruction was compared with the source. Reinspect the source yourself and correct these reproduction problems in the structured description. Treat the feedback as fallible hints, never as evidence for a feature you cannot see.\n- Missing prompt detail: Specify 'medium resolution digital photo' instead of omitting it entirely; the generator defaulted to high-resolution output despite instructions for medium quality.\n- Missing prompt detail: Clarify that shadows should be soft and cast under the cat's body due to above-left lighting, rather than relying on default rendering assumptions.\n- Previous visible mismatch to re-check: IMAGE 2 displays a significantly higher resolution and sharper focus than the medium-resolution source in IMAGE 1.\n- Previous visible mismatch to re-check: The lighting direction is inverted: IMAGE 1 shows light from above-left casting shadows under the cat's body; IMAGE 2 appears to have more diffuse, even illumination with less distinct shadowing.\n- Previous visible mismatch to re-check: IMAGE 2 lacks visible motion blur or texture degradation present in IMAGE 1.",
+      "pairwise": {
+        "accepted": false,
+        "consistent": false,
+        "trials": [
+          {
+            "order": [
+              "baseline",
+              "challenger"
+            ],
+            "preferred": "challenger",
+            "reason": "Candidate B (IMAGE 2) preserves the specific source better than Candidate A (IMAGE 1). While both images depict a similar subject—a tabby kitten sleeping on a keyboard—there are significant differences in composition and camera geometry. In IMAGE 1, the cat is curled up with its head resting near the 'N' key, and its body extends towards the right edge of the frame. The perspective includes parts of the desk surface and other objects (like cables) around the cat. In contrast, Candidate B presents a tighter crop that focuses more centrally on the kitten's upper body and head, which is curled over keys like 'W', 'E', and 'R'. This framing in IMAGE 2 feels less cluttered and provides a clearer view of the subject itself without extraneous background elements from the original scene. Therefore, Candidate B maintains a closer visual fidelity to what might be considered an ideal reconstruction"
+          },
+          {
+            "order": [
+              "challenger",
+              "baseline"
+            ],
+            "preferred": "baseline",
+            "reason": "Candidate B (IMAGE 2) preserves the specific source better than Candidate A (IMAGE 1). While both are reconstructions of a sleeping kitten on a keyboard, Image 1 appears to be an older or lower-quality photograph with more visible noise and compression artifacts. In contrast, Image 2 is sharper, has higher resolution detail in the fur texture and keycaps, and maintains clearer lighting consistency that aligns better with what one would expect from a high-fidelity reconstruction of the original scene."
+          }
+        ]
+      },
+      "prompt": "challenger-1.prompt.txt",
+      "rating": {
+        "deterministic": {
+          "aspect_similarity": 0.75,
+          "critical_text_recall": 1.0,
+          "dhash_similarity": 0.59375,
+          "edge_similarity": 0.950317,
+          "histogram_similarity": 0.530558,
+          "layout_score": 0.724158,
+          "palette_distance": 0.100979,
+          "visual_proxy_score": 0.669543
+        },
+        "differences": [
+          "Lighting direction is inverted: original has shadows falling beneath the cat from above-left; reconstruction casts light from below-right creating unnatural highlights on top of body.",
+          "Text fidelity failure: reconstructed keyboard displays 'Esc' and 'Tab', but these keys are absent in the source image which only shows standard QWERTY layout starting with Esc at far left edge without label visible."
+        ],
+        "method": "experimental local multi-signal rating; not calibrated to human ratings",
+        "prompt_improvements": [
+          "Specify exact key positions relative to cat's head rather than listing specific characters that may not align spatially.",
+          "Clarify lighting direction as 'top-down' or 'above-left' instead of allowing interpretation from below-right.",
+          "Remove explicit text labels like Esc/Tab unless confirmed present in original image."
+        ],
+        "semantic_median": 70.0,
+        "semantic_medians": {
+          "composition_fidelity": 92.0,
+          "identity_fidelity": 70.0,
+          "style_fidelity": 45.0,
+          "subject_fidelity": 85.0,
+          "text_fidelity": 60.0
+        },
+        "semantic_spreads": {
+          "composition_fidelity": 0,
+          "identity_fidelity": 0,
+          "style_fidelity": 0,
+          "subject_fidelity": 0,
+          "text_fidelity": 0
+        },
+        "trials": [
+          {
+            "composition_fidelity": 92,
+            "differences": [
+              "Lighting direction is inverted: original has shadows falling beneath the cat from above-left; reconstruction casts light from below-right creating unnatural highlights on top of body.",
+              "Text fidelity failure: reconstructed keyboard displays 'Esc' and 'Tab', but these keys are absent in the source image which only shows standard QWERTY layout starting with Esc at far left edge without label visible."
+            ],
+            "identity_fidelity": 70,
+            "prompt_improvements": [
+              "Specify exact key positions relative to cat's head rather than listing specific characters that may not align spatially.",
+              "Clarify lighting direction as 'top-down' or 'above-left' instead of allowing interpretation from below-right.",
+              "Remove explicit text labels like Esc/Tab unless confirmed present in original image."
+            ],
+            "seed": 42,
+            "style_fidelity": 45,
+            "subject_fidelity": 85,
+            "text_fidelity": 60
+          },
+          {
+            "composition_fidelity": 92,
+            "differences": [
+              "Lighting direction is inverted: original has shadows falling beneath the cat from above-left; reconstruction casts light from below-right creating unnatural highlights on top of body.",
+              "Text fidelity failure: reconstructed keyboard displays 'Esc' and 'Tab', but these keys are absent in the source image which only shows standard QWERTY layout starting with Esc at far left edge without label visible."
+            ],
+            "identity_fidelity": 70,
+            "prompt_improvements": [
+              "Specify exact key positions relative to cat's head rather than listing specific characters that may not align spatially.",
+              "Clarify lighting direction as 'top-down' or 'above-left' instead of allowing interpretation from below-right.",
+              "Remove explicit text labels like Esc/Tab unless confirmed present in original image."
+            ],
+            "seed": 43,
+            "style_fidelity": 45,
+            "subject_fidelity": 85,
+            "text_fidelity": 60
+          },
+          {
+            "composition_fidelity": 92,
+            "differences": [
+              "Lighting direction is inverted: original has shadows falling beneath the cat from above-left; reconstruction casts light from below-right creating unnatural highlights on top of body.",
+              "Text fidelity failure: reconstructed keyboard displays 'Esc' and 'Tab', but these keys are absent in the source image which only shows standard QWERTY layout starting with Esc at far left edge without label visible."
+            ],
+            "identity_fidelity": 70,
+            "prompt_improvements": [
+              "Specify exact key positions relative to cat's head rather than listing specific characters that may not align spatially.",
+              "Clarify lighting direction as 'top-down' or 'above-left' instead of allowing interpretation from below-right.",
+              "Remove explicit text labels like Esc/Tab unless confirmed present in original image."
+            ],
+            "seed": 44,
+            "style_fidelity": 45,
+            "subject_fidelity": 85,
+            "text_fidelity": 60
+          }
+        ],
+        "unstable": false,
+        "verdict": "partial"
+      },
+      "reconstruction": "challenger-1.png",
+      "reconstruction_bytes": 522710,
+      "round": 1
+    }
+  ],
+  "source": "survey/sources/cat-on-keyboard.jpg"
+}

@@ -1,0 +1,32 @@
+Create a new image from this semantic description.
+
+Primary request: Close-up shot of a young brown-and-black striped tabby kitten asleep atop an old beige or cream-colored PC keyboard. The cat is curled up diagonally across the frame from top-right to bottom-left, with its head resting on the left side near the 'N' key and eyes closed in deep sleep. Its front paws are tucked under itself but one paw rests directly over keys including 'O', while back legs extend toward right edge of image showing white fur patches at feet. Tail curls around lower-right corner displaying dark tips against lighter base coat pattern typical for kittens aged 2-4 months old based on size relative to keyboard layout visible beneath it.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: Medium resolution digital photo with slight motion blur suggesting quick capture moment before settling into stillness. Composition emphasizes intimacy between pet and technology through juxtaposition of organic forms against rigid mechanical structure.
+Canvas: 2048x1536 (1.333:1)
+Composition:
+- 0-100% width, 5%-98% height (entire frame): Main subject is the sleeping kitten occupying central diagonal space with body extending from upper right quadrant down toward lower left. Head positioned near bottom-left corner overlapping 'N' key area; ears perked slightly forward despite sleep posture indicating alertness during rest phase rather than unconscious state typical for fully grown cats due to juvenile characteristics evident in facial structure proportions compared to adult feline models.
+- 0-100% width, 5%-98% height (entire frame): Keyboard spans entire background layer beneath cat body with keys clearly legible showing standard QWERTY layout arrangement. White plastic casing contrasts subtly against wooden desk surface texture visible along edges outside keyboard perimeter where grain patterns run horizontally across bottom portion of image.
+- 0-100% width, 5%-98% height (entire frame): Lighting appears natural coming from above-left direction casting soft shadows under cat's body and keyboard keys. Depth field shallow enough to blur distant background elements like monitor base visible in top-right corner slightly out of focus compared to sharp foreground details on kitten fur texture.
+Palette: #8B7355, #D4C4A8, #F5E6CC
+Text to render verbatim when possible:
+- "Esc"
+- "~"
+- "@"
+- "#"
+- "$"
+- "%"
+- "^"
+- "&"
+- "*"
+- "-"
+- "+"
+- "="
+- "["
+- "]"
+- "{"
+- "}, \\"
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: Do not specify breed beyond observable tabby markings, Avoid inferring emotional states beyond neutral sleep expression, Never claim exact age without supporting visual evidence; extra logos; watermarks; invented claims.
