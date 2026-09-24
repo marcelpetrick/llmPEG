@@ -346,11 +346,44 @@ def test_qwen_review_is_local_and_traceable_to_the_review_report() -> None:
             assert f"{key} {source[key]} → {rendered[key]}" in case["finding"]
 
 
-def test_pages_workflow_publishes_only_the_qwen_review_page() -> None:
+def test_tone_candidates_are_traceable_to_their_measurements() -> None:
+    manifest_path = REPO / "survey/qwen-tone-manifest.json"
+    manifest = _load_manifest(manifest_path)
+    output = render_survey(manifest_path)
+
+    assert "Current pipeline" in output
+    assert "Tone candidate" in output
+    for case in manifest["cases"]:
+        for field in (
+            "source",
+            "baseline_reconstruction",
+            "reconstruction",
+            "artifact",
+            "prompt",
+            "result",
+            "baseline_result",
+            "report",
+        ):
+            assert (manifest_path.parent / case[field]).is_file(), (
+                f"missing {field} for {case['id']}"
+            )
+        rows = _load_manifest(manifest_path.parent / case["report"])["rows"]
+        image = Path(case["reconstruction"]).name
+        row = next(row for row in rows if row["image"] == image)
+        assert row["extra_negative"] in case["finding"]
+        for key in ("luminance", "saturation"):
+            assert f"{key} {row['reconstruction_tone'][key]}" in case["finding"]
+            assert f"{key} {row['source_tone'][key]}" in case["finding"]
+
+
+def test_pages_workflow_publishes_only_the_qwen_review_pages() -> None:
     workflow = (REPO / ".github/workflows/pages.yml").read_text(encoding="utf-8")
     assert "cp -R survey/. _site/" in workflow
     assert "rm _site/*.html" in workflow
     assert workflow.index("rm _site/*.html") < workflow.index(
         "cp survey/qwen.html _site/index.html"
+    )
+    assert workflow.index("rm _site/*.html") < workflow.index(
+        "cp survey/qwen-tone.html _site/tone.html"
     )
     assert "balanced.html" not in workflow
