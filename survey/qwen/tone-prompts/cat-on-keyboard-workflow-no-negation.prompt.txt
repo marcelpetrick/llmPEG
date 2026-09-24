@@ -1,0 +1,27 @@
+Create a new image from this semantic description.
+
+Primary request: Close-up, high-angle view looking down at a small brown and grey striped tabby kitten fast asleep. The cat is lying directly across the keys of a beige or light-grey plastic computer keyboard that sits on a wooden desk surface. Its head rests near the bottom-left corner of the frame with its eyes closed in deep sleep. One front paw (white tip) dangles over the key area while another lies flat against the wood to the right.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: close-up, high-angle shot, natural indoor lighting from above casting soft shadows under the cat's body and head.
+Canvas: 2048x1536 (1.333:1)
+Composition:
+- 45% - 85%, 30% - 70%: The main subject: a sleeping kitten with brown and grey tabby stripes, white chest fur, and white paws. Its head is turned slightly to the left side of frame.
+- 15% - 92%, 60% - 85%: The keyboard: An off-white or beige computer keyboard with standard QWERTY layout. The keys are visible under and around the cat's body.
+- 1% - 43%, 2% - 97%: Background surface: A light brown wooden desk or table top showing wood grain texture beneath both the keyboard and the kitten.
+Palette: #8B6F5C, #D3CFCA, #A97E42
+Tone: mid-tone exposure (mean luminance 148/255), moderate contrast (spread 55/255), natural, moderate colour with a neutral white balance (mean saturation 48/255).
+Text to render verbatim when possible:
+- "\"Esc\""
+- "\"Tab\""
+- "\"Q\" \"W\" \"E\""
+- "\"A\" \"S\" \"D\""
+- "\"Z\" (partially obscured)"
+- "\"X\""
+- "\"C\""
+- "\"V\""
+- "\"B\" (obscured by paw)\",\n    \"N\", \"M\", \"K\", \"L\", \";\" , '\"', 'O' ', /P', '[', '\\]', '`'"
+- "F9, F10, F11, F12 keys visible on the right side of keyboard"
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: inferring breed beyond tabby pattern description, speculating on time of day or location context outside visual evidence; extra logos; watermarks; invented claims.

@@ -1,0 +1,21 @@
+Create a new image from this semantic description.
+
+Primary request: Top-down view of one brown and black striped domestic shorthair cat lying supine on short, bright green grass. The cat is fully stretched out with limbs splayed: front paws raised high near the head, hind legs extended straight back, tail fanned slightly to the left side. Fur pattern consists of dark chocolate-brown M-shaped markings along the spine and lighter tan underbelly; whiskers are visible extending from muzzle.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: medium, top-down camera viewpoint at approximately eye level with subject; natural daylight illumination from above creating soft shadows beneath limbs and body; shallow depth of field blurring grass texture slightly around edges while keeping cat sharply focused.
+Canvas: 1536x1024 (1.500:1)
+Composition:
+- 0% - 100%, 25% - 78%: Full body of cat oriented diagonally across frame, head near top-right corner facing away from camera toward upper right; spine runs center-left to bottom-center.
+- 63%-100%, 25%-45%: Cat’s head and neck region showing pointed ears, white muzzle area with visible whiskers extending forward-rightward directionally away from viewer perspective.
+- 87%-94%, 31%-60%: Front right paw extended upward toward top edge of frame; front left paw slightly lower and more inward positioned relative to body axis.
+- 25%-45%, 31%-78%: Cat’s torso displaying longitudinal dark brown stripes over lighter tan fur texture running parallel to spine line from neck down toward hindquarters.
+- 0% - 63%, 31%-94%: Hind legs and tail region with extended back paws splayed outward; striped pattern continues along lower body into tail which fans slightly leftward near bottom-left quadrant.
+- 0% - 100%, 78%-94%: Background consisting of uniformly cut green grass with minor variations in shade due to lighting; no other objects or subjects present within frame boundaries.
+Palette: #5C9E62, #A07B3F, #4D381E
+Tone: bright exposure (mean luminance 158/255), low, soft contrast (spread 24/255), natural, moderate colour with a warm white balance (mean saturation 89/255). Match this grading exactly: do not brighten, add contrast, boost saturation, or apply HDR, glow, or cinematic colour grading.
+Text to render verbatim when possible:
+- none
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: inferring breed beyond visible tabby markings, speculating on emotional state or intent behind pose, adding environmental context not clearly depicted (e.g., garden, park); extra logos; watermarks; invented claims.

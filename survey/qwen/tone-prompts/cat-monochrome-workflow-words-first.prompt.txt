@@ -1,0 +1,18 @@
+Create a new image from this semantic description.
+
+A photograph with mid-tone exposure, moderate contrast, strictly black-and-white grayscale with no colour or tint at all.
+Primary request: Black and white medium shot, eye-level perspective looking down at a seated domestic shorthair cat positioned centrally within the frame. The subject is facing slightly left with its head turned to look back toward the camera lens. Visible features include pointed ears set high on the skull, dark tabby markings over the top of the head contrasting with a white blaze running between the eyes and up the nose bridge. Dark fur covers the cheeks while the muzzle area transitions from grey to white around the mouth. The chest is predominantly white extending down into front paws which are planted forward in an upright sitting posture. A large dark patch extends across the back flank toward the rear legs where lighter tones appear near the hindquarters and tail base. Background consists of out-of-focus vegetation with linear textures suggesting grass blades scattered throughout.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: medium focal length lens with shallow depth of field creating soft background blur; natural daylight illumination from above casting subtle shadows beneath paws and along body contours.
+Canvas: 1491x1510 (0.987:1)
+Composition:
+- 0% - 100%, 5% - 98%: Full frame occupied by seated cat; head occupies upper left quadrant, body extends diagonally toward lower right corner.
+- 23% - 47%, 6% - 18%: Cat's face showing dark tabby forehead markings above white muzzle area with visible whiskers extending outward from snout region.
+- 50% - 98%, 23% - 97%: Lower body and legs; front paws positioned forward showing lighter fur tones against darker flank coverage, hindquarters partially obscured by angle of view.
+Palette: #000000, #808080, #FFFFFF
+Text to render verbatim when possible:
+- none
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: inferring breed beyond domestic shorthair classification based on visible fur texture, speculating emotional state or intent behind gaze direction; extra logos; watermarks; invented claims.

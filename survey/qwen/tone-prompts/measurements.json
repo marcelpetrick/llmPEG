@@ -1,0 +1,815 @@
+{
+  "artifacts": "survey/qwen/review",
+  "generator": "local ComfyUI/Qwen-Image-2.1",
+  "llmpeg_version": "0.6.0",
+  "resolution": 512,
+  "rows": [
+    {
+      "case": "cat-monochrome",
+      "image": "cat-monochrome-workflow-control.png",
+      "prompt": "cat-monochrome-workflow-control.prompt.txt",
+      "prompt_variant": "control",
+      "reconstruction_tone": {
+        "contrast": 62,
+        "luminance": 67,
+        "saturation": 11,
+        "warmth": -1
+      },
+      "setting": "workflow",
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      }
+    },
+    {
+      "case": "cat-on-keyboard",
+      "image": "cat-on-keyboard-workflow-control.png",
+      "prompt": "cat-on-keyboard-workflow-control.prompt.txt",
+      "prompt_variant": "control",
+      "reconstruction_tone": {
+        "contrast": 46,
+        "luminance": 111,
+        "saturation": 88,
+        "warmth": 40
+      },
+      "setting": "workflow",
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      }
+    },
+    {
+      "case": "cat-on-grass",
+      "image": "cat-on-grass-workflow-control.png",
+      "prompt": "cat-on-grass-workflow-control.prompt.txt",
+      "prompt_variant": "control",
+      "reconstruction_tone": {
+        "contrast": 33,
+        "luminance": 124,
+        "saturation": 126,
+        "warmth": 47
+      },
+      "setting": "workflow",
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      }
+    },
+    {
+      "case": "cat-monochrome",
+      "image": "cat-monochrome-workflow-no-tone.png",
+      "prompt": "cat-monochrome-workflow-no-tone.prompt.txt",
+      "prompt_variant": "no-tone",
+      "reconstruction_tone": {
+        "contrast": 65,
+        "luminance": 73,
+        "saturation": 15,
+        "warmth": -1
+      },
+      "setting": "workflow",
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      }
+    },
+    {
+      "case": "cat-on-keyboard",
+      "image": "cat-on-keyboard-workflow-no-tone.png",
+      "prompt": "cat-on-keyboard-workflow-no-tone.prompt.txt",
+      "prompt_variant": "no-tone",
+      "reconstruction_tone": {
+        "contrast": 51,
+        "luminance": 123,
+        "saturation": 95,
+        "warmth": 48
+      },
+      "setting": "workflow",
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      }
+    },
+    {
+      "case": "cat-on-grass",
+      "image": "cat-on-grass-workflow-no-tone.png",
+      "prompt": "cat-on-grass-workflow-no-tone.prompt.txt",
+      "prompt_variant": "no-tone",
+      "reconstruction_tone": {
+        "contrast": 33,
+        "luminance": 106,
+        "saturation": 142,
+        "warmth": 39
+      },
+      "setting": "workflow",
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      }
+    },
+    {
+      "case": "cat-monochrome",
+      "image": "cat-monochrome-workflow-no-negation.png",
+      "prompt": "cat-monochrome-workflow-no-negation.prompt.txt",
+      "prompt_variant": "no-negation",
+      "reconstruction_tone": {
+        "contrast": 61,
+        "luminance": 68,
+        "saturation": 11,
+        "warmth": -1
+      },
+      "setting": "workflow",
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      }
+    },
+    {
+      "case": "cat-on-keyboard",
+      "image": "cat-on-keyboard-workflow-no-negation.png",
+      "prompt": "cat-on-keyboard-workflow-no-negation.prompt.txt",
+      "prompt_variant": "no-negation",
+      "reconstruction_tone": {
+        "contrast": 47,
+        "luminance": 114,
+        "saturation": 86,
+        "warmth": 40
+      },
+      "setting": "workflow",
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      }
+    },
+    {
+      "case": "cat-on-grass",
+      "image": "cat-on-grass-workflow-no-negation.png",
+      "prompt": "cat-on-grass-workflow-no-negation.prompt.txt",
+      "prompt_variant": "no-negation",
+      "reconstruction_tone": {
+        "contrast": 32,
+        "luminance": 120,
+        "saturation": 131,
+        "warmth": 47
+      },
+      "setting": "workflow",
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      }
+    },
+    {
+      "case": "cat-monochrome",
+      "image": "cat-monochrome-workflow-words-only.png",
+      "prompt": "cat-monochrome-workflow-words-only.prompt.txt",
+      "prompt_variant": "words-only",
+      "reconstruction_tone": {
+        "contrast": 62,
+        "luminance": 69,
+        "saturation": 15,
+        "warmth": -1
+      },
+      "setting": "workflow",
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      }
+    },
+    {
+      "case": "cat-on-keyboard",
+      "image": "cat-on-keyboard-workflow-words-only.png",
+      "prompt": "cat-on-keyboard-workflow-words-only.prompt.txt",
+      "prompt_variant": "words-only",
+      "reconstruction_tone": {
+        "contrast": 51,
+        "luminance": 122,
+        "saturation": 78,
+        "warmth": 37
+      },
+      "setting": "workflow",
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      }
+    },
+    {
+      "case": "cat-on-grass",
+      "image": "cat-on-grass-workflow-words-only.png",
+      "prompt": "cat-on-grass-workflow-words-only.prompt.txt",
+      "prompt_variant": "words-only",
+      "reconstruction_tone": {
+        "contrast": 35,
+        "luminance": 121,
+        "saturation": 134,
+        "warmth": 48
+      },
+      "setting": "workflow",
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      }
+    },
+    {
+      "case": "cat-monochrome",
+      "image": "cat-monochrome-workflow-words-first.png",
+      "prompt": "cat-monochrome-workflow-words-first.prompt.txt",
+      "prompt_variant": "words-first",
+      "reconstruction_tone": {
+        "contrast": 62,
+        "luminance": 72,
+        "saturation": 11,
+        "warmth": -1
+      },
+      "setting": "workflow",
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      }
+    },
+    {
+      "case": "cat-on-keyboard",
+      "image": "cat-on-keyboard-workflow-words-first.png",
+      "prompt": "cat-on-keyboard-workflow-words-first.prompt.txt",
+      "prompt_variant": "words-first",
+      "reconstruction_tone": {
+        "contrast": 49,
+        "luminance": 125,
+        "saturation": 81,
+        "warmth": 42
+      },
+      "setting": "workflow",
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      }
+    },
+    {
+      "case": "cat-on-grass",
+      "image": "cat-on-grass-workflow-words-first.png",
+      "prompt": "cat-on-grass-workflow-words-first.prompt.txt",
+      "prompt_variant": "words-first",
+      "reconstruction_tone": {
+        "contrast": 35,
+        "luminance": 124,
+        "saturation": 135,
+        "warmth": 50
+      },
+      "setting": "workflow",
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      }
+    },
+    {
+      "case": "cat-monochrome",
+      "image": "cat-monochrome-workflow-snapshot.png",
+      "prompt": "cat-monochrome-workflow-snapshot.prompt.txt",
+      "prompt_variant": "snapshot",
+      "reconstruction_tone": {
+        "contrast": 61,
+        "luminance": 89,
+        "saturation": 9,
+        "warmth": -2
+      },
+      "setting": "workflow",
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      }
+    },
+    {
+      "case": "cat-on-keyboard",
+      "image": "cat-on-keyboard-workflow-snapshot.png",
+      "prompt": "cat-on-keyboard-workflow-snapshot.prompt.txt",
+      "prompt_variant": "snapshot",
+      "reconstruction_tone": {
+        "contrast": 47,
+        "luminance": 121,
+        "saturation": 73,
+        "warmth": 37
+      },
+      "setting": "workflow",
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      }
+    },
+    {
+      "case": "cat-on-grass",
+      "image": "cat-on-grass-workflow-snapshot.png",
+      "prompt": "cat-on-grass-workflow-snapshot.prompt.txt",
+      "prompt_variant": "snapshot",
+      "reconstruction_tone": {
+        "contrast": 35,
+        "luminance": 126,
+        "saturation": 120,
+        "warmth": 42
+      },
+      "setting": "workflow",
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      }
+    },
+    {
+      "case": "cat-monochrome",
+      "image": "cat-monochrome-workflow-observer.png",
+      "prompt": "cat-monochrome-workflow-observer.prompt.txt",
+      "prompt_variant": "observer",
+      "reconstruction_tone": {
+        "contrast": 59,
+        "luminance": 78,
+        "saturation": 16,
+        "warmth": -3
+      },
+      "setting": "workflow",
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      }
+    },
+    {
+      "case": "cat-on-keyboard",
+      "image": "cat-on-keyboard-workflow-observer.png",
+      "prompt": "cat-on-keyboard-workflow-observer.prompt.txt",
+      "prompt_variant": "observer",
+      "reconstruction_tone": {
+        "contrast": 50,
+        "luminance": 117,
+        "saturation": 73,
+        "warmth": 34
+      },
+      "setting": "workflow",
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      }
+    },
+    {
+      "case": "cat-on-grass",
+      "image": "cat-on-grass-workflow-observer.png",
+      "prompt": "cat-on-grass-workflow-observer.prompt.txt",
+      "prompt_variant": "observer",
+      "reconstruction_tone": {
+        "contrast": 35,
+        "luminance": 133,
+        "saturation": 118,
+        "warmth": 53
+      },
+      "setting": "workflow",
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      }
+    },
+    {
+      "case": "cat-monochrome",
+      "image": "cat-monochrome-official-control.png",
+      "prompt": "cat-monochrome-official-control.prompt.txt",
+      "prompt_variant": "control",
+      "reconstruction_tone": {
+        "contrast": 61,
+        "luminance": 67,
+        "saturation": 8,
+        "warmth": 0
+      },
+      "setting": "official",
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      }
+    },
+    {
+      "case": "cat-on-keyboard",
+      "image": "cat-on-keyboard-official-control.png",
+      "prompt": "cat-on-keyboard-official-control.prompt.txt",
+      "prompt_variant": "control",
+      "reconstruction_tone": {
+        "contrast": 51,
+        "luminance": 116,
+        "saturation": 96,
+        "warmth": 45
+      },
+      "setting": "official",
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      }
+    },
+    {
+      "case": "cat-on-grass",
+      "image": "cat-on-grass-official-control.png",
+      "prompt": "cat-on-grass-official-control.prompt.txt",
+      "prompt_variant": "control",
+      "reconstruction_tone": {
+        "contrast": 28,
+        "luminance": 114,
+        "saturation": 172,
+        "warmth": 64
+      },
+      "setting": "official",
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      }
+    },
+    {
+      "case": "cat-monochrome",
+      "image": "cat-monochrome-official-no-tone.png",
+      "prompt": "cat-monochrome-official-no-tone.prompt.txt",
+      "prompt_variant": "no-tone",
+      "reconstruction_tone": {
+        "contrast": 63,
+        "luminance": 74,
+        "saturation": 8,
+        "warmth": 0
+      },
+      "setting": "official",
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      }
+    },
+    {
+      "case": "cat-on-keyboard",
+      "image": "cat-on-keyboard-official-no-tone.png",
+      "prompt": "cat-on-keyboard-official-no-tone.prompt.txt",
+      "prompt_variant": "no-tone",
+      "reconstruction_tone": {
+        "contrast": 54,
+        "luminance": 125,
+        "saturation": 103,
+        "warmth": 52
+      },
+      "setting": "official",
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      }
+    },
+    {
+      "case": "cat-on-grass",
+      "image": "cat-on-grass-official-no-tone.png",
+      "prompt": "cat-on-grass-official-no-tone.prompt.txt",
+      "prompt_variant": "no-tone",
+      "reconstruction_tone": {
+        "contrast": 27,
+        "luminance": 91,
+        "saturation": 187,
+        "warmth": 53
+      },
+      "setting": "official",
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      }
+    },
+    {
+      "case": "cat-monochrome",
+      "image": "cat-monochrome-official-no-negation.png",
+      "prompt": "cat-monochrome-official-no-negation.prompt.txt",
+      "prompt_variant": "no-negation",
+      "reconstruction_tone": {
+        "contrast": 60,
+        "luminance": 69,
+        "saturation": 7,
+        "warmth": 0
+      },
+      "setting": "official",
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      }
+    },
+    {
+      "case": "cat-on-keyboard",
+      "image": "cat-on-keyboard-official-no-negation.png",
+      "prompt": "cat-on-keyboard-official-no-negation.prompt.txt",
+      "prompt_variant": "no-negation",
+      "reconstruction_tone": {
+        "contrast": 52,
+        "luminance": 118,
+        "saturation": 96,
+        "warmth": 45
+      },
+      "setting": "official",
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      }
+    },
+    {
+      "case": "cat-on-grass",
+      "image": "cat-on-grass-official-no-negation.png",
+      "prompt": "cat-on-grass-official-no-negation.prompt.txt",
+      "prompt_variant": "no-negation",
+      "reconstruction_tone": {
+        "contrast": 27,
+        "luminance": 106,
+        "saturation": 176,
+        "warmth": 60
+      },
+      "setting": "official",
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      }
+    },
+    {
+      "case": "cat-monochrome",
+      "image": "cat-monochrome-official-words-only.png",
+      "prompt": "cat-monochrome-official-words-only.prompt.txt",
+      "prompt_variant": "words-only",
+      "reconstruction_tone": {
+        "contrast": 62,
+        "luminance": 70,
+        "saturation": 8,
+        "warmth": 0
+      },
+      "setting": "official",
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      }
+    },
+    {
+      "case": "cat-on-keyboard",
+      "image": "cat-on-keyboard-official-words-only.png",
+      "prompt": "cat-on-keyboard-official-words-only.prompt.txt",
+      "prompt_variant": "words-only",
+      "reconstruction_tone": {
+        "contrast": 53,
+        "luminance": 122,
+        "saturation": 93,
+        "warmth": 44
+      },
+      "setting": "official",
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      }
+    },
+    {
+      "case": "cat-on-grass",
+      "image": "cat-on-grass-official-words-only.png",
+      "prompt": "cat-on-grass-official-words-only.prompt.txt",
+      "prompt_variant": "words-only",
+      "reconstruction_tone": {
+        "contrast": 29,
+        "luminance": 110,
+        "saturation": 175,
+        "warmth": 62
+      },
+      "setting": "official",
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      }
+    },
+    {
+      "case": "cat-monochrome",
+      "image": "cat-monochrome-official-words-first.png",
+      "prompt": "cat-monochrome-official-words-first.prompt.txt",
+      "prompt_variant": "words-first",
+      "reconstruction_tone": {
+        "contrast": 60,
+        "luminance": 68,
+        "saturation": 6,
+        "warmth": 0
+      },
+      "setting": "official",
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      }
+    },
+    {
+      "case": "cat-on-keyboard",
+      "image": "cat-on-keyboard-official-words-first.png",
+      "prompt": "cat-on-keyboard-official-words-first.prompt.txt",
+      "prompt_variant": "words-first",
+      "reconstruction_tone": {
+        "contrast": 57,
+        "luminance": 127,
+        "saturation": 91,
+        "warmth": 46
+      },
+      "setting": "official",
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      }
+    },
+    {
+      "case": "cat-on-grass",
+      "image": "cat-on-grass-official-words-first.png",
+      "prompt": "cat-on-grass-official-words-first.prompt.txt",
+      "prompt_variant": "words-first",
+      "reconstruction_tone": {
+        "contrast": 31,
+        "luminance": 119,
+        "saturation": 172,
+        "warmth": 67
+      },
+      "setting": "official",
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      }
+    },
+    {
+      "case": "cat-monochrome",
+      "image": "cat-monochrome-official-snapshot.png",
+      "prompt": "cat-monochrome-official-snapshot.prompt.txt",
+      "prompt_variant": "snapshot",
+      "reconstruction_tone": {
+        "contrast": 57,
+        "luminance": 86,
+        "saturation": 4,
+        "warmth": 0
+      },
+      "setting": "official",
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      }
+    },
+    {
+      "case": "cat-on-keyboard",
+      "image": "cat-on-keyboard-official-snapshot.png",
+      "prompt": "cat-on-keyboard-official-snapshot.prompt.txt",
+      "prompt_variant": "snapshot",
+      "reconstruction_tone": {
+        "contrast": 51,
+        "luminance": 128,
+        "saturation": 85,
+        "warmth": 45
+      },
+      "setting": "official",
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      }
+    },
+    {
+      "case": "cat-on-grass",
+      "image": "cat-on-grass-official-snapshot.png",
+      "prompt": "cat-on-grass-official-snapshot.prompt.txt",
+      "prompt_variant": "snapshot",
+      "reconstruction_tone": {
+        "contrast": 31,
+        "luminance": 120,
+        "saturation": 157,
+        "warmth": 59
+      },
+      "setting": "official",
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      }
+    },
+    {
+      "case": "cat-monochrome",
+      "image": "cat-monochrome-official-observer.png",
+      "prompt": "cat-monochrome-official-observer.prompt.txt",
+      "prompt_variant": "observer",
+      "reconstruction_tone": {
+        "contrast": 59,
+        "luminance": 79,
+        "saturation": 8,
+        "warmth": 0
+      },
+      "setting": "official",
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      }
+    },
+    {
+      "case": "cat-on-keyboard",
+      "image": "cat-on-keyboard-official-observer.png",
+      "prompt": "cat-on-keyboard-official-observer.prompt.txt",
+      "prompt_variant": "observer",
+      "reconstruction_tone": {
+        "contrast": 55,
+        "luminance": 119,
+        "saturation": 83,
+        "warmth": 37
+      },
+      "setting": "official",
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      }
+    },
+    {
+      "case": "cat-on-grass",
+      "image": "cat-on-grass-official-observer.png",
+      "prompt": "cat-on-grass-official-observer.prompt.txt",
+      "prompt_variant": "observer",
+      "reconstruction_tone": {
+        "contrast": 30,
+        "luminance": 129,
+        "saturation": 157,
+        "warmth": 70
+      },
+      "setting": "official",
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      }
+    }
+  ],
+  "seed": 42,
+  "settings": {
+    "official": {
+      "cfg": 1.0,
+      "steps": 25
+    },
+    "workflow": {}
+  },
+  "snapshot_phrase": "Casual unedited snapshot in soft natural light, understated and unpolished"
+}
