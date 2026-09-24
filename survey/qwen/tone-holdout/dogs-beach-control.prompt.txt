@@ -1,0 +1,18 @@
+Create a new image from this semantic description.
+
+Primary request: A medium shot at eye level of two slender sighthound-like canines running left to right across a sandy beach. The dog in the foreground (left) is brindle-patterned: light tan base with irregular black stripes covering neck and back; short rounded ears set high on skull, dark eyes looking forward; muzzle extended slightly upward as mouth opens showing teeth and pink tongue; hind legs driving ground while front paws lift off surface; tail held low. The second dog (right) is solid charcoal-black coat speckled with white sand particles clinging to fur along flank and rump; head turned toward first dog, eyes focused forward; ears folded back against skull; long thin body stretched horizontally as it runs parallel to companion; legs in mid-stride kicking up fine granules of pale beige sand that scatter through air around them. Background is out-of-focus coastal dunes under overcast sky with diffuse even lighting casting no strong shadows.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: medium, eye-level camera angle, moderate focal length (~70mm), soft diffused lighting from overcast sky with no directional shadows
+Canvas: 1920x1159 (1.657:1)
+Composition:
+- 0-48%, 215-673%: Brindle-coated dog in motion, head turned slightly right showing open mouth with visible teeth and tongue; body angled forward as it runs leftward across frame.
+- 349-860%, 215-700%: Solid black dog running parallel to first, head turned toward companion; sand particles cling visibly along flank and rump as legs propel forward on beach surface.
+- 0-99%, 683-1000%: Sandy ground texture with disturbed patches where dogs’ paws have kicked up loose grains; shallow depth of field blurs distant dunes and sky behind subjects.
+Palette: #D4C6A8, #5B3E2F, #1A1A1A
+Tone: very bright, high-key exposure (mean luminance 190/255), moderate contrast (spread 41/255), muted, desaturated colour with a neutral white balance (mean saturation 39/255). Match this grading exactly: do not brighten, add contrast, boost saturation, or apply HDR, glow, or cinematic colour grading.
+Text to render verbatim when possible:
+- none
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: inferring breed beyond sighthound-like morphology, speculating on emotional state or intent, adding non-visible elements like clothing or accessories; extra logos; watermarks; invented claims.

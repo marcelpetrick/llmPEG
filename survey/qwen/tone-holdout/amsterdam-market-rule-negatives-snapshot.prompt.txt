@@ -1,0 +1,25 @@
+Create a new image from this semantic description.
+
+Casual unedited snapshot in soft natural light, understated and unpolished.
+Primary request: An eye-level, medium shot of an active outdoor market on a sunny day in front of colorful brick buildings. In the foreground right, a fruit vendor stands behind stacked green plastic crates holding piles of oranges; to his left are yellow crates with limes and lemons. A woman with curly brown hair wearing a dark coat with fur trim faces away from camera near orange crate pile. Mid-ground shows three pedestrians walking toward viewer: woman in olive puffer jacket carrying tan shoulder bag, man in green jacket over plaid shirt holding paper bag, woman in black coat with grey crossbody strap and gloves. Background features rows of market stalls under red/orange/brown awnings; people browsing produce or standing near vendor counters. Distant buildings show varied colors including blue/green/red brick facades with white window frames.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: eye-level medium shot, natural daylight with hard shadows cast by awnings and people, shallow depth of field blurring distant background slightly
+Canvas: 1920x1440 (1.333:1)
+Composition:
+- 0% A-35%, y 20%-60%: Foreground pedestrians: woman in olive puffer jacket (left), man in green plaid shirt holding paper bag, woman in black coat with grey strap walking toward camera.
+- 48% A-100%, y 52%-96%: Foreground fruit stall: vendor behind stacked crates (green/yellow), piles of oranges and citrus fruits, woman in fur-trimmed coat facing away.
+- 38% A-100%, y 42%-75%: Mid-ground market activity: people browsing stalls under awnings, vendor counters with produce displays visible behind pedestrians.
+Palette: #FF9933, #8B4513, #2F4F4F, #DAA520
+Tone: moderately dark exposure (mean luminance 89/255), moderate contrast (spread 53/255), natural, moderate colour with a neutral white balance (mean saturation 60/255). Match this grading exactly: do not brighten, add contrast, boost saturation, or apply HDR, glow, or cinematic colour grading.
+Text to render verbatim when possible:
+- "GOWTU CENTRE"
+- "JEWELIER"
+- "Gouda Zilverenid"
+- "Abt Gouwstraat Nr: 47138 Amsterdam"
+- "06-5297146"
+- "ZOOO"
+- "Sola"
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: specific identity misidentification, inferred clothing brands or models not visible in image, incorrect crate color assignments; extra logos; watermarks; invented claims.

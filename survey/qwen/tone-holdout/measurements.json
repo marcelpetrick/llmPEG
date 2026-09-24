@@ -1,0 +1,264 @@
+{
+  "encoder": "ollama/qwen3.5:4b",
+  "generator": "local ComfyUI/Qwen-Image-2.1",
+  "llmpeg_version": "0.6.0",
+  "profile": "detailed",
+  "resolution": 512,
+  "rows": [
+    {
+      "case": "amsterdam-market",
+      "extra_negative": "",
+      "image": "amsterdam-market-control.png",
+      "reconstruction_tone": {
+        "contrast": 50,
+        "luminance": 62,
+        "saturation": 141,
+        "warmth": 16
+      },
+      "source_tone": {
+        "contrast": 53,
+        "luminance": 89,
+        "saturation": 60,
+        "warmth": 14
+      },
+      "variant": "control"
+    },
+    {
+      "case": "amsterdam-market",
+      "extra_negative": "professional color grading, studio lighting, vivid colors, saturated colors, warm color cast, orange tint",
+      "image": "amsterdam-market-rule-negatives.png",
+      "reconstruction_tone": {
+        "contrast": 46,
+        "luminance": 55,
+        "saturation": 134,
+        "warmth": -1
+      },
+      "source_tone": {
+        "contrast": 53,
+        "luminance": 89,
+        "saturation": 60,
+        "warmth": 14
+      },
+      "variant": "rule-negatives"
+    },
+    {
+      "case": "amsterdam-market",
+      "extra_negative": "professional color grading, studio lighting, vivid colors, saturated colors, warm color cast, orange tint",
+      "image": "amsterdam-market-rule-negatives-snapshot.png",
+      "reconstruction_tone": {
+        "contrast": 53,
+        "luminance": 65,
+        "saturation": 122,
+        "warmth": 3
+      },
+      "source_tone": {
+        "contrast": 53,
+        "luminance": 89,
+        "saturation": 60,
+        "warmth": 14
+      },
+      "variant": "rule-negatives-snapshot"
+    },
+    {
+      "case": "astronaut-crew",
+      "extra_negative": "",
+      "image": "astronaut-crew-control.png",
+      "reconstruction_tone": {
+        "contrast": 44,
+        "luminance": 28,
+        "saturation": 138,
+        "warmth": -20
+      },
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 59,
+        "saturation": 169,
+        "warmth": -34
+      },
+      "variant": "control"
+    },
+    {
+      "case": "astronaut-crew",
+      "extra_negative": "professional color grading, studio lighting, warm color cast, orange tint",
+      "image": "astronaut-crew-rule-negatives.png",
+      "reconstruction_tone": {
+        "contrast": 44,
+        "luminance": 26,
+        "saturation": 130,
+        "warmth": -26
+      },
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 59,
+        "saturation": 169,
+        "warmth": -34
+      },
+      "variant": "rule-negatives"
+    },
+    {
+      "case": "astronaut-crew",
+      "extra_negative": "professional color grading, studio lighting, warm color cast, orange tint",
+      "image": "astronaut-crew-rule-negatives-snapshot.png",
+      "reconstruction_tone": {
+        "contrast": 35,
+        "luminance": 20,
+        "saturation": 124,
+        "warmth": -25
+      },
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 59,
+        "saturation": 169,
+        "warmth": -34
+      },
+      "variant": "rule-negatives-snapshot"
+    },
+    {
+      "case": "dogs-beach",
+      "extra_negative": "",
+      "image": "dogs-beach-control.png",
+      "reconstruction_tone": {
+        "contrast": 55,
+        "luminance": 212,
+        "saturation": 13,
+        "warmth": 8
+      },
+      "source_tone": {
+        "contrast": 41,
+        "luminance": 190,
+        "saturation": 39,
+        "warmth": -1
+      },
+      "variant": "control"
+    },
+    {
+      "case": "dogs-beach",
+      "extra_negative": "professional color grading, studio lighting, vivid colors, saturated colors, dark, underexposed, warm color cast, orange tint",
+      "image": "dogs-beach-rule-negatives.png",
+      "reconstruction_tone": {
+        "contrast": 52,
+        "luminance": 215,
+        "saturation": 9,
+        "warmth": 5
+      },
+      "source_tone": {
+        "contrast": 41,
+        "luminance": 190,
+        "saturation": 39,
+        "warmth": -1
+      },
+      "variant": "rule-negatives"
+    },
+    {
+      "case": "dogs-beach",
+      "extra_negative": "professional color grading, studio lighting, vivid colors, saturated colors, dark, underexposed, warm color cast, orange tint",
+      "image": "dogs-beach-rule-negatives-snapshot.png",
+      "reconstruction_tone": {
+        "contrast": 50,
+        "luminance": 215,
+        "saturation": 9,
+        "warmth": 5
+      },
+      "source_tone": {
+        "contrast": 41,
+        "luminance": 190,
+        "saturation": 39,
+        "warmth": -1
+      },
+      "variant": "rule-negatives-snapshot"
+    },
+    {
+      "case": "food-table",
+      "extra_negative": "",
+      "image": "food-table-control.png",
+      "reconstruction_tone": {
+        "contrast": 46,
+        "luminance": 51,
+        "saturation": 157,
+        "warmth": 30
+      },
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 93,
+        "saturation": 70,
+        "warmth": -3
+      },
+      "variant": "control"
+    },
+    {
+      "case": "food-table",
+      "extra_negative": "professional color grading, studio lighting, vivid colors, saturated colors, dark, underexposed, warm color cast, orange tint",
+      "image": "food-table-rule-negatives.png",
+      "reconstruction_tone": {
+        "contrast": 48,
+        "luminance": 53,
+        "saturation": 120,
+        "warmth": 19
+      },
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 93,
+        "saturation": 70,
+        "warmth": -3
+      },
+      "variant": "rule-negatives"
+    },
+    {
+      "case": "food-table",
+      "extra_negative": "professional color grading, studio lighting, vivid colors, saturated colors, dark, underexposed, warm color cast, orange tint",
+      "image": "food-table-rule-negatives-snapshot.png",
+      "reconstruction_tone": {
+        "contrast": 47,
+        "luminance": 59,
+        "saturation": 105,
+        "warmth": 19
+      },
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 93,
+        "saturation": 70,
+        "warmth": -3
+      },
+      "variant": "rule-negatives-snapshot"
+    },
+    {
+      "case": "kitchen-table",
+      "extra_negative": "",
+      "image": "kitchen-table-control.png",
+      "reconstruction_tone": {
+        "contrast": 67,
+        "luminance": 76,
+        "saturation": 123,
+        "warmth": 26
+      },
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 100,
+        "saturation": 46,
+        "warmth": 18
+      },
+      "variant": "control"
+    },
+    {
+      "case": "kitchen-table",
+      "extra_negative": "professional color grading, studio lighting, vivid colors, saturated colors, dark, underexposed",
+      "image": "kitchen-table-rule-negatives.png",
+      "reconstruction_tone": {
+        "contrast": 67,
+        "luminance": 78,
+        "saturation": 116,
+        "warmth": 26
+      },
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 100,
+        "saturation": 46,
+        "warmth": 18
+      },
+      "variant": "rule-negatives"
+    }
+  ],
+  "seed": 42,
+  "snapshot_phrase": "Casual unedited snapshot in soft natural light, understated and unpolished.",
+  "status": "stopped by request after 14 of 30 renders; complete sources: amsterdam-market, astronaut-crew, dogs-beach, food-table"
+}

@@ -1,0 +1,24 @@
+Create a new image from this semantic description.
+
+Primary request: Six smiling men standing and sitting for a formal group photo, all wearing matching royal blue zip-up flight jackets. The setting is deep space with stars, the planet Earth in the bottom left corner showing North America, and the planet Mars in the top right corner. A large mission patch featuring an ISS orbiting Earth dominates the lower center foreground.
+Fidelity goal: Maximize resemblance to this specifically described subject. Prioritize distinctive markings, proportions, pose landmarks, crop, and object geometry over generic beauty or creative interpretation.
+Style/medium: studio lighting, medium focal length portrait shot with shallow depth of field focusing on faces and upper torsos.
+Canvas: 1920x1536 (1.250:1)
+Composition:
+- 0-32%, 15%-68%: Standing man on the far left with short brown hair, smiling at camera. Wearing blue flight suit with NASA patch and mission patches.
+- 47-92%, 10-38%: Seated astronaut in front center-left with receding hairline, looking directly forward. Blue jacket has Roscosmos logo on left chest.
+- 56-92%, 47%-82%: Standing man seated position far right with greyish-brown hair and Italian flag patch visible on sleeve.
+Palette: #0F3D91, #FFFFFF, #FF6B35
+Tone: dark, low-key exposure (mean luminance 59/255), moderate contrast (spread 50/255), vivid colour with a cool white balance (mean saturation 169/255). Match this grading exactly: do not brighten, add contrast, boost saturation, or apply HDR, glow, or cinematic colour grading.
+Text to render verbatim when possible:
+- "NASA"
+- "ROSCOSMOS"
+- "ESA"
+- "ITALIA"
+- "ACABA BRESNIK"
+- "RYAZANSKII NESPOLI"
+- "VANDE HEY MISURUKIN"
+Constraints: preserve every described landmark, hierarchy, and spatial relationship; add no
+unlisted subject, object, marking, or decoration.
+This is a semantic reconstruction, not the original.
+Avoid: specific identity names or nationalities not explicitly written; extra logos; watermarks; invented claims.
