@@ -1,46 +1,44 @@
 # llmPEG
 
 [![CI](https://github.com/marcelpetrick/llmPEG/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/marcelpetrick/llmPEG/actions/workflows/ci.yml)
+[![Release](https://github.com/marcelpetrick/llmPEG/actions/workflows/release.yml/badge.svg)](https://github.com/marcelpetrick/llmPEG/actions/workflows/release.yml)
+[![Pages](https://github.com/marcelpetrick/llmPEG/actions/workflows/pages.yml/badge.svg?branch=master)](https://marcelpetrick.github.io/llmPEG/)
+[![Latest Release](https://img.shields.io/github/v/release/marcelpetrick/llmPEG?sort=semver)](https://github.com/marcelpetrick/llmPEG/releases/latest)
 [![License: GPL v3 or later](https://img.shields.io/badge/license-GPLv3%20or%20later-blue.svg)](LICENSE)
 [![Python 3.14](https://img.shields.io/badge/Python-3.14-3776ab.svg)](https://www.python.org/)
+[![uv 0.12.18](https://img.shields.io/badge/uv-0.12.18-de5fe9.svg)](https://docs.astral.sh/uv/)
 [![Ruff](https://img.shields.io/badge/lint-ruff-261230.svg)](https://docs.astral.sh/ruff/)
 [![mypy strict](https://img.shields.io/badge/types-mypy%20strict-2a6db2.svg)](https://mypy-lang.org/)
 [![Coverage 96.0%](https://img.shields.io/badge/coverage-96.0%25-brightgreen.svg)](#development)
+[![Encoder: Ollama qwen3.5:4b](https://img.shields.io/badge/encoder-Ollama%20qwen3.5%3A4b-000000.svg)](https://ollama.com/)
+[![Generator: ComfyUI Qwen--Image--2.1](https://img.shields.io/badge/generator-ComfyUI%20Qwen--Image--2.1-6d28d9.svg)](https://github.com/QwenLM/Qwen-Image-2.1)
 
 **llmPEG** — the *LLM Photo Expert Group*, after JPEG's **J**oint **P**hotographic **E**xperts
-**G**roup. In JPEG the codec is an algorithm. Here the codec is a **large language model**: one
-model writes a tiny description, and a second model invents a reconstruction from it.
+**G**roup. In JPEG the codec is an algorithm. Here it is two models: one writes a tiny description
+of your photo, the other paints a new picture from that description.
 
-The joke came first. A satirical article does the rounds every few months — *"teenager compresses
-family photos into AI prompts and deletes the originals, 6 MB down to 200 bytes!"* Deletion has
-been renamed compression. Everybody laughs.
+It started as a joke. A satirical article does the rounds every few months: *"teenager compresses
+family photos into AI prompts and deletes the originals, 6 MB down to 200 bytes!"* Deletion,
+renamed compression. llmPEG builds that joke for real and measures it honestly.
 
-llmPEG is that joke, built for real and measured honestly. A vision model turns your image into a
-small text description. Later, an image generator reads that description and paints a **brand new
-picture**. If you delete the original, it is gone. What comes back is not your photo — it is a
-stranger's photo of the same idea.
-
-**Author: Marcel Petrick <mail@marcelpetrick.it>**
-
-**Note: project is generated with AI.**
-
-**License: GPLv3 or later. See `LICENSE`.**
+**Author:** Marcel Petrick <mail@marcelpetrick.it> · **Note:** this project is generated with AI.
+· **License:** GPLv3 or later.
 
 > ## ⚠️ This is TOTALLY LOSSY
 >
-> llmPEG does not preserve pixels. It does not preserve faces, text, brands, or how many things
-> were in the picture. It throws the image away and keeps a caption.
+> llmPEG keeps no pixels. It does not preserve faces, text, brands, or how many things were in the
+> picture. It throws the image away and keeps a caption.
 >
-> Never use it for archives, evidence, medical images, identity documents, irreplaceable family
-> photos, or anything you cannot afford to lose. It is not a backup. It is not JPEG. It is an
-> experiment about how much meaning survives when you delete everything else.
+> Never use it for archives, evidence, medical images, identity documents, family photos, or
+> anything you cannot afford to lose. It is not a backup and it is not JPEG. It is an experiment
+> about how much meaning survives when you delete everything else.
 
-## How it works, for non-technical readers
+## How it works
 
 ```mermaid
 flowchart LR
-    A["📷 Your photo<br/>800 KB"] -->|"a vision model<br/>looks at it"| B["📝 A description<br/>1.2 KB of text"]
-    B --> C["💾 You keep ONLY this<br/>660x smaller"]
+    A["📷 Your photo<br/>800 KB"] -->|"a vision model<br/>looks at it"| B["📝 A description<br/>1–3 KB of text"]
+    B --> C["💾 You keep ONLY this"]
     A -.->|"the original is<br/>thrown away"| D["🗑️ Gone forever"]
     C -->|"later, an image model<br/>reads the description"| E["🎨 A NEW picture<br/>painted from words"]
     E --> F["👀 The same scene —<br/>but not the same photo"]
@@ -52,283 +50,167 @@ flowchart LR
     style F fill:#dcfce7,stroke:#16a34a,color:#052e16
 ```
 
-Think of it as describing a painting to a friend over the phone, throwing the painting away, and
-years later asking a different artist to paint it back from your description. You get *a*
-painting. You do not get *your* painting.
+Think of describing a painting over the phone, burning the painting, and years later asking a
+different artist to paint it from your notes. You get *a* painting, not *your* painting. There is
+no decompressor: reconstruction means a generator inventing a new image from text, which is why
+everything here is measured rather than trusted.
 
-There is no decompressor. Reconstruction means an image generator inventing a new picture from
-text — which is why everything below is scored rather than trusted.
+## The pipeline: two local models
 
-## Try it on your own photo
+| Stage | Runs on | Model |
+| --- | --- | --- |
+| **Encode** (photo → artifact) | local [Ollama](https://ollama.com/) | `qwen3.5:4b` vision model, temperature 0, seed 42 |
+| **Generate** (artifact → new photo) | local [ComfyUI](https://github.com/comfyanonymous/ComfyUI) | Qwen-Image-2.1, bundled workflow, seed 42 |
 
-[`prototypeWebUI/`](prototypeWebUI/README.md) is a small local web page: drop an image, watch local
-Ollama/Qwen describe it, read the description, then have local Qwen-Image-2.1 paint a new picture
-from those words alone. The page compares the result with the source using explicit proxy metrics
-and repeated local vision judgments; that experimental rating is not calibrated to human ratings.
+Both run on one machine with an 8 GB GPU. The generator receives only the rendered text, never the
+source image, and there is no hosted fallback: if a local service is down, the command fails.
+
+**This is the way to run llmPEG.** Early experiments used other tools: a larger remote
+`qwen3-vl:32b` endpoint for encoding, and Codex's built-in image generation (plus, briefly, other
+hosted adapters) for reconstruction. Their results stay in the repository, labelled with that
+provenance, but the local pair replaced them because it is:
+
+- **private** — no image leaves the machine, for encoding or generation;
+- **reproducible** — the same artifact and seed give a pixel-identical image, checked on several
+  separate reruns ([`docs/tone.md`](docs/tone.md));
+- **free per run and fast** — 21–36 s to encode and 67 s to generate a 512 px image on the measured
+  runs (`survey/qwen/review/report.json`);
+- **honest when it breaks** — failures surface instead of silently switching providers.
+
+Whether the local pair also paints *better* pictures is not shown. On the three cats its
+deterministic proxy scores (0.63, 0.67, 0.57) sit a little below the hosted run's (0.71, 0.70,
+0.60), but the runs differ in profile and models, and the proxy has never been validated against
+people (`docs/metrics.md`). The one human rating so far is for the local path: subject,
+composition, and overall 5 of 5; colour and lighting 3 of 5.
+
+## Try it
+
+**One command at a time** (Python 3.14+, [uv](https://docs.astral.sh/uv/), local Ollama and
+ComfyUI running):
 
 ```bash
+uv sync --extra dev
 ollama pull qwen3.5:4b
-# Start ComfyUI with the Qwen-Image-2.1 weights described in prototypeWebUI/README.md.
-uv run python prototypeWebUI/server.py \
-  --vision-host http://127.0.0.1:11434     # then open http://127.0.0.1:8000
+uv run llmpeg encode photo.jpg                    # -> photo.jpg.llmpeg.json.gz
+uv run llmpeg reconstruct photo.jpg.llmpeg.json.gz > photo.prompt.txt
+uv run llmpeg generate photo.jpg.llmpeg.json.gz   # -> photo.jpg.reconstructed.png
+uv run llmpeg evaluate photo.jpg photo.jpg.reconstructed.png
 ```
 
-Generation has one fail-closed path: the bundled Qwen-Image-2.1 workflow over local ComfyUI HTTP.
-There is no hosted fallback. The prompt remains editable before generation—the one real perk of a
-codec whose compressed form is readable.
+**In the browser:** [`prototypeWebUI/`](prototypeWebUI/README.md) is a small local page. Drop an
+image, read the description the model writes, edit it if you like, and watch Qwen-Image-2.1 paint
+a new picture from those words alone:
+
+```bash
+uv run python prototypeWebUI/server.py --vision-host http://127.0.0.1:11434
+# then open http://127.0.0.1:8000
+```
 
 Doing this to a photo you took yourself makes the point faster than any table below.
 
-## The cat, the ratio, and the catch
+## Results
 
-| Source photo | Prompt-only reconstruction |
+### The review page
+
+**[marcelpetrick.github.io/llmPEG](https://marcelpetrick.github.io/llmPEG/)** is the one published
+comparison page. For seven public-domain and CC0 photos it shows the original, the current local
+pipeline's reconstruction, and the closed-loop tone correction below, with each artifact, prompt,
+metric, and licence credit, plus 1–5 rating controls and JSON export. Ratings are what the project
+needs most.
+
+### The cat, the ratio, and the catch
+
+| Source photo | Prompt-only reconstruction (hosted generator, historical) |
 | --- | --- |
 | ![Cat stretched on grass, public domain](survey/sources/cat-on-grass.jpg) | ![llmPEG reconstruction of the cat](survey/reconstructions/cat-on-grass.png) |
 
 | Measurement | Result |
 | --- | ---: |
 | Source JPEG | 799,983 bytes |
-| Semantic artifact | 1,206 bytes |
-| **Compression ratio** | **663:1** |
-| Size reduction | 99.85% |
-| Same artifact in the optional gzip envelope | 686 bytes, 1,166:1 |
-| Visual proxy score | 0.595 (pass, `balanced`) |
-| Layout score | 0.706 (pass) |
-| dHash similarity | 0.500 |
+| Artifact, `balanced`, plain JSON | 1,206 bytes — **663:1** |
+| Same artifact, gzip envelope | 686 bytes — 1,166:1 |
+| Local run, `detailed` (more description) | 2,875 bytes plain (278:1), 1,531 gzip (523:1) |
 
-**663:1.** That is the whole seduction of the idea, and it is real — 1,206 bytes of text stood in
-for an 800 KB photograph, and what comes back is unmistakably a cat stretched out on grass.
+**663:1** is the whole seduction, and it is real: 1.2 KB of text stood in for an 800 KB photograph,
+and what comes back is unmistakably a cat stretched out on grass. The catch: it is **not the same
+cat**. Markings, pose, and fur are invented. This is also the lowest visual-proxy score of the three
+cats — the best ratio in the repository buys the weakest resemblance.
 
-Now the catch: it is **not the same cat**. The markings are invented, the pose is approximate, the
-fur is a different fur. And this is the *lowest* visual-proxy score of the three cats tested — the
-best ratio in this repository buys the weakest resemblance. That trade-off is the finding, not a
-footnote.
-
-## The hard case: a page of text
+### The hard case: a page of text
 
 | Source | Prompt-only reconstruction |
 | --- | --- |
 | ![Satirical source article](media/newsArticle.jpg) | ![llmPEG reconstruction](examples/news-article.reconstructed.png) |
 
-The satirical article that inspired the project is also the cruelest test for it, because its
-meaning *is* its text. Generated from [the rendered prompt](examples/news-article.prompt.txt)
-alone — the generator never saw the source.
+The satirical article that inspired the project is also the cruellest test, because its meaning
+*is* its text. The reconstruction ([prompt](examples/news-article.prompt.txt)) kept the masthead,
+headline, grid, boy with laptop, crying family, and palette, then invented new body copy:
 
 | Measurement | Result |
 | --- | ---: |
-| Source JPEG | 123,585 bytes |
-| Semantic artifact | 3,543 bytes |
-| Size reduction | 97.13% (35:1) |
-| Visual proxy score | 0.770 (pass) |
-| Layout score | 0.812 (pass) |
-| Palette distance | 0.059 (pass; lower is better) |
+| Source JPEG → artifact | 123,585 → 3,543 bytes (35:1) |
+| Visual proxy / layout | 0.770 / 0.812 (pass) |
 | Critical-text recall | 0.600 (**fail**) |
-| `detailed` profile verdict | **fail** |
+| `detailed` verdict | **fail** |
 
-That last row matters most. The output kept the masthead, headline, article grid, boy with laptop,
-crying family, and palette — then invented new body copy. It is a good semantic reconstruction and
-a bad copy of a document. The checked-in
-[evaluation report](examples/news-article.evaluation.json) records both facts, and this demo stays
-in the README **because** it fails.
+A good semantic reconstruction and a bad copy of a document — the
+[evaluation report](examples/news-article.evaluation.json) records both, and the demo stays here
+**because** it fails. The reconstruction PNG (1.88 MB) is also larger than the source JPEG.
 
-The reconstruction PNG is 1.88 MB — larger than the input JPEG. The storage win exists only while
-you keep the artifact and regenerate on demand; model weights and compute are not free.
+### Tone: what the generator gets wrong
 
-## Benchmarks
-
-### Local Qwen-Image-2.1 review (`n=3`, `detailed`)
-
-The [public review page](https://marcelpetrick.github.io/llmPEG/) shows one reconstruction per cat
-from the current pipeline, with each source's measured tone beside its reconstruction's. Its
-technology panel records both measured stages:
-
-- **Compression / semantic encoding:** local Ollama with `qwen3.5:4b` receives the source and
-  writes the detailed gzip-wrapped llmPEG 1.1 artifact, including pixel-measured tone.
-- **Reconstruction (not decompression):** local ComfyUI with Qwen-Image-2.1 receives only the
-  rendered text and generates a new 512×512 image on the GPU.
-
-The prompt's tone line did not stop Qwen from missing each photo's exposure and colour
-([`docs/tone.md`](docs/tone.md)). A second page,
-[`tone.html`](https://marcelpetrick.github.io/llmPEG/tone.html), sets the current pipeline beside
-the two opt-in `--tone-correction` modes for seven sources and asks for human ratings. The pages are
-generated from [`survey/qwen-manifest.json`](survey/qwen-manifest.json) and
-[`survey/qwen-tone-manifest.json`](survey/qwen-tone-manifest.json); the raw runs are under
-[`survey/qwen/`](survey/qwen/README.md), including the earlier creator/rater experiments whose
-challengers were both rejected.
-
-### Historical cat survey (`n=3`, `balanced`)
-
-Open [`survey/index.html`](survey/index.html) for interactive comparisons with machine metrics,
-exact prompts, source/license links, 1–5 human-rating controls, and JSON export. This older run
-used `qwen3-vl:32b-ctx49k` for encoding and Codex built-in image generation for reconstruction;
-the generated page labels that provenance explicitly.
-
-| Aggregate | Result |
-| --- | ---: |
-| Cases passing proxy thresholds | 3/3 |
-| Mean visual proxy | 0.667 |
-| Mean layout score | 0.686 |
-| Mean palette distance | 0.081 |
-| Mean dHash similarity | 0.474 |
-
-The codec reliably preserved "what kind of cat is doing what, where?" It did not preserve the same
-cat, exact markings, fur texture, or pixels.
-
-The [detailed identity survey](survey/detailed.html) repeats the experiment with 2.5–3.2 KB
-artifacts carrying subject bounds, pose landmarks, marking boundaries, and camera geometry. It
-improves two visual-proxy scores and slightly lowers one — extra detail helps selectively rather
-than guaranteeing identity.
-
-### Expanded scene benchmark (`n=10`, `detailed`) — complete
-
-Harder question: what survives in a busy scene full of people, objects, and signage? Ten complex
-sources, all reconstructed from their prompts alone and evaluated. Per-case table in
-[`survey/EXPANDED.md`](survey/EXPANDED.md), visuals in
-[`survey/expanded.html`](survey/expanded.html).
-
-| Aggregate | Result |
-| --- | ---: |
-| Cases measured | 10 of 10 |
-| Passing all thresholds | 9 |
-| Failing a threshold | 1 (crew portrait, on text recall) |
-| Mean visual proxy | 0.737 |
-| Mean layout score | 0.746 |
-| Mean palette distance | 0.069 |
-| Mean critical-text recall | 0.950 |
-
-**Text survived far better than expected.** Nine of ten cases recalled every critical string — one
-reconstruction rendered a Japanese platform sign, `山手線 / Yamanote Line / 東京・上野・駒込方面`,
-correctly from the description alone.
-
-**Identity still did not.** The single failure is the one that depends on *who* is in the frame:
-the six-person astronaut crew portrait recalled half its text and invented the rest, turning six
-specific people into six plausible ones. More cases did not soften that.
-
-Two caveats on the 0.950: recall does not punish *invented* text (one reconstruction adds a
-fictional bike number and still scores 1.00), and duplicate expected strings all match a single
-rendered occurrence. Both are documented in `EXPANDED.md`.
-
-### What a full cycle costs
-
-Measured by [`scripts/benchmark_cycle.py`](scripts/benchmark_cycle.py) against a local
-`qwen3-vl:32b-ctx49k` endpoint — three images, two runs each, `balanced` profile. Raw data in
-[`docs/benchmark-cycle.json`](docs/benchmark-cycle.json).
-
-| Stage | Mean | Range |
-| --- | ---: | ---: |
-| **Compress** (image → artifact) | 78.0 s | 63.5 – 104.7 s |
-| **Render prompt** (artifact → generator prompt) | < 1 ms | — |
-| **Evaluate** (source vs reconstruction) | 0.12 s | 0.11 – 0.13 s |
-| **Generate a new image** (prompt → pixels) | not measured | external generator |
-
-The cost is wildly asymmetric. Compressing one photograph costs over a minute of GPU time;
-everything in the core package afterwards is effectively free. The expensive generation step was
-not measured in this benchmark. The prototype can invoke a generator, but that compute remains an
-external cost. A codec whose reconstruction stage is "rent a diffusion model" has an honesty
-problem with the word *compression*, which is the joke.
-
-**Reproducibility is worse than the ratio suggests.** Re-encoding `cat-on-grass` for this
-benchmark produced a **1,275-byte** artifact where the checked-in run produced **997 bytes** —
-627:1 instead of 802:1, from the same image, the same model name, the same seed `42` and
-temperature `0`. The compression ratio is not a property of your photo. It is a property of one
-particular run of one particular model, and it moves by 28% between runs.
-
-(Both figures predate the format header, so they are comparable with each other but not with the
-tables above. The header is a constant and does not affect the spread.)
-
-### Does the score match a human eye? We still cannot say
-
-A vision-model judge rated every checked-in pair on scene, identity, composition, mood, and an
-overall "is this a faithful stand-in?".
-
-An earlier version of this README reported that `visual_proxy_score` correlates **−0.468** with
-that judge — that the headline metric pointed the wrong way. **That claim is withdrawn.** A second
-run, differing only by a formatting instruction added to the judge's prompt, changed **11 of 12
-verdicts by an average of 1.67 points** on a 1–5 scale, at temperature 0 with a fixed seed. The
-correlation moved with them:
-
-| Metric | ρ, run 1 (n=12) | ρ, run 2 (n=16) |
-| --- | ---: | ---: |
-| **`visual_proxy_score`** | **−0.468** | **+0.007** |
-| `edge_similarity` | −0.392 | +0.389 |
-| `palette_distance` (inverted) | −0.725 | +0.287 |
-
-Every correlation flipped sign or collapsed. The finding is therefore not about the metrics at
-all: **a single-run vision-model judge is not a stable enough instrument to validate them.** Both
-runs are checked in so the flip can be recomputed rather than believed.
-
-What survives: `aspect_similarity` is degenerate in both runs (σ ≈ 0.004), and the structural
-signals remain blind to subject identity by construction — edges and histograms cannot encode
-*who* is in a photograph. Treat `visual_proxy_score` as a structural sanity check, not a quality
-score. Full analysis, both datasets, and what would actually settle the question in
-[`docs/metrics.md`](docs/metrics.md).
-
-### Can the codec improve itself? Not yet
-
-[`scripts/adversarial_refine.py`](scripts/adversarial_refine.py) runs a GAN-*shaped* loop — no
-gradients, no trained discriminator, just the useful part of the idea: the extraction instruction
-proposes, a critic that sees the original and only the generated prompt attacks, and its
-complaints steer the next round.
-
-| Round | Mean reconstructability | Severe misses | Mean artifact bytes |
-| ---: | ---: | ---: | ---: |
-| 0 (baseline) | 3.00 | 6 | 2,767 |
-| 1 | 3.00 | 10 | 2,408 |
-| 2 | 3.00 | 10 | 2,418 |
-
-It failed, and the failure is the useful part: **the critic returned exactly 3 for all nine
-case-rounds.** A discriminator with no dynamic range provides no gradient, so nothing downstream
-could work. Told to prioritise counts and positions, the encoder produced *smaller* artifacts with
-*more* severe misses — focus instructions compete for a fixed byte budget, and nothing decided
-what was safe to drop. Diagnosis and the fix worth trying next (pairwise forced choice instead of
-absolute scoring) in [`docs/adversarial.md`](docs/adversarial.md).
-
-Regenerate any survey page after changing a manifest or result:
+Qwen-Image-2.1 misses each photo's exposure, and which way it misses depends on the scene, not the
+seed: across 13 sources and three seeds the direction never changed. Writing the measured tone into
+the prompt barely helps. What does help is measuring the first render and correcting it:
 
 ```bash
-uv run llmpeg survey survey/manifest.json --output survey/index.html --overwrite
-uv run llmpeg survey survey/detailed-manifest.json --output survey/detailed.html --overwrite
-uv run llmpeg survey survey/expanded-manifest.json --output survey/expanded.html --overwrite
-uv run llmpeg survey survey/qwen-manifest.json --output survey/qwen.html --overwrite
+uv run llmpeg generate photo.jpg.llmpeg.json.gz --tone-correction loop    # second render, steered
+uv run llmpeg generate photo.jpg.llmpeg.json.gz --tone-correction match   # post-process regrade
 ```
 
-GitHub Pages publishes exactly one review page, the
-[local Qwen-Image-2.1 review](https://marcelpetrick.github.io/llmPEG/): one reconstruction per
-source, rated side by side with the original. The historical survey pages above stay in the
-repository as evidence and open locally, but are no longer published.
+`loop` renders once more with negative-prompt terms that push each miss back toward the tone
+recorded in the artifact; it cut the mean luminance error from 28.1 to 22.3 (0–255) across those
+39 source-seed pairs. `match` regrades the image instead. Both read only the artifact, never the
+source, and both are opt-in until people rate them. Colour results are on hold: the recorded
+saturation figure (mean HSV saturation) overstates colour in dark images, which also made `match`
+over-colour some images. The full story, including what did not work, is in
+[`docs/tone.md`](docs/tone.md).
 
-## Media and licensing
+### Historical benchmarks (hosted generator)
 
-The project requires every benchmark and survey image to be freely licensed, with attribution
-read from its source record rather than guessed. All thirteen benchmark images meet that rule:
+These runs predate the local pipeline: `qwen3-vl:32b` encoding and Codex image generation. The pages
+open locally from `survey/`.
 
-| Set | Images | Licensing |
-| --- | ---: | --- |
-| Cat survey | 3 | Public domain dedication — [per-case credits](survey/README.md) |
-| Expanded scene benchmark | 10, all traced | CC0 1.0 and NASA public domain — [per-case credits](survey/EXPANDED.md#sources-and-licensing) |
+| Benchmark | n | Profile | Passing | Mean visual proxy | Notes |
+| --- | ---: | --- | ---: | ---: | --- |
+| [Cat survey](survey/index.html) | 3 | `balanced` | 3/3 | 0.667 | keeps "what cat, doing what, where"; not the same cat |
+| [Detailed cats](survey/detailed.html) | 3 | `detailed` | 1/3 | 0.685 | 2.5–3.2 KB artifacts; more detail helped selectively |
+| [Expanded scenes](survey/expanded.html) | 10 | `detailed` | 9/10 | 0.737 | text survived (recall 0.950); identity did not |
 
-Sources are stored unmodified apart from being resized to at most 1920 px on the longest edge, and
-every artifact embeds its source's SHA-256 hash.
+**Text survived better than expected.** Nine of ten busy scenes recalled every critical string; one
+rendered a Japanese platform sign, `山手線 / Yamanote Line / 東京・上野・駒込方面`, correctly from the
+description alone. Recall does not punish *invented* text, though, so treat 0.950 as an upper bound
+([`survey/EXPANDED.md`](survey/EXPANDED.md)). **Identity did not survive:** the six-person astronaut
+crew became six plausible strangers.
 
-Two expanded-benchmark sources, `kitchen-table` and `living-room`, were labelled unverified for a
-while because their Commons URLs were never recorded. Both have since been found as CC0 files and
-verified by perceptual hash against the full-resolution originals (dHash 1.000), so the published
-results needed no change. Six expanded sources come from Unsplash's former CC0 catalogue, and
-Commons has not yet reviewed the licence of five of them — [details](survey/EXPANDED.md#how-the-last-four-attributions-were-recovered).
+**Ratios are a property of one run, not of your photo.** Re-encoding `cat-on-grass` with the same
+model, seed 42, and temperature 0 gave 1,275 bytes instead of 997 — a 28% swing (both measured
+before the format header; [`docs/benchmark-cycle.json`](docs/benchmark-cycle.json)).
 
-One further exception, stated plainly: `media/newsArticle.jpg` is **not** free-licensed media. It is the
-third-party satirical image that motivated the project, reproduced here for commentary and as a
-deliberately difficult test case. It is not part of the licensed benchmark set.
+### Does the score match a human eye? Not established
+
+`visual_proxy_score` combines dHash, histograms, edges, palette, and layout. It is a structural
+sanity check, not a quality score. An attempt to validate it with a vision-model judge failed
+because the judge was unstable: a cosmetic prompt change moved 11 of 12 verdicts by 1.67 points,
+and the correlation flipped from −0.468 to +0.007 ([`docs/metrics.md`](docs/metrics.md)). A
+GAN-shaped self-improvement loop failed the same way — its critic returned the same score for every
+case ([`docs/adversarial.md`](docs/adversarial.md)). Human ratings from the review page would
+settle more than any amount of model judging.
 
 ## The file format
 
-A real image format tells you, before you parse anything, whether the file is yours and whether
-your version can read it. PNG opens with an eight-byte signature. GIF spells the version into the
-magic itself (`GIF87a`, `GIF89a`). PDF writes `%PDF-1.7`. AVIF and HEIF carry an ISO base media
-`ftyp` box naming a **major brand** and the **compatible brands** a decoder may use.
-
-llmPEG artifacts are JSON, so the signature is a JSON object — but it answers the same questions,
-and it comes first in the file:
+`.llmpeg.json` opens with a signature, the way PNG, GIF, and AVIF do: a versioned header that says
+what the file is, which reader it needs, and — unusually — that its decoder is not bundled.
 
 ```json
 {"llmpeg":{
@@ -342,309 +224,123 @@ and it comes first in the file:
 }, ...}
 ```
 
-That last field is the one this format needs and others do not. A PNG decoder ships with the
-library; llmPEG's does not exist here at all, so the container says so in every single file.
-
 ```console
-$ head -c 40 photo.jpg.llmpeg.json
-{"llmpeg":{"magic":"llmPEG","format_
-
-$ llmpeg verify photo.jpg.llmpeg.json
-llmPEG 1.0 (lpg1)
+$ llmpeg verify cat-on-grass.jpg.llmpeg.json.gz
+llmPEG 1.1 (lpg1)
+compatible brands: lpg1
 written by: llmpeg/0.7.0
 needs reader: llmpeg >= 0.1.0
 decoder: text-to-image model; lossy; non-deterministic; not bundled
-envelope: none (1206 bytes on disk)
+envelope: gzip (1530 bytes on disk)
+profile: detailed
+encoder model: ollama/qwen3.5:4b
 conforms: yes
 ```
 
-`verify` exits `0` when a file conforms and `2` when it does not, so it works in a pipeline.
+- **Compatibility:** a higher major version is refused; a higher minor is accepted with unknown
+  fields ignored; the same or older version is read strictly. Format 1.1 added the pixel-measured
+  `tone` object.
+- **Conformance is enforced:** `write()` re-parses its own bytes before touching disk, so the
+  encoder cannot emit a file it could not read. `verify` exits `0` or `2`.
+- **The header costs 228 bytes** and is charged against every ratio here (the cat went from 802:1
+  to 663:1 when it landed).
+- **gzip is the default envelope:** one deterministic gzip member around the unchanged canonical
+  JSON. Across the 17 checked-in artifacts it stores 48,817 bytes in 21,801 (44.7%,
+  [`docs/gzip-measurement.json`](docs/gzip-measurement.json)). Budgets still apply to the plain JSON,
+  so compression never buys the encoder more content.
 
-**Compatibility** follows PNG's critical/ancillary split, expressed through the version number:
+Full specification: [`docs/format.md`](docs/format.md).
 
-| File version vs. your build | Behaviour |
-| --- | --- |
-| Higher **major** | **Refused**, naming the release you need |
-| Higher **minor** | **Accepted**; unknown fields ignored, because minor bumps are additive |
-| Same or older | **Accepted strictly** — an unknown key is a bug, not a feature |
+## Convert a whole folder, and back
 
-**Conformance is enforced, not promised.** `write()` serializes the artifact, parses its own bytes
-back, and compares — if the round trip is not byte-identical it raises *before* touching the disk.
-The encoder cannot emit a file it could not read.
-
-**What the header cost.** 228 bytes per artifact. Migrating an old file also dropped the 19-byte
-`schema_version` field it replaced, so the checked-in artifacts grew by 209 bytes net. That is real
-overhead and it is charged against every ratio in this README: the cat went from 802:1 to **663:1** and the news article from
-37:1 to **35:1** when the header landed. All 17 checked-in artifacts were migrated and every
-published figure re-measured, because the alternative — quoting the old ratios against the new
-files — is exactly the kind of accounting this project exists to make fun of.
-
-**Default gzip envelope.** The JSON is text, so it compresses. `llmpeg encode` stores the
-same canonical artifact inside one deterministic gzip member, `photo.jpg.llmpeg.json.gz`, and every
-command reads either form — recognised by gzip's signature, not the file name. `gunzip` gives back
-the plain artifact byte for byte. Measured on all 17 checked-in artifacts
-([`docs/gzip-measurement.json`](docs/gzip-measurement.json)):
-
-| Stored as | Total bytes | The cat | The news article |
-| --- | ---: | ---: | ---: |
-| Plain `.llmpeg.json` | 48,817 | 1,206 bytes, 663:1 | 3,543 bytes, 35:1 |
-| `.llmpeg.json.gz` | **21,801** (44.7%) | 686 bytes, **1,166:1** | 1,662 bytes, **74:1** |
-
-The ratio is charged on the compressed file, gzip's own 18 bytes included, while the profile budget
-still applies to the uncompressed JSON — compression shrinks the file, it does not let the encoder
-keep more. None of this changes a single invented pixel: a smaller description of the wrong cat is
-still the wrong cat.
-
-Files written before the header existed remain readable and upgrade on read. Full specification,
-including the body schema and the canonical serialization rules, in
-[`docs/format.md`](docs/format.md).
-
-## Architecture
-
-See the [styled C4 architecture guide](docs/architecture.md) for system-context, container,
-component, and reconstruction-lifecycle diagrams.
-
-```text
-image ──vision model──> versioned .llmpeg.json ──prompt renderer──> generator prompt
-  │                                                                  │
-  └──────────────────── evaluation harness <──new image───────────────┘
-```
-
-The artifact holds source dimensions and hash, a fidelity profile, generation prompt, critical
-text, composition regions, palette, style, avoid-list, and encoder provenance. It never contains
-the original image bytes. JSON is serialized canonically, byte budgets are enforced, and source
-files are never modified or deleted. The codec remains generator-neutral; the CLI and prototype
-Web UI add optional adapters around it.
-
-## Quick start
-
-llmPEG needs Python 3.14+ and [uv](https://docs.astral.sh/uv/). Dependencies are pinned in
-`uv.lock`.
+The joke in full. Set the paths first; `--project` keeps `uv` attached to this checkout.
 
 ```bash
-uv sync --extra dev
-uv run llmpeg --help
-```
-
-With local Ollama and ComfyUI running, the everyday commands take no flags at all:
-
-```bash
-uv run llmpeg encode photo.jpg                    # -> photo.jpg.llmpeg.json.gz
-uv run llmpeg reconstruct photo.jpg.llmpeg.json.gz > photo.prompt.txt
-uv run llmpeg generate photo.jpg.llmpeg.json.gz   # -> photo.jpg.reconstructed.png
-uv run llmpeg verify photo.jpg.llmpeg.json.gz
-uv run llmpeg inspect photo.jpg.llmpeg.json.gz
-```
-
-`encode` defaults to the quality-first `detailed` profile and writes
-`<whole file name>.llmpeg.json.gz` beside the image. It prints plain and stored byte counts and
-ratios together; `--plain` is the explicit opt-out. Every reading command accepts either envelope.
-`reconstruct` writes the prompt to stdout so it pipes. `generate` calls local ComfyUI directly and
-fails if that service or its Qwen workflow fails. `evaluate` finds the artifact the same way:
-
-```bash
-uv run llmpeg evaluate photo.jpg regenerated.png   # uses photo.jpg.llmpeg.json
-```
-
-Override the local service with `--comfyui-host` or `LLMPEG_COMFYUI_HOST`. The generator receives
-only the rendered text prompt, never the source image.
-
-Qwen-Image misses a photo's exposure and colour, and which way it misses depends on the scene
-([`docs/tone.md`](docs/tone.md)). `generate --tone-correction loop` measures the first render and
-renders once more with negative-prompt terms that push each miss back toward the tone recorded in
-the artifact; `--tone-correction match` instead regrades the render as a post-process. Both read
-only the artifact, never the source. Across 13 sources and three seeds the loop cut the mean
-saturation error from 34.6 to 24.9 and the mean luminance error from 28.1 to 22.3 (0–255, from
-[`survey/qwen/tone-feedback/measurements.json`](survey/qwen/tone-feedback/measurements.json)).
-`match` hits the recorded numbers almost exactly by construction, but can add a visible colour cast.
-Neither is the default until people rate them. Older checked-in benchmark reconstructions
-retain their actual Codex provenance; changing the active adapter does not rewrite historical
-evidence.
-
-Output files are never overwritten unless `--overwrite` is supplied. Encoding sends the full image
-to the configured Ollama endpoint, so only use a server you trust.
-
-### When you need the details
-
-Everything above has an explicit form, and every default is overridable:
-
-```bash
-uv run llmpeg encode photo.jpg \
-  --profile detailed \                 # gist | balanced | detailed (default)
-  --plain \                            # gzip is the default
-  --output artifacts/photo.jpg.llmpeg.json \
-  --host http://other-host:11434 \
-  --model qwen3.5:4b \
-  --timeout 600 \
-  --max-image-bytes 26214400 \
-  --max-image-pixels 50000000 \
-  --overwrite
-
-uv run llmpeg evaluate photo.jpg regenerated.png \
-  --artifact artifacts/photo.jpg.llmpeg.json \
-  --ocr-text regenerated.txt \
-  --output evaluation.json
-```
-
-The client uses Ollama's `/api/chat`, structured output, temperature `0`, seed `42`, and
-`/no_think`. Ollama 0.32 with this Qwen build sometimes places valid schema-constrained JSON in
-`message.thinking` despite `think:false`; llmPEG accepts that field only when it parses as
-complete valid JSON. It fails closed on empty, truncated, malformed, or over-budget output.
-
-`evaluate` exits `0` for pass, `1` for threshold failure, `2` for usage/data errors, and `3` when
-a required check (normally `detailed`-profile OCR) was not evaluated. `verify` exits `0` when a
-file conforms to the format and `2` when it does not.
-
-## Convert a whole folder, and convert it back
-
-The joke in full: turn a folder of photographs into a folder of text, then paint them back. The
-commands below use `--project` so `uv` remains attached to this checkout after entering the photo
-folder. Set the photo directory and trusted Ollama endpoint before running them.
-
-### 1. Compress every photo
-
-```bash
-LLMPEG_PROJECT=/home/mpetrick/repos/llmPEG
-PHOTO_DIR=/path/to/photos
-cd "$PHOTO_DIR"
-export OLLAMA_VISION_HOST=http://127.0.0.1:11434
+LLMPEG_PROJECT=/path/to/llmPEG
+cd /path/to/photos
 mkdir -p llmpeg/artifacts llmpeg/restored
 
+# 1. Compress every photo (the originals stay).
 find . -maxdepth 1 -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) -print0 |
   while IFS= read -r -d '' f; do
-    n=$(basename "${f#./}")
     uv run --project "$LLMPEG_PROJECT" llmpeg encode "${f#./}" \
-      --output "llmpeg/artifacts/$n.llmpeg.json.gz"
+      --output "llmpeg/artifacts/$(basename "$f").llmpeg.json.gz"
   done
 
-du -sh llmpeg/artifacts          # compact text artifacts; originals still remain
-```
-
-`encode` appends `.llmpeg.json.gz` to the **whole** file name, so `photo.jpg` and `photo.png` in one
-folder produce two artifacts instead of one silently overwriting the other. The explicit output
-path places them where the later loops expect them. With no `--overwrite`, re-running stops on an
-existing artifact rather than spending more model time. `find` avoids zsh's unmatched-glob error;
-`-print0` handles spaces in file names.
-
-### 2. Check what you actually have
-
-```bash
+# 2. Check what you have.
 for a in llmpeg/artifacts/*.llmpeg.json.gz; do
-  uv run --project "$LLMPEG_PROJECT" llmpeg verify "$a" | head -1  # llmPEG 1.0 (lpg1)
   uv run --project "$LLMPEG_PROJECT" llmpeg inspect "$a" | grep ratio
 done
 ```
 
-### 3. Delete the originals — the destructive step
-
-> ### 🔥 STOP
+> ### 🔥 STOP before step 3
 >
-> This is the part of the meme that is a joke. Your photographs do **not** come back. What comes
-> back is a new picture of a similar scene: different faces, different pets, different text.
-> **Never run this on photographs you care about.** Run it on copies, or on the sample folder
-> below, and only to see the point made.
-
-The step is deliberately not a one-liner. Set the variable in the same command so it cannot happen
-by scroll-back accident:
+> Your photographs do **not** come back. What comes back is a new picture of a similar scene:
+> different faces, pets, and text. Only ever run this on copies.
 
 ```bash
+# 3. Delete the originals. Deliberately awkward so it cannot happen by accident.
 I_UNDERSTAND_THIS_DELETES_MY_PHOTOS=yes bash -c '
   [ "$I_UNDERSTAND_THIS_DELETES_MY_PHOTOS" = yes ] || exit 1
-  for a in llmpeg/artifacts/*.llmpeg.json.gz; do
-    rm -f -- "$(basename "$a" .llmpeg.json.gz)" # photo.jpg.llmpeg.json.gz -> photo.jpg
-  done
-  echo "originals deleted; only the text remains"
+  for a in llmpeg/artifacts/*.llmpeg.json.gz; do rm -f -- "$(basename "$a" .llmpeg.json.gz)"; done
 '
-```
 
-### 4. Convert back
-
-Generate a new image from each artifact. The CLI renders the text prompt internally and sends only
-that text to local ComfyUI. It fails closed if ComfyUI or Qwen-Image-2.1 is unavailable:
-
-```bash
+# 4. Convert back: every output is a newly invented image.
 for a in llmpeg/artifacts/*.llmpeg.json.gz; do
-  n=$(basename "$a" .llmpeg.json.gz)
   uv run --project "$LLMPEG_PROJECT" llmpeg generate "$a" \
-    --output "llmpeg/restored/$n.png" --overwrite
+    --output "llmpeg/restored/$(basename "$a" .llmpeg.json.gz).png"
 done
 ```
 
-The exact packaged workflow and required weight names are documented in
-[`prototypeWebUI/README.md`](prototypeWebUI/README.md). The installed Qwen-Image-2.1 weights use
-the non-commercial Qwen Research licence and are not bundled.
+`encode` names artifacts after the **whole** file name, so `photo.jpg` and `photo.png` never collide,
+and nothing is overwritten without `--overwrite`.
 
-`reconstruct` remains available when you want to inspect, edit, or pipe the exact prompt without
-generating an image. There is still no decompressor: every output is a newly invented image.
+## Reference
 
-For the artifacts already written under this repository's `llmpeg-output/`, run:
+### Commands and options
 
-```bash
-cd /home/mpetrick/repos/llmPEG
-mkdir -p llmpeg-output/generated
-for a in llmpeg-output/artifacts/*.llmpeg.json; do
-  n=$(basename "$a" .llmpeg.json)
-  uv run llmpeg generate "$a" --output "llmpeg-output/generated/$n.png"
-done
-```
+| Command | Does |
+| --- | --- |
+| `encode <image>` | writes `<image>.llmpeg.json.gz`; `--profile gist\|balanced\|detailed` (default `detailed`), `--plain`, `--host`, `--model`, `--output` |
+| `reconstruct <artifact>` | prints the generator prompt (pipe it, edit it) |
+| `generate <artifact>` | local ComfyUI render; `--resolution`, `--seed`, `--tone-correction none\|loop\|match` |
+| `evaluate <source> <image>` | proxy metrics; exits `0` pass, `1` fail, `2` error, `3` a required check not evaluated |
+| `verify` / `inspect <artifact>` | format conformance / sizes, ratios, provenance |
+| `survey <manifest>` | builds an interactive HTML comparison page |
 
-### What it costs: five photos, measured
+The vision client uses Ollama's `/api/chat` with structured output, temperature 0, seed 42, and
+`/no_think`, and fails closed on empty, truncated, malformed, or over-budget output. Encoding sends
+the full image to the Ollama host you configure (`OLLAMA_VISION_HOST`), so use one you trust.
+`LLMPEG_COMFYUI_HOST` points at ComfyUI. The Qwen-Image-2.1 weights use the non-commercial Qwen
+Research licence and are not bundled; the workflow and weight names are in
+[`prototypeWebUI/README.md`](prototypeWebUI/README.md).
 
-A real run over five CC0 photographs (3,125,477 bytes total), `balanced` profile, local
-`qwen3-vl:32b-ctx49k` for encoding and Codex for generation:
+### Fidelity profiles
 
-| Stage | Time |
-| --- | ---: |
-| Compress 5 photos | **101 s** (14–27 s each, mean 20 s) |
-| Render 5 prompts | **< 1 s** |
-| Generate 5 new images | **304 s** (51–69 s each, mean 61 s) |
-| **Total wall clock** | **405 s — under 7 minutes** |
-
-| Folder | Size |
-| --- | ---: |
-| 5 original photos | 3,125,477 bytes |
-| 5 artifacts | **9,018 bytes** |
-| Ratio | **347:1** (99.71% smaller) |
-
-Roughly **80 seconds per photo** for the full round trip, almost all of it model time. Compression
-is the cheap half; painting the picture back costs three times as much and needs a service you do
-not control.
-
-And at the end of it you have five pictures that are not your photographs.
-
-## Fidelity profiles
-
-| Profile | Intended preservation | Artifact budget |
+| Profile | Keeps | Byte budget |
 | --- | --- | ---: |
 | `gist` | subject, action, setting, palette, broad composition | max(1 KiB, 2% of source) |
-| `balanced` | gist plus relationships, lighting, style, major objects, critical text | max(4 KiB, 5%) |
-| `detailed` | balanced plus OCR text, attributes, approximate geometry, typography intent | max(16 KiB, 15%) |
+| `balanced` | + relationships, lighting, style, major objects, critical text | max(4 KiB, 5%) |
+| `detailed` | + visible text, attributes, approximate geometry, typography | max(16 KiB, 15%) |
 
-If a model response does not fit, encoding **fails** instead of silently dropping content to
-improve the ratio.
+A response that does not fit **fails** instead of silently dropping content to improve the ratio.
 
-## What the score means
+### Media and licensing
 
-The offline harness uses Pillow to compare aspect ratio, dHash, RGB histograms, edge density, and
-dominant colors, combining them into `visual_proxy_score` and `layout_score`. These are fast
-structural proxies — not human judgment, not CLIP similarity, and not proof that two images mean
-the same thing. An attempt to validate them against a vision-model judge was inconclusive — the
-judge itself proved unstable ([`docs/metrics.md`](docs/metrics.md)) — so read `visual_proxy_score`
-as a structural sanity check rather than a quality score. Critical-text recall is scored
-separately and reports `not_evaluated` when no transcript is supplied.
+Every benchmark image is public domain or CC0, with its credit read from the source record
+([cats](survey/README.md), [expanded scenes](survey/EXPANDED.md#sources-and-licensing)). Six expanded
+sources come from Unsplash's former CC0 catalogue, five of them still awaiting Commons licence
+review. The one exception is `media/newsArticle.jpg`, the third-party satirical image that
+motivated the project: it is **not** free-licensed, is reproduced for commentary, and is not part
+of the benchmark set.
 
-The demo transcript was verified by hand because the local Tesseract installation had no language
-data. llmPEG consumes OCR text; it does not ship an OCR engine.
+### Architecture
 
-The Web UI adds an explicitly experimental local multi-signal report: five repeated-Qwen semantic
-subscores, their spread, visible differences, prompt suggestions, and the unchanged deterministic
-metrics. A creator-versus-rater script uses order-reversed pairwise judgments plus deterministic
-regression guards. Both checked-in runs rejected their challengers after the pixels-only judge
-showed presentation-order bias, so this loop still has no trustworthy improvement gradient;
-inspect the prompts, images, licence credit, and raw trials in
-[`survey/qwen/creator-rater/report.json`](survey/qwen/creator-rater/report.json).
+The [C4 architecture guide](docs/architecture.md) goes from system context down to components.
+The artifact holds source dimensions and hash, profile, prompt, critical text, composition regions,
+palette, style, avoid-list, measured tone, and encoder provenance — never the source pixels.
 
-## Development
+### Development
 
 ```bash
 uv run ruff format --check .
@@ -654,25 +350,15 @@ uv run pytest --cov=llmpeg --cov-report=term-missing --cov-fail-under=95
 uv run python -m build
 ```
 
-The suite is offline and injects fake providers. Live Ollama and image-generation runs are manual
-demo steps, not CI dependencies. Current suite: **195 tests, 96.0% branch-aware coverage**.
-
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs all five gates on Python 3.14 for
-every push and pull request.
-
-See [AGENTS.md](AGENTS.md) for the contributor working agreement, including the Conventional
-Commits requirement.
+The suite is offline and injects fake providers: **194 tests, 96.0% branch coverage**. CI runs all
+five gates on Python 3.14 for every push. Contributor rules, including Conventional Commits, are in
+[AGENTS.md](AGENTS.md).
 
 ### Releases
 
-Pushing a `v*` tag runs [`.github/workflows/release.yml`](.github/workflows/release.yml), which
-builds an sdist and a wheel with `uv build`, checks them with twine, and attaches both to a
-generated GitHub Release.
-
-The current release is [`v0.7.0`](https://github.com/marcelpetrick/llmPEG/releases/tag/v0.7.0).
-
-There is no PyPI upload: the distribution name `llmpeg` is already registered there by an
-unrelated project, so installing is done from a release artifact or from a checkout:
+Pushing a `v*` tag builds an sdist and wheel and attaches them to a GitHub Release. The current
+release is [`v0.7.0`](https://github.com/marcelpetrick/llmPEG/releases/tag/v0.7.0). The name
+`llmpeg` is taken on PyPI by an unrelated project, so install from a release or a checkout:
 
 ```bash
 uv pip install llmpeg-0.7.0-py3-none-any.whl   # from a GitHub Release
@@ -681,18 +367,18 @@ uv pip install .                               # from a clone
 
 ## Limitations
 
-- Regeneration is non-deterministic and depends on provider, model version, seed, settings, and
-  service availability.
-- Faces, identity, exact poses, text, type metrics, fine texture, and small objects change.
-- Prompts can preserve private facts even though they are smaller than images.
+- Regeneration depends on the model, its version, seed, and settings; identical pixels only come
+  back for the same artifact, seed, and local setup.
+- Faces, identity, exact poses, text, fine texture, and small objects change.
+- Prompts can carry private facts even though they are smaller than images.
 - A compact artifact can exceed a tiny or already well-compressed source.
-- Evaluation proxies can be fooled and cannot establish evidentiary equivalence.
-- Generator compute and model weights dwarf the artifact; this is a storage experiment, not a
-  claim about total-system efficiency.
+- Proxy metrics can be fooled and say nothing about evidentiary equivalence.
+- Model weights and compute dwarf the artifact: this is a storage experiment, not a claim about
+  total-system efficiency.
 
 Inspired by [this LinkedIn post](https://lnkd.in/p/eSqXmyvw) and the satirical
 ["New Compression Technique"](https://programmerhumor.io/ai-memes/new-compression-technique-9yp7)
-article. See the [product vision](docs/vision.md) for the contract and the
-[delivery plan](docs/plan.md) for its implementation history.
+article. The [product vision](docs/vision.md) holds the contract, the [delivery plan](docs/plan.md)
+the history.
 
 Licensed under the [GNU General Public License v3.0 or later](LICENSE).
