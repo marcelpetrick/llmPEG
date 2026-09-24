@@ -14,6 +14,7 @@ import io
 import json
 import os
 from dataclasses import asdict
+from importlib import resources
 from pathlib import Path
 from typing import Any
 
@@ -21,7 +22,12 @@ from PIL import Image
 
 from llmpeg import __version__
 from llmpeg.encoder import measure_tone
-from llmpeg.generators import DEFAULT_COMFYUI_HOST, DEFAULT_QWEN_SEED, generate_comfyui
+from llmpeg.generators import (
+    DEFAULT_COMFYUI_HOST,
+    DEFAULT_QWEN_SEED,
+    WORKFLOW_RESOURCE,
+    generate_comfyui,
+)
 
 REPO = Path(__file__).resolve().parent.parent
 CASES = ("cat-monochrome", "cat-on-keyboard", "cat-on-grass")
@@ -48,6 +54,8 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     output_dir.mkdir(parents=True, exist_ok=True)
     report = json.loads((review_dir / "report.json").read_text(encoding="utf-8"))
     source_tones = {case["case"]: case["source_tone"] for case in report["cases"]}
+    workflow = json.loads(resources.files("llmpeg").joinpath(WORKFLOW_RESOURCE).read_text())
+    workflow_cfg = workflow["6"]["inputs"]["cfg"]
 
     rows: list[dict[str, Any]] = []
     for variant in args.variants:
@@ -72,7 +80,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                 {
                     "case": case,
                     "variant": variant,
-                    "cfg": settings["cfg"] if settings["cfg"] is not None else 3.5,
+                    "cfg": settings["cfg"] if settings["cfg"] is not None else workflow_cfg,
                     "extra_negative": extra,
                     "image": image_path.name,
                     "source_tone": source_tones[case],
