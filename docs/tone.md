@@ -11,7 +11,7 @@ any lever makes a reconstruction look better to a person.
 
 ## What "tone" means here
 
-`llmpeg.encoder.measure_tone` reduces an image to four numbers on a 512-pixel thumbnail:
+`llmpeg.encoder.measure_tone` reduces an image to four numbers on a 256-pixel thumbnail:
 mean Rec. 601 luminance, luminance standard deviation ("contrast"), mean HSV saturation (all
 0–255), and warmth (mean red minus mean blue). The encoder stores them in the format 1.1 `tone`
 object. Reconstructions are measured with the same function.
