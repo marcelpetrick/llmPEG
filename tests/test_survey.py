@@ -317,43 +317,17 @@ def test_survey_rejects_invalid_baseline_references(tmp_path: Path, artifact: Ar
         render_survey(manifest)
 
 
-def test_qwen_review_is_local_and_traceable_to_the_review_report() -> None:
+def test_single_qwen_review_page_is_local_and_traceable() -> None:
     manifest_path = REPO / "survey/qwen-manifest.json"
     manifest = _load_manifest(manifest_path)
     output = render_survey(manifest_path)
-    report = _load_manifest(REPO / "survey/qwen/review/report.json")
-    by_case = {case["case"]: case for case in report["cases"]}
 
     assert "Local Ollama / qwen3.5:4b" in output
     assert "Local ComfyUI / Qwen-Image-2.1" in output
-    assert "baseline" not in output.lower()
-    assert "Codex built-in" not in output
-    assert report["encoder"] == "ollama/qwen3.5:4b"
-    assert report["resolution"] == 512
-    assert report["seed"] == 42
-    assert [case["id"] for case in manifest["cases"]] == [f"qwen-review-{name}" for name in by_case]
-
-    for case in manifest["cases"]:
-        for field in ("source", "reconstruction", "artifact", "prompt", "result", "report"):
-            assert (manifest_path.parent / case[field]).is_file(), (
-                f"missing {field} for {case['id']}"
-            )
-        measured = by_case[case["id"].removeprefix("qwen-review-")]
-        result = _load_manifest(manifest_path.parent / case["result"])
-        assert result["status"] == measured["status"]
-        source, rendered = measured["source_tone"], measured["reconstruction_tone"]
-        for key in ("luminance", "contrast", "saturation"):
-            assert f"{key} {source[key]} → {rendered[key]}" in case["finding"]
-
-
-def test_tone_candidates_are_traceable_to_their_measurements() -> None:
-    manifest_path = REPO / "survey/qwen-tone-manifest.json"
-    manifest = _load_manifest(manifest_path)
-    output = render_survey(manifest_path)
-
     assert "Current pipeline" in output
     assert "Closed loop" in output
-    assert "Regraded" in output
+    assert "Codex built-in" not in output
+    assert not (REPO / "survey/qwen-tone-manifest.json").exists()
     for case in manifest["cases"]:
         for field in (
             "source",
@@ -369,22 +343,28 @@ def test_tone_candidates_are_traceable_to_their_measurements() -> None:
                 f"missing {field} for {case['id']}"
             )
         rows = _load_manifest(manifest_path.parent / case["report"])["rows"]
-        image = Path(case["reconstruction"]).name
-        row = next(row for row in rows if row["image"] == image)
-        assert row["extra_negative"] in case["finding"]
-        for key in ("luminance", "saturation"):
-            assert f"{key} {row['reconstruction_tone'][key]}" in case["finding"]
-            assert f"{key} {row['source_tone'][key]}" in case["finding"]
+        loop = next(row for row in rows if row["image"] == Path(case["reconstruction"]).name)
+        control = next(
+            row
+            for row in rows
+            if (row["case"], row["seed"], row["variant"]) == (loop["case"], 42, "control")
+        )
+        assert loop["seed"] == 42
+        assert loop["variant"] == "loop"
+        assert loop["extra_negative"] in case["finding"]
+        assert (
+            f"source {loop['source_tone']['luminance']} → current "
+            f"{control['reconstruction_tone']['luminance']} → closed loop "
+            f"{loop['reconstruction_tone']['luminance']}"
+        ) in case["finding"]
 
 
-def test_pages_workflow_publishes_only_the_qwen_review_pages() -> None:
+def test_pages_workflow_publishes_one_review_page() -> None:
     workflow = (REPO / ".github/workflows/pages.yml").read_text(encoding="utf-8")
     assert "cp -R survey/. _site/" in workflow
     assert "rm _site/*.html" in workflow
     assert workflow.index("rm _site/*.html") < workflow.index(
         "cp survey/qwen.html _site/index.html"
     )
-    assert workflow.index("rm _site/*.html") < workflow.index(
-        "cp survey/qwen-tone.html _site/tone.html"
-    )
+    assert workflow.count("_site/") == workflow.count("cp -R survey/. _site/") + 2
     assert "balanced.html" not in workflow

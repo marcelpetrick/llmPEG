@@ -1,7 +1,8 @@
 {
-  "title": "Local Qwen-Image-2.1 Review",
-  "date": "2026-09-23",
+  "title": "llmPEG Local Qwen Review",
+  "date": "2026-09-24",
   "profile": "detailed",
+  "comparison_label": "Current pipeline → closed-loop tone correction",
   "technology": {
     "encoding": {
       "name": "Local Ollama / qwen3.5:4b",
@@ -14,61 +15,158 @@
   },
   "cases": [
     {
-      "id": "qwen-review-cat-monochrome",
-      "name": "Monochrome cat portrait",
       "source": "sources/cat-monochrome.jpg",
       "source_label": "Original source",
-      "reconstruction": "qwen/review/cat-monochrome.png",
-      "reconstruction_label": "Qwen-Image-2.1 reconstruction",
+      "baseline_reconstruction": "qwen/review/cat-monochrome.png",
+      "baseline_label": "Current pipeline",
+      "baseline_result": "qwen/review/cat-monochrome-result.json",
+      "reconstruction": "qwen/tone-feedback/cat-monochrome-s42-loop.png",
+      "reconstruction_label": "Closed loop",
       "artifact": "qwen/review/cat-monochrome.llmpeg.json.gz",
       "prompt": "qwen/review/cat-monochrome.prompt.txt",
-      "result": "qwen/review/cat-monochrome-result.json",
-      "report": "qwen/review/report.json",
-      "finding": "Measured tone, source → reconstruction: luminance 125 → 67, contrast 61 → 62, saturation 0 → 11 (0–255). The prompt's tone line did not stop the generator darkening the image or, for colour sources, raising saturation.",
+      "result": "qwen/tone-feedback/cat-monochrome-s42-loop-result.json",
+      "report": "qwen/tone-feedback/measurements.json",
       "credit": {
         "author": "Barmanru",
         "license": "Public domain dedication",
         "license_url": "https://commons.wikimedia.org/wiki/File:Cat_bw-photo.jpg#Licensing",
         "source_url": "https://commons.wikimedia.org/wiki/File:Cat_bw-photo.jpg"
-      }
+      },
+      "id": "qwen-cat-monochrome",
+      "name": "Monochrome cat portrait",
+      "finding": "Mean luminance, source 125 → current 67 → closed loop 79 (0–255). The closed loop rendered again with the negatives: color, colour, tint, sepia, dark, underexposed, dim. Colour figures are left out: the recorded saturation measure overstates colour in dark images (docs/tone.md)."
     },
     {
-      "id": "qwen-review-cat-on-keyboard",
-      "name": "Kitten sleeping on a keyboard",
       "source": "sources/cat-on-keyboard.jpg",
       "source_label": "Original source",
-      "reconstruction": "qwen/review/cat-on-keyboard.png",
-      "reconstruction_label": "Qwen-Image-2.1 reconstruction",
+      "baseline_reconstruction": "qwen/review/cat-on-keyboard.png",
+      "baseline_label": "Current pipeline",
+      "baseline_result": "qwen/review/cat-on-keyboard-result.json",
+      "reconstruction": "qwen/tone-feedback/cat-on-keyboard-s42-loop.png",
+      "reconstruction_label": "Closed loop",
       "artifact": "qwen/review/cat-on-keyboard.llmpeg.json.gz",
       "prompt": "qwen/review/cat-on-keyboard.prompt.txt",
-      "result": "qwen/review/cat-on-keyboard-result.json",
-      "report": "qwen/review/report.json",
-      "finding": "Measured tone, source → reconstruction: luminance 148 → 111, contrast 55 → 46, saturation 48 → 88 (0–255). The prompt's tone line did not stop the generator darkening the image or, for colour sources, raising saturation.",
+      "result": "qwen/tone-feedback/cat-on-keyboard-s42-loop-result.json",
+      "report": "qwen/tone-feedback/measurements.json",
       "credit": {
         "author": "Remedios44",
         "license": "Public domain dedication",
         "license_url": "https://commons.wikimedia.org/wiki/File:Wikipedians_cat.jpg#Licensing",
         "source_url": "https://commons.wikimedia.org/wiki/File:Wikipedians_cat.jpg"
-      }
+      },
+      "id": "qwen-cat-on-keyboard",
+      "name": "Kitten sleeping on a keyboard",
+      "finding": "Mean luminance, source 148 → current 111 → closed loop 118 (0–255). The closed loop rendered again with the negatives: dark, underexposed, dim, flat, hazy, low contrast, vivid colors, saturated colors, warm color cast, orange tint, yellow tint. Colour figures are left out: the recorded saturation measure overstates colour in dark images (docs/tone.md)."
     },
     {
-      "id": "qwen-review-cat-on-grass",
-      "name": "Cat stretched on grass",
       "source": "sources/cat-on-grass.jpg",
       "source_label": "Original source",
-      "reconstruction": "qwen/review/cat-on-grass.png",
-      "reconstruction_label": "Qwen-Image-2.1 reconstruction",
+      "baseline_reconstruction": "qwen/review/cat-on-grass.png",
+      "baseline_label": "Current pipeline",
+      "baseline_result": "qwen/review/cat-on-grass-result.json",
+      "reconstruction": "qwen/tone-feedback/cat-on-grass-s42-loop.png",
+      "reconstruction_label": "Closed loop",
       "artifact": "qwen/review/cat-on-grass.llmpeg.json.gz",
       "prompt": "qwen/review/cat-on-grass.prompt.txt",
-      "result": "qwen/review/cat-on-grass-result.json",
-      "report": "qwen/review/report.json",
-      "finding": "Measured tone, source → reconstruction: luminance 158 → 124, contrast 24 → 33, saturation 89 → 126 (0–255). The prompt's tone line did not stop the generator darkening the image or, for colour sources, raising saturation.",
+      "result": "qwen/tone-feedback/cat-on-grass-s42-loop-result.json",
+      "report": "qwen/tone-feedback/measurements.json",
       "credit": {
         "author": "Clavecin",
         "license": "Public domain dedication",
         "license_url": "https://commons.wikimedia.org/wiki/File:Cat_full_length.jpg#Licensing",
         "source_url": "https://commons.wikimedia.org/wiki/File:Cat_full_length.jpg"
-      }
+      },
+      "id": "qwen-cat-on-grass",
+      "name": "Cat stretched on grass",
+      "finding": "Mean luminance, source 158 → current 124 → closed loop 139 (0–255). The closed loop rendered again with the negatives: dark, underexposed, dim, harsh contrast, deep black shadows, vivid colors, saturated colors. Colour figures are left out: the recorded saturation measure overstates colour in dark images (docs/tone.md)."
+    },
+    {
+      "source": "sources/amsterdam-market.jpg",
+      "source_label": "Original source",
+      "baseline_reconstruction": "qwen/tone-holdout/amsterdam-market-control.png",
+      "baseline_label": "Current pipeline",
+      "baseline_result": "qwen/tone-holdout/amsterdam-market-control-result.json",
+      "reconstruction": "qwen/tone-feedback/amsterdam-market-s42-loop.png",
+      "reconstruction_label": "Closed loop",
+      "artifact": "qwen/tone-holdout/amsterdam-market.llmpeg.json.gz",
+      "prompt": "qwen/tone-holdout/amsterdam-market-control.prompt.txt",
+      "result": "qwen/tone-feedback/amsterdam-market-s42-loop-result.json",
+      "report": "qwen/tone-feedback/measurements.json",
+      "credit": {
+        "author": "Fons Heijnsbroek",
+        "license": "CC0 1.0 Universal (public domain dedication)",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "source_url": "https://commons.wikimedia.org/wiki/File:2023_Amsterdam_-_a_fruit_market_stall_at_the_Albert_Cuyp_market_in_the_sunlight_with_a_lot_of_city_people_walking_and_shopping_-_free_download_photo_in_Dutch_street_photography_by_Fons_Heijnsbroek,_Netherlands.tif"
+      },
+      "id": "qwen-amsterdam-market",
+      "name": "Amsterdam market",
+      "finding": "Mean luminance, source 89 → current 62 → closed loop 74 (0–255). The closed loop rendered again with the negatives: dark, underexposed, dim, vivid colors, saturated colors. Colour figures are left out: the recorded saturation measure overstates colour in dark images (docs/tone.md)."
+    },
+    {
+      "source": "sources/astronaut-crew.jpg",
+      "source_label": "Original source",
+      "baseline_reconstruction": "qwen/tone-holdout/astronaut-crew-control.png",
+      "baseline_label": "Current pipeline",
+      "baseline_result": "qwen/tone-holdout/astronaut-crew-control-result.json",
+      "reconstruction": "qwen/tone-feedback/astronaut-crew-s42-loop.png",
+      "reconstruction_label": "Closed loop",
+      "artifact": "qwen/tone-holdout/astronaut-crew.llmpeg.json.gz",
+      "prompt": "qwen/tone-holdout/astronaut-crew-control.prompt.txt",
+      "result": "qwen/tone-feedback/astronaut-crew-s42-loop-result.json",
+      "report": "qwen/tone-feedback/measurements.json",
+      "credit": {
+        "author": "Robert Markowitz",
+        "license": "Public domain (NASA)",
+        "license_url": "https://commons.wikimedia.org/wiki/Commons:Licensing",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Expedition_53_crew_portrait.jpg"
+      },
+      "id": "qwen-astronaut-crew",
+      "name": "Astronaut crew",
+      "finding": "Mean luminance, source 59 → current 28 → closed loop 34 (0–255). The closed loop rendered again with the negatives: dark, underexposed, dim, dull colors, desaturated, grey, washed out, warm color cast, orange tint, yellow tint. Colour figures are left out: the recorded saturation measure overstates colour in dark images (docs/tone.md)."
+    },
+    {
+      "source": "sources/dogs-beach.jpg",
+      "source_label": "Original source",
+      "baseline_reconstruction": "qwen/tone-holdout/dogs-beach-control.png",
+      "baseline_label": "Current pipeline",
+      "baseline_result": "qwen/tone-holdout/dogs-beach-control-result.json",
+      "reconstruction": "qwen/tone-feedback/dogs-beach-s42-loop.png",
+      "reconstruction_label": "Closed loop",
+      "artifact": "qwen/tone-holdout/dogs-beach.llmpeg.json.gz",
+      "prompt": "qwen/tone-holdout/dogs-beach-control.prompt.txt",
+      "result": "qwen/tone-feedback/dogs-beach-s42-loop-result.json",
+      "report": "qwen/tone-feedback/measurements.json",
+      "credit": {
+        "author": "Mark Galer",
+        "license": "CC0 1.0 Universal (public domain dedication)",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Two_dogs_playing_on_the_beach_(Unsplash).jpg"
+      },
+      "id": "qwen-dogs-beach",
+      "name": "Dogs on a beach",
+      "finding": "Mean luminance, source 190 → current 212 → closed loop 212 (0–255). The closed loop rendered again with the negatives: overexposed, too bright, harsh contrast, deep black shadows, dull colors, desaturated, grey, washed out. Colour figures are left out: the recorded saturation measure overstates colour in dark images (docs/tone.md)."
+    },
+    {
+      "source": "sources/food-table.jpg",
+      "source_label": "Original source",
+      "baseline_reconstruction": "qwen/tone-holdout/food-table-control.png",
+      "baseline_label": "Current pipeline",
+      "baseline_result": "qwen/tone-holdout/food-table-control-result.json",
+      "reconstruction": "qwen/tone-feedback/food-table-s42-loop.png",
+      "reconstruction_label": "Closed loop",
+      "artifact": "qwen/tone-holdout/food-table.llmpeg.json.gz",
+      "prompt": "qwen/tone-holdout/food-table-control.prompt.txt",
+      "result": "qwen/tone-feedback/food-table-s42-loop-result.json",
+      "report": "qwen/tone-feedback/measurements.json",
+      "credit": {
+        "author": "www.Pixel.la Free Stock Photos",
+        "license": "CC0 1.0 Universal (public domain dedication)",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Table_with_food.jpg"
+      },
+      "id": "qwen-food-table",
+      "name": "Food on a table",
+      "finding": "Mean luminance, source 93 → current 51 → closed loop 56 (0–255). The closed loop rendered again with the negatives: dark, underexposed, dim, flat, hazy, low contrast, vivid colors, saturated colors, warm color cast, orange tint, yellow tint. Colour figures are left out: the recorded saturation measure overstates colour in dark images (docs/tone.md)."
     }
   ]
 }
