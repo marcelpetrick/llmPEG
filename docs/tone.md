@@ -179,28 +179,45 @@ material, none of them measured here beyond the sweep above:
   Our measurements disagree for *tone*: at CFG 3.5, negatives moved saturation more than anything
   else.
 
-## Status (2026-09-23)
+## Attempt 4: a tone rule on sources it was not tuned on (stopped early)
 
-Done and committed locally:
+`scripts/tone_rule_holdout.py` turns attempt 2's hand-picked negatives into `tone_negative()`, a
+rule that reads only the artifact's measured tone, and renders each non-cat survey source three
+ways at CFG 3.5. The run was **stopped by request after 14 of 30 renders**; four sources are
+complete. Evidence: [`survey/qwen/tone-holdout/`](../survey/qwen/tone-holdout/README.md).
 
-- The composition-region fix holds: the 11 regions across the three review artifacts are distinct
-  percentage boxes, and none repeats the instruction's former example box.
-- The tone fix does not: see the tables above.
-- `survey/qwen.html` shows one **default**-pipeline reconstruction per source from
-  `survey/qwen/review/`, because that is what `llmpeg` produces today. The hand-tuned negatives are
-  evidence only. The page title changed, so ratings stored in a browser for the old page don't carry
-  over.
-- `generate_comfyui` accepts keyword-only `cfg` and `extra_negative` overrides, and
-  `scripts/tone_sweep.py` reproduces the sweep.
+Luminance / saturation, source → reconstruction:
 
-Open, in order:
+| Source | Source | `control` | rule negatives | rule negatives + snapshot |
+| --- | --- | --- | --- | --- |
+| `amsterdam-market` | 89 / 60 | 62 / 141 | 55 / 134 | 65 / 122 |
+| `astronaut-crew` | 59 / 169 | 28 / 138 | 26 / 130 | 20 / 124 |
+| `dogs-beach` | 190 / 39 | 212 / 13 | 215 / 9 | 215 / 9 |
+| `food-table` | 93 / 70 | 51 / 157 | 53 / 120 | 59 / 105 |
+| `kitchen-table` (partial) | 100 / 46 | 76 / 123 | 78 / 116 | not rendered |
 
-1. **Is tone really not controllable from the positive prompt?** Isolate it: the same artifact with
-   the tone line removed, without the negated sentence, with words instead of numbers, and with the
-   tone moved to the front of the prompt. Check what the ComfyUI text-encode node does with a long
-   prompt, and what others report about Qwen-Image and saturation.
-2. If negatives remain the only lever, derive them from the artifact's measured tone with a rule,
-   and measure that rule on sources it was not tuned on.
-3. Release decision: format 1.1 is reader-visible and fits 0.6.0.
-4. Ask for another human rating. Whether any of this reads as better to a person is unmeasured,
-   and the colour/lighting score is the test.
+Over the four complete sources, rule plus snapshot cuts the summed saturation error from 225 to 172
+and leaves the summed luminance error unchanged (122 → 122). The rule helps where Qwen
+over-saturates (`food-table` 87 → 35, `amsterdam-market` 81 → 62) and **hurts** where it
+under-saturates: the astronaut photograph is vivid (169) and Qwen renders it at 138, so asking for
+less saturation moves it further away (31 → 45); the beach scene comes back bright and nearly grey
+(13 against 39), and the rule pushes it to 9.
+
+So "Qwen over-saturates" is not the whole story. **Qwen pulls every image toward its own look**,
+not away from the source in one fixed direction: most muted sources come back darker and more
+saturated, the bright beach brighter still and nearly grey, the vivid astronaut photograph duller. A fixed
+rule, however it is derived, cannot know in advance which way a render will miss. Four sources at
+one seed is also too few to call the rule an improvement.
+
+## Status (2026-09-24, paused)
+
+Work is paused for another project. The plan for resuming is in
+[`plan.md`](plan.md#11-tone-work-paused-2026-09-24).
+
+- `survey/qwen.html` (site index) shows the default pipeline, one reconstruction per cat.
+- `survey/qwen-tone.html` (site `tone.html`) sets the current pipeline beside a tone candidate for
+  seven sources: hand-picked negatives for the three cats (tuned on them, so an upper bound) and the
+  tone rule plus snapshot phrase for the four held-out sources. It exists for a human rating; no
+  number above says the candidates *look* closer.
+- Nothing in the pipeline has changed: `llmpeg reconstruct` and the bundled workflow still produce
+  the `control` renders.

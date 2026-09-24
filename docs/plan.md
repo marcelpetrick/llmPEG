@@ -242,6 +242,46 @@ Exit gate: local encode, generate, rate, and pairwise refinement complete withou
 fallback; every output and decision needed to audit the experiment is checked in with the source
 credit; all five project gates pass.
 
+## 11. Tone work, paused 2026-09-24
+
+Started from one human survey response: two local-Qwen cases rated colour/lighting 3 of 5, "too
+saturated". The session log is [`tone-review-plan.md`](tone-review-plan.md); the measurements and
+their reading are in [`tone.md`](tone.md). **Paused by request for another project.**
+
+Done:
+
+- [x] Format 1.1 records pixel-measured `tone`; the prompt carries it as a `Tone:` line (`v0.6.0`).
+- [x] Composition regions are pinned to percentage boxes; verified live on 11 regions.
+- [x] One review page, one default-pipeline reconstruction per cat (`survey/qwen.html`, site
+      index).
+- [x] Measured the levers at seed 42: CFG (3.5 / 2.5 / 1.5 / official 1), hand-picked negatives,
+      seven rule-derived prompt variants, and a tone rule on held-out sources (stopped after 4 of
+      10 sources). Findings: the positive prompt steers tone only weakly; negatives act strongly
+      but only at CFG above 1; Qwen pulls each image toward its own look in either direction, so a
+      fixed rule overshoots on some sources.
+- [x] A tone-candidate page for human review (`survey/qwen-tone.html`, site `tone.html`).
+- [x] `uv` 0.12.18 toolchain pin; local user-level `uv` matches it.
+
+Left, in order:
+
+- [ ] **Human rating of `tone.html`.** Does either candidate look closer than the current pipeline?
+      The colour/lighting score decides; no measurement here can.
+- [ ] Finish the held-out run for the five remaining sources plus `kitchen-table`'s last render
+      (`scripts/tone_rule_holdout.py`, about 45 minutes; the script reuses existing artifacts, but
+      it refuses to overwrite the partial `measurements.json`, so move that aside first).
+- [ ] Try a **closed loop**: render, measure the render's tone, choose negatives from the *sign* of
+      each error, render once more. It needs no guess about which way Qwen will miss, at the cost of
+      a second render. Measure it on the held-out set, not the cats.
+- [ ] Try **deterministic tone matching after generation**: shift the render's luminance,
+      contrast, and saturation toward the artifact's recorded numbers. Honest only if the page
+      labels it as a post-process that reads the artifact, never the source.
+- [ ] Test more than one seed before quoting any lever as a general effect.
+- [ ] Ask the encoder not to use grading words in content ("bright green grass"), or measure whether
+      that matters.
+- [ ] Decide whether the prompt should move to Qwen's own register (the `observer` variant); it
+      helped tone but also changed content, so it needs a fidelity check, not just a tone check.
+- [ ] Only then change `llmpeg reconstruct` or the bundled workflow, and release.
+
 ## Open work
 
 Nothing below is done. Each item says why it is still open.

@@ -1,5 +1,8 @@
 # Tone fix and single review page — status and remaining plan
 
+> Superseded as the live plan by [`plan.md` §11](plan.md#11-tone-work-paused-2026-09-24);
+> kept as the session record.
+
 ## Update, later on 2026-09-23
 
 The GPU came back, and steps 1–6 below are done. Findings are in [`tone.md`](tone.md):

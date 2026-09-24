@@ -100,7 +100,7 @@ Scripts under `scripts/` are linted and type-checked like the package, but are m
 tools rather than product surface: they may talk to the live Ollama endpoint, and they never
 run in CI. Never record the endpoint host in their output — model name only.
 
-Current baseline: **184 tests, 95.8% branch coverage**. Update this line when it changes — a stale
+Current baseline: **185 tests, 95.8% branch coverage**. Update this line when it changes — a stale
 self-measurement is the most embarrassing possible bug in a project about honest measurement.
 
 The release version lives only in `src/llmpeg/_version.py`; packaging, the artifact header, and
@@ -186,7 +186,7 @@ Established scopes: `codec` (encoder/artifact/providers), `survey`, `architectur
 - The adversarial critic returns a constant verdict, so the refinement loop has no gradient
   (`docs/adversarial.md`). Rebuild it as a pairwise forced choice before trusting any round.
 - The vision-model judge has never been calibrated against real human ratings.
-- Qwen-Image ignores the prompt's `Tone:` line: reconstructions come back darker and, for colour
-  sources, more saturated than measured, and lowering CFG does not help (`docs/tone.md`). Hand-
-  picked negative terms moved saturation toward the source on two cases; that is tuning on the
-  test set, not yet a pipeline rule.
+- Qwen-Image follows the prompt's `Tone:` line only weakly and pulls each image toward its own look,
+  in either direction (`docs/tone.md`). Negatives act strongly but only at CFG above 1; the
+  official CFG 1 is more saturated still. A fixed tone rule helped two held-out sources and hurt
+  two. Nothing in the pipeline has changed yet; the paused plan is `docs/plan.md` §11.
