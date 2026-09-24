@@ -1,6 +1,6 @@
 # Tone fix and single review page — status and remaining plan
 
-> Superseded as the live plan by [`plan.md` §11](plan.md#11-tone-work-paused-2026-09-24);
+> Superseded as the live plan by [`plan.md` §11](plan.md#11-tone-work);
 > kept as the session record.
 
 ## Update, later on 2026-09-23

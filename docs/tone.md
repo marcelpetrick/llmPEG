@@ -274,15 +274,12 @@ comes from the whole description being rewritten, which moves content and tone t
 seed of one re-encode cannot separate that from chance. **Not adopted**: the instruction is
 unchanged.
 
-## Status (2026-09-24, paused)
+## Status (2026-09-24)
 
-Work is paused for another project. The plan for resuming is in
-[`plan.md`](plan.md#11-tone-work-paused-2026-09-24).
-
+- `llmpeg generate --tone-correction loop|match` ships in 0.7.0 as an **opt-in**. The default is
+  unchanged: `llmpeg reconstruct` and the bundled workflow still produce the `control` renders.
 - `survey/qwen.html` (site index) shows the default pipeline, one reconstruction per cat.
-- `survey/qwen-tone.html` (site `tone.html`) sets the current pipeline beside a tone candidate for
-  seven sources: hand-picked negatives for the three cats (tuned on them, so an upper bound) and the
-  tone rule plus snapshot phrase for the four held-out sources. It exists for a human rating; no
-  number above says the candidates *look* closer.
-- Nothing in the pipeline has changed: `llmpeg reconstruct` and the bundled workflow still produce
-  the `control` renders.
+- `survey/qwen-tone.html` (site `tone.html`) sets the current pipeline beside `loop` and beside
+  `match` for seven sources at seed 42. It exists for a human rating: every number above measures
+  distance to four recorded statistics, and none says a correction *looks* closer.
+- The remaining plan is in [`plan.md`](plan.md#11-tone-work).

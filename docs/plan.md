@@ -242,11 +242,12 @@ Exit gate: local encode, generate, rate, and pairwise refinement complete withou
 fallback; every output and decision needed to audit the experiment is checked in with the source
 credit; all five project gates pass.
 
-## 11. Tone work, paused 2026-09-24
+## 11. Tone work
 
 Started from one human survey response: two local-Qwen cases rated colour/lighting 3 of 5, "too
 saturated". The session log is [`tone-review-plan.md`](tone-review-plan.md); the measurements and
-their reading are in [`tone.md`](tone.md). **Paused by request for another project.**
+their reading are in [`tone.md`](tone.md). Paused once on 2026-09-24 for another project, then
+resumed the same day.
 
 Done:
 
@@ -255,32 +256,30 @@ Done:
 - [x] One review page, one default-pipeline reconstruction per cat (`survey/qwen.html`, site
       index).
 - [x] Measured the levers at seed 42: CFG (3.5 / 2.5 / 1.5 / official 1), hand-picked negatives,
-      seven rule-derived prompt variants, and a tone rule on held-out sources (stopped after 4 of
-      10 sources). Findings: the positive prompt steers tone only weakly; negatives act strongly
-      but only at CFG above 1; Qwen pulls each image toward its own look in either direction, so a
-      fixed rule overshoots on some sources.
-- [x] A tone-candidate page for human review (`survey/qwen-tone.html`, site `tone.html`).
+      and seven rule-derived prompt variants. The positive prompt steers tone only weakly;
+      negatives act strongly but only at CFG above 1.
+- [x] A fixed tone rule on all ten held-out sources: better for five, worse for five.
+- [x] A closed loop and a post-process regrade on 13 sources at three seeds. The loop lowers the
+      luminance-plus-saturation error in 37 of 39 pairs; the miss direction never changes with
+      the seed. The regrade hits the numbers by construction and can add colour casts.
+- [x] `--tone-correction loop|match` on `llmpeg generate`, opt-in (`v0.7.0`).
+- [x] Fidelity check of the `observer` register: no loss on the proxy metrics (layout, dHash within
+      ±0.03); it changed the grass cat's pose, which the proxies do not catch.
+- [x] Encoder colour wording: rejected. It changed 3 intensifying words to 2 but rewrote whole
+      descriptions, so its tone effect cannot be attributed.
+- [x] Review page `survey/qwen-tone.html` (site `tone.html`): current pipeline vs. loop vs. regrade.
 - [x] `uv` 0.12.18 toolchain pin; local user-level `uv` matches it.
 
 Left, in order:
 
-- [ ] **Human rating of `tone.html`.** Does either candidate look closer than the current pipeline?
-      The colour/lighting score decides; no measurement here can.
-- [ ] Finish the held-out run for the five remaining sources plus `kitchen-table`'s last render
-      (`scripts/tone_rule_holdout.py`, about 45 minutes; the script reuses existing artifacts, but
-      it refuses to overwrite the partial `measurements.json`, so move that aside first).
-- [ ] Try a **closed loop**: render, measure the render's tone, choose negatives from the *sign* of
-      each error, render once more. It needs no guess about which way Qwen will miss, at the cost of
-      a second render. Measure it on the held-out set, not the cats.
-- [ ] Try **deterministic tone matching after generation**: shift the render's luminance,
-      contrast, and saturation toward the artifact's recorded numbers. Honest only if the page
-      labels it as a post-process that reads the artifact, never the source.
-- [ ] Test more than one seed before quoting any lever as a general effect.
-- [ ] Ask the encoder not to use grading words in content ("bright green grass"), or measure whether
-      that matters.
-- [ ] Decide whether the prompt should move to Qwen's own register (the `observer` variant); it
-      helped tone but also changed content, so it needs a fidelity check, not just a tone check.
-- [ ] Only then change `llmpeg reconstruct` or the bundled workflow, and release.
+- [ ] **Human rating of `tone.html`.** Does the loop or the regrade look closer than the current
+      pipeline? The colour/lighting score decides whether either becomes the default.
+- [ ] If the loop wins, make it the default for `generate` and the prototype Web UI, and say in the
+      output that it costs a second render.
+- [ ] If the regrade wins, damp it where it has to add much saturation or warmth, which is where the
+      casts appear, and re-measure.
+- [ ] Try the `observer` register with the loop; the two are independent levers.
+- [ ] Repeat the encoder-wording test over several re-encodes before judging it again.
 
 ## Open work
 
