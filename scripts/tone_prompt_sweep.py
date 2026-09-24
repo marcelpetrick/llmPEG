@@ -76,6 +76,26 @@ def _snapshot(artifact: Artifact) -> str:
     return f"{PREAMBLE}{SNAPSHOT}; {_tone_words(prompt)}.\n{body}"
 
 
+def _observer(artifact: Artifact) -> str:
+    """Rewrite the artifact in the register of Qwen's own prompt-rewriting model.
+
+    Its system prompt asks for one paragraph that observes the finished image rather than
+    instructs a renderer, names no resolution or ratio, uses hex codes only when a user gave
+    them, and gives the lighting its own sentence. Critical text is left out: this variant tests
+    tone, and the keyboard artifact's text list is malformed.
+    """
+    words = _tone_words(render_generation_prompt(artifact))
+    summary = artifact.summary.rstrip(".")
+    summary = summary[0].lower() + summary[1:] if summary[:2].lower() == "a " else summary
+    regions = " ".join(region.description.rstrip(".") + "." for region in artifact.composition)
+    return (
+        f"The image is a square realistic photograph: {summary}. "
+        f"{artifact.generation_prompt.strip()} {regions} "
+        f"The lighting is {artifact.style.rstrip('.')}. "
+        f"The photograph has {words}."
+    )
+
+
 PROMPTS: dict[str, Callable[[Artifact], str]] = {
     "control": render_generation_prompt,
     "no-tone": _no_tone,
@@ -83,6 +103,7 @@ PROMPTS: dict[str, Callable[[Artifact], str]] = {
     "words-only": _words_only,
     "words-first": _words_first,
     "snapshot": _snapshot,
+    "observer": _observer,
 }
 
 
