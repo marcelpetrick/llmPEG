@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from dataclasses import replace
 from pathlib import Path
 from typing import Any
@@ -8,7 +9,13 @@ import pytest
 from PIL import Image
 
 from llmpeg.artifact import Artifact, ArtifactError, FidelityProfile, Provenance, Tone
-from llmpeg.encoder import describe_tone, encode_image, measure_tone, render_generation_prompt
+from llmpeg.encoder import (
+    colourfulness,
+    describe_tone,
+    encode_image,
+    measure_tone,
+    render_generation_prompt,
+)
 
 
 class FakeProvider:
@@ -44,10 +51,19 @@ def test_encode_and_render(sample_image: Path, description: dict[str, Any]) -> N
 
 def test_tone_is_measured_from_pixels() -> None:
     gray = measure_tone(Image.new("L", (64, 64), 128))
-    assert gray == Tone(luminance=128, contrast=0, saturation=0, warmth=0)
+    assert gray == Tone(luminance=128, contrast=0, saturation=0, warmth=0, colourfulness=0)
     orange = measure_tone(Image.new("RGB", (64, 64), (255, 128, 0)))
     assert orange.saturation == 255
     assert orange.warmth == 255
+    # A flat colour has no spread, so only the mean term counts: 0.3 * hypot(127, 191.5).
+    assert orange.colourfulness == round(0.3 * math.hypot(127, 191.5))
+
+
+def test_colourfulness_ignores_dark_tints_that_hsv_saturation_inflates() -> None:
+    dark = Image.new("RGB", (64, 64), (12, 6, 4))
+    mid = Image.new("RGB", (64, 64), (120, 110, 100))
+    assert measure_tone(dark).saturation > measure_tone(mid).saturation
+    assert colourfulness(dark) < colourfulness(mid)
 
 
 def test_tone_is_described_in_words_and_numbers() -> None:

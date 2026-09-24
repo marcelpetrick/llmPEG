@@ -276,6 +276,44 @@ def test_tone_round_trips_from_format_1_1(artifact: Artifact) -> None:
     assert "tone" not in json.loads(artifact.to_bytes())
 
 
+def test_colourfulness_round_trips_from_format_1_2(artifact: Artifact) -> None:
+    toned = replace(artifact, tone=Tone(148, 55, 48, -12, colourfulness=32))
+    assert toned.header.format_version == "1.2"
+    parsed = Artifact.from_file_bytes(toned.to_bytes())
+    assert parsed.tone == toned.tone
+    assert json.loads(toned.to_bytes())["tone"]["colourfulness"] == 32
+
+
+def test_a_format_1_1_artifact_stays_strict_about_colourfulness(artifact: Artifact) -> None:
+    """Colourfulness arrived in 1.2; a 1.1 file without it round-trips byte for byte."""
+    old = replace(
+        artifact,
+        header=replace(artifact.header, format_version="1.1"),
+        tone=Tone(148, 55, 48, -12),
+    )
+    assert Artifact.from_file_bytes(old.to_bytes()).to_bytes() == old.to_bytes()
+    data = old.to_dict()
+    data["tone"]["colourfulness"] = 30
+    with pytest.raises(ArtifactError, match="tone keys mismatch"):
+        Artifact.from_dict(data)
+    with pytest.raises(ArtifactError, match=r"requires format 1\.2"):
+        replace(old, tone=Tone(148, 55, 48, -12, colourfulness=30)).validate()
+
+
+def test_explicit_null_colourfulness_is_rejected(artifact: Artifact) -> None:
+    data = replace(artifact, tone=Tone(148, 55, 48, -12, colourfulness=32)).to_dict()
+    data["tone"]["colourfulness"] = None
+    with pytest.raises(ArtifactError, match="colourfulness must be an integer"):
+        Artifact.from_dict(data)
+
+
+def test_a_newer_minor_may_add_tone_fields(artifact: Artifact) -> None:
+    data = replace(artifact, tone=Tone(148, 55, 48, -12, colourfulness=32)).to_dict()
+    data["llmpeg"]["format_version"] = "1.9"
+    data["tone"]["sharpness"] = 3
+    assert Artifact.from_dict(data).tone == Tone(148, 55, 48, -12, colourfulness=32)
+
+
 def test_a_format_1_0_artifact_stays_strict_about_tone(artifact: Artifact) -> None:
     """Tone arrived in 1.1, so a file that claims 1.0 and carries it is not conforming."""
     old = replace(artifact, header=replace(artifact.header, format_version="1.0"))

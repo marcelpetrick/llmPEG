@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import io
 import json
+import math
+import statistics
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from PIL import Image, ImageStat, UnidentifiedImageError
 
@@ -131,7 +133,23 @@ def measure_tone(image: Image.Image) -> Tone:
         contrast=round(luminance.stddev[0]),
         saturation=round(saturation.mean[0]),
         warmth=round(red - blue),
+        colourfulness=min(255, round(colourfulness(sample))),
     )
+
+
+def colourfulness(image: Image.Image) -> float:
+    """Hasler-Suesstrunk colourfulness (2003) of an RGB image.
+
+    It measures the spread and mean of the opponent channels rg = R - G and yb = (R + G)/2 - B.
+    Unlike HSV saturation it does not divide by brightness, so a near-black pixel with a faint
+    tint does not count as vividly coloured. Grey images score 0; ordinary photographs score
+    roughly 10 to 110.
+    """
+    pixels = cast(list[tuple[int, int, int]], list(image.convert("RGB").get_flattened_data()))
+    rg = [r - g for r, g, _ in pixels]
+    yb = [(r + g) / 2 - b for r, g, b in pixels]
+    spread = math.hypot(statistics.pstdev(rg), statistics.pstdev(yb))
+    return spread + 0.3 * math.hypot(statistics.fmean(rg), statistics.fmean(yb))
 
 
 def describe_tone(tone: Tone) -> str:

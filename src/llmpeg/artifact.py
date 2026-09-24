@@ -26,7 +26,7 @@ MAGIC = "llmPEG"
 # a higher minor and ignores fields it does not know, the way PNG lets decoders
 # skip ancillary chunks.
 FORMAT_MAJOR = 1
-FORMAT_MINOR = 1
+FORMAT_MINOR = 2
 FORMAT_VERSION = f"{FORMAT_MAJOR}.{FORMAT_MINOR}"
 
 # Brands follow the ISO base media file format idea used by AVIF and HEIF: the
@@ -213,16 +213,21 @@ class Tone:
 
     Every value is an integer on a 0-255 scale: mean Rec. 601 luminance, luminance standard
     deviation, and mean HSV saturation. `warmth` is mean red minus mean blue, -255 to 255.
+    `colourfulness` is the Hasler-Suesstrunk metric, which unlike HSV saturation does not divide
+    by brightness and so does not read dark pixels as vividly coloured; it is absent before 1.2.
     """
 
     luminance: int
     contrast: int
     saturation: int
     warmth: int
+    colourfulness: int | None = None
 
 
-# Format 1.1 added the optional `tone` object.
+# Format 1.1 added the optional `tone` object; 1.2 added its optional `colourfulness`.
 TONE_FORMAT = (1, 1)
+COLOURFULNESS_FORMAT = (1, 2)
+TONE_KEYS = frozenset({"luminance", "contrast", "saturation", "warmth"})
 
 
 @dataclass(frozen=True)
@@ -287,7 +292,16 @@ class Artifact:
         if self.tone is not None:
             if self.header.version_tuple < TONE_FORMAT:
                 raise ArtifactError(f"tone requires format 1.1, got {self.header.format_version}")
+            if (
+                self.tone.colourfulness is not None
+                and self.header.version_tuple < COLOURFULNESS_FORMAT
+            ):
+                raise ArtifactError(
+                    f"tone.colourfulness requires format 1.2, got {self.header.format_version}"
+                )
             for name, value in asdict(self.tone).items():
+                if name == "colourfulness" and value is None:
+                    continue
                 if type(value) is not int:
                     raise ArtifactError(f"tone.{name} must be an integer")
                 low = -255 if name == "warmth" else 0
@@ -308,6 +322,9 @@ class Artifact:
         if self.tone is None:
             # Optional since 1.1; omitted rather than null so 1.0 artifacts round-trip unchanged.
             del data["tone"]
+        elif self.tone.colourfulness is None:
+            # Optional since 1.2, omitted for the same reason in 1.1 files.
+            del data["tone"]["colourfulness"]
         return data
 
     def to_bytes(self) -> bytes:
@@ -431,12 +448,23 @@ class Artifact:
             tone: Tone | None = None
             if "tone" in body and "tone" in optional:
                 tone_data = _require_mapping(data["tone"], "tone")
-                _require_keys(tone_data, {"luminance", "contrast", "saturation", "warmth"}, "tone")
+                allowed = set(TONE_KEYS)
+                if header.version_tuple >= COLOURFULNESS_FORMAT:
+                    allowed.add("colourfulness")
+                missing_tone, extra_tone = TONE_KEYS - set(tone_data), set(tone_data) - allowed
+                if missing_tone or (extra_tone and header.is_strict()):
+                    raise ArtifactError(
+                        f"tone keys mismatch; missing={sorted(missing_tone)}, "
+                        f"extra={sorted(extra_tone)}"
+                    )
                 tone = Tone(
                     _require_integer(tone_data["luminance"], "tone.luminance"),
                     _require_integer(tone_data["contrast"], "tone.contrast"),
                     _require_integer(tone_data["saturation"], "tone.saturation"),
                     _require_integer(tone_data["warmth"], "tone.warmth"),
+                    _require_integer(tone_data["colourfulness"], "tone.colourfulness")
+                    if "colourfulness" in allowed and "colourfulness" in tone_data
+                    else None,
                 )
             artifact = cls(
                 header=header,
