@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any
 
 from PIL import Image
+from tone_cases import HOLDOUT, RESOLUTION, SNAPSHOT_PHRASE
 
 from llmpeg import __version__
 from llmpeg.artifact import Artifact, FidelityProfile, Tone
@@ -31,22 +32,8 @@ from llmpeg.generators import DEFAULT_COMFYUI_HOST, DEFAULT_QWEN_SEED, generate_
 from llmpeg.providers import DEFAULT_OLLAMA_VISION_HOST, DEFAULT_VISION_MODEL, OllamaVisionProvider
 
 REPO = Path(__file__).resolve().parent.parent
-# Every non-cat survey source: none of them informed the negative terms below.
-HOLDOUT = (
-    "amsterdam-market",
-    "astronaut-crew",
-    "dogs-beach",
-    "food-table",
-    "kitchen-table",
-    "living-room",
-    "mountain-hikers",
-    "street-bicycles",
-    "train-platform",
-    "workspace-books",
-)
-RESOLUTION = 512
 PREAMBLE = "Create a new image from this semantic description.\n\n"
-SNAPSHOT = "Casual unedited snapshot in soft natural light, understated and unpolished."
+SNAPSHOT = SNAPSHOT_PHRASE + "."
 DARK_LUMINANCE = 90
 VIVID_SATURATION = 140
 WARM = 15

@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Any
 
 from PIL import Image
+from tone_cases import CATS, RESOLUTION
 
 from llmpeg import __version__
 from llmpeg.encoder import measure_tone
@@ -30,8 +31,7 @@ from llmpeg.generators import (
 )
 
 REPO = Path(__file__).resolve().parent.parent
-CASES = ("cat-monochrome", "cat-on-keyboard", "cat-on-grass")
-RESOLUTION = 512
+CASES = CATS
 COMMON_NEGATIVE = "dark, underexposed, studio lighting, professional color grading, vivid colors"
 # Chosen by hand after looking at the default renders, so they are per-case and not yet a rule
 # the renderer could derive from an artifact. A derived version needs its own measured run.

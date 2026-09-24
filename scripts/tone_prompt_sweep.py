@@ -20,6 +20,7 @@ from pathlib import Path
 from typing import Any
 
 from PIL import Image
+from tone_cases import CATS, RESOLUTION, SNAPSHOT_PHRASE
 
 from llmpeg import __version__
 from llmpeg.artifact import Artifact
@@ -27,8 +28,7 @@ from llmpeg.encoder import measure_tone, render_generation_prompt
 from llmpeg.generators import DEFAULT_COMFYUI_HOST, DEFAULT_QWEN_SEED, generate_comfyui
 
 REPO = Path(__file__).resolve().parent.parent
-CASES = ("cat-monochrome", "cat-on-keyboard", "cat-on-grass")
-RESOLUTION = 512
+CASES = CATS
 SETTINGS: dict[str, dict[str, Any]] = {
     "workflow": {"cfg": None, "steps": None},
     "official": {"cfg": 1.0, "steps": 25},
@@ -37,9 +37,7 @@ TONE_LINE = re.compile(r"^Tone: .*\n", re.MULTILINE)
 NEGATED = re.compile(r" Match this grading exactly:.*$")
 NUMBERS = re.compile(r" \([^()]*\d+/255\)")
 PREAMBLE = "Create a new image from this semantic description.\n\n"
-# One uniform phrase for every case: the opposite of a text-to-image model's polished default.
-# It names no colour, so the black-and-white case is steered by its tone words alone.
-SNAPSHOT = "Casual unedited snapshot in soft natural light, understated and unpolished"
+SNAPSHOT = SNAPSHOT_PHRASE
 
 
 def _tone_words(prompt: str) -> str:

@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Any
 
 from PIL import Image
+from tone_cases import CATS, HOLDOUT, RESOLUTION
 
 from llmpeg import __version__
 from llmpeg.artifact import Artifact, FidelityProfile
@@ -27,20 +28,6 @@ from llmpeg.generators import DEFAULT_COMFYUI_HOST, DEFAULT_QWEN_SEED, generate_
 from llmpeg.providers import DEFAULT_OLLAMA_VISION_HOST, DEFAULT_VISION_MODEL, OllamaVisionProvider
 
 REPO = Path(__file__).resolve().parent.parent
-CATS = ("cat-monochrome", "cat-on-keyboard", "cat-on-grass")
-HOLDOUT = (
-    "amsterdam-market",
-    "astronaut-crew",
-    "dogs-beach",
-    "food-table",
-    "kitchen-table",
-    "living-room",
-    "mountain-hikers",
-    "street-bicycles",
-    "train-platform",
-    "workspace-books",
-)
-RESOLUTION = 512
 INTENSIFIERS = re.compile(r"\b(bright|brilliant|vivid|vibrant|lush|rich|saturated)\b", re.I)
 
 

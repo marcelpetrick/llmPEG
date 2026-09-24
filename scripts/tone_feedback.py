@@ -24,6 +24,7 @@ from pathlib import Path
 from typing import Any
 
 from PIL import Image
+from tone_cases import CATS, HOLDOUT, RESOLUTION
 
 from llmpeg import __version__
 from llmpeg.artifact import Artifact
@@ -33,21 +34,7 @@ from llmpeg.generators import DEFAULT_COMFYUI_HOST, generate_comfyui
 from llmpeg.grading import FEEDBACK_MARGIN, FEEDBACK_TERMS, feedback_negative, match_tone
 
 REPO = Path(__file__).resolve().parent.parent
-CATS = ("cat-monochrome", "cat-on-keyboard", "cat-on-grass")
-HOLDOUT = (
-    "amsterdam-market",
-    "astronaut-crew",
-    "dogs-beach",
-    "food-table",
-    "kitchen-table",
-    "living-room",
-    "mountain-hikers",
-    "street-bicycles",
-    "train-platform",
-    "workspace-books",
-)
 SEEDS = (42, 7, 1234)
-RESOLUTION = 512
 
 
 def _artifact(case: str) -> Artifact:
