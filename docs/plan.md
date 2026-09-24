@@ -269,7 +269,12 @@ Done:
       descriptions, so its tone effect cannot be attributed.
 - [x] Review page `survey/qwen-tone.html` (site `tone.html`): current pipeline vs. loop vs. regrade.
 - [x] `uv` 0.12.18 toolchain pin; local user-level `uv` matches it.
-- [x] One published review page: original, current pipeline, closed loop (`v0.7.1`).
+- [x] One published review page: original, current pipeline, closed loop, plus each artifact's
+      JSON and stored gzip bytes (`v0.8.0`).
+- [x] Format 1.2 records colourfulness; the loop and regrade steer colour by it. Re-measured on
+      13 sources × 3 seeds: the loop helps in 35 of 39 pairs, and the regrade's worst colour
+      overshoot fell from +41 to +1 (`v0.8.0`, `docs/tone.md` attempt 7).
+- [x] Code review of the release (`review.md`); all six findings fixed.
 - [x] Found and documented that the recorded saturation (mean HSV) overstates colour in dark
       images; checked against Hasler–Süsstrunk colourfulness (`docs/colourfulness-check.json`).
 
@@ -277,13 +282,12 @@ Left, in order:
 
 - [ ] **Human rating of the review page.** Does the closed loop look closer than the current
       pipeline? The colour/lighting score decides whether it becomes the default.
-- [ ] Replace the saturation measure: record colourfulness in the artifact (format 1.2), steer the
-      loop's colour terms by it, and regrade chroma instead of HSV saturation. Re-run
-      `scripts/tone_feedback.py` (about 90 minutes of GPU time).
 - [ ] If the loop wins, make it the default for `generate` and the prototype Web UI, and say in the
       output that it costs a second render.
-- [ ] If the regrade wins, damp it where it has to add much saturation or warmth, which is where the
-      casts appear, and re-measure.
+- [ ] If the regrade wins, damp its global warmth shift, which still casts the keyboard cat and the
+      food cool, and re-measure.
+- [ ] The prompt's tone line still quotes mean HSV saturation; decide whether to describe
+      colourfulness instead (it changes every prompt, so it needs a fresh render comparison).
 - [ ] Try the `observer` register with the loop; the two are independent levers.
 - [ ] Repeat the encoder-wording test over several re-encodes before judging it again.
 

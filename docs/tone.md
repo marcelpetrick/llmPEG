@@ -1,11 +1,12 @@
 # Tone: why telling the generator "don't saturate" barely works
 
-> **Correction (2026-09-24).** Every *saturation* figure on this page is mean HSV saturation, and
-> that measure overstates colour in dark images: a near-black pixel with a faint tint counts as
-> strongly saturated. Checked against a perceptual colourfulness metric, the cats were **not**
-> clearly over-saturated, and the regrade (`match`) over-coloured one source. Luminance, contrast,
-> and warmth findings are unaffected. See [the correction](#correction-the-saturation-measure)
-> before quoting any colour result below.
+> **Correction (2026-09-24).** The *saturation* figures in attempts 1–6 are mean HSV saturation,
+> which overstates colour in dark images: a near-black pixel with a faint tint counts as strongly
+> saturated. Checked against perceptual colourfulness, the cats were **not** clearly
+> over-saturated, and the first regrade over-coloured one source. Luminance, contrast, and warmth
+> findings are unaffected. Format 1.2 now records colourfulness, and attempt 7 repeats the
+> corrections with it. See [the correction](#correction-the-saturation-measure) before quoting any
+> colour result below.
 
 One human reviewer rated the first local Qwen-Image-2.1 reconstructions as "too saturated" (two
 cases, colour/lighting/style 3 of 5; see [`tone-review-plan.md`](tone-review-plan.md)). This
@@ -319,15 +320,44 @@ What changes:
 - **Still sound:** everything about luminance, contrast, and warmth, and the scene-not-seed
   direction of the exposure miss. The loop's luminance gain (28.1 → 22.3) does not use saturation.
 
-The fix — recording colourfulness in the artifact (a format 1.2 field), steering the loop's colour
-terms by it, and regrading chroma rather than HSV saturation — is planned, not done
-([`plan.md`](plan.md#11-tone-work)).
+The fix — recording colourfulness in the artifact (format 1.2), steering the loop's colour terms
+by it, and regrading chroma rather than HSV saturation — shipped in 0.8.0; attempt 7 measures it.
+
+## Attempt 7: the corrections, judged by colourfulness
+
+The 13 artifacts were upgraded to format 1.2 by re-measuring tone from their verified sources
+(`scripts/upgrade_tone.py`), which leaves every prompt byte-identical, and attempt 5 was repeated
+at seeds 42, 7, and 1234. Evidence:
+[`survey/qwen/tone-feedback-v2/`](../survey/qwen/tone-feedback-v2/README.md). Mean absolute error
+against the recorded tone over the 39 source-seed pairs:
+
+| Variant | Luminance | Contrast | Colourfulness | Warmth | Visual proxy | Histogram similarity |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `control` | 28.1 | 7.2 | 8.4 | 11.6 | 0.644 | 0.565 |
+| `loop` | 21.3 | 6.3 | 8.2 | 9.5 | 0.659 | 0.611 |
+| `match` | 0.9 | 0.1 | 1.6 | 0.0 | 0.666 | 0.637 |
+
+- **Qwen's colour was never far off.** The current pipeline sits a mean 8.4 from its sources in
+  colourfulness, where steps between Hasler and Süsstrunk's named categories are about 12. Its real
+  miss is exposure, 28.1 on average.
+- **The loop still helps.** It lowers the combined luminance-plus-colourfulness error in 35 of 39
+  pairs, ties in 3, and is worse in 1; the luminance gain is about the same at every seed (29.8 →
+  22.8, 25.8 → 19.2, 28.7 → 21.9 at seeds 42, 7, 1234). It no longer adds "vivid colors, saturated
+  colors" on a false reading: food-table and the keyboard cat now get only exposure, contrast, and
+  warmth terms.
+- **The regrade no longer over-colours.** Its largest colourfulness overshoot is now 1 (it was
+  +41 on `astronaut-crew`). The 2× chroma cap stops the beach dogs at 16 against a source of 30
+  rather than tinting the sand. Its global warmth shift still gives the keyboard cat and the food a
+  cool cast, which matches the sources' measured warmth but is visible.
+- Histogram similarity for `match` fell from 0.661 to 0.637 because it no longer over-boosts
+  colour; neither figure is a perception score.
+
 
 ## Status (2026-09-24)
 
-- `llmpeg generate --tone-correction loop|match` shipped in 0.7.0 as an **opt-in**; the default is
-  unchanged. Treat `match`'s colour as unreliable until the fix above lands.
+- `llmpeg generate --tone-correction loop|match` is an **opt-in** since 0.7.0; 0.8.0 steers its
+  colour by colourfulness. The default render is unchanged.
 - `survey/qwen.html` (the site index) is the one review page: original, current pipeline, and
-  `loop`, for seven sources at seed 42. It exists for human ratings; nothing on this page says a
+  the v2 `loop`, for seven sources at seed 42, with each artifact's JSON and stored gzip bytes. It exists for human ratings; nothing on this page says a
   correction *looks* closer.
 - The remaining plan is in [`plan.md`](plan.md#11-tone-work).
