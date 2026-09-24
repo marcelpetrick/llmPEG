@@ -179,12 +179,13 @@ material, none of them measured here beyond the sweep above:
   Our measurements disagree for *tone*: at CFG 3.5, negatives moved saturation more than anything
   else.
 
-## Attempt 4: a tone rule on sources it was not tuned on (stopped early)
+## Attempt 4: a tone rule on sources it was not tuned on
 
 `scripts/tone_rule_holdout.py` turns attempt 2's hand-picked negatives into `tone_negative()`, a
-rule that reads only the artifact's measured tone, and renders each non-cat survey source three
-ways at CFG 3.5. The run was **stopped by request after 14 of 30 renders**; four sources are
-complete. Evidence: [`survey/qwen/tone-holdout/`](../survey/qwen/tone-holdout/README.md).
+rule that reads only the artifact's measured tone, and renders each of the ten non-cat survey
+sources three ways at CFG 3.5, seed 42. Evidence:
+[`survey/qwen/tone-holdout/`](../survey/qwen/tone-holdout/README.md) (the run was stopped once and
+resumed; `kitchen-table`'s re-render matched its first renders exactly).
 
 Luminance / saturation, source → reconstruction:
 
@@ -194,20 +195,28 @@ Luminance / saturation, source → reconstruction:
 | `astronaut-crew` | 59 / 169 | 28 / 138 | 26 / 130 | 20 / 124 |
 | `dogs-beach` | 190 / 39 | 212 / 13 | 215 / 9 | 215 / 9 |
 | `food-table` | 93 / 70 | 51 / 157 | 53 / 120 | 59 / 105 |
-| `kitchen-table` (partial) | 100 / 46 | 76 / 123 | 78 / 116 | not rendered |
+| `kitchen-table` | 100 / 46 | 76 / 123 | 78 / 116 | 81 / 109 |
+| `living-room` | 192 / 17 | 215 / 7 | 218 / 4 | 211 / 5 |
+| `mountain-hikers` | 138 / 64 | 145 / 42 | 158 / 37 | 163 / 44 |
+| `street-bicycles` | 116 / 77 | 77 / 92 | 86 / 85 | 89 / 84 |
+| `train-platform` | 56 / 46 | 34 / 47 | 33 / 56 | 40 / 61 |
+| `workspace-books` | 168 / 77 | 190 / 49 | 198 / 42 | 192 / 46 |
 
-Over the four complete sources, rule plus snapshot cuts the summed saturation error from 225 to 172
-and leaves the summed luminance error unchanged (122 → 122). The rule helps where Qwen
-over-saturates (`food-table` 87 → 35, `amsterdam-market` 81 → 62) and **hurts** where it
-under-saturates: the astronaut photograph is vivid (169) and Qwen renders it at 138, so asking for
-less saturation moves it further away (31 → 45); the beach scene comes back bright and nearly grey
-(13 against 39), and the rule pushes it to 9.
+Summed over the ten sources, rule plus snapshot cuts the saturation error from 378 to 320 and the
+luminance error from 259 to 252; the rule's negatives alone make luminance worse (283). Per source
+it is a coin toss: the saturation error falls for five (`food-table` 87 → 35, `amsterdam-market`
+81 → 62, `kitchen-table` 77 → 63, `street-bicycles` 15 → 7, `mountain-hikers` 22 → 20) and rises
+for the other five (`train-platform` 1 → 15, `astronaut-crew` 31 → 45, `dogs-beach` 26 → 30,
+`workspace-books` 28 → 31, `living-room` 10 → 12).
 
-So "Qwen over-saturates" is not the whole story. **Qwen pulls every image toward its own look**,
-not away from the source in one fixed direction: most muted sources come back darker and more
-saturated, the bright beach brighter still and nearly grey, the vivid astronaut photograph duller. A fixed
-rule, however it is derived, cannot know in advance which way a render will miss. Four sources at
-one seed is also too few to call the rule an improvement.
+The `control` column shows why. **In these ten sources, Qwen pushes exposure away from the
+middle**: every source darker than 130 comes back darker (89 → 62, 59 → 28, 93 → 51, 100 → 76,
+116 → 77, 56 → 34), and every brighter one comes back brighter (190 → 212, 192 → 215, 138 → 145,
+168 → 190). Saturation mostly follows: the dark scenes gain it, the bright ones lose it. The cats do
+not fit this pattern: the keyboard (148) and grass (158) cats are bright, yet came back darker (111,
+124) and more saturated. So the direction of the miss differs from image to image, and one seed
+cannot tell whether a pattern belongs to the scene or to the seed. A fixed rule cannot know in
+advance which way a render will miss.
 
 ## Status (2026-09-24, paused)
 
