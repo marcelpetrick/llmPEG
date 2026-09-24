@@ -44,7 +44,7 @@ include = [
 ]
 
 [tool.uv]
-required-version = "==0.12.17"
+required-version = "==0.12.18"
 # The version is read from _version.py, so a bump must rebuild the installed metadata.
 cache-keys = [{ file = "pyproject.toml" }, { file = "src/llmpeg/_version.py" }]
 
