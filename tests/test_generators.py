@@ -102,9 +102,10 @@ def test_qwen_workflow_matches_the_local_runtime(monkeypatch: pytest.MonkeyPatch
 
 def test_qwen_workflow_applies_tone_experiment_overrides() -> None:
     default = _qwen_workflow("cat", 512, 42)
-    workflow = _qwen_workflow("cat", 512, 42, cfg=1.5, extra_negative=" sepia, tint ")
+    workflow = _qwen_workflow("cat", 512, 42, cfg=1.5, steps=25, extra_negative=" sepia, tint ")
 
     assert workflow["6"]["inputs"]["cfg"] == 1.5
+    assert workflow["6"]["inputs"]["steps"] == 25
     assert workflow["5"]["inputs"]["negative_prompt"] == (
         default["5"]["inputs"]["negative_prompt"] + ", sepia, tint"
     )
@@ -185,9 +186,11 @@ def test_generate_comfyui_validates_request(
         generate_comfyui(prompt, resolution, seed, timeout=timeout, poll_interval=poll_interval)
 
 
-def test_generate_comfyui_rejects_non_positive_cfg() -> None:
+def test_generate_comfyui_rejects_non_positive_overrides() -> None:
     with pytest.raises(ArtifactError, match="cfg must be positive"):
         generate_comfyui("cat", 1024, 42, cfg=0)
+    with pytest.raises(ArtifactError, match="steps must be positive"):
+        generate_comfyui("cat", 1024, 42, steps=0)
 
 
 def test_generate_comfyui_fails_closed_when_local_service_is_down(

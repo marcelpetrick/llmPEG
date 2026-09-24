@@ -51,12 +51,14 @@ def generate_comfyui(
     *,
     poll_interval: float = POLL_INTERVAL_SECONDS,
     cfg: float | None = None,
+    steps: int | None = None,
     extra_negative: str = "",
 ) -> bytes:
     """Render one square image with the bundled Qwen-Image-2.1 ComfyUI workflow.
 
-    ``cfg`` replaces the workflow's guidance scale and ``extra_negative`` is appended to its
-    negative prompt; both exist for measured tone experiments and default to the workflow as-is.
+    ``cfg`` and ``steps`` replace the workflow's guidance scale and step count, and
+    ``extra_negative`` is appended to its negative prompt; they exist for measured tone
+    experiments and default to the workflow as-is.
     """
     prompt = prompt.strip()
     if not prompt:
@@ -73,12 +75,16 @@ def generate_comfyui(
         raise ArtifactError("ComfyUI poll interval must be positive")
     if cfg is not None and cfg <= 0:
         raise ArtifactError("cfg must be positive")
+    if steps is not None and steps <= 0:
+        raise ArtifactError("steps must be positive")
 
     base = host.rstrip("/")
     if not comfyui_reachable(base, timeout):
         raise GeneratorUnavailable(f"local ComfyUI is unavailable at {base}")
 
-    workflow = _qwen_workflow(prompt, resolution, seed, cfg=cfg, extra_negative=extra_negative)
+    workflow = _qwen_workflow(
+        prompt, resolution, seed, cfg=cfg, steps=steps, extra_negative=extra_negative
+    )
     deadline = time.monotonic() + timeout
     submitted = _request_json(
         base + "/prompt",
@@ -107,6 +113,7 @@ def _qwen_workflow(
     seed: int,
     *,
     cfg: float | None = None,
+    steps: int | None = None,
     extra_negative: str = "",
 ) -> dict[str, Any]:
     """Return an isolated workflow with only request-specific values changed."""
@@ -126,6 +133,8 @@ def _qwen_workflow(
         workflow["8"]["inputs"]["filename_prefix"] = f"llmpeg/{uuid.uuid4().hex}"
         if cfg is not None:
             workflow["6"]["inputs"]["cfg"] = cfg
+        if steps is not None:
+            workflow["6"]["inputs"]["steps"] = steps
         if extra_negative.strip():
             workflow["5"]["inputs"]["negative_prompt"] += ", " + extra_negative.strip()
     except (KeyError, TypeError) as error:  # pragma: no cover - structure is unit-tested
