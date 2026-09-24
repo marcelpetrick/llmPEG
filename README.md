@@ -5,7 +5,7 @@
 [![Python 3.14](https://img.shields.io/badge/Python-3.14-3776ab.svg)](https://www.python.org/)
 [![Ruff](https://img.shields.io/badge/lint-ruff-261230.svg)](https://docs.astral.sh/ruff/)
 [![mypy strict](https://img.shields.io/badge/types-mypy%20strict-2a6db2.svg)](https://mypy-lang.org/)
-[![Coverage 95.7%](https://img.shields.io/badge/coverage-95.7%25-brightgreen.svg)](#development)
+[![Coverage 96.0%](https://img.shields.io/badge/coverage-96.0%25-brightgreen.svg)](#development)
 
 **llmPEG** — the *LLM Photo Expert Group*, after JPEG's **J**oint **P**hotographic **E**xperts
 **G**roup. In JPEG the codec is an algorithm. Here the codec is a **large language model**: one
@@ -136,22 +136,25 @@ you keep the artifact and regenerate on demand; model weights and compute are no
 
 ## Benchmarks
 
-### Local Qwen-Image-2.1 comparison (`n=2`, `detailed`)
+### Local Qwen-Image-2.1 review (`n=3`, `detailed`)
 
-The [public comparison landing page](https://marcelpetrick.github.io/llmPEG/) shows the two
-checked-in local runs as original source → Qwen baseline → Qwen challenger. Its technology panel
-records both measured stages:
+The [public review page](https://marcelpetrick.github.io/llmPEG/) shows one reconstruction per cat
+from the current pipeline, with each source's measured tone beside its reconstruction's. Its
+technology panel records both measured stages:
 
 - **Compression / semantic encoding:** local Ollama with `qwen3.5:4b` receives the source and
-  writes the detailed gzip-wrapped llmPEG artifact.
+  writes the detailed gzip-wrapped llmPEG 1.1 artifact, including pixel-measured tone.
 - **Reconstruction (not decompression):** local ComfyUI with Qwen-Image-2.1 receives only the
   rendered text and generates a new 512×512 image on the GPU.
 
-Both challenger rounds were rejected. The pixels-only pairwise judge preferred the
-second-presented candidate in each order, so it produced inconsistent logical verdicts; the page
-keeps that failure visible rather than presenting the challenger as an improvement. The page is
-generated from [`survey/qwen-manifest.json`](survey/qwen-manifest.json), while the complete raw
-trials and settings remain authoritative under [`survey/qwen/`](survey/qwen/README.md).
+The prompt's tone line did not stop Qwen from missing each photo's exposure and colour
+([`docs/tone.md`](docs/tone.md)). A second page,
+[`tone.html`](https://marcelpetrick.github.io/llmPEG/tone.html), sets the current pipeline beside
+the two opt-in `--tone-correction` modes for seven sources and asks for human ratings. The pages are
+generated from [`survey/qwen-manifest.json`](survey/qwen-manifest.json) and
+[`survey/qwen-tone-manifest.json`](survey/qwen-tone-manifest.json); the raw runs are under
+[`survey/qwen/`](survey/qwen/README.md), including the earlier creator/rater experiments whose
+challengers were both rejected.
 
 ### Historical cat survey (`n=3`, `balanced`)
 
@@ -333,7 +336,7 @@ and it comes first in the file:
   "format_version":"1.1",
   "major_brand":"lpg1",
   "compatible_brands":["lpg1"],
-  "encoder":"llmpeg/0.6.0",
+  "encoder":"llmpeg/0.7.0",
   "min_reader_version":"0.1.0",
   "decoder":"text-to-image model; lossy; non-deterministic; not bundled"
 }, ...}
@@ -348,7 +351,7 @@ $ head -c 40 photo.jpg.llmpeg.json
 
 $ llmpeg verify photo.jpg.llmpeg.json
 llmPEG 1.0 (lpg1)
-written by: llmpeg/0.6.0
+written by: llmpeg/0.7.0
 needs reader: llmpeg >= 0.1.0
 decoder: text-to-image model; lossy; non-deterministic; not bundled
 envelope: none (1206 bytes on disk)
@@ -652,7 +655,7 @@ uv run python -m build
 ```
 
 The suite is offline and injects fake providers. Live Ollama and image-generation runs are manual
-demo steps, not CI dependencies. Current suite: **185 tests, 95.8% branch-aware coverage**.
+demo steps, not CI dependencies. Current suite: **195 tests, 96.0% branch-aware coverage**.
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs all five gates on Python 3.14 for
 every push and pull request.
@@ -666,13 +669,13 @@ Pushing a `v*` tag runs [`.github/workflows/release.yml`](.github/workflows/rele
 builds an sdist and a wheel with `uv build`, checks them with twine, and attaches both to a
 generated GitHub Release.
 
-The current release is [`v0.6.0`](https://github.com/marcelpetrick/llmPEG/releases/tag/v0.6.0).
+The current release is [`v0.7.0`](https://github.com/marcelpetrick/llmPEG/releases/tag/v0.7.0).
 
 There is no PyPI upload: the distribution name `llmpeg` is already registered there by an
 unrelated project, so installing is done from a release artifact or from a checkout:
 
 ```bash
-uv pip install llmpeg-0.6.0-py3-none-any.whl   # from a GitHub Release
+uv pip install llmpeg-0.7.0-py3-none-any.whl   # from a GitHub Release
 uv pip install .                               # from a clone
 ```
 
