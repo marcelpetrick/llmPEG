@@ -642,7 +642,7 @@ uv run python -m build
 ```
 
 The suite is offline and injects fake providers. Live Ollama and image-generation runs are manual
-demo steps, not CI dependencies. Current suite: **184 tests, 95.8% branch-aware coverage**.
+demo steps, not CI dependencies. Current suite: **185 tests, 95.8% branch-aware coverage**.
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs all five gates on Python 3.14 for
 every push and pull request.
