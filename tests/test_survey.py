@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import html
 import json
 import re
 from pathlib import Path
@@ -370,3 +371,35 @@ def test_pages_workflow_publishes_one_review_page() -> None:
     destinations = re.findall(r"^\s*cp (?:-R )?\S+ (_site/\S*)$", workflow, re.M)
     assert destinations == ["_site/", "_site/index.html"]
     assert "balanced.html" not in workflow
+
+
+def test_review_page_shows_the_artifact_json_and_the_stored_gzip_bytes() -> None:
+    manifest_path = REPO / "survey/qwen-manifest.json"
+    case = _load_manifest(manifest_path)["cases"][0]
+    stored = (manifest_path.parent / case["artifact"]).read_bytes()
+    output = render_survey(manifest_path)
+
+    assert "What the vision model extracted — the artifact as JSON" in output
+    assert f"What the stored file looks like — {len(stored):,} bytes of gzip" in output
+    assert "gzip-compressed" in output
+    assert html.escape('"generation_prompt"') in output
+    first_line = "00000000  " + " ".join(f"{byte:02x}" for byte in stored[:16])
+    assert first_line in output
+
+
+def test_plain_artifacts_show_json_without_a_hexdump() -> None:
+    output = render_survey(REPO / "survey/manifest.json")
+
+    assert "What the vision model extracted — the artifact as JSON" in output
+    assert "Stored as <strong>plain JSON</strong>" in output
+    assert "What the stored file looks like" not in output
+
+
+def test_hexdump_matches_xxd_layout() -> None:
+    from llmpeg.survey import _hexdump
+
+    dump = _hexdump(b"\x1f\x8bllmPEG" + bytes(range(10)))
+    assert dump.splitlines()[0] == (
+        "00000000  1f 8b 6c 6c 6d 50 45 47 00 01 02 03 04 05 06 07  ..llmPEG........"
+    )
+    assert dump.splitlines()[1] == "00000010  08 09" + " " * 42 + "  .."

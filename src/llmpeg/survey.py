@@ -14,6 +14,45 @@ from llmpeg.artifact import Artifact, ArtifactError, envelope_of
 UNVERIFIED_LICENSE_PREFIX = "Provenance not verified"
 
 
+def _hexdump(data: bytes) -> str:
+    """Render bytes the way `xxd` does: offset, sixteen hex bytes, printable ASCII."""
+    lines = []
+    for offset in range(0, len(data), 16):
+        chunk = data[offset : offset + 16]
+        hex_part = " ".join(f"{byte:02x}" for byte in chunk)
+        text = "".join(chr(byte) if 32 <= byte < 127 else "." for byte in chunk)
+        lines.append(f"{offset:08x}  {hex_part:<47}  {text}")
+    return "\n".join(lines)
+
+
+def _artifact_blocks(case: dict[str, Any], href: str) -> str:
+    """Show the artifact the model wrote, and the bytes that are actually stored."""
+    plain, stored = case["artifact_bytes"], case["stored_artifact_bytes"]
+    if case["artifact_envelope"] == "gzip":
+        note = (
+            f"Stored <strong>gzip-compressed</strong>: {stored:,} bytes on disk. Shown here unpacked "
+            f"and indented for reading; the file holds {plain:,} bytes of compact canonical JSON, "
+            "and <code>gunzip</code> gives back exactly those bytes."
+        )
+        stored_block = (
+            f"  <details><summary>What the stored file looks like — {stored:,} bytes of gzip"
+            "</summary><p>This is the whole compressed file, byte for byte, as <code>xxd</code> "
+            "shows it. Nothing else is kept: no pixels, no thumbnail.</p>"
+            f'<pre class="hex">{html.escape(str(case["stored_hexdump"]))}</pre></details>\n'
+        )
+    else:
+        note = (
+            f"Stored as <strong>plain JSON</strong>: {stored:,} bytes on disk, compact and canonical;"
+            " shown here indented for reading. Nothing else is kept: no pixels, no thumbnail."
+        )
+        stored_block = ""
+    return (
+        "  <details><summary>What the vision model extracted — the artifact as JSON</summary>"
+        f"<p>{note}</p><pre>{html.escape(str(case['artifact_json']))}</pre>"
+        f'<p><a href="{href}">Download the stored file</a></p></details>\n{stored_block}'
+    )
+
+
 def render_survey(manifest_path: Path) -> str:
     """Render a manifest and its local results as one portable HTML document."""
     manifest = _read_object(manifest_path)
@@ -57,6 +96,8 @@ def render_survey(manifest_path: Path) -> str:
         case["source_bytes"] = artifact.source.byte_size
         case["ratio"] = artifact.source.byte_size / len(artifact.to_bytes())
         case["prompt_text"] = prompt
+        case["artifact_json"] = json.dumps(artifact.to_dict(), indent=2, ensure_ascii=False)
+        case["stored_hexdump"] = _hexdump(stored_artifact)
         baseline_result_path = case.get("baseline_result")
         if baseline_result_path is not None:
             if not isinstance(baseline_result_path, str) or not baseline_result_path:
@@ -214,6 +255,7 @@ def _render_case(case: dict[str, Any]) -> str:
     {_metric("Palette distance", _number(metrics, "palette_distance"), True)}
   </div>
 {delta_line}{finding_line}  <p class="compression">{plain_ratio}{stored_ratio}</p>
+{_artifact_blocks(case, html.escape(_string(case, "artifact"), quote=True))}
   <details><summary>Prompt and machine-readable result</summary><pre>{html.escape(str(case["prompt_text"]))}</pre><p><a href="{prompt}">Prompt</a> · <a href="{result}">Evaluation JSON</a>{report_link}</p></details>
   <section class="questions" data-case="{case_id}">
     <h3>Your assessment</h3>
@@ -290,7 +332,7 @@ def _page(**values: Any) -> str:
     return """<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{title}</title><style>
-:root{{--ink:#17202a;--muted:#667085;--paper:#f6f4ef;--card:#fff;--navy:#102a43;--blue:#2878b5;--mint:#32a071;--line:#ddd8ce}}*{{box-sizing:border-box}}body{{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 ui-sans-serif,system-ui,sans-serif}}header{{background:var(--navy);color:white;padding:64px max(24px,calc((100% - 1180px)/2)) 54px}}header p{{max-width:860px;color:#d9e7f2;font-size:1.08rem}}h1{{font-size:clamp(2.4rem,6vw,5rem);line-height:.98;margin:.2em 0}}main{{max-width:1180px;margin:auto;padding:36px 24px 72px}}.technology{{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:stretch;margin:0 0 24px}}.technology article{{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}}.technology strong{{display:block;font-size:1.12rem;margin:.2em 0}}.technology p{{margin:.35em 0 0;color:var(--muted)}}.technology .arrow{{display:grid;place-items:center;color:var(--blue);font-weight:850}}.boundary{{grid-column:1/-1;background:#eaf3f9;border-left:5px solid var(--blue);border-radius:0 10px 10px 0;padding:12px 16px;margin:0}}.summary{{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:-65px;margin-bottom:36px}}.summary div{{background:var(--card);padding:18px;border-radius:14px;box-shadow:0 8px 25px #102a4315}}.summary span,.eyebrow{{display:block;color:var(--muted);font-size:.73rem;font-weight:750;letter-spacing:.08em;text-transform:uppercase}}.summary strong{{font-size:1.65rem}}.finding{{border-left:5px solid var(--blue);padding:14px 20px;background:#eaf3f9;border-radius:0 10px 10px 0;margin:0 0 16px}}.comparison,.case-finding{{padding:14px 20px;background:#fff7d6;border-radius:10px;margin:0 0 24px}}.case{{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;margin:24px 0;box-shadow:0 12px 35px #243b5310}}.case-head{{display:flex;justify-content:space-between;gap:20px;align-items:start}}h2{{margin:.15em 0 .7em;font-size:1.7rem}}.status{{background:#dff5e9;color:#17663f;border-radius:999px;padding:6px 12px;font-weight:800;font-size:.78rem}}.status.fail,.status.rejected{{background:#fee2e2;color:#991b1b}}.status.incomplete{{background:#fff7d6;color:#854d0e}}.pair{{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}}figure{{margin:0}}.image-frame{{background:#e8e6e0;aspect-ratio:4/3;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center}}img{{width:100%;height:100%;object-fit:contain}}figcaption{{font-weight:750;padding:7px 2px}}.metrics{{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}}.metric{{font-size:.82rem}}.metric strong{{float:right}}.bar{{height:7px;background:#e8e9eb;border-radius:9px;clear:both;overflow:hidden;margin-top:6px}}.bar i{{display:block;height:100%;background:var(--mint)}}.compression,.delta{{color:var(--muted)}}details{{border-top:1px solid var(--line);padding-top:13px}}summary{{cursor:pointer;font-weight:700}}pre{{white-space:pre-wrap;background:#101b26;color:#e7edf2;padding:16px;border-radius:10px;max-height:340px;overflow:auto}}a{{color:#176b9c}}.questions{{margin-top:20px;background:#f8fafb;border-radius:14px;padding:18px}}h3{{margin-top:0}}fieldset{{border:0;padding:0;margin:15px 0}}legend{{font-weight:650}}.scale{{display:flex;gap:7px;margin-top:7px}}.scale input{{position:absolute;opacity:0}}.scale span{{display:grid;place-items:center;width:38px;height:34px;border:1px solid #b9c2ca;border-radius:8px;cursor:pointer;background:white}}.scale input:checked+span{{background:var(--blue);color:white;border-color:var(--blue)}}small{{color:var(--muted)}}.comment{{display:grid;gap:6px;font-weight:650}}textarea{{font:inherit;padding:9px;border:1px solid #b9c2ca;border-radius:8px}}.credit{{font-size:.78rem;color:var(--muted);margin-bottom:0}}.actions{{position:sticky;bottom:12px;display:flex;gap:10px;justify-content:center;margin-top:30px}}button{{border:0;border-radius:999px;padding:12px 20px;font-weight:750;cursor:pointer;background:var(--navy);color:white}}button.secondary{{background:white;color:var(--navy);border:1px solid var(--line)}}footer{{color:var(--muted);font-size:.85rem;margin-top:36px}}@media(max-width:800px){{.summary{{grid-template-columns:repeat(2,1fr);margin-top:-45px}}.technology{{grid-template-columns:1fr}}.technology .arrow{{transform:rotate(90deg)}}.pair,.metrics{{grid-template-columns:1fr}}header{{padding-top:42px}}}}
+:root{{--ink:#17202a;--muted:#667085;--paper:#f6f4ef;--card:#fff;--navy:#102a43;--blue:#2878b5;--mint:#32a071;--line:#ddd8ce}}*{{box-sizing:border-box}}body{{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 ui-sans-serif,system-ui,sans-serif}}header{{background:var(--navy);color:white;padding:64px max(24px,calc((100% - 1180px)/2)) 54px}}header p{{max-width:860px;color:#d9e7f2;font-size:1.08rem}}h1{{font-size:clamp(2.4rem,6vw,5rem);line-height:.98;margin:.2em 0}}main{{max-width:1180px;margin:auto;padding:36px 24px 72px}}.technology{{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:stretch;margin:0 0 24px}}.technology article{{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}}.technology strong{{display:block;font-size:1.12rem;margin:.2em 0}}.technology p{{margin:.35em 0 0;color:var(--muted)}}.technology .arrow{{display:grid;place-items:center;color:var(--blue);font-weight:850}}.boundary{{grid-column:1/-1;background:#eaf3f9;border-left:5px solid var(--blue);border-radius:0 10px 10px 0;padding:12px 16px;margin:0}}.summary{{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:-65px;margin-bottom:36px}}.summary div{{background:var(--card);padding:18px;border-radius:14px;box-shadow:0 8px 25px #102a4315}}.summary span,.eyebrow{{display:block;color:var(--muted);font-size:.73rem;font-weight:750;letter-spacing:.08em;text-transform:uppercase}}.summary strong{{font-size:1.65rem}}.finding{{border-left:5px solid var(--blue);padding:14px 20px;background:#eaf3f9;border-radius:0 10px 10px 0;margin:0 0 16px}}.comparison,.case-finding{{padding:14px 20px;background:#fff7d6;border-radius:10px;margin:0 0 24px}}.case{{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;margin:24px 0;box-shadow:0 12px 35px #243b5310}}.case-head{{display:flex;justify-content:space-between;gap:20px;align-items:start}}h2{{margin:.15em 0 .7em;font-size:1.7rem}}.status{{background:#dff5e9;color:#17663f;border-radius:999px;padding:6px 12px;font-weight:800;font-size:.78rem}}.status.fail,.status.rejected{{background:#fee2e2;color:#991b1b}}.status.incomplete{{background:#fff7d6;color:#854d0e}}.pair{{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}}figure{{margin:0}}.image-frame{{background:#e8e6e0;aspect-ratio:4/3;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center}}img{{width:100%;height:100%;object-fit:contain}}figcaption{{font-weight:750;padding:7px 2px}}.metrics{{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}}.metric{{font-size:.82rem}}.metric strong{{float:right}}.bar{{height:7px;background:#e8e9eb;border-radius:9px;clear:both;overflow:hidden;margin-top:6px}}.bar i{{display:block;height:100%;background:var(--mint)}}.compression,.delta{{color:var(--muted)}}details{{border-top:1px solid var(--line);padding-top:13px}}summary{{cursor:pointer;font-weight:700}}pre.hex{{white-space:pre;font-size:.78rem}}pre{{white-space:pre-wrap;background:#101b26;color:#e7edf2;padding:16px;border-radius:10px;max-height:340px;overflow:auto}}a{{color:#176b9c}}.questions{{margin-top:20px;background:#f8fafb;border-radius:14px;padding:18px}}h3{{margin-top:0}}fieldset{{border:0;padding:0;margin:15px 0}}legend{{font-weight:650}}.scale{{display:flex;gap:7px;margin-top:7px}}.scale input{{position:absolute;opacity:0}}.scale span{{display:grid;place-items:center;width:38px;height:34px;border:1px solid #b9c2ca;border-radius:8px;cursor:pointer;background:white}}.scale input:checked+span{{background:var(--blue);color:white;border-color:var(--blue)}}small{{color:var(--muted)}}.comment{{display:grid;gap:6px;font-weight:650}}textarea{{font:inherit;padding:9px;border:1px solid #b9c2ca;border-radius:8px}}.credit{{font-size:.78rem;color:var(--muted);margin-bottom:0}}.actions{{position:sticky;bottom:12px;display:flex;gap:10px;justify-content:center;margin-top:30px}}button{{border:0;border-radius:999px;padding:12px 20px;font-weight:750;cursor:pointer;background:var(--navy);color:white}}button.secondary{{background:white;color:var(--navy);border:1px solid var(--line)}}footer{{color:var(--muted);font-size:.85rem;margin-top:36px}}@media(max-width:800px){{.summary{{grid-template-columns:repeat(2,1fr);margin-top:-45px}}.technology{{grid-template-columns:1fr}}.technology .arrow{{transform:rotate(90deg)}}.pair,.metrics{{grid-template-columns:1fr}}header{{padding-top:42px}}}}
 </style></head><body><header><span class="eyebrow">EXPLORATORY BENCHMARK · {date}</span><h1>{title}</h1><p>Can a compact semantic description preserve what matters in a photograph? {count} source images were encoded with <strong>{encoding_name}</strong> and the <code>{profile}</code> profile, then reconstructed from text with <strong>{reconstruction_name}</strong>.{provenance}</p></header><main>
 <section class="summary"><div><span>Cases marked pass</span><strong>{pass_count}/{count}</strong></div><div><span>Mean visual proxy</span><strong>{visual_mean:.3f}</strong></div><div><span>Mean layout</span><strong>{layout_mean:.3f}</strong></div><div><span>Mean palette distance</span><strong>{palette_mean:.3f}</strong></div><div><span>Mean dHash</span><strong>{dhash_mean:.3f}</strong></div></section>
 <section class="technology" aria-label="Technology used"><article><span class="eyebrow">Compression · semantic encoding</span><strong>{encoding_name}</strong><p>{encoding_detail}</p></article><div class="arrow" aria-hidden="true">TEXT ONLY →</div><article><span class="eyebrow">Reconstruction · not decompression</span><strong>{reconstruction_name}</strong><p>{reconstruction_detail}</p></article><p class="boundary"><strong>Model boundary:</strong> the image generator received the rendered text prompt only. It never received the source image or source pixels.</p></section>
