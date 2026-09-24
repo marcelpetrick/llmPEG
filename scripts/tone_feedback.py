@@ -26,10 +26,11 @@ from typing import Any
 from PIL import Image
 
 from llmpeg import __version__
-from llmpeg.artifact import Artifact, Tone
-from llmpeg.encoder import MONOCHROME_SATURATION, measure_tone, render_generation_prompt
+from llmpeg.artifact import Artifact
+from llmpeg.encoder import measure_tone, render_generation_prompt
 from llmpeg.evaluation import evaluate_with_artifact
 from llmpeg.generators import DEFAULT_COMFYUI_HOST, generate_comfyui
+from llmpeg.grading import FEEDBACK_MARGIN, FEEDBACK_TERMS, feedback_negative, match_tone
 
 REPO = Path(__file__).resolve().parent.parent
 CATS = ("cat-monochrome", "cat-on-keyboard", "cat-on-grass")
@@ -47,61 +48,6 @@ HOLDOUT = (
 )
 SEEDS = (42, 7, 1234)
 RESOLUTION = 512
-# An error inside these margins (0-255 scale) is left alone.
-MARGIN = {"luminance": 12, "contrast": 8, "saturation": 12, "warmth": 12}
-# Negative terms for a render that is too high (first) or too low (second) on each measure.
-FEEDBACK = {
-    "luminance": ("overexposed, too bright", "dark, underexposed, dim"),
-    "contrast": ("harsh contrast, deep black shadows", "flat, hazy, low contrast"),
-    "saturation": ("vivid colors, saturated colors", "dull colors, desaturated, grey, washed out"),
-    "warmth": ("warm color cast, orange tint, yellow tint", "cool color cast, blue tint"),
-}
-MATCH_ROUNDS = 6
-
-
-def feedback_negative(target: Tone, rendered: Tone) -> str:
-    """Negative terms that push each measure of the render back toward the recorded tone."""
-    terms: list[str] = []
-    if target.saturation < MONOCHROME_SATURATION and rendered.saturation >= MONOCHROME_SATURATION:
-        terms.append("color, colour, tint, sepia")
-    for name, (too_high, too_low) in FEEDBACK.items():
-        error = getattr(rendered, name) - getattr(target, name)
-        if name in {"saturation", "warmth"} and target.saturation < MONOCHROME_SATURATION:
-            continue
-        if error > MARGIN[name]:
-            terms.append(too_high)
-        elif error < -MARGIN[name]:
-            terms.append(too_low)
-    return ", ".join(terms)
-
-
-def match_tone(image: Image.Image, target: Tone) -> Image.Image:
-    """Regrade an image toward a recorded tone with global, deterministic adjustments.
-
-    Each round measures the image, then applies one affine map to all three channels (which moves
-    mean luminance and its spread exactly, before clipping), scales HSV saturation, and shifts red
-    against blue for warmth. Clipping makes one round inexact, so it repeats a few times.
-    """
-    graded = image.convert("RGB")
-    for _ in range(MATCH_ROUNDS):
-        now = measure_tone(graded)
-        gain = target.contrast / max(now.contrast, 1)
-        offset = target.luminance - now.luminance * gain
-        graded = graded.point(lambda value, g=gain, o=offset: round(value * g + o))
-        if target.saturation < MONOCHROME_SATURATION:
-            graded = graded.convert("L").convert("RGB")
-        else:
-            now = measure_tone(graded)
-            scale = target.saturation / max(now.saturation, 1)
-            hue, sat, val = graded.convert("HSV").split()
-            sat = sat.point(lambda value, k=scale: round(value * k))
-            graded = Image.merge("HSV", (hue, sat, val)).convert("RGB")
-            shift = (target.warmth - measure_tone(graded).warmth) / 2
-            red, green, blue = graded.split()
-            red = red.point(lambda value, d=shift: round(value + d))
-            blue = blue.point(lambda value, d=shift: round(value - d))
-            graded = Image.merge("RGB", (red, green, blue))
-    return graded
 
 
 def _artifact(case: str) -> Artifact:
@@ -169,8 +115,8 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "llmpeg_version": __version__,
         "generator": "local ComfyUI/Qwen-Image-2.1",
         "resolution": RESOLUTION,
-        "margins": MARGIN,
-        "feedback_terms": FEEDBACK,
+        "margins": FEEDBACK_MARGIN,
+        "feedback_terms": FEEDBACK_TERMS,
         "rows": rows,
     }
     (output_dir / "measurements.json").write_text(

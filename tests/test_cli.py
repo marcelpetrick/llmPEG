@@ -1,14 +1,17 @@
 from __future__ import annotations
 
+import io
 import json
 from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
 
 import pytest
+from PIL import Image
 
-from llmpeg.artifact import FORMAT_VERSION, Artifact, SourceInfo, source_digest
+from llmpeg.artifact import FORMAT_VERSION, Artifact, SourceInfo, Tone, source_digest
 from llmpeg.cli import artifact_path_for, existing_artifact_path_for, generated_path_for, main
+from llmpeg.encoder import measure_tone
 from llmpeg.generators import GeneratorUnavailable
 
 
@@ -319,3 +322,86 @@ def test_generate_cli_checks_overwrite_before_generation(
     generate.assert_not_called()
     assert output.read_bytes() == b"keep"
     assert "refusing to overwrite" in capsys.readouterr().err
+
+
+def _png(colour: tuple[int, int, int]) -> bytes:
+    image = Image.new("RGB", (32, 32), colour)
+    for x in range(16):
+        for y in range(32):
+            image.putpixel((x, y), (0, 0, 0))
+    stream = io.BytesIO()
+    image.save(stream, format="PNG")
+    return stream.getvalue()
+
+
+TONED = Tone(luminance=90, contrast=40, saturation=0, warmth=0)
+
+
+def test_generate_cli_tone_loop_renders_again_with_feedback_negatives(
+    artifact: Artifact, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    artifact_path = tmp_path / "photo.jpg.llmpeg.json"
+    replace(artifact, tone=TONED).write(artifact_path)
+    output = tmp_path / "generated.png"
+    renders = [_png((250, 30, 30)), b"second"]
+    with patch("llmpeg.cli.generate_comfyui", side_effect=renders) as generate:
+        assert (
+            main(["generate", str(artifact_path), "-o", str(output), "--tone-correction", "loop"])
+            == 0
+        )
+
+    assert output.read_bytes() == b"second"
+    assert generate.call_count == 2
+    assert "extra_negative" not in generate.call_args_list[0].kwargs
+    assert "color, colour, tint, sepia" in generate.call_args_list[1].kwargs["extra_negative"]
+    assert "second render with negatives" in capsys.readouterr().out
+
+
+def test_generate_cli_tone_loop_keeps_a_render_inside_the_margins(
+    artifact: Artifact, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    first = _png((180, 180, 180))
+    with Image.open(io.BytesIO(first)) as image:
+        tone = measure_tone(image)
+    artifact_path = tmp_path / "photo.jpg.llmpeg.json"
+    replace(artifact, tone=tone).write(artifact_path)
+    output = tmp_path / "generated.png"
+    with patch("llmpeg.cli.generate_comfyui", return_value=first) as generate:
+        assert (
+            main(["generate", str(artifact_path), "-o", str(output), "--tone-correction", "loop"])
+            == 0
+        )
+
+    assert generate.call_count == 1
+    assert output.read_bytes() == first
+    assert "already within tone margins" in capsys.readouterr().out
+
+
+def test_generate_cli_tone_match_regrades_without_a_second_render(
+    artifact: Artifact, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    artifact_path = tmp_path / "photo.jpg.llmpeg.json"
+    replace(artifact, tone=TONED).write(artifact_path)
+    output = tmp_path / "generated.png"
+    with patch("llmpeg.cli.generate_comfyui", return_value=_png((250, 30, 30))) as generate:
+        assert (
+            main(["generate", str(artifact_path), "-o", str(output), "--tone-correction", "match"])
+            == 0
+        )
+
+    assert generate.call_count == 1
+    with Image.open(output) as graded:
+        assert measure_tone(graded).saturation == 0
+    assert "tone matched as a post-process" in capsys.readouterr().out
+
+
+def test_generate_cli_tone_correction_needs_a_recorded_tone(
+    artifact: Artifact, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    artifact_path = tmp_path / "photo.jpg.llmpeg.json"
+    replace(artifact, tone=None).write(artifact_path)
+    with patch("llmpeg.cli.generate_comfyui") as generate:
+        assert main(["generate", str(artifact_path), "--tone-correction", "loop"]) == 2
+
+    generate.assert_not_called()
+    assert "needs a format 1.1 artifact with tone" in capsys.readouterr().err

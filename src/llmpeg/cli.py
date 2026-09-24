@@ -3,16 +3,20 @@
 from __future__ import annotations
 
 import argparse
+import io
 import os
 import sys
 from collections.abc import Sequence
 from pathlib import Path
+
+from PIL import Image
 
 from llmpeg.artifact import Artifact, ArtifactError, FidelityProfile, envelope_of
 from llmpeg.encoder import (
     DEFAULT_MAX_IMAGE_BYTES,
     DEFAULT_MAX_IMAGE_PIXELS,
     encode_image,
+    measure_tone,
     render_generation_prompt,
 )
 from llmpeg.evaluation import evaluate_with_artifact
@@ -23,6 +27,7 @@ from llmpeg.generators import (
     DEFAULT_QWEN_SEED,
     generate_comfyui,
 )
+from llmpeg.grading import feedback_negative, match_tone
 from llmpeg.providers import (
     DEFAULT_OLLAMA_VISION_HOST,
     DEFAULT_VISION_MODEL,
@@ -98,6 +103,16 @@ def build_parser() -> argparse.ArgumentParser:
     generate.add_argument("--resolution", type=int, default=DEFAULT_QWEN_RESOLUTION)
     generate.add_argument("--seed", type=int, default=DEFAULT_QWEN_SEED)
     generate.add_argument("--timeout", type=float, default=DEFAULT_GENERATION_TIMEOUT)
+    generate.add_argument(
+        "--tone-correction",
+        choices=("none", "loop", "match"),
+        default="none",
+        help=(
+            "steer the render toward the artifact's recorded tone: 'loop' renders again with "
+            "negative terms chosen from the first render's measured error; 'match' regrades the "
+            "render as a post-process (never reads the source)"
+        ),
+    )
     generate.add_argument("--overwrite", action="store_true")
 
     inspect = subparsers.add_parser("inspect", help="show artifact sizes and provenance")
@@ -170,6 +185,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             artifact = Artifact.read(args.artifact)
             output = args.output or generated_path_for(args.artifact)
             _check_overwrite(output, overwrite=args.overwrite)
+            if args.tone_correction != "none" and artifact.tone is None:
+                raise ArtifactError("tone correction needs a format 1.1 artifact with tone")
             prompt = render_generation_prompt(artifact)
             generated = generate_comfyui(
                 prompt,
@@ -178,8 +195,31 @@ def main(argv: Sequence[str] | None = None) -> int:
                 args.comfyui_host,
                 args.timeout,
             )
+            note = ""
+            if artifact.tone is not None and args.tone_correction != "none":
+                with Image.open(io.BytesIO(generated)) as first:
+                    if args.tone_correction == "match":
+                        stream = io.BytesIO()
+                        match_tone(first, artifact.tone).save(stream, format="PNG")
+                    else:
+                        first_tone = measure_tone(first)
+                if args.tone_correction == "match":
+                    generated = stream.getvalue()
+                    note = "; tone matched as a post-process"
+                elif extra := feedback_negative(artifact.tone, first_tone):
+                    generated = generate_comfyui(
+                        prompt,
+                        args.resolution,
+                        args.seed,
+                        args.comfyui_host,
+                        args.timeout,
+                        extra_negative=extra,
+                    )
+                    note = f"; second render with negatives: {extra}"
+                else:
+                    note = "; first render already within tone margins"
             _write_bytes(output, generated, overwrite=args.overwrite)
-            print(f"wrote {output} (generator: local ComfyUI/Qwen-Image-2.1)")
+            print(f"wrote {output} (generator: local ComfyUI/Qwen-Image-2.1{note})")
         elif args.command == "inspect":
             artifact, stored = Artifact.read_stored(args.artifact)
             # Ratios are charged on the bytes actually on disk, envelope included, never on a
