@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -366,5 +367,6 @@ def test_pages_workflow_publishes_one_review_page() -> None:
     assert workflow.index("rm _site/*.html") < workflow.index(
         "cp survey/qwen.html _site/index.html"
     )
-    assert workflow.count("_site/") == workflow.count("cp -R survey/. _site/") + 2
+    destinations = re.findall(r"^\s*cp (?:-R )?\S+ (_site/\S*)$", workflow, re.M)
+    assert destinations == ["_site/", "_site/index.html"]
     assert "balanced.html" not in workflow
