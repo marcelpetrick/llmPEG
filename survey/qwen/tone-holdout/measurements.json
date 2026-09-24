@@ -256,9 +256,297 @@
         "warmth": 18
       },
       "variant": "rule-negatives"
+    },
+    {
+      "case": "kitchen-table",
+      "extra_negative": "professional color grading, studio lighting, vivid colors, saturated colors, dark, underexposed",
+      "image": "kitchen-table-rule-negatives-snapshot.png",
+      "reconstruction_tone": {
+        "contrast": 67,
+        "luminance": 81,
+        "saturation": 109,
+        "warmth": 23
+      },
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 100,
+        "saturation": 46,
+        "warmth": 18
+      },
+      "variant": "rule-negatives-snapshot"
+    },
+    {
+      "case": "living-room",
+      "extra_negative": "",
+      "image": "living-room-control.png",
+      "reconstruction_tone": {
+        "contrast": 48,
+        "luminance": 215,
+        "saturation": 7,
+        "warmth": 4
+      },
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 192,
+        "saturation": 17,
+        "warmth": 3
+      },
+      "variant": "control"
+    },
+    {
+      "case": "living-room",
+      "extra_negative": "professional color grading, studio lighting, vivid colors, saturated colors, dark, underexposed, warm color cast, orange tint",
+      "image": "living-room-rule-negatives.png",
+      "reconstruction_tone": {
+        "contrast": 46,
+        "luminance": 218,
+        "saturation": 4,
+        "warmth": 2
+      },
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 192,
+        "saturation": 17,
+        "warmth": 3
+      },
+      "variant": "rule-negatives"
+    },
+    {
+      "case": "living-room",
+      "extra_negative": "professional color grading, studio lighting, vivid colors, saturated colors, dark, underexposed, warm color cast, orange tint",
+      "image": "living-room-rule-negatives-snapshot.png",
+      "reconstruction_tone": {
+        "contrast": 47,
+        "luminance": 211,
+        "saturation": 5,
+        "warmth": 2
+      },
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 192,
+        "saturation": 17,
+        "warmth": 3
+      },
+      "variant": "rule-negatives-snapshot"
+    },
+    {
+      "case": "mountain-hikers",
+      "extra_negative": "",
+      "image": "mountain-hikers-control.png",
+      "reconstruction_tone": {
+        "contrast": 79,
+        "luminance": 145,
+        "saturation": 42,
+        "warmth": -5
+      },
+      "source_tone": {
+        "contrast": 74,
+        "luminance": 138,
+        "saturation": 64,
+        "warmth": 3
+      },
+      "variant": "control"
+    },
+    {
+      "case": "mountain-hikers",
+      "extra_negative": "professional color grading, studio lighting, vivid colors, saturated colors, dark, underexposed, warm color cast, orange tint",
+      "image": "mountain-hikers-rule-negatives.png",
+      "reconstruction_tone": {
+        "contrast": 76,
+        "luminance": 158,
+        "saturation": 37,
+        "warmth": -10
+      },
+      "source_tone": {
+        "contrast": 74,
+        "luminance": 138,
+        "saturation": 64,
+        "warmth": 3
+      },
+      "variant": "rule-negatives"
+    },
+    {
+      "case": "mountain-hikers",
+      "extra_negative": "professional color grading, studio lighting, vivid colors, saturated colors, dark, underexposed, warm color cast, orange tint",
+      "image": "mountain-hikers-rule-negatives-snapshot.png",
+      "reconstruction_tone": {
+        "contrast": 74,
+        "luminance": 163,
+        "saturation": 44,
+        "warmth": -8
+      },
+      "source_tone": {
+        "contrast": 74,
+        "luminance": 138,
+        "saturation": 64,
+        "warmth": 3
+      },
+      "variant": "rule-negatives-snapshot"
+    },
+    {
+      "case": "street-bicycles",
+      "extra_negative": "",
+      "image": "street-bicycles-control.png",
+      "reconstruction_tone": {
+        "contrast": 69,
+        "luminance": 77,
+        "saturation": 92,
+        "warmth": 19
+      },
+      "source_tone": {
+        "contrast": 68,
+        "luminance": 116,
+        "saturation": 77,
+        "warmth": 23
+      },
+      "variant": "control"
+    },
+    {
+      "case": "street-bicycles",
+      "extra_negative": "professional color grading, studio lighting, vivid colors, saturated colors, dark, underexposed",
+      "image": "street-bicycles-rule-negatives.png",
+      "reconstruction_tone": {
+        "contrast": 69,
+        "luminance": 86,
+        "saturation": 85,
+        "warmth": 17
+      },
+      "source_tone": {
+        "contrast": 68,
+        "luminance": 116,
+        "saturation": 77,
+        "warmth": 23
+      },
+      "variant": "rule-negatives"
+    },
+    {
+      "case": "street-bicycles",
+      "extra_negative": "professional color grading, studio lighting, vivid colors, saturated colors, dark, underexposed",
+      "image": "street-bicycles-rule-negatives-snapshot.png",
+      "reconstruction_tone": {
+        "contrast": 73,
+        "luminance": 89,
+        "saturation": 84,
+        "warmth": 16
+      },
+      "source_tone": {
+        "contrast": 68,
+        "luminance": 116,
+        "saturation": 77,
+        "warmth": 23
+      },
+      "variant": "rule-negatives-snapshot"
+    },
+    {
+      "case": "train-platform",
+      "extra_negative": "",
+      "image": "train-platform-control.png",
+      "reconstruction_tone": {
+        "contrast": 56,
+        "luminance": 34,
+        "saturation": 47,
+        "warmth": 2
+      },
+      "source_tone": {
+        "contrast": 67,
+        "luminance": 56,
+        "saturation": 46,
+        "warmth": 7
+      },
+      "variant": "control"
+    },
+    {
+      "case": "train-platform",
+      "extra_negative": "professional color grading, studio lighting, vivid colors, saturated colors, warm color cast, orange tint",
+      "image": "train-platform-rule-negatives.png",
+      "reconstruction_tone": {
+        "contrast": 54,
+        "luminance": 33,
+        "saturation": 56,
+        "warmth": -1
+      },
+      "source_tone": {
+        "contrast": 67,
+        "luminance": 56,
+        "saturation": 46,
+        "warmth": 7
+      },
+      "variant": "rule-negatives"
+    },
+    {
+      "case": "train-platform",
+      "extra_negative": "professional color grading, studio lighting, vivid colors, saturated colors, warm color cast, orange tint",
+      "image": "train-platform-rule-negatives-snapshot.png",
+      "reconstruction_tone": {
+        "contrast": 60,
+        "luminance": 40,
+        "saturation": 61,
+        "warmth": -1
+      },
+      "source_tone": {
+        "contrast": 67,
+        "luminance": 56,
+        "saturation": 46,
+        "warmth": 7
+      },
+      "variant": "rule-negatives-snapshot"
+    },
+    {
+      "case": "workspace-books",
+      "extra_negative": "",
+      "image": "workspace-books-control.png",
+      "reconstruction_tone": {
+        "contrast": 54,
+        "luminance": 190,
+        "saturation": 49,
+        "warmth": 25
+      },
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 168,
+        "saturation": 77,
+        "warmth": 47
+      },
+      "variant": "control"
+    },
+    {
+      "case": "workspace-books",
+      "extra_negative": "professional color grading, studio lighting, vivid colors, saturated colors, dark, underexposed",
+      "image": "workspace-books-rule-negatives.png",
+      "reconstruction_tone": {
+        "contrast": 49,
+        "luminance": 198,
+        "saturation": 42,
+        "warmth": 25
+      },
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 168,
+        "saturation": 77,
+        "warmth": 47
+      },
+      "variant": "rule-negatives"
+    },
+    {
+      "case": "workspace-books",
+      "extra_negative": "professional color grading, studio lighting, vivid colors, saturated colors, dark, underexposed",
+      "image": "workspace-books-rule-negatives-snapshot.png",
+      "reconstruction_tone": {
+        "contrast": 50,
+        "luminance": 192,
+        "saturation": 46,
+        "warmth": 25
+      },
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 168,
+        "saturation": 77,
+        "warmth": 47
+      },
+      "variant": "rule-negatives-snapshot"
     }
   ],
   "seed": 42,
   "snapshot_phrase": "Casual unedited snapshot in soft natural light, understated and unpolished.",
-  "status": "stopped by request after 14 of 30 renders; complete sources: amsterdam-market, astronaut-crew, dogs-beach, food-table"
+  "status": "complete: 30 of 30 renders. Rows for amsterdam-market, astronaut-crew, dogs-beach and food-table come from the first run, which was stopped and whose measurements were rebuilt from its console log; the other six sources come from the resumed run's own measurements.json."
 }
