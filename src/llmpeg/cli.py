@@ -6,12 +6,14 @@ import argparse
 import io
 import os
 import sys
+import time
 from collections.abc import Sequence
 from pathlib import Path
 
 from PIL import Image
+from PIL.PngImagePlugin import PngInfo
 
-from llmpeg.artifact import Artifact, ArtifactError, FidelityProfile, envelope_of
+from llmpeg.artifact import Artifact, ArtifactError, FidelityProfile, Tone, envelope_of
 from llmpeg.encoder import (
     DEFAULT_MAX_IMAGE_BYTES,
     DEFAULT_MAX_IMAGE_PIXELS,
@@ -140,6 +142,18 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _regraded_png(image: Image.Image, tone: Tone) -> bytes:
+    """Regrade a render and keep its PNG text chunks, adding one that records the regrade."""
+    info = PngInfo()
+    for key, value in image.info.items():
+        if isinstance(key, str) and isinstance(value, str):
+            info.add_text(key, value)
+    info.add_text("llmpeg-tone-correction", "match: regraded toward the artifact's recorded tone")
+    stream = io.BytesIO()
+    match_tone(image, tone).save(stream, format="PNG", pnginfo=info)
+    return stream.getvalue()
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     """Run the CLI and return a process exit code."""
     args = build_parser().parse_args(argv)
@@ -188,6 +202,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             if args.tone_correction != "none" and artifact.tone is None:
                 raise ArtifactError("tone correction needs a format 1.1 artifact with tone")
             prompt = render_generation_prompt(artifact)
+            # One deadline covers every render, so --tone-correction loop keeps --timeout.
+            deadline = time.monotonic() + args.timeout
             generated = generate_comfyui(
                 prompt,
                 args.resolution,
@@ -199,25 +215,28 @@ def main(argv: Sequence[str] | None = None) -> int:
             if artifact.tone is not None and args.tone_correction != "none":
                 with Image.open(io.BytesIO(generated)) as first:
                     if args.tone_correction == "match":
-                        stream = io.BytesIO()
-                        match_tone(first, artifact.tone).save(stream, format="PNG")
+                        generated = _regraded_png(first, artifact.tone)
+                        note = "; tone matched as a post-process"
                     else:
                         first_tone = measure_tone(first)
-                if args.tone_correction == "match":
-                    generated = stream.getvalue()
-                    note = "; tone matched as a post-process"
-                elif extra := feedback_negative(artifact.tone, first_tone):
-                    generated = generate_comfyui(
-                        prompt,
-                        args.resolution,
-                        args.seed,
-                        args.comfyui_host,
-                        args.timeout,
-                        extra_negative=extra,
-                    )
-                    note = f"; second render with negatives: {extra}"
-                else:
-                    note = "; first render already within tone margins"
+                if args.tone_correction == "loop":
+                    if extra := feedback_negative(artifact.tone, first_tone):
+                        remaining = deadline - time.monotonic()
+                        if remaining <= 0:
+                            raise ArtifactError(
+                                "--timeout ran out before the tone-correction render"
+                            )
+                        generated = generate_comfyui(
+                            prompt,
+                            args.resolution,
+                            args.seed,
+                            args.comfyui_host,
+                            remaining,
+                            extra_negative=extra,
+                        )
+                        note = f"; second render with negatives: {extra}"
+                    else:
+                        note = "; first render already within tone margins"
             _write_bytes(output, generated, overwrite=args.overwrite)
             print(f"wrote {output} (generator: local ComfyUI/Qwen-Image-2.1{note})")
         elif args.command == "inspect":

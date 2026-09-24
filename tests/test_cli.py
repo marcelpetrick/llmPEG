@@ -8,6 +8,7 @@ from unittest.mock import patch
 
 import pytest
 from PIL import Image
+from PIL.PngImagePlugin import PngInfo
 
 from llmpeg.artifact import FORMAT_VERSION, Artifact, SourceInfo, Tone, source_digest
 from llmpeg.cli import artifact_path_for, existing_artifact_path_for, generated_path_for, main
@@ -324,13 +325,16 @@ def test_generate_cli_checks_overwrite_before_generation(
     assert "refusing to overwrite" in capsys.readouterr().err
 
 
-def _png(colour: tuple[int, int, int]) -> bytes:
+def _png(colour: tuple[int, int, int], text: dict[str, str] | None = None) -> bytes:
     image = Image.new("RGB", (32, 32), colour)
     for x in range(16):
         for y in range(32):
             image.putpixel((x, y), (0, 0, 0))
+    info = PngInfo()
+    for key, value in (text or {}).items():
+        info.add_text(key, value)
     stream = io.BytesIO()
-    image.save(stream, format="PNG")
+    image.save(stream, format="PNG", pnginfo=info)
     return stream.getvalue()
 
 
@@ -383,7 +387,8 @@ def test_generate_cli_tone_match_regrades_without_a_second_render(
     artifact_path = tmp_path / "photo.jpg.llmpeg.json"
     replace(artifact, tone=TONED).write(artifact_path)
     output = tmp_path / "generated.png"
-    with patch("llmpeg.cli.generate_comfyui", return_value=_png((250, 30, 30))) as generate:
+    first = _png((250, 30, 30), {"prompt": "{comfyui workflow}"})
+    with patch("llmpeg.cli.generate_comfyui", return_value=first) as generate:
         assert (
             main(["generate", str(artifact_path), "-o", str(output), "--tone-correction", "match"])
             == 0
@@ -392,6 +397,8 @@ def test_generate_cli_tone_match_regrades_without_a_second_render(
     assert generate.call_count == 1
     with Image.open(output) as graded:
         assert measure_tone(graded).saturation == 0
+        assert graded.info["prompt"] == "{comfyui workflow}"
+        assert graded.info["llmpeg-tone-correction"].startswith("match")
     assert "tone matched as a post-process" in capsys.readouterr().out
 
 
@@ -405,3 +412,66 @@ def test_generate_cli_tone_correction_needs_a_recorded_tone(
 
     generate.assert_not_called()
     assert "needs a format 1.1 artifact with tone" in capsys.readouterr().err
+
+
+def test_generate_cli_tone_loop_shares_one_deadline(
+    artifact: Artifact, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    artifact_path = tmp_path / "photo.jpg.llmpeg.json"
+    replace(artifact, tone=TONED).write(artifact_path)
+    clock = iter([100.0, 130.0])
+    renders = [_png((250, 30, 30)), b"second"]
+    with (
+        patch("llmpeg.cli.time.monotonic", side_effect=lambda: next(clock)),
+        patch("llmpeg.cli.generate_comfyui", side_effect=renders) as generate,
+    ):
+        assert (
+            main(
+                [
+                    "generate",
+                    str(artifact_path),
+                    "-o",
+                    str(tmp_path / "out.png"),
+                    "--timeout",
+                    "50",
+                    "--tone-correction",
+                    "loop",
+                ]
+            )
+            == 0
+        )
+
+    assert generate.call_args_list[0].args[4] == 50.0
+    assert generate.call_args_list[1].args[4] == 20.0
+
+
+def test_generate_cli_tone_loop_stops_when_the_deadline_has_passed(
+    artifact: Artifact, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    artifact_path = tmp_path / "photo.jpg.llmpeg.json"
+    replace(artifact, tone=TONED).write(artifact_path)
+    output = tmp_path / "out.png"
+    clock = iter([100.0, 151.0])
+    with (
+        patch("llmpeg.cli.time.monotonic", side_effect=lambda: next(clock)),
+        patch("llmpeg.cli.generate_comfyui", return_value=_png((250, 30, 30))) as generate,
+    ):
+        assert (
+            main(
+                [
+                    "generate",
+                    str(artifact_path),
+                    "-o",
+                    str(output),
+                    "--timeout",
+                    "50",
+                    "--tone-correction",
+                    "loop",
+                ]
+            )
+            == 2
+        )
+
+    assert generate.call_count == 1
+    assert not output.exists()
+    assert "--timeout ran out" in capsys.readouterr().err
