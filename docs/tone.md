@@ -1,5 +1,12 @@
 # Tone: why telling the generator "don't saturate" barely works
 
+> **Correction (2026-09-24).** Every *saturation* figure on this page is mean HSV saturation, and
+> that measure overstates colour in dark images: a near-black pixel with a faint tint counts as
+> strongly saturated. Checked against a perceptual colourfulness metric, the cats were **not**
+> clearly over-saturated, and the regrade (`match`) over-coloured one source. Luminance, contrast,
+> and warmth findings are unaffected. See [the correction](#correction-the-saturation-measure)
+> before quoting any colour result below.
+
 One human reviewer rated the first local Qwen-Image-2.1 reconstructions as "too saturated" (two
 cases, colour/lighting/style 3 of 5; see [`tone-review-plan.md`](tone-review-plan.md)). This
 page records what we tried and what the numbers say. Short version: **the positive prompt does
@@ -274,12 +281,53 @@ comes from the whole description being rewritten, which moves content and tone t
 seed of one re-encode cannot separate that from chance. **Not adopted**: the instruction is
 unchanged.
 
+## Correction: the saturation measure
+
+`measure_tone` records saturation as mean HSV saturation, `(max − min) / max` per pixel. The
+denominator is the pixel's brightness, so a dark pixel with a faint tint scores as strongly
+saturated even though it looks nearly black. Qwen's renders are often darker than their sources,
+so they *measure* more saturated than they look. `scripts/colourfulness_check.py` sets the
+recorded figure beside the Hasler–Süsstrunk colourfulness metric (Hasler and Süsstrunk, 2003),
+which works on opponent colour channels and does not divide by brightness. Seed 42, the seven
+review-page sources ([`colourfulness-check.json`](colourfulness-check.json)):
+
+| Source | HSV saturation: source → current | Colourfulness: source → current → loop → regraded | Near-black pixels, current |
+| --- | --- | --- | ---: |
+| `cat-monochrome` | 0 → 11 | 0.0 → 1.3 → 1.4 → 0.0 | 35.7% |
+| `cat-on-keyboard` | 48 → 88 | 32.2 → 30.6 → 22.0 → 26.6 | 2.8% |
+| `cat-on-grass` | 89 → 126 | 41.2 → 42.8 → 40.2 → 35.1 | 1.4% |
+| `amsterdam-market` | 60 → 141 | 43.4 → 60.5 → 62.4 → 40.7 | 34.0% |
+| `astronaut-crew` | 169 → 138 | 73.7 → 49.9 → 59.6 → **114.8** | 47.9% |
+| `dogs-beach` | 39 → 13 | 30.1 → 11.4 → 13.5 → 32.2 | 1.1% |
+| `food-table` | 70 → 157 | 37.5 → 38.0 → 36.1 → 34.4 | 42.9% |
+
+What changes:
+
+- **The cats were not clearly over-saturated.** By colourfulness the three current renders sit
+  within 2 of their sources (the keyboard 32.2 → 30.6, the grass 41.2 → 42.8). The reviewer's "too
+  saturated" is more likely the warm orange desk (warmth −5 → 40) and the darker, harder look.
+  That is a hypothesis, not a measurement.
+- **`food-table` was never over-saturated** (37.5 → 38.0), although HSV said 70 → 157: 42.9% of
+  its current render is near-black. The loop added "vivid colors, saturated colors" to its
+  negatives on a false reading.
+- **Two sources really differ in colour:** `amsterdam-market` is more colourful (43.4 → 60.5) and
+  `dogs-beach` far less (30.1 → 11.4). HSV saw the direction right for both.
+- **The regrade over-coloured `astronaut-crew`** (73.7 → 114.8). A dark background (27.2% near-black
+  pixels) lifts the source's HSV figure to 169, so matching it drove the render far past the
+  source's real colour. For `dogs-beach` the overall figure matches (32.2 against 30.1), but a
+  threefold saturation boost gives the near-grey sand and dogs a hue that was mostly noise.
+- **Still sound:** everything about luminance, contrast, and warmth, and the scene-not-seed
+  direction of the exposure miss. The loop's luminance gain (28.1 → 22.3) does not use saturation.
+
+The fix — recording colourfulness in the artifact (a format 1.2 field), steering the loop's colour
+terms by it, and regrading chroma rather than HSV saturation — is planned, not done
+([`plan.md`](plan.md#11-tone-work)).
+
 ## Status (2026-09-24)
 
-- `llmpeg generate --tone-correction loop|match` ships in 0.7.0 as an **opt-in**. The default is
-  unchanged: `llmpeg reconstruct` and the bundled workflow still produce the `control` renders.
-- `survey/qwen.html` (site index) shows the default pipeline, one reconstruction per cat.
-- `survey/qwen-tone.html` (site `tone.html`) sets the current pipeline beside `loop` and beside
-  `match` for seven sources at seed 42. It exists for a human rating: every number above measures
-  distance to four recorded statistics, and none says a correction *looks* closer.
+- `llmpeg generate --tone-correction loop|match` shipped in 0.7.0 as an **opt-in**; the default is
+  unchanged. Treat `match`'s colour as unreliable until the fix above lands.
+- `survey/qwen.html` (the site index) is the one review page: original, current pipeline, and
+  `loop`, for seven sources at seed 42. It exists for human ratings; nothing on this page says a
+  correction *looks* closer.
 - The remaining plan is in [`plan.md`](plan.md#11-tone-work).

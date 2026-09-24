@@ -1,0 +1,230 @@
+{
+  "method": "Hasler-Suesstrunk colourfulness vs mean HSV saturation, 256 px thumbnail",
+  "near_black_threshold": 40,
+  "rows": [
+    {
+      "case": "cat-monochrome",
+      "colourfulness": 0.0,
+      "hsv_saturation": 0.0,
+      "image": "survey/sources/cat-monochrome.jpg",
+      "near_black_percent": 2.6,
+      "variant": "source"
+    },
+    {
+      "case": "cat-monochrome",
+      "colourfulness": 1.3,
+      "hsv_saturation": 11.0,
+      "image": "survey/qwen/review/cat-monochrome.png",
+      "near_black_percent": 35.7,
+      "variant": "current"
+    },
+    {
+      "case": "cat-monochrome",
+      "colourfulness": 1.4,
+      "hsv_saturation": 10.1,
+      "image": "survey/qwen/tone-feedback/cat-monochrome-s42-loop.png",
+      "near_black_percent": 24.5,
+      "variant": "loop"
+    },
+    {
+      "case": "cat-monochrome",
+      "colourfulness": 0.0,
+      "hsv_saturation": 0.0,
+      "image": "survey/qwen/tone-feedback/cat-monochrome-s42-matched.png",
+      "near_black_percent": 0.0,
+      "variant": "regraded"
+    },
+    {
+      "case": "cat-on-keyboard",
+      "colourfulness": 32.2,
+      "hsv_saturation": 47.5,
+      "image": "survey/sources/cat-on-keyboard.jpg",
+      "near_black_percent": 1.3,
+      "variant": "source"
+    },
+    {
+      "case": "cat-on-keyboard",
+      "colourfulness": 30.6,
+      "hsv_saturation": 88.4,
+      "image": "survey/qwen/review/cat-on-keyboard.png",
+      "near_black_percent": 2.8,
+      "variant": "current"
+    },
+    {
+      "case": "cat-on-keyboard",
+      "colourfulness": 22.0,
+      "hsv_saturation": 57.7,
+      "image": "survey/qwen/tone-feedback/cat-on-keyboard-s42-loop.png",
+      "near_black_percent": 2.2,
+      "variant": "loop"
+    },
+    {
+      "case": "cat-on-keyboard",
+      "colourfulness": 26.6,
+      "hsv_saturation": 47.5,
+      "image": "survey/qwen/tone-feedback/cat-on-keyboard-s42-matched.png",
+      "near_black_percent": 0.0,
+      "variant": "regraded"
+    },
+    {
+      "case": "cat-on-grass",
+      "colourfulness": 41.2,
+      "hsv_saturation": 89.0,
+      "image": "survey/sources/cat-on-grass.jpg",
+      "near_black_percent": 0.0,
+      "variant": "source"
+    },
+    {
+      "case": "cat-on-grass",
+      "colourfulness": 42.8,
+      "hsv_saturation": 125.8,
+      "image": "survey/qwen/review/cat-on-grass.png",
+      "near_black_percent": 1.4,
+      "variant": "current"
+    },
+    {
+      "case": "cat-on-grass",
+      "colourfulness": 40.2,
+      "hsv_saturation": 107.0,
+      "image": "survey/qwen/tone-feedback/cat-on-grass-s42-loop.png",
+      "near_black_percent": 0.7,
+      "variant": "loop"
+    },
+    {
+      "case": "cat-on-grass",
+      "colourfulness": 35.1,
+      "hsv_saturation": 87.9,
+      "image": "survey/qwen/tone-feedback/cat-on-grass-s42-matched.png",
+      "near_black_percent": 0.0,
+      "variant": "regraded"
+    },
+    {
+      "case": "amsterdam-market",
+      "colourfulness": 43.4,
+      "hsv_saturation": 60.4,
+      "image": "survey/sources/amsterdam-market.jpg",
+      "near_black_percent": 14.3,
+      "variant": "source"
+    },
+    {
+      "case": "amsterdam-market",
+      "colourfulness": 60.5,
+      "hsv_saturation": 140.5,
+      "image": "survey/qwen/tone-holdout/amsterdam-market-control.png",
+      "near_black_percent": 34.0,
+      "variant": "current"
+    },
+    {
+      "case": "amsterdam-market",
+      "colourfulness": 62.4,
+      "hsv_saturation": 123.8,
+      "image": "survey/qwen/tone-feedback/amsterdam-market-s42-loop.png",
+      "near_black_percent": 26.0,
+      "variant": "loop"
+    },
+    {
+      "case": "amsterdam-market",
+      "colourfulness": 40.7,
+      "hsv_saturation": 59.8,
+      "image": "survey/qwen/tone-feedback/amsterdam-market-s42-matched.png",
+      "near_black_percent": 18.6,
+      "variant": "regraded"
+    },
+    {
+      "case": "astronaut-crew",
+      "colourfulness": 73.7,
+      "hsv_saturation": 169.0,
+      "image": "survey/sources/astronaut-crew.jpg",
+      "near_black_percent": 27.2,
+      "variant": "source"
+    },
+    {
+      "case": "astronaut-crew",
+      "colourfulness": 49.9,
+      "hsv_saturation": 137.9,
+      "image": "survey/qwen/tone-holdout/astronaut-crew-control.png",
+      "near_black_percent": 47.9,
+      "variant": "current"
+    },
+    {
+      "case": "astronaut-crew",
+      "colourfulness": 59.6,
+      "hsv_saturation": 141.8,
+      "image": "survey/qwen/tone-feedback/astronaut-crew-s42-loop.png",
+      "near_black_percent": 40.1,
+      "variant": "loop"
+    },
+    {
+      "case": "astronaut-crew",
+      "colourfulness": 114.8,
+      "hsv_saturation": 170.0,
+      "image": "survey/qwen/tone-feedback/astronaut-crew-s42-matched.png",
+      "near_black_percent": 35.9,
+      "variant": "regraded"
+    },
+    {
+      "case": "dogs-beach",
+      "colourfulness": 30.1,
+      "hsv_saturation": 39.3,
+      "image": "survey/sources/dogs-beach.jpg",
+      "near_black_percent": 0.3,
+      "variant": "source"
+    },
+    {
+      "case": "dogs-beach",
+      "colourfulness": 11.4,
+      "hsv_saturation": 12.6,
+      "image": "survey/qwen/tone-holdout/dogs-beach-control.png",
+      "near_black_percent": 1.1,
+      "variant": "current"
+    },
+    {
+      "case": "dogs-beach",
+      "colourfulness": 13.5,
+      "hsv_saturation": 15.0,
+      "image": "survey/qwen/tone-feedback/dogs-beach-s42-loop.png",
+      "near_black_percent": 1.2,
+      "variant": "loop"
+    },
+    {
+      "case": "dogs-beach",
+      "colourfulness": 32.2,
+      "hsv_saturation": 38.3,
+      "image": "survey/qwen/tone-feedback/dogs-beach-s42-matched.png",
+      "near_black_percent": 0.0,
+      "variant": "regraded"
+    },
+    {
+      "case": "food-table",
+      "colourfulness": 37.5,
+      "hsv_saturation": 70.5,
+      "image": "survey/sources/food-table.jpg",
+      "near_black_percent": 0.0,
+      "variant": "source"
+    },
+    {
+      "case": "food-table",
+      "colourfulness": 38.0,
+      "hsv_saturation": 157.1,
+      "image": "survey/qwen/tone-holdout/food-table-control.png",
+      "near_black_percent": 42.9,
+      "variant": "current"
+    },
+    {
+      "case": "food-table",
+      "colourfulness": 36.1,
+      "hsv_saturation": 125.6,
+      "image": "survey/qwen/tone-feedback/food-table-s42-loop.png",
+      "near_black_percent": 40.3,
+      "variant": "loop"
+    },
+    {
+      "case": "food-table",
+      "colourfulness": 34.4,
+      "hsv_saturation": 69.7,
+      "image": "survey/qwen/tone-feedback/food-table-s42-matched.png",
+      "near_black_percent": 0.0,
+      "variant": "regraded"
+    }
+  ]
+}
