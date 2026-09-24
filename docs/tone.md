@@ -1,13 +1,15 @@
-# Tone: why telling the generator "don't saturate" doesn't work
+# Tone: why telling the generator "don't saturate" barely works
 
 One human reviewer rated the first local Qwen-Image-2.1 reconstructions as "too saturated" (two
 cases, colour/lighting/style 3 of 5; see [`tone-review-plan.md`](tone-review-plan.md)). This
-page records what we tried and what the numbers say. Short version: **writing the tone into the
-positive prompt did not bring saturation down, and neither did lowering guidance. Negative-prompt
-terms did move it.**
+page records what we tried and what the numbers say. Short version: **the positive prompt does
+steer tone, but weakly. Against a prompt with no tone at all, writing the measured tone into it
+removes about a quarter of the saturation error, and rewriting the prompt in the model's own
+register about two fifths. Negative-prompt terms do far more, and they only work because this
+workflow runs with CFG above 1, which Qwen's own settings do not.**
 
-This is three images at one seed. It shows which levers move the numbers; it does not show that
-any lever makes a reconstruction look better to a person.
+The first three attempts use three images at one seed. They show which levers move the numbers;
+they do not show that any lever makes a reconstruction look better to a person.
 
 ## What "tone" means here
 
@@ -80,20 +82,102 @@ keyboard, `neon green` for the grass). That is tuning on the test set. They are 
 the renderer could derive from an artifact, and a derived version needs its own measured run on
 other sources before it goes into the pipeline.
 
-## Why the positive prompt fails: a hypothesis, not a finding
+## Attempt 3: is the prompt really powerless?
 
-The review prompts were never rendered *without* the tone line, so its effect is not isolated: the
-earlier runs also used different artifacts. What follows is untested; treat it as a direction for
-the next experiment. Qwen-Image-2.1 conditions on a text encoder that reads the prompt as a
-description of *content*. Numbers such as "mean saturation 48/255" probably carry no visual meaning
-for it, and negated instructions ("do not boost saturation") are a known weak spot of text-to-image
-conditioning: the tokens `boost saturation` are still in the prompt. The negative prompt, by
-contrast, is the one channel the sampler actively steers away from. The model's prior for "a photo
-of a cat" also looks like modern, well-lit stock photography, which is darker, punchier, and more
-saturated than these public-domain snapshots.
+Attempt 1 changed the artifact and the prompt at once, so it never isolated the tone line.
+`scripts/tone_prompt_sweep.py` does: it takes the three review artifacts, derives seven prompts
+from each **by rule** (nothing is chosen per case), and renders every prompt under two settings,
+the bundled workflow (CFG 3.5, 30 steps) and ComfyUI's official Qwen-Image-2.1 template (CFG 1,
+25 steps). Evidence: [`survey/qwen/tone-prompts/`](../survey/qwen/tone-prompts/README.md). Its
+`control` renders are pixel-identical to the review run's again.
 
-Two cheap checks would test this: remove the negated sentence and keep only the descriptive words;
-and replace the numbers with plain descriptors ("muted, faded, washed-out colours").
+| Prompt variant | What changes |
+| --- | --- |
+| `control` | the current llmPEG prompt |
+| `no-tone` | the `Tone:` line removed |
+| `no-negation` | the tone line without its "Match this grading exactly: do not …" sentence |
+| `words-only` | as `no-negation`, and the `/255` numbers removed |
+| `words-first` | the words-only tone moved to the top: "A photograph with …" |
+| `snapshot` | a fixed phrase for every case in front of the tone words: "Casual unedited snapshot in soft natural light, understated and unpolished" |
+| `observer` | the artifact rewritten as one observing paragraph in the register of Qwen's prompt rewriter (below): no labels, no hex codes, no canvas size, no instructions, lighting in its own sentence |
+
+Reconstruction luminance / contrast / saturation / warmth. The last two columns add up the absolute
+error against the three sources (125/61/0/0, 148/55/48/−5, 158/24/89/51):
+
+| Setting | Variant | Monochrome | Keyboard | Grass | Σ\|Δ sat\| | Σ\|Δ lum\| |
+| --- | --- | --- | --- | --- | ---: | ---: |
+| CFG 3.5 | `control` | 67/62/11/−1 | 111/46/88/40 | 124/33/126/47 | 88 | 129 |
+| | `no-tone` | 73/65/15/−1 | 123/51/95/48 | 106/33/142/39 | 115 | 129 |
+| | `no-negation` | 68/61/11/−1 | 114/47/86/40 | 120/32/131/47 | 91 | 129 |
+| | `words-only` | 69/62/15/−1 | 122/51/78/37 | 121/35/134/48 | 90 | 119 |
+| | `words-first` | 72/62/11/−1 | 125/49/81/42 | 124/35/135/50 | 90 | 110 |
+| | `snapshot` | 89/61/9/−2 | 121/47/73/37 | 126/35/120/42 | **65** | **95** |
+| | `observer` | 78/59/16/−3 | 117/50/73/34 | 133/35/118/53 | 70 | 103 |
+| CFG 1 | `control` | 67/61/8/0 | 116/51/96/45 | 114/28/172/64 | 139 | 134 |
+| | `no-tone` | 74/63/8/0 | 125/54/103/52 | 91/27/187/53 | 161 | 141 |
+| | `no-negation` | 69/60/7/0 | 118/52/96/45 | 106/27/176/60 | 142 | 138 |
+| | `words-only` | 70/62/8/0 | 122/53/93/44 | 110/29/175/62 | 139 | 129 |
+| | `words-first` | 68/60/6/0 | 127/57/91/46 | 119/31/172/67 | 132 | 117 |
+| | `snapshot` | 86/57/4/0 | 128/51/85/45 | 120/31/157/59 | **109** | **97** |
+| | `observer` | 79/59/8/0 | 119/55/83/37 | 129/30/157/70 | 111 | 104 |
+
+For comparison, the hand-picked negatives of attempt 2 reach Σ|Δ sat| = 30 (12 + 9 + 9) at
+CFG 3.5.
+
+What it shows:
+
+- **The tone line was never useless, only weak.** Removing it raises saturation in every colour
+  case (Σ 88 → 115 at CFG 3.5, 139 → 161 at CFG 1). Attempt 1 could not see this because it had
+  no tone-free control.
+- **Negation and numbers don't matter much.** Dropping the "do not" sentence or the `/255` numbers
+  moves Σ|Δ sat| by 1–3 at CFG 3.5; at CFG 1 moving the words to the front helps a little (139 →
+  132). The PromptMaster finding that negation in the positive prompt backfires (below) does not
+  show up here as a large effect.
+- **Register and look words help most on the positive side.** The `snapshot` phrase and the
+  `observer` paragraph cut the saturation error by a fifth to a quarter against `control` (88 →
+  65–70) and also brighten (Σ|Δ lum| 129 → 95–103). They do not change the verdict: every colour
+  render is still more saturated than its source.
+- **The official CFG 1 is worse for tone.** Every variant is more saturated at CFG 1 than at 3.5,
+  and the grass cat reaches 157–187 against a source of 89. The bundled CFG 3.5 was never
+  justified in the repository (it arrived with the first local-model commit), but it happens to
+  help: it is what lets the negative prompt act at all.
+- **The monochrome cat stays dark.** 67–89 luminance against 125 in every variant. The model draws
+  a crisp, high-contrast studio black-and-white; the source is a faded, over-exposed snapshot.
+- **Content words carry colour.** The vision model described the grass as "bright green grass";
+  the source's grass is pale and yellowish. A tone line cannot outvote the content description.
+- `observer` also changes the grass cat's pose, a reminder that register changes content, not just
+  tone.
+
+## What the model expects: sources and code
+
+Why is the positive prompt so weak? Three findings from reading the code and the published
+material, none of them measured here beyond the sweep above:
+
+- **The prompt reaches the model whole.** ComfyUI's `TextEncodeQwenImage21` does not truncate
+  (`max_length` is effectively unlimited), wraps the prompt in a chat template with the system turn
+  "Comprehend and analyze the provided prompt.", drops that system turn, and conditions the DiT on
+  the last hidden layer of Qwen3-VL-8B over the user message
+  (`comfy/text_encoders/qwen_image21.py` in the local ComfyUI checkout). The tone line is not lost;
+  it is outweighed.
+- **Qwen's own prompts look nothing like llmPEG's.** The
+  [Qwen-Image-2.1 README](https://github.com/QwenLM/Qwen-Image-2.1) recommends running every prompt
+  through its rewriting model, and the rewriter's
+  [system prompt](https://huggingface.co/Qwen/Qwen-Image-2.1-PE-T2I) asks for "one long English
+  paragraph that describes the finished image as if you were looking at it", "the description
+  states what is in the frame, never what must be done", "Never write a ratio, a resolution",
+  colours "with a modifier, almost never bare … Hex codes only if the user gave them", and a
+  lighting sentence of its own. llmPEG's prompt is labelled sections, instructions, a canvas size,
+  and hex codes. The `observer` variant approximates the rewriter's register without the rewriter.
+- **Official settings disable the negative prompt.** ComfyUI's
+  [official template](https://github.com/Comfy-Org/workflow_templates/blob/main/templates/image_qwen_image_2_1_t2i.json)
+  samples 25 steps at CFG 1, and a community
+  [Qwen-Image-2.1 prompt guide](https://github.com/kjranyone/qwen-image-2.1-prompt-guide) notes
+  that "Distillation-style serving at guidance 1 ignores negatives entirely". A
+  [PromptMaster article](https://blog.promptmaster.pro/posts/qwen-image-negative-prompts/) reports
+  that Qwen-Image negatives failed to exclude *content* ("child") at any CFG, and that "Not a child"
+  in the positive prompt produced more children; it does not say which Qwen-Image version it tested.
+  Our measurements disagree for *tone*: at CFG 3.5, negatives moved saturation more than anything
+  else.
 
 ## Status (2026-09-23)
 
