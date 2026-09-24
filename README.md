@@ -9,7 +9,7 @@
 [![uv 0.12.18](https://img.shields.io/badge/uv-0.12.18-de5fe9.svg)](https://docs.astral.sh/uv/)
 [![Ruff](https://img.shields.io/badge/lint-ruff-261230.svg)](https://docs.astral.sh/ruff/)
 [![mypy strict](https://img.shields.io/badge/types-mypy%20strict-2a6db2.svg)](https://mypy-lang.org/)
-[![Coverage 96.0%](https://img.shields.io/badge/coverage-96.0%25-brightgreen.svg)](#development)
+[![Coverage 96.1%](https://img.shields.io/badge/coverage-96.1%25-brightgreen.svg)](#development)
 [![Encoder: Ollama qwen3.5:4b](https://img.shields.io/badge/encoder-Ollama%20qwen3.5%3A4b-000000.svg)](https://ollama.com/)
 [![Generator: ComfyUI Qwen--Image--2.1](https://img.shields.io/badge/generator-ComfyUI%20Qwen--Image--2.1-6d28d9.svg)](https://github.com/QwenLM/Qwen-Image-2.1)
 
@@ -169,12 +169,15 @@ uv run llmpeg generate photo.jpg.llmpeg.json.gz --tone-correction match   # post
 ```
 
 `loop` renders once more with negative-prompt terms that push each miss back toward the tone
-recorded in the artifact; it cut the mean luminance error from 28.1 to 22.3 (0–255) across those
-39 source-seed pairs. `match` regrades the image instead. Both read only the artifact, never the
-source, and both are opt-in until people rate them. Colour results are on hold: the recorded
-saturation figure (mean HSV saturation) overstates colour in dark images, which also made `match`
-over-colour some images. The full story, including what did not work, is in
-[`docs/tone.md`](docs/tone.md).
+recorded in the artifact; across those 39 source-seed pairs it cut the mean luminance error from
+28.1 to 21.3 (0–255) and helped in 35. `match` regrades the image instead and lands on the recorded
+numbers by construction, which proves nothing by itself. Both read only the artifact, never the
+source, and both are opt-in until people rate them.
+
+Colour turned out to be mostly fine. The first colour measure, mean HSV saturation, reads dark
+pixels as vividly coloured and made Qwen look over-saturated; measured with Hasler–Süsstrunk
+colourfulness (format 1.2), the current renders sit a mean 8.4 from their sources. The full story,
+including what did not work, is in [`docs/tone.md`](docs/tone.md).
 
 ### Historical benchmarks (hosted generator)
 
@@ -215,10 +218,10 @@ what the file is, which reader it needs, and — unusually — that its decoder 
 ```json
 {"llmpeg":{
   "magic":"llmPEG",
-  "format_version":"1.1",
+  "format_version":"1.2",
   "major_brand":"lpg1",
   "compatible_brands":["lpg1"],
-  "encoder":"llmpeg/0.7.0",
+  "encoder":"llmpeg/0.8.0",
   "min_reader_version":"0.1.0",
   "decoder":"text-to-image model; lossy; non-deterministic; not bundled"
 }, ...}
@@ -226,12 +229,12 @@ what the file is, which reader it needs, and — unusually — that its decoder 
 
 ```console
 $ llmpeg verify cat-on-grass.jpg.llmpeg.json.gz
-llmPEG 1.1 (lpg1)
+llmPEG 1.2 (lpg1)
 compatible brands: lpg1
-written by: llmpeg/0.7.0
+written by: llmpeg/0.8.0
 needs reader: llmpeg >= 0.1.0
 decoder: text-to-image model; lossy; non-deterministic; not bundled
-envelope: gzip (1530 bytes on disk)
+envelope: gzip (1545 bytes on disk)
 profile: detailed
 encoder model: ollama/qwen3.5:4b
 conforms: yes
@@ -239,7 +242,7 @@ conforms: yes
 
 - **Compatibility:** a higher major version is refused; a higher minor is accepted with unknown
   fields ignored; the same or older version is read strictly. Format 1.1 added the pixel-measured
-  `tone` object.
+  `tone` object, 1.2 its perceptual `colourfulness`.
 - **Conformance is enforced:** `write()` re-parses its own bytes before touching disk, so the
   encoder cannot emit a file it could not read. `verify` exits `0` or `2`.
 - **The header costs 228 bytes** and is charged against every ratio here (the cat went from 802:1
@@ -350,18 +353,18 @@ uv run pytest --cov=llmpeg --cov-report=term-missing --cov-fail-under=95
 uv run python -m build
 ```
 
-The suite is offline and injects fake providers: **194 tests, 96.0% branch coverage**. CI runs all
+The suite is offline and injects fake providers: **205 tests, 96.1% branch coverage**. CI runs all
 five gates on Python 3.14 for every push. Contributor rules, including Conventional Commits, are in
 [AGENTS.md](AGENTS.md).
 
 ### Releases
 
 Pushing a `v*` tag builds an sdist and wheel and attaches them to a GitHub Release. The current
-release is [`v0.7.0`](https://github.com/marcelpetrick/llmPEG/releases/tag/v0.7.0). The name
+release is [`v0.8.0`](https://github.com/marcelpetrick/llmPEG/releases/tag/v0.8.0). The name
 `llmpeg` is taken on PyPI by an unrelated project, so install from a release or a checkout:
 
 ```bash
-uv pip install llmpeg-0.7.0-py3-none-any.whl   # from a GitHub Release
+uv pip install llmpeg-0.8.0-py3-none-any.whl   # from a GitHub Release
 uv pip install .                               # from a clone
 ```
 

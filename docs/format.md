@@ -1,6 +1,6 @@
 # The `.llmpeg.json` container format
 
-Version **1.1**. This document is the normative description of the file llmPEG writes.
+Version **1.2**. This document is the normative description of the file llmPEG writes.
 
 A conventional image format starts with a signature so a reader can answer two questions before
 parsing anything: *is this mine?* and *can my version read it?* PNG opens with an eight-byte
@@ -18,10 +18,10 @@ Every artifact begins with a single `llmpeg` object:
 ```json
 {"llmpeg":{
   "magic":"llmPEG",
-  "format_version":"1.1",
+  "format_version":"1.2",
   "major_brand":"lpg1",
   "compatible_brands":["lpg1"],
-  "encoder":"llmpeg/0.7.0",
+  "encoder":"llmpeg/0.8.0",
   "min_reader_version":"0.1.0",
   "decoder":"text-to-image model; lossy; non-deterministic; not bundled"
 }, ...}
@@ -65,7 +65,7 @@ Consequences for anyone extending the format:
 ## Body
 
 After the header, the body carries the semantic payload. Every field is required except `tone`,
-which is optional and was added in 1.1:
+which is optional and was added in 1.1 (its `colourfulness` member in 1.2):
 
 | Field | Type | Meaning |
 | --- | --- | --- |
@@ -79,16 +79,28 @@ which is optional and was added in 1.1:
 | `style` | string | Medium and visual treatment. |
 | `avoid` | array | Errors a generator should not make. |
 | `provenance` | object | `provider`, `model`, `seed`, `temperature` of the encoding run. |
-| `tone` | object | Optional, 1.1+. `luminance`, `contrast`, `saturation`, `warmth` measured from the source pixels. |
+| `tone` | object | Optional, 1.1+. `luminance`, `contrast`, `saturation`, `warmth`, and (1.2+, optional) `colourfulness`, measured from the source pixels. |
 
-`tone` is the only body field computed from pixels rather than written by the vision model. All
-four values are integers: mean Rec. 601 luminance, luminance standard deviation, and mean HSV
-saturation, each 0–255, and `warmth` as mean red minus mean blue, −255 to 255. They are global
-statistics of a 256-pixel thumbnail, about 70 bytes of JSON, and describe grading only — nothing
-about where anything is. The prompt renderer turns them into words and asks the generator not to
-brighten, add contrast, or boost saturation, because reviewers found Qwen-Image-2.1
-reconstructions over-saturated without them. A file that declares 1.0 and carries `tone` does
-not conform; 1.0 files without it read and round-trip unchanged.
+`tone` is the only body field computed from pixels rather than written by the vision model. Its
+values are integers from a 256-pixel thumbnail, about 90 bytes of JSON, and describe grading only —
+nothing about where anything is:
+
+| Member | Since | Meaning |
+| --- | --- | --- |
+| `luminance` | 1.1 | mean Rec. 601 luminance, 0–255 |
+| `contrast` | 1.1 | luminance standard deviation, 0–255 |
+| `saturation` | 1.1 | mean HSV saturation, 0–255; exactly 0 for a grayscale source |
+| `warmth` | 1.1 | mean red minus mean blue, −255 to 255 |
+| `colourfulness` | 1.2 | Hasler–Süsstrunk colourfulness, 0–255 (photographs score roughly 10–110) |
+
+HSV saturation divides by brightness, so it reads near-black pixels with a faint tint as vividly
+coloured; `colourfulness` does not, and is the figure to use for how colourful an image looks
+([`tone.md`](tone.md), correction). `saturation` stays for compatibility and for the one thing it
+measures exactly, a grayscale source. The prompt renderer turns the 1.1 members into words.
+
+Version rules for `tone`: a file that declares 1.0 and carries it does not conform, nor does a 1.1
+file carrying `colourfulness`; `colourfulness` may not be `null`. Files without the newer members
+read and round-trip byte for byte.
 
 **The body never contains image bytes.** `source.sha256` identifies the original so an evaluation
 can prove it is comparing against the right file; it does not let anyone recover it.
@@ -163,15 +175,15 @@ fails rather than silently dropping content to flatter a ratio.
 Check any file:
 
 ```console
-$ llmpeg verify photo.jpg.llmpeg.json
-llmPEG 1.0 (lpg1)
+$ llmpeg verify cat-on-grass.jpg.llmpeg.json.gz
+llmPEG 1.2 (lpg1)
 compatible brands: lpg1
-written by: llmpeg/0.7.0
+written by: llmpeg/0.8.0
 needs reader: llmpeg >= 0.1.0
 decoder: text-to-image model; lossy; non-deterministic; not bundled
-envelope: none (1206 bytes on disk)
-profile: balanced
-encoder model: ollama/qwen3-vl:32b-ctx49k
+envelope: gzip (1545 bytes on disk)
+profile: detailed
+encoder model: ollama/qwen3.5:4b
 conforms: yes
 ```
 
