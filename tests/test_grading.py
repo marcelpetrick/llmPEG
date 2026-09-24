@@ -8,7 +8,7 @@ from llmpeg.artifact import Tone
 from llmpeg.encoder import measure_tone
 from llmpeg.grading import FEEDBACK_TERMS, MONOCHROME_TERMS, feedback_negative, match_tone
 
-TARGET = Tone(luminance=120, contrast=40, saturation=60, warmth=0)
+TARGET = Tone(luminance=120, contrast=40, saturation=60, warmth=0, colourfulness=40)
 
 
 def gradient(colour: tuple[int, int, int]) -> Image.Image:
@@ -26,8 +26,8 @@ def test_feedback_is_silent_inside_the_margins() -> None:
 
 
 def test_feedback_pushes_each_measure_back_toward_the_target() -> None:
-    high = feedback_negative(TARGET, Tone(luminance=160, contrast=60, saturation=100, warmth=30))
-    low = feedback_negative(TARGET, Tone(luminance=80, contrast=20, saturation=20, warmth=-30))
+    high = feedback_negative(TARGET, Tone(160, 60, 100, 30, colourfulness=60))
+    low = feedback_negative(TARGET, Tone(80, 20, 20, -30, colourfulness=20))
 
     assert high == ", ".join(terms[0] for terms in FEEDBACK_TERMS.values())
     assert low == ", ".join(terms[1] for terms in FEEDBACK_TERMS.values())
@@ -47,20 +47,33 @@ def test_match_tone_lands_on_the_recorded_tone() -> None:
 
     assert abs(tone.luminance - TARGET.luminance) <= 2
     assert abs(tone.contrast - TARGET.contrast) <= 2
-    assert abs(tone.saturation - TARGET.saturation) <= 3
+    assert tone.colourfulness is not None
+    assert abs(tone.colourfulness - 40) <= 3
     assert abs(tone.warmth - TARGET.warmth) <= 2
 
 
-def test_match_tone_renders_a_monochrome_target_without_colour() -> None:
-    target = Tone(luminance=100, contrast=50, saturation=0, warmth=0)
-    graded = match_tone(gradient((40, 200, 90)), target)
+def test_feedback_ignores_saturation_and_needs_colourfulness_on_both_sides() -> None:
+    no_colourfulness = replace(TARGET, colourfulness=None)
+    rendered = Tone(120, 40, 200, 0, colourfulness=90)
 
-    assert measure_tone(graded).saturation == 0
-    assert abs(measure_tone(graded).luminance - target.luminance) <= 2
+    assert feedback_negative(no_colourfulness, rendered) == ""
+    assert feedback_negative(TARGET, replace(rendered, colourfulness=None)) == ""
+    assert feedback_negative(TARGET, replace(rendered, colourfulness=44)) == ""
 
 
-def test_match_tone_does_not_modify_its_input() -> None:
+def test_match_tone_caps_the_chroma_boost() -> None:
+    image = gradient((140, 120, 110))
+    before = measure_tone(image).colourfulness
+    graded = measure_tone(match_tone(image, replace(TARGET, colourfulness=200)))
+
+    assert before is not None and graded.colourfulness is not None
+    assert graded.colourfulness <= 2 * before + 2
+
+
+def test_match_tone_without_colourfulness_leaves_chroma_alone() -> None:
     image = gradient((250, 120, 40))
-    before = image.tobytes()
-    match_tone(image, TARGET)
-    assert image.tobytes() == before
+    own = measure_tone(image)
+    graded = measure_tone(match_tone(image, replace(own, colourfulness=None)))
+
+    assert own.colourfulness is not None and graded.colourfulness is not None
+    assert abs(graded.colourfulness - own.colourfulness) <= 1
