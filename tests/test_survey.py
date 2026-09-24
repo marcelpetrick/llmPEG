@@ -352,7 +352,8 @@ def test_tone_candidates_are_traceable_to_their_measurements() -> None:
     output = render_survey(manifest_path)
 
     assert "Current pipeline" in output
-    assert "Tone candidate" in output
+    assert "Closed loop" in output
+    assert "Regraded" in output
     for case in manifest["cases"]:
         for field in (
             "source",
