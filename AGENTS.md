@@ -100,7 +100,7 @@ Scripts under `scripts/` are linted and type-checked like the package, but are m
 tools rather than product surface: they may talk to the live Ollama endpoint, and they never
 run in CI. Never record the endpoint host in their output — model name only.
 
-Current baseline: **195 tests, 96.0% branch coverage**. Update this line when it changes — a stale
+Current baseline: **194 tests, 96.0% branch coverage**. Update this line when it changes — a stale
 self-measurement is the most embarrassing possible bug in a project about honest measurement.
 
 The release version lives only in `src/llmpeg/_version.py`; packaging, the artifact header, and
@@ -190,3 +190,6 @@ Established scopes: `codec` (encoder/artifact/providers), `survey`, `architectur
   colour in a scene-specific direction (`docs/tone.md`). `generate --tone-correction loop|match`
   corrects it by measurement, opt-in only: no person has rated the result yet. `match` scores
   near-perfectly on tone by construction, so never quote its tone error as evidence.
+- The recorded `tone.saturation` (mean HSV saturation) overstates colour in dark images
+  (`docs/tone.md`, correction; `docs/colourfulness-check.json`). Do not quote a saturation figure as
+  perceived colour, and do not trust `match`'s colour until colourfulness replaces it.

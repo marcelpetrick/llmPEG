@@ -5,8 +5,9 @@ a browser. Human ratings are stored only in that browser's `localStorage` until 
 **Export my ratings**.
 
 This run predates the local Qwen-Image-2.1 generator. It used `qwen3-vl:32b-ctx49k` for encoding
-and Codex built-in image generation for reconstruction. The current local-Qwen evidence and its
-public landing page are documented under [`qwen/`](qwen/README.md).
+and Codex built-in image generation for reconstruction. The project now runs on local models
+(Ollama `qwen3.5:4b` and ComfyUI Qwen-Image-2.1); their evidence and the published review page are
+documented under [`qwen/`](qwen/README.md).
 
 ## Sources and licenses
 

@@ -1,13 +1,21 @@
-# Local Qwen-Image-2.1 comparison evidence
+# Local Qwen evidence
 
-`survey/qwen.html` now shows the single-reconstruction review in [`review/`](review/README.md),
-with tone experiments in [`tone-sweep/`](tone-sweep/README.md) and
-[`docs/tone.md`](../../docs/tone.md). The two creator/rater runs below are **superseded** as the
-published page and kept as evidence.
+Everything here was produced by the local pipeline: Ollama `qwen3.5:4b` encoding and ComfyUI
+Qwen-Image-2.1 generation. `survey/qwen.html`, the published review page, is built from these runs.
 
-This directory contains the two creator/rater runs that `survey/qwen.html` used to show. Both
-source photographs are existing public-domain survey sources; their credits are copied into each
-authoritative `report.json` and into `survey/qwen-manifest.json`.
+| Directory | What it holds |
+| --- | --- |
+| [`review/`](review/README.md) | one format 1.1 artifact and reconstruction per cat; the review page's "current pipeline" column |
+| [`tone-sweep/`](tone-sweep/README.md) | generator settings (CFG, negatives) with fixed prompts |
+| [`tone-prompts/`](tone-prompts/README.md) | seven prompt variants under two settings |
+| [`tone-holdout/`](tone-holdout/README.md) | a fixed tone rule on ten sources it was not tuned on |
+| [`tone-feedback/`](tone-feedback/README.md) | closed loop and regrade, 13 sources × 3 seeds; the review page's "closed loop" column |
+| [`tone-wording/`](tone-wording/README.md) | a rejected encoder-wording change |
+| `creator-rater/`, `creator-rater-holdout/` | the earlier creator/rater experiment, described below |
+
+The tone runs are written up in [`docs/tone.md`](../../docs/tone.md). The creator/rater runs below
+are superseded as the published page and kept as evidence; both source photographs are
+public-domain survey sources, credited in each `report.json`.
 
 ## Measured pipeline
 

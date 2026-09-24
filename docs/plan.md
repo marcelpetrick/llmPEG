@@ -269,11 +269,17 @@ Done:
       descriptions, so its tone effect cannot be attributed.
 - [x] Review page `survey/qwen-tone.html` (site `tone.html`): current pipeline vs. loop vs. regrade.
 - [x] `uv` 0.12.18 toolchain pin; local user-level `uv` matches it.
+- [x] One published review page: original, current pipeline, closed loop (`v0.7.1`).
+- [x] Found and documented that the recorded saturation (mean HSV) overstates colour in dark
+      images; checked against Hasler–Süsstrunk colourfulness (`docs/colourfulness-check.json`).
 
 Left, in order:
 
-- [ ] **Human rating of `tone.html`.** Does the loop or the regrade look closer than the current
-      pipeline? The colour/lighting score decides whether either becomes the default.
+- [ ] **Human rating of the review page.** Does the closed loop look closer than the current
+      pipeline? The colour/lighting score decides whether it becomes the default.
+- [ ] Replace the saturation measure: record colourfulness in the artifact (format 1.2), steer the
+      loop's colour terms by it, and regrade chroma instead of HSV saturation. Re-run
+      `scripts/tone_feedback.py` (about 90 minutes of GPU time).
 - [ ] If the loop wins, make it the default for `generate` and the prototype Web UI, and say in the
       output that it costs a second render.
 - [ ] If the regrade wins, damp it where it has to add much saturation or warmth, which is where the
