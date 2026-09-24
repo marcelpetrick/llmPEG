@@ -7,6 +7,11 @@ The diagrams use the [C4 model](https://c4model.com/) from system context down t
 elements are llmPEG, purple elements are models outside its deterministic core, and amber
 elements are durable evidence.
 
+Both models run locally: Qwen3.5 (`qwen3.5:4b`) behind Ollama encodes, and Qwen-Image-2.1 behind
+ComfyUI generates. Early experiments used a remote `qwen3-vl:32b` endpoint and hosted image
+generators (Codex's built-in tool, briefly others); those adapters are gone, and only their
+labelled evidence remains under `survey/`.
+
 ## 1. System context
 
 ```mermaid
@@ -46,6 +51,7 @@ C4Container
     Container(webBackend, "Prototype backend", "Python HTTP server", "Bounds uploads and coordinates local model calls")
     ContainerDb(files, "Experiment evidence", "JSON, text, PNG/JPEG", "Sources, artifacts, prompts, reconstructions, metrics, manifests")
     Container(html, "Static survey", "HTML/CSS/JS", "Side-by-side inspection, browser-local ratings, JSON export")
+    Container(scripts, "Measurement scripts", "Python", "Sweeps, benchmarks, and tone experiments against the live local models; never run in CI")
   }
 
   System_Ext(ollama, "Ollama + Qwen3.5", "Local non-deterministic extraction and rating boundary")
@@ -70,6 +76,8 @@ C4Container
   Rel(survey, files, "Reads manifest and evidence")
   Rel(survey, html, "Generates")
   Rel(user, html, "Reviews and rates", "Browser")
+  Rel(scripts, core, "Encode, generate, measure")
+  Rel(scripts, files, "Writes measurements.json and evidence")
 
   UpdateElementStyle(files, $bgColor="#FFF7D6", $fontColor="#713F12", $borderColor="#D97706")
   UpdateElementStyle(web, $bgColor="#DBEAFE", $fontColor="#102A43", $borderColor="#2563EB")
@@ -92,12 +100,13 @@ C4Component
   title Codec core — Python components
   Container_Boundary(core, "llmpeg") {
     Component(cli, "Command dispatcher", "cli.py", "Parses commands and maps failures to exit codes")
-    Component(guard, "Image guard", "encoder.py + Pillow", "Checks type, byte/pixel limits, dimensions, and source digest")
+    Component(guard, "Image guard", "encoder.py + Pillow", "Checks type, byte/pixel limits, dimensions, and source digest; measures tone from pixels")
     Component(adapter, "Vision adapter", "providers.py", "Calls Ollama with a strict JSON schema and fidelity-specific instructions")
     Component(codec, "Artifact builder", "encoder.py", "Converts extracted fields into a validated artifact")
     Component(model, "Artifact model", "artifact.py", "Writes the versioned header, validates the schema, enforces the byte budget, and writes canonical JSON, plain or gzip-wrapped, atomically")
     Component(renderer, "Prompt renderer", "encoder.py", "Expands the artifact into a model-neutral generation brief")
     Component(generator, "Qwen generator adapter", "generators.py", "Runs one bundled ComfyUI workflow and fails closed")
+    Component(grading, "Tone correction", "grading.py", "Measures a render's tone error against the artifact; steers a second render or regrades the image")
     Component(metrics, "Metric engine", "evaluation.py", "Measures aspect, dHash, histogram, edges, palette, layout, and text recall")
     Component(rater, "Similarity rater", "rating.py", "Repeats local semantic comparisons and order-reversed A/B judgments")
     Component(report, "Survey renderer", "survey.py", "Combines evidence into interactive static HTML")
@@ -120,6 +129,8 @@ C4Component
   Rel(generator, renderer, "Uses rendered prompt")
   Rel(generator, imagegen, "Prompt only")
   Rel(generator, evidence, "Writes new image")
+  Rel(cli, grading, "generate --tone-correction")
+  Rel(grading, generator, "Second render with feedback negatives")
   Rel(cli, metrics, "evaluate")
   Rel(metrics, evidence, "Reads pair; writes result")
   Rel(rater, ollama, "Source + reconstruction under strict schema")
@@ -148,6 +159,7 @@ sequenceDiagram
 
   U->>C: encode source.jpg --profile detailed
   C->>C: Validate type, size, pixels, and source hash
+  C->>C: Measure tone (luminance, contrast, saturation, warmth)
   C->>V: Image + strict identity-landmark schema
   V-->>C: Description, regions, palette, style, avoid-list
   C->>A: Validate canonical budget and atomically persist (gzip default)
@@ -157,6 +169,11 @@ sequenceDiagram
   U->>C: generate artifact
   C->>G: Text prompt only (local, fail closed)
   G-->>C: Novel reconstruction PNG
+  opt --tone-correction loop
+    C->>C: Measure the render's tone against the artifact
+    C->>G: Same prompt + feedback negatives, same seed
+    G-->>C: Second render
+  end
   C-->>U: Output path and concrete local provider
   U->>C: evaluate source + reconstruction + artifact
   C->>E: Verified source pair
@@ -179,9 +196,9 @@ hardened network service.
 | Property | What the architecture guarantees | What it cannot guarantee |
 | --- | --- | --- |
 | Portability | Artifact and rendered prompt are plain UTF-8 JSON/text; the optional gzip envelope opens with standard `gunzip` | Future models interpret the prompt identically |
-| Reproducibility | Source hash, dimensions, profile, model, seed, and temperature are recorded | A generator recreates identical pixels or identity |
+| Reproducibility | Source hash, dimensions, profile, model, seed, and temperature are recorded; the same artifact, seed, and local setup render identical pixels | Identical pixels across machines, model versions, or settings; identity of the original subject |
 | Safety | Inputs are bounded; artifacts validate; writes are atomic; source is never deleted | A prompt captures every visually important detail |
-| Evaluation | Deterministic metrics, repeat spread, raw semantic trials, and human survey exports remain separate and inspectable | Any automatic score equals human perceptual or identity similarity |
+| Evaluation | Deterministic metrics, measured tone, repeat spread, raw semantic trials, and human survey exports remain separate and inspectable | Any automatic score equals human perceptual or identity similarity |
 | Compression | Stored artifacts remain far smaller than source photographs | Regenerated PNGs, model weights, and compute are free |
 
 The central design choice is intentional: **the `.llmpeg.json` artifact is a semantic memory, not a
