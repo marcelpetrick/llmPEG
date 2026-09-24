@@ -1,0 +1,2488 @@
+{
+  "feedback_terms": {
+    "contrast": [
+      "harsh contrast, deep black shadows",
+      "flat, hazy, low contrast"
+    ],
+    "luminance": [
+      "overexposed, too bright",
+      "dark, underexposed, dim"
+    ],
+    "saturation": [
+      "vivid colors, saturated colors",
+      "dull colors, desaturated, grey, washed out"
+    ],
+    "warmth": [
+      "warm color cast, orange tint, yellow tint",
+      "cool color cast, blue tint"
+    ]
+  },
+  "generator": "local ComfyUI/Qwen-Image-2.1",
+  "llmpeg_version": "0.6.0",
+  "margins": {
+    "contrast": 8,
+    "luminance": 12,
+    "saturation": 12,
+    "warmth": 12
+  },
+  "resolution": 512,
+  "rows": [
+    {
+      "case": "cat-monochrome",
+      "extra_negative": "",
+      "histogram_similarity": 0.473796,
+      "image": "cat-monochrome-s42-control.png",
+      "reconstruction_tone": {
+        "contrast": 62,
+        "luminance": 67,
+        "saturation": 11,
+        "warmth": -1
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.631645
+    },
+    {
+      "case": "cat-monochrome",
+      "extra_negative": "",
+      "histogram_similarity": 0.609985,
+      "image": "cat-monochrome-s42-matched.png",
+      "reconstruction_tone": {
+        "contrast": 60,
+        "luminance": 124,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.674443
+    },
+    {
+      "case": "cat-monochrome",
+      "extra_negative": "color, colour, tint, sepia, dark, underexposed, dim",
+      "histogram_similarity": 0.583293,
+      "image": "cat-monochrome-s42-loop.png",
+      "reconstruction_tone": {
+        "contrast": 63,
+        "luminance": 79,
+        "saturation": 10,
+        "warmth": -1
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.660332
+    },
+    {
+      "case": "cat-on-keyboard",
+      "extra_negative": "",
+      "histogram_similarity": 0.631144,
+      "image": "cat-on-keyboard-s42-control.png",
+      "reconstruction_tone": {
+        "contrast": 46,
+        "luminance": 111,
+        "saturation": 88,
+        "warmth": 40
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.666577
+    },
+    {
+      "case": "cat-on-keyboard",
+      "extra_negative": "",
+      "histogram_similarity": 0.72583,
+      "image": "cat-on-keyboard-s42-matched.png",
+      "reconstruction_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 47,
+        "warmth": -5
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.704187
+    },
+    {
+      "case": "cat-on-keyboard",
+      "extra_negative": "dark, underexposed, dim, flat, hazy, low contrast, vivid colors, saturated colors, warm color cast, orange tint, yellow tint",
+      "histogram_similarity": 0.661031,
+      "image": "cat-on-keyboard-s42-loop.png",
+      "reconstruction_tone": {
+        "contrast": 46,
+        "luminance": 118,
+        "saturation": 58,
+        "warmth": 26
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.676459
+    },
+    {
+      "case": "cat-on-grass",
+      "extra_negative": "",
+      "histogram_similarity": 0.340149,
+      "image": "cat-on-grass-s42-control.png",
+      "reconstruction_tone": {
+        "contrast": 33,
+        "luminance": 124,
+        "saturation": 126,
+        "warmth": 47
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.569586
+    },
+    {
+      "case": "cat-on-grass",
+      "extra_negative": "",
+      "histogram_similarity": 0.777974,
+      "image": "cat-on-grass-s42-matched.png",
+      "reconstruction_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 88,
+        "warmth": 51
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.689105
+    },
+    {
+      "case": "cat-on-grass",
+      "extra_negative": "dark, underexposed, dim, harsh contrast, deep black shadows, vivid colors, saturated colors",
+      "histogram_similarity": 0.572774,
+      "image": "cat-on-grass-s42-loop.png",
+      "reconstruction_tone": {
+        "contrast": 32,
+        "luminance": 139,
+        "saturation": 107,
+        "warmth": 43
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.638068
+    },
+    {
+      "case": "amsterdam-market",
+      "extra_negative": "",
+      "histogram_similarity": 0.693197,
+      "image": "amsterdam-market-s42-control.png",
+      "reconstruction_tone": {
+        "contrast": 50,
+        "luminance": 62,
+        "saturation": 141,
+        "warmth": 16
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 53,
+        "luminance": 89,
+        "saturation": 60,
+        "warmth": 14
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.688672
+    },
+    {
+      "case": "amsterdam-market",
+      "extra_negative": "",
+      "histogram_similarity": 0.753011,
+      "image": "amsterdam-market-s42-matched.png",
+      "reconstruction_tone": {
+        "contrast": 53,
+        "luminance": 89,
+        "saturation": 60,
+        "warmth": 14
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 53,
+        "luminance": 89,
+        "saturation": 60,
+        "warmth": 14
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.715625
+    },
+    {
+      "case": "amsterdam-market",
+      "extra_negative": "dark, underexposed, dim, vivid colors, saturated colors",
+      "histogram_similarity": 0.736755,
+      "image": "amsterdam-market-s42-loop.png",
+      "reconstruction_tone": {
+        "contrast": 55,
+        "luminance": 74,
+        "saturation": 124,
+        "warmth": 20
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 53,
+        "luminance": 89,
+        "saturation": 60,
+        "warmth": 14
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.69588
+    },
+    {
+      "case": "astronaut-crew",
+      "extra_negative": "",
+      "histogram_similarity": 0.455322,
+      "image": "astronaut-crew-s42-control.png",
+      "reconstruction_tone": {
+        "contrast": 44,
+        "luminance": 28,
+        "saturation": 138,
+        "warmth": -20
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 59,
+        "saturation": 169,
+        "warmth": -34
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.646221
+    },
+    {
+      "case": "astronaut-crew",
+      "extra_negative": "",
+      "histogram_similarity": 0.559591,
+      "image": "astronaut-crew-s42-matched.png",
+      "reconstruction_tone": {
+        "contrast": 49,
+        "luminance": 61,
+        "saturation": 170,
+        "warmth": -34
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 59,
+        "saturation": 169,
+        "warmth": -34
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.682201
+    },
+    {
+      "case": "astronaut-crew",
+      "extra_negative": "dark, underexposed, dim, dull colors, desaturated, grey, washed out, warm color cast, orange tint, yellow tint",
+      "histogram_similarity": 0.485535,
+      "image": "astronaut-crew-s42-loop.png",
+      "reconstruction_tone": {
+        "contrast": 49,
+        "luminance": 34,
+        "saturation": 142,
+        "warmth": -30
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 59,
+        "saturation": 169,
+        "warmth": -34
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.648644
+    },
+    {
+      "case": "dogs-beach",
+      "extra_negative": "",
+      "histogram_similarity": 0.468282,
+      "image": "dogs-beach-s42-control.png",
+      "reconstruction_tone": {
+        "contrast": 55,
+        "luminance": 212,
+        "saturation": 13,
+        "warmth": 8
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 41,
+        "luminance": 190,
+        "saturation": 39,
+        "warmth": -1
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.583461
+    },
+    {
+      "case": "dogs-beach",
+      "extra_negative": "",
+      "histogram_similarity": 0.620483,
+      "image": "dogs-beach-s42-matched.png",
+      "reconstruction_tone": {
+        "contrast": 41,
+        "luminance": 190,
+        "saturation": 38,
+        "warmth": -1
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 41,
+        "luminance": 190,
+        "saturation": 39,
+        "warmth": -1
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.628596
+    },
+    {
+      "case": "dogs-beach",
+      "extra_negative": "overexposed, too bright, harsh contrast, deep black shadows, dull colors, desaturated, grey, washed out",
+      "histogram_similarity": 0.460958,
+      "image": "dogs-beach-s42-loop.png",
+      "reconstruction_tone": {
+        "contrast": 54,
+        "luminance": 212,
+        "saturation": 15,
+        "warmth": 10
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 41,
+        "luminance": 190,
+        "saturation": 39,
+        "warmth": -1
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.580189
+    },
+    {
+      "case": "food-table",
+      "extra_negative": "",
+      "histogram_similarity": 0.432861,
+      "image": "food-table-s42-control.png",
+      "reconstruction_tone": {
+        "contrast": 46,
+        "luminance": 51,
+        "saturation": 157,
+        "warmth": 30
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 93,
+        "saturation": 70,
+        "warmth": -3
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.604639
+    },
+    {
+      "case": "food-table",
+      "extra_negative": "",
+      "histogram_similarity": 0.732096,
+      "image": "food-table-s42-matched.png",
+      "reconstruction_tone": {
+        "contrast": 57,
+        "luminance": 93,
+        "saturation": 70,
+        "warmth": -3
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 93,
+        "saturation": 70,
+        "warmth": -3
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.708838
+    },
+    {
+      "case": "food-table",
+      "extra_negative": "dark, underexposed, dim, flat, hazy, low contrast, vivid colors, saturated colors, warm color cast, orange tint, yellow tint",
+      "histogram_similarity": 0.484477,
+      "image": "food-table-s42-loop.png",
+      "reconstruction_tone": {
+        "contrast": 50,
+        "luminance": 56,
+        "saturation": 126,
+        "warmth": 23
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 93,
+        "saturation": 70,
+        "warmth": -3
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.629584
+    },
+    {
+      "case": "kitchen-table",
+      "extra_negative": "",
+      "histogram_similarity": 0.532166,
+      "image": "kitchen-table-s42-control.png",
+      "reconstruction_tone": {
+        "contrast": 67,
+        "luminance": 76,
+        "saturation": 123,
+        "warmth": 26
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 100,
+        "saturation": 46,
+        "warmth": 18
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.607821
+    },
+    {
+      "case": "kitchen-table",
+      "extra_negative": "",
+      "histogram_similarity": 0.789266,
+      "image": "kitchen-table-s42-matched.png",
+      "reconstruction_tone": {
+        "contrast": 50,
+        "luminance": 101,
+        "saturation": 47,
+        "warmth": 17
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 100,
+        "saturation": 46,
+        "warmth": 18
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.687173
+    },
+    {
+      "case": "kitchen-table",
+      "extra_negative": "dark, underexposed, dim, harsh contrast, deep black shadows, vivid colors, saturated colors",
+      "histogram_similarity": 0.568502,
+      "image": "kitchen-table-s42-loop.png",
+      "reconstruction_tone": {
+        "contrast": 66,
+        "luminance": 81,
+        "saturation": 114,
+        "warmth": 27
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 100,
+        "saturation": 46,
+        "warmth": 18
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.636508
+    },
+    {
+      "case": "living-room",
+      "extra_negative": "",
+      "histogram_similarity": 0.522542,
+      "image": "living-room-s42-control.png",
+      "reconstruction_tone": {
+        "contrast": 48,
+        "luminance": 215,
+        "saturation": 7,
+        "warmth": 4
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 192,
+        "saturation": 17,
+        "warmth": 3
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.680835
+    },
+    {
+      "case": "living-room",
+      "extra_negative": "",
+      "histogram_similarity": 0.664307,
+      "image": "living-room-s42-matched.png",
+      "reconstruction_tone": {
+        "contrast": 50,
+        "luminance": 192,
+        "saturation": 17,
+        "warmth": 3
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 192,
+        "saturation": 17,
+        "warmth": 3
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.717859
+    },
+    {
+      "case": "living-room",
+      "extra_negative": "overexposed, too bright",
+      "histogram_similarity": 0.564921,
+      "image": "living-room-s42-loop.png",
+      "reconstruction_tone": {
+        "contrast": 48,
+        "luminance": 213,
+        "saturation": 7,
+        "warmth": 4
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 192,
+        "saturation": 17,
+        "warmth": 3
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.687885
+    },
+    {
+      "case": "mountain-hikers",
+      "extra_negative": "",
+      "histogram_similarity": 0.738017,
+      "image": "mountain-hikers-s42-control.png",
+      "reconstruction_tone": {
+        "contrast": 79,
+        "luminance": 145,
+        "saturation": 42,
+        "warmth": -5
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 74,
+        "luminance": 138,
+        "saturation": 64,
+        "warmth": 3
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.714322
+    },
+    {
+      "case": "mountain-hikers",
+      "extra_negative": "",
+      "histogram_similarity": 0.703756,
+      "image": "mountain-hikers-s42-matched.png",
+      "reconstruction_tone": {
+        "contrast": 74,
+        "luminance": 138,
+        "saturation": 64,
+        "warmth": 3
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 74,
+        "luminance": 138,
+        "saturation": 64,
+        "warmth": 3
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.697501
+    },
+    {
+      "case": "mountain-hikers",
+      "extra_negative": "dull colors, desaturated, grey, washed out",
+      "histogram_similarity": 0.736552,
+      "image": "mountain-hikers-s42-loop.png",
+      "reconstruction_tone": {
+        "contrast": 79,
+        "luminance": 145,
+        "saturation": 46,
+        "warmth": -6
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 74,
+        "luminance": 138,
+        "saturation": 64,
+        "warmth": 3
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.714896
+    },
+    {
+      "case": "street-bicycles",
+      "extra_negative": "",
+      "histogram_similarity": 0.578471,
+      "image": "street-bicycles-s42-control.png",
+      "reconstruction_tone": {
+        "contrast": 69,
+        "luminance": 77,
+        "saturation": 92,
+        "warmth": 19
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 68,
+        "luminance": 116,
+        "saturation": 77,
+        "warmth": 23
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.601813
+    },
+    {
+      "case": "street-bicycles",
+      "extra_negative": "",
+      "histogram_similarity": 0.634033,
+      "image": "street-bicycles-s42-matched.png",
+      "reconstruction_tone": {
+        "contrast": 68,
+        "luminance": 115,
+        "saturation": 77,
+        "warmth": 23
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 68,
+        "luminance": 116,
+        "saturation": 77,
+        "warmth": 23
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.613367
+    },
+    {
+      "case": "street-bicycles",
+      "extra_negative": "dark, underexposed, dim, vivid colors, saturated colors",
+      "histogram_similarity": 0.624552,
+      "image": "street-bicycles-s42-loop.png",
+      "reconstruction_tone": {
+        "contrast": 70,
+        "luminance": 87,
+        "saturation": 84,
+        "warmth": 20
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 68,
+        "luminance": 116,
+        "saturation": 77,
+        "warmth": 23
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.622656
+    },
+    {
+      "case": "train-platform",
+      "extra_negative": "",
+      "histogram_similarity": 0.744405,
+      "image": "train-platform-s42-control.png",
+      "reconstruction_tone": {
+        "contrast": 56,
+        "luminance": 34,
+        "saturation": 47,
+        "warmth": 2
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 67,
+        "luminance": 56,
+        "saturation": 46,
+        "warmth": 7
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.710126
+    },
+    {
+      "case": "train-platform",
+      "extra_negative": "",
+      "histogram_similarity": 0.375834,
+      "image": "train-platform-s42-matched.png",
+      "reconstruction_tone": {
+        "contrast": 67,
+        "luminance": 56,
+        "saturation": 46,
+        "warmth": 7
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 67,
+        "luminance": 56,
+        "saturation": 46,
+        "warmth": 7
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.590277
+    },
+    {
+      "case": "train-platform",
+      "extra_negative": "dark, underexposed, dim, flat, hazy, low contrast",
+      "histogram_similarity": 0.792358,
+      "image": "train-platform-s42-loop.png",
+      "reconstruction_tone": {
+        "contrast": 63,
+        "luminance": 41,
+        "saturation": 50,
+        "warmth": 2
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 67,
+        "luminance": 56,
+        "saturation": 46,
+        "warmth": 7
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.733252
+    },
+    {
+      "case": "workspace-books",
+      "extra_negative": "",
+      "histogram_similarity": 0.620646,
+      "image": "workspace-books-s42-control.png",
+      "reconstruction_tone": {
+        "contrast": 54,
+        "luminance": 190,
+        "saturation": 49,
+        "warmth": 25
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 168,
+        "saturation": 77,
+        "warmth": 47
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.663345
+    },
+    {
+      "case": "workspace-books",
+      "extra_negative": "",
+      "histogram_similarity": 0.63385,
+      "image": "workspace-books-s42-matched.png",
+      "reconstruction_tone": {
+        "contrast": 57,
+        "luminance": 168,
+        "saturation": 76,
+        "warmth": 47
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 168,
+        "saturation": 77,
+        "warmth": 47
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.663876
+    },
+    {
+      "case": "workspace-books",
+      "extra_negative": "overexposed, too bright, dull colors, desaturated, grey, washed out, cool color cast, blue tint",
+      "histogram_similarity": 0.626526,
+      "image": "workspace-books-s42-loop.png",
+      "reconstruction_tone": {
+        "contrast": 56,
+        "luminance": 190,
+        "saturation": 59,
+        "warmth": 36
+      },
+      "seed": 42,
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 168,
+        "saturation": 77,
+        "warmth": 47
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.670724
+    },
+    {
+      "case": "cat-monochrome",
+      "extra_negative": "",
+      "histogram_similarity": 0.580444,
+      "image": "cat-monochrome-s7-control.png",
+      "reconstruction_tone": {
+        "contrast": 67,
+        "luminance": 80,
+        "saturation": 11,
+        "warmth": -1
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.700651
+    },
+    {
+      "case": "cat-monochrome",
+      "extra_negative": "",
+      "histogram_similarity": 0.58075,
+      "image": "cat-monochrome-s7-matched.png",
+      "reconstruction_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.690428
+    },
+    {
+      "case": "cat-monochrome",
+      "extra_negative": "color, colour, tint, sepia, dark, underexposed, dim",
+      "histogram_similarity": 0.612549,
+      "image": "cat-monochrome-s7-loop.png",
+      "reconstruction_tone": {
+        "contrast": 69,
+        "luminance": 90,
+        "saturation": 11,
+        "warmth": -1
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.694963
+    },
+    {
+      "case": "cat-on-keyboard",
+      "extra_negative": "",
+      "histogram_similarity": 0.660889,
+      "image": "cat-on-keyboard-s7-control.png",
+      "reconstruction_tone": {
+        "contrast": 48,
+        "luminance": 116,
+        "saturation": 83,
+        "warmth": 41
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.70293
+    },
+    {
+      "case": "cat-on-keyboard",
+      "extra_negative": "",
+      "histogram_similarity": 0.717855,
+      "image": "cat-on-keyboard-s7-matched.png",
+      "reconstruction_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.711621
+    },
+    {
+      "case": "cat-on-keyboard",
+      "extra_negative": "dark, underexposed, dim, vivid colors, saturated colors, warm color cast, orange tint, yellow tint",
+      "histogram_similarity": 0.668701,
+      "image": "cat-on-keyboard-s7-loop.png",
+      "reconstruction_tone": {
+        "contrast": 46,
+        "luminance": 126,
+        "saturation": 52,
+        "warmth": 27
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.690088
+    },
+    {
+      "case": "cat-on-grass",
+      "extra_negative": "",
+      "histogram_similarity": 0.347941,
+      "image": "cat-on-grass-s7-control.png",
+      "reconstruction_tone": {
+        "contrast": 31,
+        "luminance": 126,
+        "saturation": 128,
+        "warmth": 46
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.563708
+    },
+    {
+      "case": "cat-on-grass",
+      "extra_negative": "",
+      "histogram_similarity": 0.773539,
+      "image": "cat-on-grass-s7-matched.png",
+      "reconstruction_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.676007
+    },
+    {
+      "case": "cat-on-grass",
+      "extra_negative": "dark, underexposed, dim, vivid colors, saturated colors",
+      "histogram_similarity": 0.507874,
+      "image": "cat-on-grass-s7-loop.png",
+      "reconstruction_tone": {
+        "contrast": 31,
+        "luminance": 136,
+        "saturation": 113,
+        "warmth": 45
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.617145
+    },
+    {
+      "case": "amsterdam-market",
+      "extra_negative": "",
+      "histogram_similarity": 0.684631,
+      "image": "amsterdam-market-s7-control.png",
+      "reconstruction_tone": {
+        "contrast": 55,
+        "luminance": 71,
+        "saturation": 127,
+        "warmth": 16
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 53,
+        "luminance": 89,
+        "saturation": 60,
+        "warmth": 14
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.664117
+    },
+    {
+      "case": "amsterdam-market",
+      "extra_negative": "",
+      "histogram_similarity": 0.736491,
+      "image": "amsterdam-market-s7-matched.png",
+      "reconstruction_tone": {
+        "contrast": 53,
+        "luminance": 89,
+        "saturation": 60,
+        "warmth": 14
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 53,
+        "luminance": 89,
+        "saturation": 60,
+        "warmth": 14
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.680152
+    },
+    {
+      "case": "amsterdam-market",
+      "extra_negative": "dark, underexposed, dim, vivid colors, saturated colors",
+      "histogram_similarity": 0.707072,
+      "image": "amsterdam-market-s7-loop.png",
+      "reconstruction_tone": {
+        "contrast": 58,
+        "luminance": 82,
+        "saturation": 111,
+        "warmth": 17
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 53,
+        "luminance": 89,
+        "saturation": 60,
+        "warmth": 14
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.692957
+    },
+    {
+      "case": "astronaut-crew",
+      "extra_negative": "",
+      "histogram_similarity": 0.4776,
+      "image": "astronaut-crew-s7-control.png",
+      "reconstruction_tone": {
+        "contrast": 45,
+        "luminance": 31,
+        "saturation": 184,
+        "warmth": -27
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 59,
+        "saturation": 169,
+        "warmth": -34
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.638719
+    },
+    {
+      "case": "astronaut-crew",
+      "extra_negative": "",
+      "histogram_similarity": 0.628662,
+      "image": "astronaut-crew-s7-matched.png",
+      "reconstruction_tone": {
+        "contrast": 51,
+        "luminance": 61,
+        "saturation": 165,
+        "warmth": -34
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 59,
+        "saturation": 169,
+        "warmth": -34
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.69417
+    },
+    {
+      "case": "astronaut-crew",
+      "extra_negative": "dark, underexposed, dim, vivid colors, saturated colors",
+      "histogram_similarity": 0.490845,
+      "image": "astronaut-crew-s7-loop.png",
+      "reconstruction_tone": {
+        "contrast": 48,
+        "luminance": 36,
+        "saturation": 206,
+        "warmth": -32
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 59,
+        "saturation": 169,
+        "warmth": -34
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.640276
+    },
+    {
+      "case": "dogs-beach",
+      "extra_negative": "",
+      "histogram_similarity": 0.462748,
+      "image": "dogs-beach-s7-control.png",
+      "reconstruction_tone": {
+        "contrast": 59,
+        "luminance": 208,
+        "saturation": 13,
+        "warmth": 7
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 41,
+        "luminance": 190,
+        "saturation": 39,
+        "warmth": -1
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.547316
+    },
+    {
+      "case": "dogs-beach",
+      "extra_negative": "",
+      "histogram_similarity": 0.613159,
+      "image": "dogs-beach-s7-matched.png",
+      "reconstruction_tone": {
+        "contrast": 42,
+        "luminance": 190,
+        "saturation": 39,
+        "warmth": -1
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 41,
+        "luminance": 190,
+        "saturation": 39,
+        "warmth": -1
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.590193
+    },
+    {
+      "case": "dogs-beach",
+      "extra_negative": "overexposed, too bright, harsh contrast, deep black shadows, dull colors, desaturated, grey, washed out",
+      "histogram_similarity": 0.450521,
+      "image": "dogs-beach-s7-loop.png",
+      "reconstruction_tone": {
+        "contrast": 58,
+        "luminance": 209,
+        "saturation": 15,
+        "warmth": 9
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 41,
+        "luminance": 190,
+        "saturation": 39,
+        "warmth": -1
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.548457
+    },
+    {
+      "case": "food-table",
+      "extra_negative": "",
+      "histogram_similarity": 0.451538,
+      "image": "food-table-s7-control.png",
+      "reconstruction_tone": {
+        "contrast": 54,
+        "luminance": 58,
+        "saturation": 156,
+        "warmth": 31
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 93,
+        "saturation": 70,
+        "warmth": -3
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.571741
+    },
+    {
+      "case": "food-table",
+      "extra_negative": "",
+      "histogram_similarity": 0.793315,
+      "image": "food-table-s7-matched.png",
+      "reconstruction_tone": {
+        "contrast": 57,
+        "luminance": 93,
+        "saturation": 70,
+        "warmth": -3
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 93,
+        "saturation": 70,
+        "warmth": -3
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.679596
+    },
+    {
+      "case": "food-table",
+      "extra_negative": "dark, underexposed, dim, vivid colors, saturated colors, warm color cast, orange tint, yellow tint",
+      "histogram_similarity": 0.494893,
+      "image": "food-table-s7-loop.png",
+      "reconstruction_tone": {
+        "contrast": 56,
+        "luminance": 63,
+        "saturation": 120,
+        "warmth": 21
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 93,
+        "saturation": 70,
+        "warmth": -3
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.58194
+    },
+    {
+      "case": "kitchen-table",
+      "extra_negative": "",
+      "histogram_similarity": 0.542013,
+      "image": "kitchen-table-s7-control.png",
+      "reconstruction_tone": {
+        "contrast": 67,
+        "luminance": 76,
+        "saturation": 115,
+        "warmth": 26
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 100,
+        "saturation": 46,
+        "warmth": 18
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.626498
+    },
+    {
+      "case": "kitchen-table",
+      "extra_negative": "",
+      "histogram_similarity": 0.817179,
+      "image": "kitchen-table-s7-matched.png",
+      "reconstruction_tone": {
+        "contrast": 50,
+        "luminance": 100,
+        "saturation": 46,
+        "warmth": 18
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 100,
+        "saturation": 46,
+        "warmth": 18
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.710195
+    },
+    {
+      "case": "kitchen-table",
+      "extra_negative": "dark, underexposed, dim, harsh contrast, deep black shadows, vivid colors, saturated colors",
+      "histogram_similarity": 0.575114,
+      "image": "kitchen-table-s7-loop.png",
+      "reconstruction_tone": {
+        "contrast": 66,
+        "luminance": 81,
+        "saturation": 111,
+        "warmth": 28
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 100,
+        "saturation": 46,
+        "warmth": 18
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.637112
+    },
+    {
+      "case": "living-room",
+      "extra_negative": "",
+      "histogram_similarity": 0.539225,
+      "image": "living-room-s7-control.png",
+      "reconstruction_tone": {
+        "contrast": 46,
+        "luminance": 216,
+        "saturation": 7,
+        "warmth": 4
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 192,
+        "saturation": 17,
+        "warmth": 3
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.685864
+    },
+    {
+      "case": "living-room",
+      "extra_negative": "",
+      "histogram_similarity": 0.709961,
+      "image": "living-room-s7-matched.png",
+      "reconstruction_tone": {
+        "contrast": 50,
+        "luminance": 192,
+        "saturation": 17,
+        "warmth": 3
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 192,
+        "saturation": 17,
+        "warmth": 3
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.731201
+    },
+    {
+      "case": "living-room",
+      "extra_negative": "overexposed, too bright",
+      "histogram_similarity": 0.577352,
+      "image": "living-room-s7-loop.png",
+      "reconstruction_tone": {
+        "contrast": 46,
+        "luminance": 214,
+        "saturation": 7,
+        "warmth": 4
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 192,
+        "saturation": 17,
+        "warmth": 3
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.696777
+    },
+    {
+      "case": "mountain-hikers",
+      "extra_negative": "",
+      "histogram_similarity": 0.745605,
+      "image": "mountain-hikers-s7-control.png",
+      "reconstruction_tone": {
+        "contrast": 78,
+        "luminance": 144,
+        "saturation": 47,
+        "warmth": -3
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 74,
+        "luminance": 138,
+        "saturation": 64,
+        "warmth": 3
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.71008
+    },
+    {
+      "case": "mountain-hikers",
+      "extra_negative": "",
+      "histogram_similarity": 0.706665,
+      "image": "mountain-hikers-s7-matched.png",
+      "reconstruction_tone": {
+        "contrast": 74,
+        "luminance": 137,
+        "saturation": 64,
+        "warmth": 3
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 74,
+        "luminance": 138,
+        "saturation": 64,
+        "warmth": 3
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.696604
+    },
+    {
+      "case": "mountain-hikers",
+      "extra_negative": "dull colors, desaturated, grey, washed out",
+      "histogram_similarity": 0.739502,
+      "image": "mountain-hikers-s7-loop.png",
+      "reconstruction_tone": {
+        "contrast": 79,
+        "luminance": 145,
+        "saturation": 53,
+        "warmth": -4
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 74,
+        "luminance": 138,
+        "saturation": 64,
+        "warmth": 3
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.708286
+    },
+    {
+      "case": "street-bicycles",
+      "extra_negative": "",
+      "histogram_similarity": 0.631734,
+      "image": "street-bicycles-s7-control.png",
+      "reconstruction_tone": {
+        "contrast": 77,
+        "luminance": 77,
+        "saturation": 98,
+        "warmth": 18
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 68,
+        "luminance": 116,
+        "saturation": 77,
+        "warmth": 23
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.654694
+    },
+    {
+      "case": "street-bicycles",
+      "extra_negative": "",
+      "histogram_similarity": 0.569031,
+      "image": "street-bicycles-s7-matched.png",
+      "reconstruction_tone": {
+        "contrast": 68,
+        "luminance": 115,
+        "saturation": 76,
+        "warmth": 23
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 68,
+        "luminance": 116,
+        "saturation": 77,
+        "warmth": 23
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.636444
+    },
+    {
+      "case": "street-bicycles",
+      "extra_negative": "dark, underexposed, dim, harsh contrast, deep black shadows, vivid colors, saturated colors",
+      "histogram_similarity": 0.705688,
+      "image": "street-bicycles-s7-loop.png",
+      "reconstruction_tone": {
+        "contrast": 74,
+        "luminance": 89,
+        "saturation": 86,
+        "warmth": 22
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 68,
+        "luminance": 116,
+        "saturation": 77,
+        "warmth": 23
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.674829
+    },
+    {
+      "case": "train-platform",
+      "extra_negative": "",
+      "histogram_similarity": 0.727498,
+      "image": "train-platform-s7-control.png",
+      "reconstruction_tone": {
+        "contrast": 56,
+        "luminance": 38,
+        "saturation": 39,
+        "warmth": 4
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 67,
+        "luminance": 56,
+        "saturation": 46,
+        "warmth": 7
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.71665
+    },
+    {
+      "case": "train-platform",
+      "extra_negative": "",
+      "histogram_similarity": 0.399312,
+      "image": "train-platform-s7-matched.png",
+      "reconstruction_tone": {
+        "contrast": 68,
+        "luminance": 58,
+        "saturation": 28,
+        "warmth": 7
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 67,
+        "luminance": 56,
+        "saturation": 46,
+        "warmth": 7
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.62492
+    },
+    {
+      "case": "train-platform",
+      "extra_negative": "dark, underexposed, dim, flat, hazy, low contrast",
+      "histogram_similarity": 0.777161,
+      "image": "train-platform-s7-loop.png",
+      "reconstruction_tone": {
+        "contrast": 62,
+        "luminance": 45,
+        "saturation": 39,
+        "warmth": 4
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 67,
+        "luminance": 56,
+        "saturation": 46,
+        "warmth": 7
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.732941
+    },
+    {
+      "case": "workspace-books",
+      "extra_negative": "",
+      "histogram_similarity": 0.640889,
+      "image": "workspace-books-s7-control.png",
+      "reconstruction_tone": {
+        "contrast": 56,
+        "luminance": 184,
+        "saturation": 51,
+        "warmth": 27
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 168,
+        "saturation": 77,
+        "warmth": 47
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.648482
+    },
+    {
+      "case": "workspace-books",
+      "extra_negative": "",
+      "histogram_similarity": 0.610209,
+      "image": "workspace-books-s7-matched.png",
+      "reconstruction_tone": {
+        "contrast": 57,
+        "luminance": 169,
+        "saturation": 79,
+        "warmth": 47
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 168,
+        "saturation": 77,
+        "warmth": 47
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.639718
+    },
+    {
+      "case": "workspace-books",
+      "extra_negative": "overexposed, too bright, dull colors, desaturated, grey, washed out, cool color cast, blue tint",
+      "histogram_similarity": 0.618713,
+      "image": "workspace-books-s7-loop.png",
+      "reconstruction_tone": {
+        "contrast": 57,
+        "luminance": 187,
+        "saturation": 62,
+        "warmth": 39
+      },
+      "seed": 7,
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 168,
+        "saturation": 77,
+        "warmth": 47
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.642806
+    },
+    {
+      "case": "cat-monochrome",
+      "extra_negative": "",
+      "histogram_similarity": 0.509135,
+      "image": "cat-monochrome-s1234-control.png",
+      "reconstruction_tone": {
+        "contrast": 67,
+        "luminance": 71,
+        "saturation": 12,
+        "warmth": -1
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.699034
+    },
+    {
+      "case": "cat-monochrome",
+      "extra_negative": "",
+      "histogram_similarity": 0.528137,
+      "image": "cat-monochrome-s1234-matched.png",
+      "reconstruction_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.704625
+    },
+    {
+      "case": "cat-monochrome",
+      "extra_negative": "color, colour, tint, sepia, dark, underexposed, dim",
+      "histogram_similarity": 0.60317,
+      "image": "cat-monochrome-s1234-loop.png",
+      "reconstruction_tone": {
+        "contrast": 70,
+        "luminance": 81,
+        "saturation": 11,
+        "warmth": -1
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.736803
+    },
+    {
+      "case": "cat-on-keyboard",
+      "extra_negative": "",
+      "histogram_similarity": 0.632182,
+      "image": "cat-on-keyboard-s1234-control.png",
+      "reconstruction_tone": {
+        "contrast": 48,
+        "luminance": 119,
+        "saturation": 78,
+        "warmth": 39
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.658344
+    },
+    {
+      "case": "cat-on-keyboard",
+      "extra_negative": "",
+      "histogram_similarity": 0.683329,
+      "image": "cat-on-keyboard-s1234-matched.png",
+      "reconstruction_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.676227
+    },
+    {
+      "case": "cat-on-keyboard",
+      "extra_negative": "dark, underexposed, dim, vivid colors, saturated colors, warm color cast, orange tint, yellow tint",
+      "histogram_similarity": 0.660502,
+      "image": "cat-on-keyboard-s1234-loop.png",
+      "reconstruction_tone": {
+        "contrast": 49,
+        "luminance": 127,
+        "saturation": 52,
+        "warmth": 26
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.671368
+    },
+    {
+      "case": "cat-on-grass",
+      "extra_negative": "",
+      "histogram_similarity": 0.268188,
+      "image": "cat-on-grass-s1234-control.png",
+      "reconstruction_tone": {
+        "contrast": 31,
+        "luminance": 121,
+        "saturation": 136,
+        "warmth": 49
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.523083
+    },
+    {
+      "case": "cat-on-grass",
+      "extra_negative": "",
+      "histogram_similarity": 0.756287,
+      "image": "cat-on-grass-s1234-matched.png",
+      "reconstruction_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 88,
+        "warmth": 51
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.654791
+    },
+    {
+      "case": "cat-on-grass",
+      "extra_negative": "dark, underexposed, dim, vivid colors, saturated colors",
+      "histogram_similarity": 0.467753,
+      "image": "cat-on-grass-s1234-loop.png",
+      "reconstruction_tone": {
+        "contrast": 32,
+        "luminance": 135,
+        "saturation": 116,
+        "warmth": 47
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.607062
+    },
+    {
+      "case": "amsterdam-market",
+      "extra_negative": "",
+      "histogram_similarity": 0.67452,
+      "image": "amsterdam-market-s1234-control.png",
+      "reconstruction_tone": {
+        "contrast": 57,
+        "luminance": 64,
+        "saturation": 127,
+        "warmth": 17
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 53,
+        "luminance": 89,
+        "saturation": 60,
+        "warmth": 14
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.70896
+    },
+    {
+      "case": "amsterdam-market",
+      "extra_negative": "",
+      "histogram_similarity": 0.709941,
+      "image": "amsterdam-market-s1234-matched.png",
+      "reconstruction_tone": {
+        "contrast": 53,
+        "luminance": 89,
+        "saturation": 60,
+        "warmth": 14
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 53,
+        "luminance": 89,
+        "saturation": 60,
+        "warmth": 14
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.719623
+    },
+    {
+      "case": "amsterdam-market",
+      "extra_negative": "dark, underexposed, dim, vivid colors, saturated colors",
+      "histogram_similarity": 0.705098,
+      "image": "amsterdam-market-s1234-loop.png",
+      "reconstruction_tone": {
+        "contrast": 58,
+        "luminance": 75,
+        "saturation": 129,
+        "warmth": 22
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 53,
+        "luminance": 89,
+        "saturation": 60,
+        "warmth": 14
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.709967
+    },
+    {
+      "case": "astronaut-crew",
+      "extra_negative": "",
+      "histogram_similarity": 0.456543,
+      "image": "astronaut-crew-s1234-control.png",
+      "reconstruction_tone": {
+        "contrast": 41,
+        "luminance": 25,
+        "saturation": 139,
+        "warmth": -21
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 59,
+        "saturation": 169,
+        "warmth": -34
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.628228
+    },
+    {
+      "case": "astronaut-crew",
+      "extra_negative": "",
+      "histogram_similarity": 0.595093,
+      "image": "astronaut-crew-s1234-matched.png",
+      "reconstruction_tone": {
+        "contrast": 51,
+        "luminance": 62,
+        "saturation": 166,
+        "warmth": -34
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 59,
+        "saturation": 169,
+        "warmth": -34
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.684649
+    },
+    {
+      "case": "astronaut-crew",
+      "extra_negative": "dark, underexposed, dim, flat, hazy, low contrast, dull colors, desaturated, grey, washed out, warm color cast, orange tint, yellow tint",
+      "histogram_similarity": 0.493306,
+      "image": "astronaut-crew-s1234-loop.png",
+      "reconstruction_tone": {
+        "contrast": 46,
+        "luminance": 31,
+        "saturation": 185,
+        "warmth": -28
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 59,
+        "saturation": 169,
+        "warmth": -34
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.644933
+    },
+    {
+      "case": "dogs-beach",
+      "extra_negative": "",
+      "histogram_similarity": 0.497355,
+      "image": "dogs-beach-s1234-control.png",
+      "reconstruction_tone": {
+        "contrast": 62,
+        "luminance": 203,
+        "saturation": 13,
+        "warmth": 8
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 41,
+        "luminance": 190,
+        "saturation": 39,
+        "warmth": -1
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.572236
+    },
+    {
+      "case": "dogs-beach",
+      "extra_negative": "",
+      "histogram_similarity": 0.633525,
+      "image": "dogs-beach-s1234-matched.png",
+      "reconstruction_tone": {
+        "contrast": 42,
+        "luminance": 190,
+        "saturation": 39,
+        "warmth": -1
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 41,
+        "luminance": 190,
+        "saturation": 39,
+        "warmth": -1
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.62787
+    },
+    {
+      "case": "dogs-beach",
+      "extra_negative": "overexposed, too bright, harsh contrast, deep black shadows, dull colors, desaturated, grey, washed out",
+      "histogram_similarity": 0.473633,
+      "image": "dogs-beach-s1234-loop.png",
+      "reconstruction_tone": {
+        "contrast": 59,
+        "luminance": 206,
+        "saturation": 15,
+        "warmth": 9
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 41,
+        "luminance": 190,
+        "saturation": 39,
+        "warmth": -1
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.573543
+    },
+    {
+      "case": "food-table",
+      "extra_negative": "",
+      "histogram_similarity": 0.401306,
+      "image": "food-table-s1234-control.png",
+      "reconstruction_tone": {
+        "contrast": 51,
+        "luminance": 54,
+        "saturation": 155,
+        "warmth": 28
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 93,
+        "saturation": 70,
+        "warmth": -3
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.565887
+    },
+    {
+      "case": "food-table",
+      "extra_negative": "",
+      "histogram_similarity": 0.726807,
+      "image": "food-table-s1234-matched.png",
+      "reconstruction_tone": {
+        "contrast": 57,
+        "luminance": 93,
+        "saturation": 70,
+        "warmth": -3
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 93,
+        "saturation": 70,
+        "warmth": -3
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.675415
+    },
+    {
+      "case": "food-table",
+      "extra_negative": "dark, underexposed, dim, vivid colors, saturated colors, warm color cast, orange tint, yellow tint",
+      "histogram_similarity": 0.44458,
+      "image": "food-table-s1234-loop.png",
+      "reconstruction_tone": {
+        "contrast": 53,
+        "luminance": 58,
+        "saturation": 120,
+        "warmth": 19
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 93,
+        "saturation": 70,
+        "warmth": -3
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.58075
+    },
+    {
+      "case": "kitchen-table",
+      "extra_negative": "",
+      "histogram_similarity": 0.537089,
+      "image": "kitchen-table-s1234-control.png",
+      "reconstruction_tone": {
+        "contrast": 58,
+        "luminance": 70,
+        "saturation": 121,
+        "warmth": 29
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 100,
+        "saturation": 46,
+        "warmth": 18
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.611044
+    },
+    {
+      "case": "kitchen-table",
+      "extra_negative": "",
+      "histogram_similarity": 0.780334,
+      "image": "kitchen-table-s1234-matched.png",
+      "reconstruction_tone": {
+        "contrast": 50,
+        "luminance": 100,
+        "saturation": 46,
+        "warmth": 18
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 100,
+        "saturation": 46,
+        "warmth": 18
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.683138
+    },
+    {
+      "case": "kitchen-table",
+      "extra_negative": "dark, underexposed, dim, vivid colors, saturated colors",
+      "histogram_similarity": 0.55481,
+      "image": "kitchen-table-s1234-loop.png",
+      "reconstruction_tone": {
+        "contrast": 66,
+        "luminance": 79,
+        "saturation": 108,
+        "warmth": 26
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 100,
+        "saturation": 46,
+        "warmth": 18
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.613235
+    },
+    {
+      "case": "living-room",
+      "extra_negative": "",
+      "histogram_similarity": 0.462585,
+      "image": "living-room-s1234-control.png",
+      "reconstruction_tone": {
+        "contrast": 46,
+        "luminance": 219,
+        "saturation": 6,
+        "warmth": 3
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 192,
+        "saturation": 17,
+        "warmth": 3
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.673248
+    },
+    {
+      "case": "living-room",
+      "extra_negative": "",
+      "histogram_similarity": 0.685282,
+      "image": "living-room-s1234-matched.png",
+      "reconstruction_tone": {
+        "contrast": 51,
+        "luminance": 192,
+        "saturation": 17,
+        "warmth": 3
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 192,
+        "saturation": 17,
+        "warmth": 3
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.740265
+    },
+    {
+      "case": "living-room",
+      "extra_negative": "overexposed, too bright",
+      "histogram_similarity": 0.505473,
+      "image": "living-room-s1234-loop.png",
+      "reconstruction_tone": {
+        "contrast": 46,
+        "luminance": 217,
+        "saturation": 6,
+        "warmth": 3
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 192,
+        "saturation": 17,
+        "warmth": 3
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.703143
+    },
+    {
+      "case": "mountain-hikers",
+      "extra_negative": "",
+      "histogram_similarity": 0.763957,
+      "image": "mountain-hikers-s1234-control.png",
+      "reconstruction_tone": {
+        "contrast": 76,
+        "luminance": 145,
+        "saturation": 47,
+        "warmth": -4
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 74,
+        "luminance": 138,
+        "saturation": 64,
+        "warmth": 3
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.704465
+    },
+    {
+      "case": "mountain-hikers",
+      "extra_negative": "",
+      "histogram_similarity": 0.736715,
+      "image": "mountain-hikers-s1234-matched.png",
+      "reconstruction_tone": {
+        "contrast": 74,
+        "luminance": 138,
+        "saturation": 64,
+        "warmth": 3
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 74,
+        "luminance": 138,
+        "saturation": 64,
+        "warmth": 3
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.690116
+    },
+    {
+      "case": "mountain-hikers",
+      "extra_negative": "dull colors, desaturated, grey, washed out",
+      "histogram_similarity": 0.750631,
+      "image": "mountain-hikers-s1234-loop.png",
+      "reconstruction_tone": {
+        "contrast": 76,
+        "luminance": 147,
+        "saturation": 52,
+        "warmth": -4
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 74,
+        "luminance": 138,
+        "saturation": 64,
+        "warmth": 3
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.70192
+    },
+    {
+      "case": "street-bicycles",
+      "extra_negative": "",
+      "histogram_similarity": 0.709635,
+      "image": "street-bicycles-s1234-control.png",
+      "reconstruction_tone": {
+        "contrast": 71,
+        "luminance": 80,
+        "saturation": 96,
+        "warmth": 19
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 68,
+        "luminance": 116,
+        "saturation": 77,
+        "warmth": 23
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.639526
+    },
+    {
+      "case": "street-bicycles",
+      "extra_negative": "",
+      "histogram_similarity": 0.617472,
+      "image": "street-bicycles-s1234-matched.png",
+      "reconstruction_tone": {
+        "contrast": 68,
+        "luminance": 116,
+        "saturation": 77,
+        "warmth": 23
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 68,
+        "luminance": 116,
+        "saturation": 77,
+        "warmth": 23
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.606958
+    },
+    {
+      "case": "street-bicycles",
+      "extra_negative": "dark, underexposed, dim, vivid colors, saturated colors",
+      "histogram_similarity": 0.747782,
+      "image": "street-bicycles-s1234-loop.png",
+      "reconstruction_tone": {
+        "contrast": 72,
+        "luminance": 88,
+        "saturation": 92,
+        "warmth": 19
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 68,
+        "luminance": 116,
+        "saturation": 77,
+        "warmth": 23
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.646796
+    },
+    {
+      "case": "train-platform",
+      "extra_negative": "",
+      "histogram_similarity": 0.706665,
+      "image": "train-platform-s1234-control.png",
+      "reconstruction_tone": {
+        "contrast": 52,
+        "luminance": 32,
+        "saturation": 36,
+        "warmth": 2
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 67,
+        "luminance": 56,
+        "saturation": 46,
+        "warmth": 7
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.69259
+    },
+    {
+      "case": "train-platform",
+      "extra_negative": "",
+      "histogram_similarity": 0.389425,
+      "image": "train-platform-s1234-matched.png",
+      "reconstruction_tone": {
+        "contrast": 67,
+        "luminance": 55,
+        "saturation": 51,
+        "warmth": 6
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 67,
+        "luminance": 56,
+        "saturation": 46,
+        "warmth": 7
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.589716
+    },
+    {
+      "case": "train-platform",
+      "extra_negative": "dark, underexposed, dim, flat, hazy, low contrast",
+      "histogram_similarity": 0.746867,
+      "image": "train-platform-s1234-loop.png",
+      "reconstruction_tone": {
+        "contrast": 58,
+        "luminance": 38,
+        "saturation": 39,
+        "warmth": 2
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 67,
+        "luminance": 56,
+        "saturation": 46,
+        "warmth": 7
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.718481
+    },
+    {
+      "case": "workspace-books",
+      "extra_negative": "",
+      "histogram_similarity": 0.674845,
+      "image": "workspace-books-s1234-control.png",
+      "reconstruction_tone": {
+        "contrast": 55,
+        "luminance": 186,
+        "saturation": 53,
+        "warmth": 28
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 168,
+        "saturation": 77,
+        "warmth": 47
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.656533
+    },
+    {
+      "case": "workspace-books",
+      "extra_negative": "",
+      "histogram_similarity": 0.705973,
+      "image": "workspace-books-s1234-matched.png",
+      "reconstruction_tone": {
+        "contrast": 57,
+        "luminance": 168,
+        "saturation": 78,
+        "warmth": 48
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 168,
+        "saturation": 77,
+        "warmth": 47
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.672085
+    },
+    {
+      "case": "workspace-books",
+      "extra_negative": "overexposed, too bright, dull colors, desaturated, grey, washed out, cool color cast, blue tint",
+      "histogram_similarity": 0.683594,
+      "image": "workspace-books-s1234-loop.png",
+      "reconstruction_tone": {
+        "contrast": 55,
+        "luminance": 187,
+        "saturation": 66,
+        "warmth": 41
+      },
+      "seed": 1234,
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 168,
+        "saturation": 77,
+        "warmth": 47
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.66011
+    }
+  ]
+}
