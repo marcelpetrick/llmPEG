@@ -37,11 +37,13 @@ REPO = Path(__file__).resolve().parent.parent
 SEEDS = (42, 7, 1234)
 
 
-def _artifact(case: str) -> Artifact:
-    folder = "review" if case in CATS else "tone-holdout"
-    return Artifact.from_file_bytes(
-        (REPO / "survey/qwen" / folder / f"{case}.llmpeg.json.gz").read_bytes()
-    )
+def _artifact(case: str, artifacts_dir: Path | None) -> Artifact:
+    if artifacts_dir is not None:
+        path = artifacts_dir / f"{case}.llmpeg.json.gz"
+    else:
+        folder = "review" if case in CATS else "tone-holdout"
+        path = REPO / "survey/qwen" / folder / f"{case}.llmpeg.json.gz"
+    return Artifact.from_file_bytes(path.read_bytes())
 
 
 def _row(
@@ -69,7 +71,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     rows: list[dict[str, Any]] = []
     for seed in args.seeds:
         for case in args.cases:
-            artifact = _artifact(case)
+            artifact = _artifact(case, args.artifacts_dir)
             if artifact.tone is None:
                 raise SystemExit(f"{case}: artifact has no tone")
             prompt = render_generation_prompt(artifact)
@@ -115,6 +117,11 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, default=REPO / "survey/qwen/tone-feedback")
+    parser.add_argument(
+        "--artifacts-dir",
+        type=Path,
+        help="read <case>.llmpeg.json.gz from here instead of the review and holdout runs",
+    )
     parser.add_argument("--cases", nargs="+", default=[*CATS, *HOLDOUT], choices=[*CATS, *HOLDOUT])
     parser.add_argument("--seeds", nargs="+", type=int, default=list(SEEDS))
     parser.add_argument(
