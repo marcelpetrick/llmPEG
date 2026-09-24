@@ -1,0 +1,322 @@
+{
+  "encoder": "ollama/qwen3.5:4b",
+  "generator": "local ComfyUI/Qwen-Image-2.1",
+  "intensifiers": "\\b(bright|brilliant|vivid|vibrant|lush|rich|saturated)\\b",
+  "llmpeg_version": "0.6.0",
+  "resolution": 512,
+  "rows": [
+    {
+      "case": "cat-monochrome",
+      "earlier_intensifiers": 0,
+      "earlier_reconstruction_tone": {
+        "contrast": 62,
+        "luminance": 67,
+        "saturation": 11,
+        "warmth": -1
+      },
+      "image": "cat-monochrome.png",
+      "intensifiers": 0,
+      "reconstruction_tone": {
+        "contrast": 60,
+        "luminance": 85,
+        "saturation": 7,
+        "warmth": -1
+      },
+      "source_tone": {
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      }
+    },
+    {
+      "case": "cat-on-keyboard",
+      "earlier_intensifiers": 0,
+      "earlier_reconstruction_tone": {
+        "contrast": 46,
+        "luminance": 111,
+        "saturation": 88,
+        "warmth": 40
+      },
+      "image": "cat-on-keyboard.png",
+      "intensifiers": 0,
+      "reconstruction_tone": {
+        "contrast": 58,
+        "luminance": 101,
+        "saturation": 96,
+        "warmth": 38
+      },
+      "source_tone": {
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      }
+    },
+    {
+      "case": "cat-on-grass",
+      "earlier_intensifiers": 1,
+      "earlier_reconstruction_tone": {
+        "contrast": 33,
+        "luminance": 124,
+        "saturation": 126,
+        "warmth": 47
+      },
+      "image": "cat-on-grass.png",
+      "intensifiers": 0,
+      "reconstruction_tone": {
+        "contrast": 31,
+        "luminance": 112,
+        "saturation": 121,
+        "warmth": 47
+      },
+      "source_tone": {
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      }
+    },
+    {
+      "case": "amsterdam-market",
+      "earlier_intensifiers": 0,
+      "earlier_reconstruction_tone": {
+        "contrast": 50,
+        "luminance": 62,
+        "saturation": 141,
+        "warmth": 16
+      },
+      "image": "amsterdam-market.png",
+      "intensifiers": 0,
+      "reconstruction_tone": {
+        "contrast": 65,
+        "luminance": 85,
+        "saturation": 104,
+        "warmth": 11
+      },
+      "source_tone": {
+        "contrast": 53,
+        "luminance": 89,
+        "saturation": 60,
+        "warmth": 14
+      }
+    },
+    {
+      "case": "astronaut-crew",
+      "earlier_intensifiers": 0,
+      "earlier_reconstruction_tone": {
+        "contrast": 44,
+        "luminance": 28,
+        "saturation": 138,
+        "warmth": -20
+      },
+      "image": "astronaut-crew.png",
+      "intensifiers": 0,
+      "reconstruction_tone": {
+        "contrast": 34,
+        "luminance": 29,
+        "saturation": 226,
+        "warmth": -41
+      },
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 59,
+        "saturation": 169,
+        "warmth": -34
+      }
+    },
+    {
+      "case": "dogs-beach",
+      "earlier_intensifiers": 0,
+      "earlier_reconstruction_tone": {
+        "contrast": 55,
+        "luminance": 212,
+        "saturation": 13,
+        "warmth": 8
+      },
+      "image": "dogs-beach.png",
+      "intensifiers": 0,
+      "reconstruction_tone": {
+        "contrast": 44,
+        "luminance": 205,
+        "saturation": 17,
+        "warmth": 0
+      },
+      "source_tone": {
+        "contrast": 41,
+        "luminance": 190,
+        "saturation": 39,
+        "warmth": -1
+      }
+    },
+    {
+      "case": "food-table",
+      "earlier_intensifiers": 0,
+      "earlier_reconstruction_tone": {
+        "contrast": 46,
+        "luminance": 51,
+        "saturation": 157,
+        "warmth": 30
+      },
+      "image": "food-table.png",
+      "intensifiers": 0,
+      "reconstruction_tone": {
+        "contrast": 55,
+        "luminance": 57,
+        "saturation": 142,
+        "warmth": 32
+      },
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 93,
+        "saturation": 70,
+        "warmth": -3
+      }
+    },
+    {
+      "case": "kitchen-table",
+      "earlier_intensifiers": 0,
+      "earlier_reconstruction_tone": {
+        "contrast": 67,
+        "luminance": 76,
+        "saturation": 123,
+        "warmth": 26
+      },
+      "image": "kitchen-table.png",
+      "intensifiers": 0,
+      "reconstruction_tone": {
+        "contrast": 51,
+        "luminance": 74,
+        "saturation": 100,
+        "warmth": 27
+      },
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 100,
+        "saturation": 46,
+        "warmth": 18
+      }
+    },
+    {
+      "case": "living-room",
+      "earlier_intensifiers": 0,
+      "earlier_reconstruction_tone": {
+        "contrast": 48,
+        "luminance": 215,
+        "saturation": 7,
+        "warmth": 4
+      },
+      "image": "living-room.png",
+      "intensifiers": 1,
+      "reconstruction_tone": {
+        "contrast": 51,
+        "luminance": 195,
+        "saturation": 24,
+        "warmth": 14
+      },
+      "source_tone": {
+        "contrast": 50,
+        "luminance": 192,
+        "saturation": 17,
+        "warmth": 3
+      }
+    },
+    {
+      "case": "mountain-hikers",
+      "earlier_intensifiers": 0,
+      "earlier_reconstruction_tone": {
+        "contrast": 79,
+        "luminance": 145,
+        "saturation": 42,
+        "warmth": -5
+      },
+      "image": "mountain-hikers.png",
+      "intensifiers": 0,
+      "reconstruction_tone": {
+        "contrast": 83,
+        "luminance": 152,
+        "saturation": 31,
+        "warmth": -2
+      },
+      "source_tone": {
+        "contrast": 74,
+        "luminance": 138,
+        "saturation": 64,
+        "warmth": 3
+      }
+    },
+    {
+      "case": "street-bicycles",
+      "earlier_intensifiers": 2,
+      "earlier_reconstruction_tone": {
+        "contrast": 69,
+        "luminance": 77,
+        "saturation": 92,
+        "warmth": 19
+      },
+      "image": "street-bicycles.png",
+      "intensifiers": 1,
+      "reconstruction_tone": {
+        "contrast": 68,
+        "luminance": 126,
+        "saturation": 78,
+        "warmth": 38
+      },
+      "source_tone": {
+        "contrast": 68,
+        "luminance": 116,
+        "saturation": 77,
+        "warmth": 23
+      }
+    },
+    {
+      "case": "train-platform",
+      "earlier_intensifiers": 0,
+      "earlier_reconstruction_tone": {
+        "contrast": 56,
+        "luminance": 34,
+        "saturation": 47,
+        "warmth": 2
+      },
+      "image": "train-platform.png",
+      "intensifiers": 0,
+      "reconstruction_tone": {
+        "contrast": 55,
+        "luminance": 42,
+        "saturation": 62,
+        "warmth": 6
+      },
+      "source_tone": {
+        "contrast": 67,
+        "luminance": 56,
+        "saturation": 46,
+        "warmth": 7
+      }
+    },
+    {
+      "case": "workspace-books",
+      "earlier_intensifiers": 0,
+      "earlier_reconstruction_tone": {
+        "contrast": 54,
+        "luminance": 190,
+        "saturation": 49,
+        "warmth": 25
+      },
+      "image": "workspace-books.png",
+      "intensifiers": 0,
+      "reconstruction_tone": {
+        "contrast": 63,
+        "luminance": 166,
+        "saturation": 74,
+        "warmth": 28
+      },
+      "source_tone": {
+        "contrast": 57,
+        "luminance": 168,
+        "saturation": 77,
+        "warmth": 47
+      }
+    }
+  ],
+  "seed": 42
+}

@@ -218,6 +218,62 @@ not fit this pattern: the keyboard (148) and grass (158) cats are bright, yet ca
 cannot tell whether a pattern belongs to the scene or to the seed. A fixed rule cannot know in
 advance which way a render will miss.
 
+## Attempt 5: measure the render first, then correct
+
+Attempt 4 showed that the direction of Qwen's miss depends on the image. Two corrections avoid
+guessing it by measuring the render first; both read only the artifact's recorded tone, never the
+source. They now live in `llmpeg.grading` and behind `llmpeg generate --tone-correction`:
+
+- **`loop`**: render, measure the render's tone, and render once more at the same seed with
+  negative-prompt terms chosen from the *sign* of each error beyond a margin (for example "dark,
+  underexposed, dim" when the render is more than 12 below the recorded luminance).
+- **`match`**: regrade the first render toward the recorded tone with global adjustments: one
+  affine map on all channels for luminance and spread, an HSV saturation scale, and a red–blue
+  shift for warmth.
+
+`scripts/tone_feedback.py` ran all 13 survey sources at seeds 42, 7, and 1234. Evidence:
+[`survey/qwen/tone-feedback/`](../survey/qwen/tone-feedback/README.md). Mean absolute error against
+the recorded tone over the 39 source-seed pairs (0–255), plus the deterministic proxy scores against
+the source:
+
+| Variant | Luminance | Contrast | Saturation | Warmth | Visual proxy | Histogram similarity |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `control` | 28.1 | 7.2 | 34.6 | 11.6 | 0.644 | 0.565 |
+| `loop` | 22.3 | 6.4 | 24.9 | 8.8 | 0.660 | 0.607 |
+| `match` | 0.4 | 0.2 | 1.1 | 0.1 | 0.673 | 0.661 |
+
+- **The loop helps nearly everywhere.** It lowers the combined luminance and saturation error in
+  37 of 39 pairs; the two exceptions are single seeds (`astronaut-crew` seed 7, 43 → 60;
+  `dogs-beach` seed 1234, 39 → 40). The gain is about the same at every seed: mean saturation
+  error 35.8 → 25.7, 33.0 → 24.5, and 34.8 → 24.5 at seeds 42, 7, and 1234. It costs a second
+  render.
+- **The miss belongs to the scene, not the seed.** For all 13 sources the `control` render misses
+  luminance in the same direction at all three seeds. That is why a loop works where a fixed rule
+  did not.
+- **`match` hits the numbers by construction, so those four columns prove nothing.** The
+  independent check is histogram similarity against the source, which `match` raises in 30 of 39
+  pairs (the loop in 32). The contact sheet shows the catch: where the regrade has to add a lot of
+  saturation or warmth it adds a visible cast, such as the keyboard cat turning bluish and the
+  near-grey beach dogs turning orange.
+- Proxy scores rise for both, but whether they track a human eye is unresolved
+  ([`metrics.md`](metrics.md)).
+
+## Attempt 6: ask the encoder not to intensify colours
+
+The vision model called pale, yellowish grass "bright green grass". `scripts/tone_wording.py`
+re-encoded all 13 sources with one extra instruction line, "Name each colour as it looks … never
+intensify it with bright, vivid, lush, or rich unless that is unmistakable", and rendered each at
+seed 42. Evidence: [`survey/qwen/tone-wording/`](../survey/qwen/tone-wording/README.md).
+
+The intensifying words were rare to begin with: 3 across the 13 earlier artifacts (`bright`,
+`vivid`, `lush`, `vibrant`, `brilliant`, `rich`, `saturated`), 2 after. Yet the renders moved a
+lot, in both directions: mean saturation error 35.8 → 30.5 and luminance error 29.8 → 22.1, better
+for 9 of 13 sources, but `astronaut-crew` went from 138 to 226 against a source of 169 and
+`living-room` from 7 to 24 against 17. The mechanism the line targets barely changed, so the shift
+comes from the whole description being rewritten, which moves content and tone together. One
+seed of one re-encode cannot separate that from chance. **Not adopted**: the instruction is
+unchanged.
+
 ## Status (2026-09-24, paused)
 
 Work is paused for another project. The plan for resuming is in

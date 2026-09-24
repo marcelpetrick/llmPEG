@@ -444,7 +444,17 @@ uv run llmpeg evaluate photo.jpg regenerated.png   # uses photo.jpg.llmpeg.json
 ```
 
 Override the local service with `--comfyui-host` or `LLMPEG_COMFYUI_HOST`. The generator receives
-only the rendered text prompt, never the source image. Older checked-in benchmark reconstructions
+only the rendered text prompt, never the source image.
+
+Qwen-Image misses a photo's exposure and colour, and which way it misses depends on the scene
+([`docs/tone.md`](docs/tone.md)). `generate --tone-correction loop` measures the first render and
+renders once more with negative-prompt terms that push each miss back toward the tone recorded in
+the artifact; `--tone-correction match` instead regrades the render as a post-process. Both read
+only the artifact, never the source. Across 13 sources and three seeds the loop cut the mean
+saturation error from 34.6 to 24.9 and the mean luminance error from 28.1 to 22.3 (0–255, from
+[`survey/qwen/tone-feedback/measurements.json`](survey/qwen/tone-feedback/measurements.json)).
+`match` hits the recorded numbers almost exactly by construction, but can add a visible colour cast.
+Neither is the default until people rate them. Older checked-in benchmark reconstructions
 retain their actual Codex provenance; changing the active adapter does not rewrite historical
 evidence.
 
