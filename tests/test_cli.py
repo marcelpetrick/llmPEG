@@ -475,3 +475,39 @@ def test_generate_cli_tone_loop_stops_when_the_deadline_has_passed(
     assert generate.call_count == 1
     assert not output.exists()
     assert "--timeout ran out" in capsys.readouterr().err
+
+
+def test_reconstruct_cli_renders_the_observer_style(
+    artifact: Artifact, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    artifact_path = tmp_path / "photo.jpg.llmpeg.json"
+    artifact.write(artifact_path)
+
+    assert main(["reconstruct", str(artifact_path), "--prompt-style", "observer"]) == 0
+    observer = capsys.readouterr().out
+    assert main(["reconstruct", str(artifact_path)]) == 0
+    pipeline = capsys.readouterr().out
+
+    assert observer.startswith("The image is a square realistic photograph: ")
+    assert pipeline.startswith("Create a new image from this semantic description.")
+
+
+def test_generate_cli_sends_the_observer_prompt(artifact: Artifact, tmp_path: Path) -> None:
+    artifact_path = tmp_path / "photo.jpg.llmpeg.json"
+    artifact.write(artifact_path)
+    with patch("llmpeg.cli.generate_comfyui", return_value=b"generated") as generate:
+        assert (
+            main(
+                [
+                    "generate",
+                    str(artifact_path),
+                    "-o",
+                    str(tmp_path / "out.png"),
+                    "--prompt-style",
+                    "observer",
+                ]
+            )
+            == 0
+        )
+
+    assert generate.call_args.args[0].startswith("The image is a square realistic photograph: ")

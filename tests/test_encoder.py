@@ -15,6 +15,7 @@ from llmpeg.encoder import (
     encode_image,
     measure_tone,
     render_generation_prompt,
+    render_observer_prompt,
 )
 
 
@@ -119,3 +120,32 @@ def test_encode_rejects_provider_shape(sample_image: Path, description: dict[str
     malformed = dict(description, critical_text="not an array")
     with pytest.raises(ArtifactError, match="must be an array"):
         encode_image(sample_image, FakeProvider(malformed), FidelityProfile.DETAILED)
+
+
+def test_observer_prompt_is_one_observing_paragraph(artifact: Artifact) -> None:
+    toned = replace(
+        artifact,
+        tone=Tone(148, 55, 48, -5, colourfulness=32),
+        critical_text=('"EXIT"', "ok", "a\nb", "x" * 61, '""'),
+    )
+    prompt = render_observer_prompt(toned)
+
+    assert "\n" not in prompt
+    assert prompt.startswith("The image is a square realistic photograph: ")
+    assert "The lighting is " in prompt
+    assert (
+        "The photograph has mid-tone exposure, moderate contrast, natural, moderate colour "
+        "with a neutral white balance."
+    ) in prompt
+    assert prompt.endswith('The visible text reads "EXIT", "ok".')
+    for instruction in ("Canvas:", "Palette:", "#", "Match this grading", "Avoid:"):
+        assert instruction not in prompt
+
+
+def test_observer_prompt_without_tone_or_text(artifact: Artifact) -> None:
+    plain = replace(artifact, tone=None, critical_text=())
+    prompt = render_observer_prompt(plain)
+
+    assert "The photograph has" not in prompt
+    assert "The visible text reads" not in prompt
+    assert prompt.endswith(".")

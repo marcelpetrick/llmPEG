@@ -152,8 +152,8 @@ def colourfulness(image: Image.Image) -> float:
     return spread + 0.3 * math.hypot(statistics.fmean(rg), statistics.fmean(yb))
 
 
-def describe_tone(tone: Tone) -> str:
-    """Turn measured tone into words a text-to-image model follows, keeping the numbers."""
+def _tone_parts(tone: Tone) -> tuple[str, str, str]:
+    """Exposure, contrast, and colour words for a measured tone."""
     exposure = _band(
         tone.luminance,
         (
@@ -179,6 +179,12 @@ def describe_tone(tone: Tone) -> str:
         )
         cast = "warm" if tone.warmth > 15 else "cool" if tone.warmth < -15 else "neutral"
         colour += f" with a {cast} white balance"
+    return exposure, contrast, colour
+
+
+def describe_tone(tone: Tone) -> str:
+    """Turn measured tone into words a text-to-image model follows, keeping the numbers."""
+    exposure, contrast, colour = _tone_parts(tone)
     return (
         f"{exposure} exposure (mean luminance {tone.luminance}/255), {contrast} contrast "
         f"(spread {tone.contrast}/255), {colour} (mean saturation {tone.saturation}/255). "
@@ -235,3 +241,37 @@ unlisted subject, object, marking, or decoration.
 This is a semantic reconstruction, not the original.
 Avoid: {avoid}; extra logos; watermarks; invented claims.
 """
+
+
+# Longer or multi-line entries are malformed lists the vision model wrote, not visible text.
+MAX_OBSERVED_TEXT = 60
+
+
+def render_observer_prompt(artifact: Artifact) -> str:
+    """Render the artifact as one observing paragraph, the register of Qwen's own rewriter.
+
+    Qwen-Image-2.1's prompt rewriter writes a single paragraph that describes the finished image
+    rather than instructing a renderer: no labels, no canvas size, no hex codes, lighting in a
+    sentence of its own, and visible text quoted verbatim. Measured against
+    `render_generation_prompt` it halved the exposure miss when combined with the closed loop
+    (`docs/tone.md`, attempts 9 and 10) while keeping critical text at a similar rate.
+    """
+    summary = artifact.summary.rstrip(".")
+    summary = summary[0].lower() + summary[1:] if summary[:2].lower() == "a " else summary
+    regions = " ".join(region.description.rstrip(".") + "." for region in artifact.composition)
+    prompt = (
+        f"The image is a square realistic photograph: {summary}. "
+        f"{artifact.generation_prompt.strip()} {regions} "
+        f"The lighting is {artifact.style.rstrip('.')}."
+    )
+    if artifact.tone is not None:
+        exposure, contrast, colour = _tone_parts(artifact.tone)
+        prompt += f" The photograph has {exposure} exposure, {contrast} contrast, {colour}."
+    texts = []
+    for entry in artifact.critical_text:
+        text = entry.strip().strip('"').strip()
+        if text and "\n" not in text and len(text) <= MAX_OBSERVED_TEXT:
+            texts.append(f'"{text}"')
+    if texts:
+        prompt += f" The visible text reads {', '.join(texts)}."
+    return prompt

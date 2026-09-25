@@ -20,6 +20,7 @@ from llmpeg.encoder import (
     encode_image,
     measure_tone,
     render_generation_prompt,
+    render_observer_prompt,
 )
 from llmpeg.evaluation import evaluate_with_artifact
 from llmpeg.generators import (
@@ -88,6 +89,7 @@ def build_parser() -> argparse.ArgumentParser:
         "reconstruct", help="render an artifact into a generator-ready prompt"
     )
     reconstruct.add_argument("artifact", type=Path)
+    _add_prompt_style(reconstruct)
     reconstruct.add_argument("--output", "-o", type=Path)
     reconstruct.add_argument("--overwrite", action="store_true")
 
@@ -105,6 +107,7 @@ def build_parser() -> argparse.ArgumentParser:
     generate.add_argument("--resolution", type=int, default=DEFAULT_QWEN_RESOLUTION)
     generate.add_argument("--seed", type=int, default=DEFAULT_QWEN_SEED)
     generate.add_argument("--timeout", type=float, default=DEFAULT_GENERATION_TIMEOUT)
+    _add_prompt_style(generate)
     generate.add_argument(
         "--tone-correction",
         choices=("none", "loop", "match"),
@@ -140,6 +143,21 @@ def build_parser() -> argparse.ArgumentParser:
     survey.add_argument("--output", "-o", required=True, type=Path)
     survey.add_argument("--overwrite", action="store_true")
     return parser
+
+
+PROMPT_STYLES = {"pipeline": render_generation_prompt, "observer": render_observer_prompt}
+
+
+def _add_prompt_style(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--prompt-style",
+        choices=tuple(PROMPT_STYLES),
+        default="pipeline",
+        help=(
+            "'pipeline' is the labelled llmPEG brief; 'observer' is one observing paragraph in "
+            "the register of Qwen's own prompt rewriter (opt-in, see docs/tone.md)"
+        ),
+    )
 
 
 def _regraded_png(image: Image.Image, tone: Tone) -> bytes:
@@ -189,7 +207,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 )
         elif args.command == "reconstruct":
             artifact = Artifact.read(args.artifact)
-            prompt = render_generation_prompt(artifact)
+            prompt = PROMPT_STYLES[args.prompt_style](artifact)
             if args.output:
                 _write_text(args.output, prompt, overwrite=args.overwrite)
                 print(f"wrote {args.output}")
@@ -201,7 +219,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             _check_overwrite(output, overwrite=args.overwrite)
             if args.tone_correction != "none" and artifact.tone is None:
                 raise ArtifactError("tone correction needs a format 1.1 artifact with tone")
-            prompt = render_generation_prompt(artifact)
+            prompt = PROMPT_STYLES[args.prompt_style](artifact)
             # One deadline covers every render, so --tone-correction loop keeps --timeout.
             deadline = time.monotonic() + args.timeout
             generated = generate_comfyui(
