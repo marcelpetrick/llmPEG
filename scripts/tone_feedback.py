@@ -25,10 +25,11 @@ from typing import Any
 
 from PIL import Image
 from tone_cases import CATS, HOLDOUT, RESOLUTION
+from tone_prompt_sweep import PROMPTS
 
 from llmpeg import __version__
 from llmpeg.artifact import Artifact
-from llmpeg.encoder import measure_tone, render_generation_prompt
+from llmpeg.encoder import measure_tone
 from llmpeg.evaluation import evaluate_with_artifact
 from llmpeg.generators import DEFAULT_COMFYUI_HOST, generate_comfyui
 from llmpeg.grading import FEEDBACK_MARGIN, FEEDBACK_TERMS, feedback_negative, match_tone
@@ -74,7 +75,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             artifact = _artifact(case, args.artifacts_dir)
             if artifact.tone is None:
                 raise SystemExit(f"{case}: artifact has no tone")
-            prompt = render_generation_prompt(artifact)
+            prompt = PROMPTS[args.prompt](artifact)
             control = output_dir / f"{case}-s{seed}-control.png"
             if not control.exists():
                 control.write_bytes(generate_comfyui(prompt, RESOLUTION, seed, args.comfyui_host))
@@ -104,6 +105,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "llmpeg_version": __version__,
         "generator": "local ComfyUI/Qwen-Image-2.1",
         "resolution": RESOLUTION,
+        "prompt_variant": args.prompt,
         "margins": FEEDBACK_MARGIN,
         "feedback_terms": FEEDBACK_TERMS,
         "rows": rows,
@@ -117,6 +119,12 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, default=REPO / "survey/qwen/tone-feedback")
+    parser.add_argument(
+        "--prompt",
+        default="control",
+        choices=["control", "observer"],
+        help="prompt variant from tone_prompt_sweep.py; control is the pipeline's own prompt",
+    )
     parser.add_argument(
         "--artifacts-dir",
         type=Path,
