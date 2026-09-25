@@ -9,7 +9,7 @@
 [![uv 0.12.18](https://img.shields.io/badge/uv-0.12.18-de5fe9.svg)](https://docs.astral.sh/uv/)
 [![Ruff](https://img.shields.io/badge/lint-ruff-261230.svg)](https://docs.astral.sh/ruff/)
 [![mypy strict](https://img.shields.io/badge/types-mypy%20strict-2a6db2.svg)](https://mypy-lang.org/)
-[![Coverage 96.1%](https://img.shields.io/badge/coverage-96.1%25-brightgreen.svg)](#development)
+[![Coverage 96.2%](https://img.shields.io/badge/coverage-96.2%25-brightgreen.svg)](#development)
 [![Encoder: Ollama qwen3.5:4b](https://img.shields.io/badge/encoder-Ollama%20qwen3.5%3A4b-000000.svg)](https://ollama.com/)
 [![Generator: ComfyUI Qwen--Image--2.1](https://img.shields.io/badge/generator-ComfyUI%20Qwen--Image--2.1-6d28d9.svg)](https://github.com/QwenLM/Qwen-Image-2.1)
 
@@ -166,6 +166,7 @@ the prompt barely helps. What does help is measuring the first render and correc
 ```bash
 uv run llmpeg generate photo.jpg.llmpeg.json.gz --tone-correction loop    # second render, steered
 uv run llmpeg generate photo.jpg.llmpeg.json.gz --tone-correction match   # post-process regrade
+uv run llmpeg generate photo.jpg.llmpeg.json.gz --prompt-style observer --tone-correction loop
 ```
 
 `loop` renders once more with negative-prompt terms that push each miss back toward the tone
@@ -176,8 +177,14 @@ source, and both are opt-in until people rate them.
 
 Colour turned out to be mostly fine. The first colour measure, mean HSV saturation, reads dark
 pixels as vividly coloured and made Qwen look over-saturated; measured with Hasler–Süsstrunk
-colourfulness (format 1.2), the current renders sit a mean 8.4 from their sources. The full story,
-including what did not work, is in [`docs/tone.md`](docs/tone.md).
+colourfulness (format 1.2), the current renders sit a mean 8.4 from their sources.
+
+The biggest lever was the prompt's *register*. `--prompt-style observer` writes the artifact as one
+observing paragraph, the way Qwen's own prompt rewriter does, and quotes the critical text. With
+the loop it halved the mean luminance error (27.8 → 14.9, 13 sources × 2 seeds) while keeping text
+survival at the pipeline's level (25 vs 27 of 78 strings, read by the local vision model). It is
+opt-in until people rate it. The full story, including what did not work, is in
+[`docs/tone.md`](docs/tone.md).
 
 ### Historical benchmarks (hosted generator)
 
@@ -221,7 +228,7 @@ what the file is, which reader it needs, and — unusually — that its decoder 
   "format_version":"1.2",
   "major_brand":"lpg1",
   "compatible_brands":["lpg1"],
-  "encoder":"llmpeg/0.8.0",
+  "encoder":"llmpeg/0.9.0",
   "min_reader_version":"0.1.0",
   "decoder":"text-to-image model; lossy; non-deterministic; not bundled"
 }, ...}
@@ -231,7 +238,7 @@ what the file is, which reader it needs, and — unusually — that its decoder 
 $ llmpeg verify cat-on-grass.jpg.llmpeg.json.gz
 llmPEG 1.2 (lpg1)
 compatible brands: lpg1
-written by: llmpeg/0.8.0
+written by: llmpeg/0.9.0
 needs reader: llmpeg >= 0.1.0
 decoder: text-to-image model; lossy; non-deterministic; not bundled
 envelope: gzip (1545 bytes on disk)
@@ -305,8 +312,8 @@ and nothing is overwritten without `--overwrite`.
 | Command | Does |
 | --- | --- |
 | `encode <image>` | writes `<image>.llmpeg.json.gz`; `--profile gist\|balanced\|detailed` (default `detailed`), `--plain`, `--host`, `--model`, `--output` |
-| `reconstruct <artifact>` | prints the generator prompt (pipe it, edit it) |
-| `generate <artifact>` | local ComfyUI render; `--resolution`, `--seed`, `--tone-correction none\|loop\|match` |
+| `reconstruct <artifact>` | prints the generator prompt (pipe it, edit it); `--prompt-style pipeline\|observer` |
+| `generate <artifact>` | local ComfyUI render; `--resolution`, `--seed`, `--prompt-style`, `--tone-correction none\|loop\|match` |
 | `evaluate <source> <image>` | proxy metrics; exits `0` pass, `1` fail, `2` error, `3` a required check not evaluated |
 | `verify` / `inspect <artifact>` | format conformance / sizes, ratios, provenance |
 | `survey <manifest>` | builds an interactive HTML comparison page |
@@ -353,18 +360,18 @@ uv run pytest --cov=llmpeg --cov-report=term-missing --cov-fail-under=95
 uv run python -m build
 ```
 
-The suite is offline and injects fake providers: **205 tests, 96.1% branch coverage**. CI runs all
+The suite is offline and injects fake providers: **209 tests, 96.2% branch coverage**. CI runs all
 five gates on Python 3.14 for every push. Contributor rules, including Conventional Commits, are in
 [AGENTS.md](AGENTS.md).
 
 ### Releases
 
 Pushing a `v*` tag builds an sdist and wheel and attaches them to a GitHub Release. The current
-release is [`v0.8.0`](https://github.com/marcelpetrick/llmPEG/releases/tag/v0.8.0). The name
+release is [`v0.9.0`](https://github.com/marcelpetrick/llmPEG/releases/tag/v0.9.0). The name
 `llmpeg` is taken on PyPI by an unrelated project, so install from a release or a checkout:
 
 ```bash
-uv pip install llmpeg-0.8.0-py3-none-any.whl   # from a GitHub Release
+uv pip install llmpeg-0.9.0-py3-none-any.whl   # from a GitHub Release
 uv pip install .                               # from a clone
 ```
 

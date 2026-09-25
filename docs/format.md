@@ -21,7 +21,7 @@ Every artifact begins with a single `llmpeg` object:
   "format_version":"1.2",
   "major_brand":"lpg1",
   "compatible_brands":["lpg1"],
-  "encoder":"llmpeg/0.8.0",
+  "encoder":"llmpeg/0.9.0",
   "min_reader_version":"0.1.0",
   "decoder":"text-to-image model; lossy; non-deterministic; not bundled"
 }, ...}
@@ -178,7 +178,7 @@ Check any file:
 $ llmpeg verify cat-on-grass.jpg.llmpeg.json.gz
 llmPEG 1.2 (lpg1)
 compatible brands: lpg1
-written by: llmpeg/0.8.0
+written by: llmpeg/0.9.0
 needs reader: llmpeg >= 0.1.0
 decoder: text-to-image model; lossy; non-deterministic; not bundled
 envelope: gzip (1545 bytes on disk)

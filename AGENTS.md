@@ -100,7 +100,7 @@ Scripts under `scripts/` are linted and type-checked like the package, but are m
 tools rather than product surface: they may talk to the live Ollama endpoint, and they never
 run in CI. Never record the endpoint host in their output — model name only.
 
-Current baseline: **205 tests, 96.1% branch coverage**. Update this line when it changes — a stale
+Current baseline: **209 tests, 96.2% branch coverage**. Update this line when it changes — a stale
 self-measurement is the most embarrassing possible bug in a project about honest measurement.
 
 The release version lives only in `src/llmpeg/_version.py`; packaging, the artifact header, and
