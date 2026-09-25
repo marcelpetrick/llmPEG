@@ -289,10 +289,11 @@ Left, in order:
 - [ ] If the regrade wins, damp its global warmth shift, which still casts the keyboard cat and the
       food cool, and re-measure.
 
-- [ ] **Candidate default prompt:** the `observer` register plus the loop halved the luminance
-      error (27.8 → 14.9) over 13 sources × 2 seeds (`docs/tone.md` attempt 9). Add a variant that
-      keeps critical text, check text recall on the expanded benchmark, and get a human rating
-      before switching `render_generation_prompt` to it.
+- [x] The `observer` register plus the loop halved the luminance error (27.8 → 14.9); a variant
+      quoting critical text keeps text survival at the pipeline's level (25 vs 27 of 78). Shipped
+      as opt-in `--prompt-style observer` (`v0.9.0`, `docs/tone.md` attempts 9–10).
+- [ ] **Defaults:** once people have rated them, decide whether `--prompt-style observer` and
+      `--tone-correction loop` become the defaults for `generate` and the Web UI.
 - [ ] Repeat the encoder-wording test over several re-encodes before judging it again.
 
 ## Open work

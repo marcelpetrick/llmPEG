@@ -390,10 +390,37 @@ the same seeds from attempt 7:
 - **Not adopted yet.** Before it replaces the pipeline prompt it needs a variant that keeps
   critical text (and a text-recall check on the expanded benchmark), and a human rating.
 
+## Attempt 10: keep the text, then ship the register as an opt-in
+
+The observer prompt leaves out the critical-text list. `observer-text` adds one sentence quoting it
+the way Qwen's rewriter copies visible text (`The visible text reads "…", "…".`), skipping
+multi-line or over-long entries. Rendered at seeds 42 and 7 on the 13 artifacts, its tone matches
+the plain observer prompt (with the loop: luminance error 14.9, colourfulness 7.3). Text survival
+was read from the `control` renders by the local vision model — a model-read measure, not OCR,
+applied identically to all three prompts (evidence:
+[`survey/qwen/tone-observer-text/`](../survey/qwen/tone-observer-text/README.md)):
+
+| Prompt | Critical strings found (8 sources × 2 seeds) |
+| --- | ---: |
+| pipeline | 27 / 78 |
+| observer | 13 / 78 |
+| observer-text | 25 / 78 |
+
+Leaving the text out halves what survives; quoting it restores nearly all of it. On these numbers
+`observer-text` keeps the pipeline's text and halves its exposure miss with the loop, so it ships
+in 0.9.0 as `llmpeg reconstruct|generate --prompt-style observer` (`render_observer_prompt`, which
+renders byte-identical prompts to the measured script for all 13 artifacts). It is opt-in: the
+default stays the pipeline prompt until a person has rated the difference.
+
+A first run of the text check scored almost nothing for every prompt because 36 of 48 replies were
+empty: this Qwen build answered in `message.thinking`. That run was discarded, the reader fixed,
+and empty replies now stop the script instead of being scored as lost text.
+
 ## Status (2026-09-24)
 
 - `llmpeg generate --tone-correction loop|match` is an **opt-in** since 0.7.0; 0.8.0 steers its
-  colour by colourfulness. The default render is unchanged.
+  colour by colourfulness. `--prompt-style observer` (0.9.0) is the other opt-in; together they
+  gave the best result measured here. The default render is unchanged.
 - `survey/qwen.html` (the site index) is the one review page: original, current pipeline, and the
   v2 `loop`, for seven sources at seed 42, with each artifact's JSON and stored gzip bytes. It
   exists for human ratings; nothing on this page says a correction *looks* closer.
