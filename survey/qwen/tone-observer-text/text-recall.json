@@ -1,0 +1,817 @@
+{
+  "reader": "ollama/qwen3.5:4b",
+  "instruction": "/no_think\nTranscribe every piece of legible text visible in this image exactly as written, one item per line. Do not describe the image. If there is no legible text, reply NONE.",
+  "rows": [
+    {
+      "case": "cat-on-keyboard",
+      "seed": 42,
+      "variant": "pipeline",
+      "expected": [
+        "Esc",
+        "Tab",
+        "Q\" \"W\" \"E",
+        "A\" \"S\" \"D",
+        "Z\" (partially obscured)",
+        "X",
+        "C",
+        "V",
+        "F9, F10, F11, F12 keys visible on the right side of keyboard"
+      ],
+      "found": [
+        "Tab",
+        "X",
+        "C",
+        "V"
+      ],
+      "recall": 0.444,
+      "transcript": "Eas\nhe/\nh2j\nu3k\n4567890123456789012345678901234567890123456789012345678901234567890\nQWERTYUIOPASDFGHJKLZXCVBNM<>?/\nZXCVBNMLKJIHGFDSAQPWOIUYTREWQ\nTab\nA"
+    },
+    {
+      "case": "cat-on-keyboard",
+      "seed": 42,
+      "variant": "observer",
+      "expected": [
+        "Esc",
+        "Tab",
+        "Q\" \"W\" \"E",
+        "A\" \"S\" \"D",
+        "Z\" (partially obscured)",
+        "X",
+        "C",
+        "V",
+        "F9, F10, F11, F12 keys visible on the right side of keyboard"
+      ],
+      "found": [],
+      "recall": 0.0,
+      "transcript": "NONE"
+    },
+    {
+      "case": "cat-on-keyboard",
+      "seed": 42,
+      "variant": "observer-text",
+      "expected": [
+        "Esc",
+        "Tab",
+        "Q\" \"W\" \"E",
+        "A\" \"S\" \"D",
+        "Z\" (partially obscured)",
+        "X",
+        "C",
+        "V",
+        "F9, F10, F11, F12 keys visible on the right side of keyboard"
+      ],
+      "found": [
+        "Esc",
+        "Tab",
+        "X",
+        "C",
+        "V"
+      ],
+      "recall": 0.556,
+      "transcript": "Esc\n1234567890-\nQWERTYUIOP[]{}\nTab\nASDFGHJKL;:'\"<>?/\nCapsLock\nZXCVBNM,../~`\nPgUp\nEnter\nBc\nFg"
+    },
+    {
+      "case": "cat-on-keyboard",
+      "seed": 7,
+      "variant": "pipeline",
+      "expected": [
+        "Esc",
+        "Tab",
+        "Q\" \"W\" \"E",
+        "A\" \"S\" \"D",
+        "Z\" (partially obscured)",
+        "X",
+        "C",
+        "V",
+        "F9, F10, F11, F12 keys visible on the right side of keyboard"
+      ],
+      "found": [
+        "Esc",
+        "Tab",
+        "X",
+        "C",
+        "V"
+      ],
+      "recall": 0.556,
+      "transcript": "Esc\nF10\nF9\n8\n7\n6\n5\n4\n3\n2\n1\nTab\nQ\nW\nE\nR\nT\nY\nU\nI\nO\nP\nA\nS\nD\nF\nG\nH\nJ\nK\nL\nZ\nX\nC\nV\nB\nN\nM"
+    },
+    {
+      "case": "cat-on-keyboard",
+      "seed": 7,
+      "variant": "observer",
+      "expected": [
+        "Esc",
+        "Tab",
+        "Q\" \"W\" \"E",
+        "A\" \"S\" \"D",
+        "Z\" (partially obscured)",
+        "X",
+        "C",
+        "V",
+        "F9, F10, F11, F12 keys visible on the right side of keyboard"
+      ],
+      "found": [],
+      "recall": 0.0,
+      "transcript": "NONE"
+    },
+    {
+      "case": "cat-on-keyboard",
+      "seed": 7,
+      "variant": "observer-text",
+      "expected": [
+        "Esc",
+        "Tab",
+        "Q\" \"W\" \"E",
+        "A\" \"S\" \"D",
+        "Z\" (partially obscured)",
+        "X",
+        "C",
+        "V",
+        "F9, F10, F11, F12 keys visible on the right side of keyboard"
+      ],
+      "found": [
+        "Esc",
+        "Tab",
+        "C"
+      ],
+      "recall": 0.333,
+      "transcript": "F12\nEsc\n`\nTab\nQ\nW\nE\nR\nT\nY\nU\nI\nO\nP\n[\n]\n\\\nCapsLock\nNumLock\nEnter\n4\n5\n6\n7\n8\n9\n0\n-\n=\nBackspace\n3\n2\n1\n+\nTab\nQ\nW\nE\nR\nT\nY\nU\nI\nO\nP\n[\n]\n\\\nCapsLock"
+    },
+    {
+      "case": "amsterdam-market",
+      "seed": 42,
+      "variant": "pipeline",
+      "expected": [
+        "GOWTU CENTRE",
+        "JEWELIER",
+        "Gouda Zilverenid",
+        "Abt Gouwstraat Nr: 47138 Amsterdam",
+        "06-5297146",
+        "ZOOO",
+        "Sola"
+      ],
+      "found": [],
+      "recall": 0.0,
+      "transcript": "KLAAS"
+    },
+    {
+      "case": "amsterdam-market",
+      "seed": 42,
+      "variant": "observer",
+      "expected": [
+        "GOWTU CENTRE",
+        "JEWELIER",
+        "Gouda Zilverenid",
+        "Abt Gouwstraat Nr: 47138 Amsterdam",
+        "06-5297146",
+        "ZOOO",
+        "Sola"
+      ],
+      "found": [],
+      "recall": 0.0,
+      "transcript": "NONE"
+    },
+    {
+      "case": "amsterdam-market",
+      "seed": 42,
+      "variant": "observer-text",
+      "expected": [
+        "GOWTU CENTRE",
+        "JEWELIER",
+        "Gouda Zilverenid",
+        "Abt Gouwstraat Nr: 47138 Amsterdam",
+        "06-5297146",
+        "ZOOO",
+        "Sola"
+      ],
+      "found": [
+        "JEWELIER"
+      ],
+      "recall": 0.143,
+      "transcript": "Gouda Zinlerantjes\nJEWELIER"
+    },
+    {
+      "case": "amsterdam-market",
+      "seed": 7,
+      "variant": "pipeline",
+      "expected": [
+        "GOWTU CENTRE",
+        "JEWELIER",
+        "Gouda Zilverenid",
+        "Abt Gouwstraat Nr: 47138 Amsterdam",
+        "06-5297146",
+        "ZOOO",
+        "Sola"
+      ],
+      "found": [],
+      "recall": 0.0,
+      "transcript": "JEVIELER\nGood Tea\nGouda Zierikzee"
+    },
+    {
+      "case": "amsterdam-market",
+      "seed": 7,
+      "variant": "observer",
+      "expected": [
+        "GOWTU CENTRE",
+        "JEWELIER",
+        "Gouda Zilverenid",
+        "Abt Gouwstraat Nr: 47138 Amsterdam",
+        "06-5297146",
+        "ZOOO",
+        "Sola"
+      ],
+      "found": [],
+      "recall": 0.0,
+      "transcript": "NONE"
+    },
+    {
+      "case": "amsterdam-market",
+      "seed": 7,
+      "variant": "observer-text",
+      "expected": [
+        "GOWTU CENTRE",
+        "JEWELIER",
+        "Gouda Zilverenid",
+        "Abt Gouwstraat Nr: 47138 Amsterdam",
+        "06-5297146",
+        "ZOOO",
+        "Sola"
+      ],
+      "found": [
+        "GOWTU CENTRE",
+        "JEWELIER"
+      ],
+      "recall": 0.286,
+      "transcript": "GOWTU CENTRE\nJEWELIER\nCoral Zilvermet"
+    },
+    {
+      "case": "astronaut-crew",
+      "seed": 42,
+      "variant": "pipeline",
+      "expected": [
+        "NASA",
+        "ROSCOSMOS",
+        "ESA",
+        "ITALIA",
+        "ACABA BRESNIK",
+        "RYAZANSKII NESPOLI",
+        "VANDE HEY MISURUKIN"
+      ],
+      "found": [
+        "NASA",
+        "ROSCOSMOS"
+      ],
+      "recall": 0.286,
+      "transcript": "NASA\nROSCOSMOS\nUSA\nRoscosmos\nNASA\nRoscosmos\nNASA\nRoscosmos\nRoscosmos\nRoscosmos\nRoscosmos\nRoscosmos\nRoscosmos\nRoscosmos\nRoscosmos\nRoscosmos"
+    },
+    {
+      "case": "astronaut-crew",
+      "seed": 42,
+      "variant": "observer",
+      "expected": [
+        "NASA",
+        "ROSCOSMOS",
+        "ESA",
+        "ITALIA",
+        "ACABA BRESNIK",
+        "RYAZANSKII NESPOLI",
+        "VANDE HEY MISURUKIN"
+      ],
+      "found": [
+        "NASA"
+      ],
+      "recall": 0.143,
+      "transcript": "NASA"
+    },
+    {
+      "case": "astronaut-crew",
+      "seed": 42,
+      "variant": "observer-text",
+      "expected": [
+        "NASA",
+        "ROSCOSMOS",
+        "ESA",
+        "ITALIA",
+        "ACABA BRESNIK",
+        "RYAZANSKII NESPOLI",
+        "VANDE HEY MISURUKIN"
+      ],
+      "found": [
+        "NASA",
+        "ROSCOSMOS",
+        "ESA"
+      ],
+      "recall": 0.429,
+      "transcript": "NASA\nESA\nJAXA\nRoscosmos\nCNES\nDASA\nNASA\nESA\nJAXA\nRoscosmos\nCNES\nDASA\nNASA\nESA\nJAXA\nRoscosmos\nCNES\nDASA\nNASA\nESA"
+    },
+    {
+      "case": "astronaut-crew",
+      "seed": 7,
+      "variant": "pipeline",
+      "expected": [
+        "NASA",
+        "ROSCOSMOS",
+        "ESA",
+        "ITALIA",
+        "ACABA BRESNIK",
+        "RYAZANSKII NESPOLI",
+        "VANDE HEY MISURUKIN"
+      ],
+      "found": [
+        "NASA",
+        "ROSCOSMOS",
+        "ESA"
+      ],
+      "recall": 0.429,
+      "transcript": "NASA\nROSCOSMOS\nTITL.ZANSKII INSPOLUKI\nESA\nRoscosmos\nNasa\nRuskosmoss\nItaly\nRussia\nFrance\nGermany\nSpain\nPortugal\nBelgium\nAustria\nSwitzerland"
+    },
+    {
+      "case": "astronaut-crew",
+      "seed": 7,
+      "variant": "observer",
+      "expected": [
+        "NASA",
+        "ROSCOSMOS",
+        "ESA",
+        "ITALIA",
+        "ACABA BRESNIK",
+        "RYAZANSKII NESPOLI",
+        "VANDE HEY MISURUKIN"
+      ],
+      "found": [
+        "NASA"
+      ],
+      "recall": 0.143,
+      "transcript": "NASA"
+    },
+    {
+      "case": "astronaut-crew",
+      "seed": 7,
+      "variant": "observer-text",
+      "expected": [
+        "NASA",
+        "ROSCOSMOS",
+        "ESA",
+        "ITALIA",
+        "ACABA BRESNIK",
+        "RYAZANSKII NESPOLI",
+        "VANDE HEY MISURUKIN"
+      ],
+      "found": [
+        "NASA",
+        "ROSCOSMOS",
+        "ESA"
+      ],
+      "recall": 0.429,
+      "transcript": "NASA\nESA\nRoscosmos\nNASA\nJAXA\nRSCC\nNASA\nESA\nVostok-12\nISS"
+    },
+    {
+      "case": "kitchen-table",
+      "seed": 42,
+      "variant": "pipeline",
+      "expected": [
+        "VILNEK",
+        "EST 1842"
+      ],
+      "found": [],
+      "recall": 0.0,
+      "transcript": "FURSTLEX 528"
+    },
+    {
+      "case": "kitchen-table",
+      "seed": 42,
+      "variant": "observer",
+      "expected": [
+        "VILNEK",
+        "EST 1842"
+      ],
+      "found": [
+        "VILNEK"
+      ],
+      "recall": 0.5,
+      "transcript": "VILNEK EST 1895"
+    },
+    {
+      "case": "kitchen-table",
+      "seed": 42,
+      "variant": "observer-text",
+      "expected": [
+        "VILNEK",
+        "EST 1842"
+      ],
+      "found": [
+        "VILNEK"
+      ],
+      "recall": 0.5,
+      "transcript": "VILNEK EST 1895"
+    },
+    {
+      "case": "kitchen-table",
+      "seed": 7,
+      "variant": "pipeline",
+      "expected": [
+        "VILNEK",
+        "EST 1842"
+      ],
+      "found": [],
+      "recall": 0.0,
+      "transcript": "VIDMELEER'S"
+    },
+    {
+      "case": "kitchen-table",
+      "seed": 7,
+      "variant": "observer",
+      "expected": [
+        "VILNEK",
+        "EST 1842"
+      ],
+      "found": [
+        "VILNEK"
+      ],
+      "recall": 0.5,
+      "transcript": "VILNEKES"
+    },
+    {
+      "case": "kitchen-table",
+      "seed": 7,
+      "variant": "observer-text",
+      "expected": [
+        "VILNEK",
+        "EST 1842"
+      ],
+      "found": [],
+      "recall": 0.0,
+      "transcript": "VILHEJMS"
+    },
+    {
+      "case": "living-room",
+      "seed": 42,
+      "variant": "pipeline",
+      "expected": [
+        "THE BEST INTERFACE IS NO INTERFACE",
+        "The Simple Path to Brilliant Technology"
+      ],
+      "found": [
+        "THE BEST INTERFACE IS NO INTERFACE"
+      ],
+      "recall": 0.5,
+      "transcript": "THE BEST INTERFACE IS NO INTERFACE"
+    },
+    {
+      "case": "living-room",
+      "seed": 42,
+      "variant": "observer",
+      "expected": [
+        "THE BEST INTERFACE IS NO INTERFACE",
+        "The Simple Path to Brilliant Technology"
+      ],
+      "found": [],
+      "recall": 0.0,
+      "transcript": "THEME & INTERFACE IS THE INTERFACE"
+    },
+    {
+      "case": "living-room",
+      "seed": 42,
+      "variant": "observer-text",
+      "expected": [
+        "THE BEST INTERFACE IS NO INTERFACE",
+        "The Simple Path to Brilliant Technology"
+      ],
+      "found": [],
+      "recall": 0.0,
+      "transcript": "THE BEST ADVICE IS NO REFERENCE"
+    },
+    {
+      "case": "living-room",
+      "seed": 7,
+      "variant": "pipeline",
+      "expected": [
+        "THE BEST INTERFACE IS NO INTERFACE",
+        "The Simple Path to Brilliant Technology"
+      ],
+      "found": [
+        "THE BEST INTERFACE IS NO INTERFACE"
+      ],
+      "recall": 0.5,
+      "transcript": "THE BEST INTERFACE IS NO INTERFACE"
+    },
+    {
+      "case": "living-room",
+      "seed": 7,
+      "variant": "observer",
+      "expected": [
+        "THE BEST INTERFACE IS NO INTERFACE",
+        "The Simple Path to Brilliant Technology"
+      ],
+      "found": [],
+      "recall": 0.0,
+      "transcript": "THE BEST INTERIORS I HAVE SEEN EVER"
+    },
+    {
+      "case": "living-room",
+      "seed": 7,
+      "variant": "observer-text",
+      "expected": [
+        "THE BEST INTERFACE IS NO INTERFACE",
+        "The Simple Path to Brilliant Technology"
+      ],
+      "found": [],
+      "recall": 0.0,
+      "transcript": "THE BEST FRIENDS ARE NO INTERRACCE"
+    },
+    {
+      "case": "street-bicycles",
+      "seed": 42,
+      "variant": "pipeline",
+      "expected": [
+        "ВТБ",
+        "2398"
+      ],
+      "found": [
+        "ВТБ"
+      ],
+      "recall": 0.5,
+      "transcript": "ВТБ\nВТБ\nВТБ\nВТБ\nВТБ"
+    },
+    {
+      "case": "street-bicycles",
+      "seed": 42,
+      "variant": "observer",
+      "expected": [
+        "ВТБ",
+        "2398"
+      ],
+      "found": [
+        "ВТБ"
+      ],
+      "recall": 0.5,
+      "transcript": "ВТ6\nВТБ\nВТБ\nВТБ\nВТБ"
+    },
+    {
+      "case": "street-bicycles",
+      "seed": 42,
+      "variant": "observer-text",
+      "expected": [
+        "ВТБ",
+        "2398"
+      ],
+      "found": [],
+      "recall": 0.0,
+      "transcript": "ВТ6\nВТ6\nВТ6\nВТ5\nВТ6"
+    },
+    {
+      "case": "street-bicycles",
+      "seed": 7,
+      "variant": "pipeline",
+      "expected": [
+        "ВТБ",
+        "2398"
+      ],
+      "found": [
+        "ВТБ"
+      ],
+      "recall": 0.5,
+      "transcript": "ВТБ\nВТБ\nВТБ\nВТБ\nВТБ\nВТБ\nВТБ"
+    },
+    {
+      "case": "street-bicycles",
+      "seed": 7,
+      "variant": "observer",
+      "expected": [
+        "ВТБ",
+        "2398"
+      ],
+      "found": [
+        "ВТБ"
+      ],
+      "recall": 0.5,
+      "transcript": "ВТБ\nВТБ\nВТБ\nВТБ\nВТБ\nВТБ"
+    },
+    {
+      "case": "street-bicycles",
+      "seed": 7,
+      "variant": "observer-text",
+      "expected": [
+        "ВТБ",
+        "2398"
+      ],
+      "found": [
+        "ВТБ"
+      ],
+      "recall": 0.5,
+      "transcript": "ВТБ\nВТБ\nВТБ\nВТБ\nВТБ\nВТБ\nВТБ"
+    },
+    {
+      "case": "train-platform",
+      "seed": 42,
+      "variant": "pipeline",
+      "expected": [
+        "1",
+        "山手線",
+        "Yamanote Line",
+        "for Tokyo,Ueno & Komagome"
+      ],
+      "found": [
+        "1",
+        "山手線",
+        "Yamanote Line"
+      ],
+      "recall": 0.75,
+      "transcript": "1\n山手線\nYamanote Line\nV.Tokyo & Eastman\nTOKYO METRO\nMTR\nNO ENTRY\nNo Entry\nTokyo Metro Limited Access Station No 2035487690"
+    },
+    {
+      "case": "train-platform",
+      "seed": 42,
+      "variant": "observer",
+      "expected": [
+        "1",
+        "山手線",
+        "Yamanote Line",
+        "for Tokyo,Ueno & Komagome"
+      ],
+      "found": [
+        "1",
+        "山手線",
+        "Yamanote Line"
+      ],
+      "recall": 0.75,
+      "transcript": "1 山手線 Yamanote Line\nYAMANOTE LINE\nKINSHU"
+    },
+    {
+      "case": "train-platform",
+      "seed": 42,
+      "variant": "observer-text",
+      "expected": [
+        "1",
+        "山手線",
+        "Yamanote Line",
+        "for Tokyo,Ueno & Komagome"
+      ],
+      "found": [
+        "1",
+        "山手線",
+        "Yamanote Line"
+      ],
+      "recall": 0.75,
+      "transcript": "1 山手線\nYamanote Line\nShinjuku Station\nPlatform No.4 & Platform No.5\nTokyo Metro\nTOKYO METRO YAMANOTE LINE\nSOUTH TO SHINJUKU STATION (SHINKO)\nNORTH TO UENO STATION"
+    },
+    {
+      "case": "train-platform",
+      "seed": 7,
+      "variant": "pipeline",
+      "expected": [
+        "1",
+        "山手線",
+        "Yamanote Line",
+        "for Tokyo,Ueno & Komagome"
+      ],
+      "found": [
+        "1",
+        "山手線",
+        "Yamanote Line"
+      ],
+      "recall": 0.75,
+      "transcript": "1\n山手線\nYamanote Line\nWest Platform 2035-48769\nNo Entry"
+    },
+    {
+      "case": "train-platform",
+      "seed": 7,
+      "variant": "observer",
+      "expected": [
+        "1",
+        "山手線",
+        "Yamanote Line",
+        "for Tokyo,Ueno & Komagome"
+      ],
+      "found": [
+        "1",
+        "山手線",
+        "Yamanote Line"
+      ],
+      "recall": 0.75,
+      "transcript": "1 山手線 Yamanote Line\nTOKYO METROPOLITAN HEISEI LINE\nNO STOPPING"
+    },
+    {
+      "case": "train-platform",
+      "seed": 7,
+      "variant": "observer-text",
+      "expected": [
+        "1",
+        "山手線",
+        "Yamanote Line",
+        "for Tokyo,Ueno & Komagome"
+      ],
+      "found": [
+        "1",
+        "山手線"
+      ],
+      "recall": 0.5,
+      "transcript": "1 山手線\nTōyoko Line\nPlatform No.1\n2035-48769\n1\n2035-48769\n2035-48769\n2035-48769"
+    },
+    {
+      "case": "workspace-books",
+      "seed": 42,
+      "variant": "pipeline",
+      "expected": [
+        "iPod и iPod mini",
+        "самые популярные мп3-плееры в мире",
+        "Quark",
+        "conEdison",
+        "LG",
+        "Google Play"
+      ],
+      "found": [
+        "LG"
+      ],
+      "recall": 0.167,
+      "transcript": "iPod w iPod mini\nUniversity SourcePrint\nE\nLG"
+    },
+    {
+      "case": "workspace-books",
+      "seed": 42,
+      "variant": "observer",
+      "expected": [
+        "iPod и iPod mini",
+        "самые популярные мп3-плееры в мире",
+        "Quark",
+        "conEdison",
+        "LG",
+        "Google Play"
+      ],
+      "found": [
+        "LG"
+      ],
+      "recall": 0.167,
+      "transcript": "iPad & iPod mini\nLG\nUniversity Space Park"
+    },
+    {
+      "case": "workspace-books",
+      "seed": 42,
+      "variant": "observer-text",
+      "expected": [
+        "iPod и iPod mini",
+        "самые популярные мп3-плееры в мире",
+        "Quark",
+        "conEdison",
+        "LG",
+        "Google Play"
+      ],
+      "found": [
+        "LG"
+      ],
+      "recall": 0.167,
+      "transcript": "iPod v iPod mini\nLG\nUzima Space-Pix"
+    },
+    {
+      "case": "workspace-books",
+      "seed": 7,
+      "variant": "pipeline",
+      "expected": [
+        "iPod и iPod mini",
+        "самые популярные мп3-плееры в мире",
+        "Quark",
+        "conEdison",
+        "LG",
+        "Google Play"
+      ],
+      "found": [
+        "Quark",
+        "LG"
+      ],
+      "recall": 0.333,
+      "transcript": "iPod n Pod mini\nQuark\nE\nLG\nM\nL G\nUniversity Center Park"
+    },
+    {
+      "case": "workspace-books",
+      "seed": 7,
+      "variant": "observer",
+      "expected": [
+        "iPod и iPod mini",
+        "самые популярные мп3-плееры в мире",
+        "Quark",
+        "conEdison",
+        "LG",
+        "Google Play"
+      ],
+      "found": [],
+      "recall": 0.0,
+      "transcript": "iPod to iPod mini\nThe complete design story\n2005-2013\nE\nO\nL\nU\nA\nC\nP\nK\nUltimate Color Park"
+    },
+    {
+      "case": "workspace-books",
+      "seed": 7,
+      "variant": "observer-text",
+      "expected": [
+        "iPod и iPod mini",
+        "самые популярные мп3-плееры в мире",
+        "Quark",
+        "conEdison",
+        "LG",
+        "Google Play"
+      ],
+      "found": [],
+      "recall": 0.0,
+      "transcript": "iPod wi iPod mini\nUniversity\nCAMPUS PARK"
+    }
+  ]
+}

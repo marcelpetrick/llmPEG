@@ -1,0 +1,1826 @@
+{
+  "feedback_terms": {
+    "colourfulness": [
+      "vivid colors, saturated colors",
+      "dull colors, desaturated, grey, washed out"
+    ],
+    "contrast": [
+      "harsh contrast, deep black shadows",
+      "flat, hazy, low contrast"
+    ],
+    "luminance": [
+      "overexposed, too bright",
+      "dark, underexposed, dim"
+    ],
+    "warmth": [
+      "warm color cast, orange tint, yellow tint",
+      "cool color cast, blue tint"
+    ]
+  },
+  "generator": "local ComfyUI/Qwen-Image-2.1",
+  "llmpeg_version": "0.8.0",
+  "margins": {
+    "colourfulness": 8,
+    "contrast": 8,
+    "luminance": 12,
+    "warmth": 12
+  },
+  "prompt_variant": "observer-text",
+  "resolution": 512,
+  "rows": [
+    {
+      "case": "cat-monochrome",
+      "extra_negative": "",
+      "histogram_similarity": 0.592428,
+      "image": "cat-monochrome-s42-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 2,
+        "contrast": 59,
+        "luminance": 78,
+        "saturation": 16,
+        "warmth": -3
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 0,
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.671544
+    },
+    {
+      "case": "cat-monochrome",
+      "extra_negative": "",
+      "histogram_similarity": 0.616028,
+      "image": "cat-monochrome-s42-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 0,
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 0,
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.681432
+    },
+    {
+      "case": "cat-monochrome",
+      "extra_negative": "color, colour, tint, sepia, dark, underexposed, dim",
+      "histogram_similarity": 0.654826,
+      "image": "cat-monochrome-s42-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 3,
+        "contrast": 61,
+        "luminance": 92,
+        "saturation": 19,
+        "warmth": -4
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 0,
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.698284
+    },
+    {
+      "case": "cat-on-keyboard",
+      "extra_negative": "",
+      "histogram_similarity": 0.677551,
+      "image": "cat-on-keyboard-s42-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 27,
+        "contrast": 50,
+        "luminance": 112,
+        "saturation": 75,
+        "warmth": 33
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 32,
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.654742
+    },
+    {
+      "case": "cat-on-keyboard",
+      "extra_negative": "",
+      "histogram_similarity": 0.764384,
+      "image": "cat-on-keyboard-s42-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 32,
+        "contrast": 55,
+        "luminance": 147,
+        "saturation": 55,
+        "warmth": -5
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 32,
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.676886
+    },
+    {
+      "case": "cat-on-keyboard",
+      "extra_negative": "dark, underexposed, dim, warm color cast, orange tint, yellow tint",
+      "histogram_similarity": 0.783447,
+      "image": "cat-on-keyboard-s42-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 24,
+        "contrast": 51,
+        "luminance": 127,
+        "saturation": 51,
+        "warmth": 24
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 32,
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.69093
+    },
+    {
+      "case": "cat-on-grass",
+      "extra_negative": "",
+      "histogram_similarity": 0.506755,
+      "image": "cat-on-grass-s42-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 44,
+        "contrast": 35,
+        "luminance": 133,
+        "saturation": 118,
+        "warmth": 53
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 41,
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.620508
+    },
+    {
+      "case": "cat-on-grass",
+      "extra_negative": "",
+      "histogram_similarity": 0.713867,
+      "image": "cat-on-grass-s42-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 41,
+        "contrast": 24,
+        "luminance": 157,
+        "saturation": 98,
+        "warmth": 51
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 41,
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.672314
+    },
+    {
+      "case": "cat-on-grass",
+      "extra_negative": "dark, underexposed, dim, harsh contrast, deep black shadows",
+      "histogram_similarity": 0.702311,
+      "image": "cat-on-grass-s42-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 45,
+        "contrast": 36,
+        "luminance": 148,
+        "saturation": 107,
+        "warmth": 53
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 41,
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.683606
+    },
+    {
+      "case": "amsterdam-market",
+      "extra_negative": "",
+      "histogram_similarity": 0.732646,
+      "image": "amsterdam-market-s42-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 58,
+        "contrast": 59,
+        "luminance": 75,
+        "saturation": 119,
+        "warmth": 18
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 43,
+        "contrast": 53,
+        "luminance": 89,
+        "saturation": 60,
+        "warmth": 14
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.711237
+    },
+    {
+      "case": "amsterdam-market",
+      "extra_negative": "",
+      "histogram_similarity": 0.731608,
+      "image": "amsterdam-market-s42-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 44,
+        "contrast": 53,
+        "luminance": 88,
+        "saturation": 72,
+        "warmth": 14
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 43,
+        "contrast": 53,
+        "luminance": 89,
+        "saturation": 60,
+        "warmth": 14
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.709643
+    },
+    {
+      "case": "amsterdam-market",
+      "extra_negative": "dark, underexposed, dim, vivid colors, saturated colors",
+      "histogram_similarity": 0.731832,
+      "image": "amsterdam-market-s42-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 57,
+        "contrast": 63,
+        "luminance": 85,
+        "saturation": 109,
+        "warmth": 17
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 43,
+        "contrast": 53,
+        "luminance": 89,
+        "saturation": 60,
+        "warmth": 14
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.705768
+    },
+    {
+      "case": "astronaut-crew",
+      "extra_negative": "",
+      "histogram_similarity": 0.533671,
+      "image": "astronaut-crew-s42-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 53,
+        "contrast": 43,
+        "luminance": 34,
+        "saturation": 208,
+        "warmth": -31
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 74,
+        "contrast": 50,
+        "luminance": 59,
+        "saturation": 169,
+        "warmth": -34
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.667919
+    },
+    {
+      "case": "astronaut-crew",
+      "extra_negative": "",
+      "histogram_similarity": 0.688029,
+      "image": "astronaut-crew-s42-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 74,
+        "contrast": 50,
+        "luminance": 58,
+        "saturation": 148,
+        "warmth": -34
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 74,
+        "contrast": 50,
+        "luminance": 59,
+        "saturation": 169,
+        "warmth": -34
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.722991
+    },
+    {
+      "case": "astronaut-crew",
+      "extra_negative": "dark, underexposed, dim, dull colors, desaturated, grey, washed out",
+      "histogram_similarity": 0.565084,
+      "image": "astronaut-crew-s42-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 64,
+        "contrast": 48,
+        "luminance": 41,
+        "saturation": 211,
+        "warmth": -40
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 74,
+        "contrast": 50,
+        "luminance": 59,
+        "saturation": 169,
+        "warmth": -34
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.702257
+    },
+    {
+      "case": "dogs-beach",
+      "extra_negative": "",
+      "histogram_similarity": 0.563843,
+      "image": "dogs-beach-s42-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 12,
+        "contrast": 52,
+        "luminance": 207,
+        "saturation": 13,
+        "warmth": 8
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 30,
+        "contrast": 41,
+        "luminance": 190,
+        "saturation": 39,
+        "warmth": -1
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.589436
+    },
+    {
+      "case": "dogs-beach",
+      "extra_negative": "",
+      "histogram_similarity": 0.684001,
+      "image": "dogs-beach-s42-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 18,
+        "contrast": 41,
+        "luminance": 189,
+        "saturation": 22,
+        "warmth": -1
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 30,
+        "contrast": 41,
+        "luminance": 190,
+        "saturation": 39,
+        "warmth": -1
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.62596
+    },
+    {
+      "case": "dogs-beach",
+      "extra_negative": "overexposed, too bright, harsh contrast, deep black shadows, dull colors, desaturated, grey, washed out",
+      "histogram_similarity": 0.560018,
+      "image": "dogs-beach-s42-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 13,
+        "contrast": 51,
+        "luminance": 208,
+        "saturation": 15,
+        "warmth": 9
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 30,
+        "contrast": 41,
+        "luminance": 190,
+        "saturation": 39,
+        "warmth": -1
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.593147
+    },
+    {
+      "case": "food-table",
+      "extra_negative": "",
+      "histogram_similarity": 0.502136,
+      "image": "food-table-s42-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 32,
+        "contrast": 48,
+        "luminance": 59,
+        "saturation": 105,
+        "warmth": 20
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 37,
+        "contrast": 57,
+        "luminance": 93,
+        "saturation": 70,
+        "warmth": -3
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.599188
+    },
+    {
+      "case": "food-table",
+      "extra_negative": "",
+      "histogram_similarity": 0.662374,
+      "image": "food-table-s42-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 38,
+        "contrast": 57,
+        "luminance": 92,
+        "saturation": 76,
+        "warmth": -3
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 37,
+        "contrast": 57,
+        "luminance": 93,
+        "saturation": 70,
+        "warmth": -3
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.641644
+    },
+    {
+      "case": "food-table",
+      "extra_negative": "dark, underexposed, dim, flat, hazy, low contrast, warm color cast, orange tint, yellow tint",
+      "histogram_similarity": 0.543681,
+      "image": "food-table-s42-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 34,
+        "contrast": 55,
+        "luminance": 71,
+        "saturation": 81,
+        "warmth": 16
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 37,
+        "contrast": 57,
+        "luminance": 93,
+        "saturation": 70,
+        "warmth": -3
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.611432
+    },
+    {
+      "case": "kitchen-table",
+      "extra_negative": "",
+      "histogram_similarity": 0.530965,
+      "image": "kitchen-table-s42-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 26,
+        "contrast": 66,
+        "luminance": 75,
+        "saturation": 104,
+        "warmth": 18
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 22,
+        "contrast": 50,
+        "luminance": 100,
+        "saturation": 46,
+        "warmth": 18
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.643167
+    },
+    {
+      "case": "kitchen-table",
+      "extra_negative": "",
+      "histogram_similarity": 0.7854,
+      "image": "kitchen-table-s42-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 22,
+        "contrast": 50,
+        "luminance": 99,
+        "saturation": 56,
+        "warmth": 18
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 22,
+        "contrast": 50,
+        "luminance": 100,
+        "saturation": 46,
+        "warmth": 18
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.716299
+    },
+    {
+      "case": "kitchen-table",
+      "extra_negative": "dark, underexposed, dim, harsh contrast, deep black shadows",
+      "histogram_similarity": 0.573405,
+      "image": "kitchen-table-s42-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 28,
+        "contrast": 67,
+        "luminance": 81,
+        "saturation": 99,
+        "warmth": 19
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 22,
+        "contrast": 50,
+        "luminance": 100,
+        "saturation": 46,
+        "warmth": 18
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.651577
+    },
+    {
+      "case": "living-room",
+      "extra_negative": "",
+      "histogram_similarity": 0.725098,
+      "image": "living-room-s42-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 11,
+        "contrast": 54,
+        "luminance": 190,
+        "saturation": 14,
+        "warmth": 6
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 17,
+        "contrast": 50,
+        "luminance": 192,
+        "saturation": 17,
+        "warmth": 3
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.746143
+    },
+    {
+      "case": "living-room",
+      "extra_negative": "",
+      "histogram_similarity": 0.728821,
+      "image": "living-room-s42-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 17,
+        "contrast": 50,
+        "luminance": 191,
+        "saturation": 20,
+        "warmth": 3
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 17,
+        "contrast": 50,
+        "luminance": 192,
+        "saturation": 17,
+        "warmth": 3
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.753265
+    },
+    {
+      "case": "living-room",
+      "extra_negative": "",
+      "histogram_similarity": 0.725098,
+      "image": "living-room-s42-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 11,
+        "contrast": 54,
+        "luminance": 190,
+        "saturation": 14,
+        "warmth": 6
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 17,
+        "contrast": 50,
+        "luminance": 192,
+        "saturation": 17,
+        "warmth": 3
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.746143
+    },
+    {
+      "case": "mountain-hikers",
+      "extra_negative": "",
+      "histogram_similarity": 0.774862,
+      "image": "mountain-hikers-s42-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 20,
+        "contrast": 80,
+        "luminance": 141,
+        "saturation": 37,
+        "warmth": -2
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 41,
+        "contrast": 74,
+        "luminance": 138,
+        "saturation": 64,
+        "warmth": 3
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.73336
+    },
+    {
+      "case": "mountain-hikers",
+      "extra_negative": "",
+      "histogram_similarity": 0.735046,
+      "image": "mountain-hikers-s42-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 39,
+        "contrast": 74,
+        "luminance": 137,
+        "saturation": 67,
+        "warmth": 3
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 41,
+        "contrast": 74,
+        "luminance": 138,
+        "saturation": 64,
+        "warmth": 3
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.720609
+    },
+    {
+      "case": "mountain-hikers",
+      "extra_negative": "dull colors, desaturated, grey, washed out",
+      "histogram_similarity": 0.765686,
+      "image": "mountain-hikers-s42-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 23,
+        "contrast": 80,
+        "luminance": 143,
+        "saturation": 40,
+        "warmth": -2
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 41,
+        "contrast": 74,
+        "luminance": 138,
+        "saturation": 64,
+        "warmth": 3
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.730619
+    },
+    {
+      "case": "street-bicycles",
+      "extra_negative": "",
+      "histogram_similarity": 0.687297,
+      "image": "street-bicycles-s42-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 55,
+        "contrast": 72,
+        "luminance": 84,
+        "saturation": 84,
+        "warmth": 14
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 49,
+        "contrast": 68,
+        "luminance": 116,
+        "saturation": 77,
+        "warmth": 23
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.637366
+    },
+    {
+      "case": "street-bicycles",
+      "extra_negative": "",
+      "histogram_similarity": 0.619812,
+      "image": "street-bicycles-s42-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 49,
+        "contrast": 68,
+        "luminance": 115,
+        "saturation": 67,
+        "warmth": 23
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 49,
+        "contrast": 68,
+        "luminance": 116,
+        "saturation": 77,
+        "warmth": 23
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.6185
+    },
+    {
+      "case": "street-bicycles",
+      "extra_negative": "dark, underexposed, dim",
+      "histogram_similarity": 0.756063,
+      "image": "street-bicycles-s42-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 54,
+        "contrast": 71,
+        "luminance": 91,
+        "saturation": 79,
+        "warmth": 14
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 49,
+        "contrast": 68,
+        "luminance": 116,
+        "saturation": 77,
+        "warmth": 23
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.673047
+    },
+    {
+      "case": "train-platform",
+      "extra_negative": "",
+      "histogram_similarity": 0.722493,
+      "image": "train-platform-s42-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 12,
+        "contrast": 46,
+        "luminance": 28,
+        "saturation": 51,
+        "warmth": 2
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 12,
+        "contrast": 67,
+        "luminance": 56,
+        "saturation": 46,
+        "warmth": 7
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.713659
+    },
+    {
+      "case": "train-platform",
+      "extra_negative": "",
+      "histogram_similarity": 0.376038,
+      "image": "train-platform-s42-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 12,
+        "contrast": 67,
+        "luminance": 55,
+        "saturation": 70,
+        "warmth": 7
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 12,
+        "contrast": 67,
+        "luminance": 56,
+        "saturation": 46,
+        "warmth": 7
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.614911
+    },
+    {
+      "case": "train-platform",
+      "extra_negative": "dark, underexposed, dim, flat, hazy, low contrast",
+      "histogram_similarity": 0.771139,
+      "image": "train-platform-s42-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 13,
+        "contrast": 53,
+        "luminance": 33,
+        "saturation": 58,
+        "warmth": 2
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 12,
+        "contrast": 67,
+        "luminance": 56,
+        "saturation": 46,
+        "warmth": 7
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.736066
+    },
+    {
+      "case": "workspace-books",
+      "extra_negative": "",
+      "histogram_similarity": 0.731873,
+      "image": "workspace-books-s42-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 48,
+        "contrast": 60,
+        "luminance": 175,
+        "saturation": 57,
+        "warmth": 25
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 52,
+        "contrast": 57,
+        "luminance": 168,
+        "saturation": 77,
+        "warmth": 47
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.727316
+    },
+    {
+      "case": "workspace-books",
+      "extra_negative": "",
+      "histogram_similarity": 0.705282,
+      "image": "workspace-books-s42-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 52,
+        "contrast": 57,
+        "luminance": 167,
+        "saturation": 84,
+        "warmth": 47
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 52,
+        "contrast": 57,
+        "luminance": 168,
+        "saturation": 77,
+        "warmth": 47
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.719827
+    },
+    {
+      "case": "workspace-books",
+      "extra_negative": "cool color cast, blue tint",
+      "histogram_similarity": 0.736389,
+      "image": "workspace-books-s42-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 52,
+        "contrast": 59,
+        "luminance": 177,
+        "saturation": 62,
+        "warmth": 35
+      },
+      "seed": 42,
+      "source_tone": {
+        "colourfulness": 52,
+        "contrast": 57,
+        "luminance": 168,
+        "saturation": 77,
+        "warmth": 47
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.733407
+    },
+    {
+      "case": "cat-monochrome",
+      "extra_negative": "",
+      "histogram_similarity": 0.678202,
+      "image": "cat-monochrome-s7-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 2,
+        "contrast": 60,
+        "luminance": 93,
+        "saturation": 12,
+        "warmth": -3
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 0,
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.703172
+    },
+    {
+      "case": "cat-monochrome",
+      "extra_negative": "",
+      "histogram_similarity": 0.62616,
+      "image": "cat-monochrome-s7-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 0,
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 0,
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.697911
+    },
+    {
+      "case": "cat-monochrome",
+      "extra_negative": "color, colour, tint, sepia, dark, underexposed, dim",
+      "histogram_similarity": 0.645203,
+      "image": "cat-monochrome-s7-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 3,
+        "contrast": 62,
+        "luminance": 105,
+        "saturation": 13,
+        "warmth": -3
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 0,
+        "contrast": 61,
+        "luminance": 125,
+        "saturation": 0,
+        "warmth": 0
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.712206
+    },
+    {
+      "case": "cat-on-keyboard",
+      "extra_negative": "",
+      "histogram_similarity": 0.684082,
+      "image": "cat-on-keyboard-s7-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 31,
+        "contrast": 51,
+        "luminance": 114,
+        "saturation": 76,
+        "warmth": 35
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 32,
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.68363
+    },
+    {
+      "case": "cat-on-keyboard",
+      "extra_negative": "",
+      "histogram_similarity": 0.735107,
+      "image": "cat-on-keyboard-s7-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 32,
+        "contrast": 55,
+        "luminance": 147,
+        "saturation": 57,
+        "warmth": -5
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 32,
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.700671
+    },
+    {
+      "case": "cat-on-keyboard",
+      "extra_negative": "dark, underexposed, dim, warm color cast, orange tint, yellow tint",
+      "histogram_similarity": 0.725566,
+      "image": "cat-on-keyboard-s7-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 22,
+        "contrast": 51,
+        "luminance": 122,
+        "saturation": 50,
+        "warmth": 24
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 32,
+        "contrast": 55,
+        "luminance": 148,
+        "saturation": 48,
+        "warmth": -5
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.688397
+    },
+    {
+      "case": "cat-on-grass",
+      "extra_negative": "",
+      "histogram_similarity": 0.485514,
+      "image": "cat-on-grass-s7-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 47,
+        "contrast": 36,
+        "luminance": 133,
+        "saturation": 127,
+        "warmth": 57
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 41,
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.585205
+    },
+    {
+      "case": "cat-on-grass",
+      "extra_negative": "",
+      "histogram_similarity": 0.692403,
+      "image": "cat-on-grass-s7-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 41,
+        "contrast": 24,
+        "luminance": 157,
+        "saturation": 100,
+        "warmth": 51
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 41,
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.643805
+    },
+    {
+      "case": "cat-on-grass",
+      "extra_negative": "dark, underexposed, dim, harsh contrast, deep black shadows",
+      "histogram_similarity": 0.691305,
+      "image": "cat-on-grass-s7-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 46,
+        "contrast": 36,
+        "luminance": 148,
+        "saturation": 114,
+        "warmth": 58
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 41,
+        "contrast": 24,
+        "luminance": 158,
+        "saturation": 89,
+        "warmth": 51
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.664826
+    },
+    {
+      "case": "amsterdam-market",
+      "extra_negative": "",
+      "histogram_similarity": 0.697978,
+      "image": "amsterdam-market-s7-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 58,
+        "contrast": 69,
+        "luminance": 88,
+        "saturation": 111,
+        "warmth": 11
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 43,
+        "contrast": 53,
+        "luminance": 89,
+        "saturation": 60,
+        "warmth": 14
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.646576
+    },
+    {
+      "case": "amsterdam-market",
+      "extra_negative": "",
+      "histogram_similarity": 0.716125,
+      "image": "amsterdam-market-s7-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 43,
+        "contrast": 53,
+        "luminance": 88,
+        "saturation": 79,
+        "warmth": 14
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 43,
+        "contrast": 53,
+        "luminance": 89,
+        "saturation": 60,
+        "warmth": 14
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.648077
+    },
+    {
+      "case": "amsterdam-market",
+      "extra_negative": "harsh contrast, deep black shadows, vivid colors, saturated colors",
+      "histogram_similarity": 0.727966,
+      "image": "amsterdam-market-s7-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 53,
+        "contrast": 66,
+        "luminance": 92,
+        "saturation": 94,
+        "warmth": 12
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 43,
+        "contrast": 53,
+        "luminance": 89,
+        "saturation": 60,
+        "warmth": 14
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.651971
+    },
+    {
+      "case": "astronaut-crew",
+      "extra_negative": "",
+      "histogram_similarity": 0.542216,
+      "image": "astronaut-crew-s7-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 57,
+        "contrast": 45,
+        "luminance": 36,
+        "saturation": 211,
+        "warmth": -36
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 74,
+        "contrast": 50,
+        "luminance": 59,
+        "saturation": 169,
+        "warmth": -34
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.661852
+    },
+    {
+      "case": "astronaut-crew",
+      "extra_negative": "",
+      "histogram_similarity": 0.704142,
+      "image": "astronaut-crew-s7-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 74,
+        "contrast": 50,
+        "luminance": 58,
+        "saturation": 145,
+        "warmth": -34
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 74,
+        "contrast": 50,
+        "luminance": 59,
+        "saturation": 169,
+        "warmth": -34
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.713542
+    },
+    {
+      "case": "astronaut-crew",
+      "extra_negative": "dark, underexposed, dim, dull colors, desaturated, grey, washed out",
+      "histogram_similarity": 0.573018,
+      "image": "astronaut-crew-s7-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 61,
+        "contrast": 51,
+        "luminance": 42,
+        "saturation": 209,
+        "warmth": -37
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 74,
+        "contrast": 50,
+        "luminance": 59,
+        "saturation": 169,
+        "warmth": -34
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.674596
+    },
+    {
+      "case": "dogs-beach",
+      "extra_negative": "",
+      "histogram_similarity": 0.515483,
+      "image": "dogs-beach-s7-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 14,
+        "contrast": 57,
+        "luminance": 205,
+        "saturation": 15,
+        "warmth": 7
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 30,
+        "contrast": 41,
+        "luminance": 190,
+        "saturation": 39,
+        "warmth": -1
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.598414
+    },
+    {
+      "case": "dogs-beach",
+      "extra_negative": "",
+      "histogram_similarity": 0.63562,
+      "image": "dogs-beach-s7-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 19,
+        "contrast": 41,
+        "luminance": 189,
+        "saturation": 24,
+        "warmth": -1
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 30,
+        "contrast": 41,
+        "luminance": 190,
+        "saturation": 39,
+        "warmth": -1
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.629146
+    },
+    {
+      "case": "dogs-beach",
+      "extra_negative": "overexposed, too bright, harsh contrast, deep black shadows, dull colors, desaturated, grey, washed out",
+      "histogram_similarity": 0.516439,
+      "image": "dogs-beach-s7-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 15,
+        "contrast": 55,
+        "luminance": 205,
+        "saturation": 17,
+        "warmth": 8
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 30,
+        "contrast": 41,
+        "luminance": 190,
+        "saturation": 39,
+        "warmth": -1
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.598543
+    },
+    {
+      "case": "food-table",
+      "extra_negative": "",
+      "histogram_similarity": 0.450439,
+      "image": "food-table-s7-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 33,
+        "contrast": 53,
+        "luminance": 60,
+        "saturation": 115,
+        "warmth": 21
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 37,
+        "contrast": 57,
+        "luminance": 93,
+        "saturation": 70,
+        "warmth": -3
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.571374
+    },
+    {
+      "case": "food-table",
+      "extra_negative": "",
+      "histogram_similarity": 0.738546,
+      "image": "food-table-s7-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 37,
+        "contrast": 57,
+        "luminance": 92,
+        "saturation": 70,
+        "warmth": -3
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 37,
+        "contrast": 57,
+        "luminance": 93,
+        "saturation": 70,
+        "warmth": -3
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.661017
+    },
+    {
+      "case": "food-table",
+      "extra_negative": "dark, underexposed, dim, warm color cast, orange tint, yellow tint",
+      "histogram_similarity": 0.495992,
+      "image": "food-table-s7-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 33,
+        "contrast": 57,
+        "luminance": 69,
+        "saturation": 85,
+        "warmth": 16
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 37,
+        "contrast": 57,
+        "luminance": 93,
+        "saturation": 70,
+        "warmth": -3
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.582453
+    },
+    {
+      "case": "kitchen-table",
+      "extra_negative": "",
+      "histogram_similarity": 0.551229,
+      "image": "kitchen-table-s7-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 26,
+        "contrast": 65,
+        "luminance": 75,
+        "saturation": 93,
+        "warmth": 17
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 22,
+        "contrast": 50,
+        "luminance": 100,
+        "saturation": 46,
+        "warmth": 18
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.652615
+    },
+    {
+      "case": "kitchen-table",
+      "extra_negative": "",
+      "histogram_similarity": 0.769491,
+      "image": "kitchen-table-s7-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 22,
+        "contrast": 50,
+        "luminance": 99,
+        "saturation": 57,
+        "warmth": 18
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 22,
+        "contrast": 50,
+        "luminance": 100,
+        "saturation": 46,
+        "warmth": 18
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.714981
+    },
+    {
+      "case": "kitchen-table",
+      "extra_negative": "dark, underexposed, dim, harsh contrast, deep black shadows",
+      "histogram_similarity": 0.58256,
+      "image": "kitchen-table-s7-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 28,
+        "contrast": 67,
+        "luminance": 83,
+        "saturation": 91,
+        "warmth": 20
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 22,
+        "contrast": 50,
+        "luminance": 100,
+        "saturation": 46,
+        "warmth": 18
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.662686
+    },
+    {
+      "case": "living-room",
+      "extra_negative": "",
+      "histogram_similarity": 0.788513,
+      "image": "living-room-s7-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 11,
+        "contrast": 52,
+        "luminance": 194,
+        "saturation": 13,
+        "warmth": 6
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 17,
+        "contrast": 50,
+        "luminance": 192,
+        "saturation": 17,
+        "warmth": 3
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.754193
+    },
+    {
+      "case": "living-room",
+      "extra_negative": "",
+      "histogram_similarity": 0.800639,
+      "image": "living-room-s7-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 17,
+        "contrast": 50,
+        "luminance": 191,
+        "saturation": 22,
+        "warmth": 3
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 17,
+        "contrast": 50,
+        "luminance": 192,
+        "saturation": 17,
+        "warmth": 3
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.757746
+    },
+    {
+      "case": "living-room",
+      "extra_negative": "",
+      "histogram_similarity": 0.788513,
+      "image": "living-room-s7-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 11,
+        "contrast": 52,
+        "luminance": 194,
+        "saturation": 13,
+        "warmth": 6
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 17,
+        "contrast": 50,
+        "luminance": 192,
+        "saturation": 17,
+        "warmth": 3
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.754193
+    },
+    {
+      "case": "mountain-hikers",
+      "extra_negative": "",
+      "histogram_similarity": 0.761739,
+      "image": "mountain-hikers-s7-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 23,
+        "contrast": 80,
+        "luminance": 137,
+        "saturation": 44,
+        "warmth": -1
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 41,
+        "contrast": 74,
+        "luminance": 138,
+        "saturation": 64,
+        "warmth": 3
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.704764
+    },
+    {
+      "case": "mountain-hikers",
+      "extra_negative": "",
+      "histogram_similarity": 0.73938,
+      "image": "mountain-hikers-s7-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 41,
+        "contrast": 74,
+        "luminance": 137,
+        "saturation": 69,
+        "warmth": 3
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 41,
+        "contrast": 74,
+        "luminance": 138,
+        "saturation": 64,
+        "warmth": 3
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.69719
+    },
+    {
+      "case": "mountain-hikers",
+      "extra_negative": "dull colors, desaturated, grey, washed out",
+      "histogram_similarity": 0.756083,
+      "image": "mountain-hikers-s7-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 26,
+        "contrast": 81,
+        "luminance": 138,
+        "saturation": 49,
+        "warmth": -1
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 41,
+        "contrast": 74,
+        "luminance": 138,
+        "saturation": 64,
+        "warmth": 3
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.709025
+    },
+    {
+      "case": "street-bicycles",
+      "extra_negative": "",
+      "histogram_similarity": 0.689351,
+      "image": "street-bicycles-s7-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 55,
+        "contrast": 74,
+        "luminance": 84,
+        "saturation": 86,
+        "warmth": 17
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 49,
+        "contrast": 68,
+        "luminance": 116,
+        "saturation": 77,
+        "warmth": 23
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.66828
+    },
+    {
+      "case": "street-bicycles",
+      "extra_negative": "",
+      "histogram_similarity": 0.595866,
+      "image": "street-bicycles-s7-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 49,
+        "contrast": 68,
+        "luminance": 115,
+        "saturation": 57,
+        "warmth": 23
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 49,
+        "contrast": 68,
+        "luminance": 116,
+        "saturation": 77,
+        "warmth": 23
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.641296
+    },
+    {
+      "case": "street-bicycles",
+      "extra_negative": "dark, underexposed, dim",
+      "histogram_similarity": 0.740784,
+      "image": "street-bicycles-s7-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 53,
+        "contrast": 74,
+        "luminance": 94,
+        "saturation": 73,
+        "warmth": 16
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 49,
+        "contrast": 68,
+        "luminance": 116,
+        "saturation": 77,
+        "warmth": 23
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.696906
+    },
+    {
+      "case": "train-platform",
+      "extra_negative": "",
+      "histogram_similarity": 0.729268,
+      "image": "train-platform-s7-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 13,
+        "contrast": 47,
+        "luminance": 32,
+        "saturation": 58,
+        "warmth": 3
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 12,
+        "contrast": 67,
+        "luminance": 56,
+        "saturation": 46,
+        "warmth": 7
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.70246
+    },
+    {
+      "case": "train-platform",
+      "extra_negative": "",
+      "histogram_similarity": 0.473307,
+      "image": "train-platform-s7-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 12,
+        "contrast": 67,
+        "luminance": 55,
+        "saturation": 83,
+        "warmth": 7
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 12,
+        "contrast": 67,
+        "luminance": 56,
+        "saturation": 46,
+        "warmth": 7
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.613293
+    },
+    {
+      "case": "train-platform",
+      "extra_negative": "dark, underexposed, dim, flat, hazy, low contrast",
+      "histogram_similarity": 0.784688,
+      "image": "train-platform-s7-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 14,
+        "contrast": 55,
+        "luminance": 40,
+        "saturation": 54,
+        "warmth": 3
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 12,
+        "contrast": 67,
+        "luminance": 56,
+        "saturation": 46,
+        "warmth": 7
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.727338
+    },
+    {
+      "case": "workspace-books",
+      "extra_negative": "",
+      "histogram_similarity": 0.705627,
+      "image": "workspace-books-s7-control.png",
+      "reconstruction_tone": {
+        "colourfulness": 49,
+        "contrast": 60,
+        "luminance": 174,
+        "saturation": 58,
+        "warmth": 26
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 52,
+        "contrast": 57,
+        "luminance": 168,
+        "saturation": 77,
+        "warmth": 47
+      },
+      "variant": "control",
+      "visual_proxy_score": 0.719173
+    },
+    {
+      "case": "workspace-books",
+      "extra_negative": "",
+      "histogram_similarity": 0.672424,
+      "image": "workspace-books-s7-matched.png",
+      "reconstruction_tone": {
+        "colourfulness": 52,
+        "contrast": 57,
+        "luminance": 167,
+        "saturation": 82,
+        "warmth": 47
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 52,
+        "contrast": 57,
+        "luminance": 168,
+        "saturation": 77,
+        "warmth": 47
+      },
+      "variant": "matched",
+      "visual_proxy_score": 0.715157
+    },
+    {
+      "case": "workspace-books",
+      "extra_negative": "cool color cast, blue tint",
+      "histogram_similarity": 0.705343,
+      "image": "workspace-books-s7-loop.png",
+      "reconstruction_tone": {
+        "colourfulness": 53,
+        "contrast": 59,
+        "luminance": 174,
+        "saturation": 64,
+        "warmth": 34
+      },
+      "seed": 7,
+      "source_tone": {
+        "colourfulness": 52,
+        "contrast": 57,
+        "luminance": 168,
+        "saturation": 77,
+        "warmth": 47
+      },
+      "variant": "loop",
+      "visual_proxy_score": 0.734408
+    }
+  ]
+}
