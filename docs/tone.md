@@ -363,6 +363,33 @@ from 7.9 to 8.2 — better for 6 of 26 pairs, worse for 12 — and luminance did
 [`survey/qwen/tone-colour-words/`](../survey/qwen/tone-colour-words/README.md). This fits attempt 3:
 the positive prompt's tone words barely steer Qwen either way.
 
+## Attempt 9: Qwen's own register, with the loop
+
+Attempt 3 found the `observer` prompt, written in the register of Qwen's prompt rewriter, the best
+positive-prompt lever at one seed. Repeated on all 13 format 1.2 artifacts at seeds 42 and 7, and
+combined with the loop (evidence:
+[`survey/qwen/tone-observer/`](../survey/qwen/tone-observer/README.md)); pipeline-prompt figures are
+the same seeds from attempt 7:
+
+| Prompt | Variant | Luminance | Contrast | Colourfulness | Warmth | Visual proxy |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| pipeline | `control` | 27.8 | 7.2 | 7.9 | 11.6 | 0.646 |
+| observer | `control` | 20.7 | 8.2 | 8.2 | 9.5 | 0.670 |
+| pipeline | `loop` | 21.0 | 6.1 | 7.9 | 9.6 | 0.659 |
+| observer | `loop` | **14.9** | 6.8 | **7.3** | **8.0** | **0.687** |
+
+- **The register matters more than any tone wording.** The observer prompt alone lowers the
+  luminance error as much as the loop does (27.8 → 20.7), and it beats the pipeline prompt on the
+  combined luminance-plus-colourfulness error in 21 of 26 pairs.
+- **The two levers add up.** Observer plus loop is the best result on this page: luminance error
+  14.9, about half the pipeline's 27.8, and better than pipeline plus loop in 20 of 26 pairs.
+- **Content held up by eye**, and on one case improved: the astronaut crew came back as six people,
+  as in the source, where the pipeline prompt drew three. The grass cat's pose changed, and some of
+  the workspace desk's labels were lost — expected, because the observer prompt leaves out the
+  critical-text list.
+- **Not adopted yet.** Before it replaces the pipeline prompt it needs a variant that keeps
+  critical text (and a text-recall check on the expanded benchmark), and a human rating.
+
 ## Status (2026-09-24)
 
 - `llmpeg generate --tone-correction loop|match` is an **opt-in** since 0.7.0; 0.8.0 steers its

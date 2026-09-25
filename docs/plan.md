@@ -289,7 +289,10 @@ Left, in order:
 - [ ] If the regrade wins, damp its global warmth shift, which still casts the keyboard cat and the
       food cool, and re-measure.
 
-- [ ] Try the `observer` register with the loop; the two are independent levers.
+- [ ] **Candidate default prompt:** the `observer` register plus the loop halved the luminance
+      error (27.8 → 14.9) over 13 sources × 2 seeds (`docs/tone.md` attempt 9). Add a variant that
+      keeps critical text, check text recall on the expanded benchmark, and get a human rating
+      before switching `render_generation_prompt` to it.
 - [ ] Repeat the encoder-wording test over several re-encodes before judging it again.
 
 ## Open work
