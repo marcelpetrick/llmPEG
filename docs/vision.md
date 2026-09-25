@@ -52,7 +52,8 @@ The product is a Python package, command-line tool, and localhost prototype that
    artifact;
 2. validate that artifact, report its byte size, and calculate the measured size ratio;
 3. turn the artifact into a generator-ready prompt;
-4. generate a new image through local ComfyUI/Qwen-Image-2.1;
+4. generate a new image through local ComfyUI/Qwen-Image-2.1, optionally correcting its exposure
+   and colour toward the tone the artifact measured from the source;
 5. compare it with transparent structural proxies and repeated local semantic judgments; and
 6. run fully offline tests by substituting deterministic fake providers.
 
