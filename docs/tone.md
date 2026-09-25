@@ -353,11 +353,21 @@ against the recorded tone over the 39 source-seed pairs:
   colour; neither figure is a perception score.
 
 
+## Attempt 8: describe colourfulness in the prompt (rejected)
+
+The `Tone:` line still quotes mean HSV saturation. One change was tested: for format 1.2 artifacts,
+name colour with Hasler and Süsstrunk's category words and the colourfulness figure instead. Across
+the 13 upgraded artifacts at seeds 42 and 7, the `control` render's mean colourfulness error went
+from 7.9 to 8.2 — better for 6 of 26 pairs, worse for 12 — and luminance did not move (27.8 →
+28.1). Not adopted. Evidence:
+[`survey/qwen/tone-colour-words/`](../survey/qwen/tone-colour-words/README.md). This fits attempt 3:
+the positive prompt's tone words barely steer Qwen either way.
+
 ## Status (2026-09-24)
 
 - `llmpeg generate --tone-correction loop|match` is an **opt-in** since 0.7.0; 0.8.0 steers its
   colour by colourfulness. The default render is unchanged.
-- `survey/qwen.html` (the site index) is the one review page: original, current pipeline, and
-  the v2 `loop`, for seven sources at seed 42, with each artifact's JSON and stored gzip bytes. It exists for human ratings; nothing on this page says a
-  correction *looks* closer.
+- `survey/qwen.html` (the site index) is the one review page: original, current pipeline, and the
+  v2 `loop`, for seven sources at seed 42, with each artifact's JSON and stored gzip bytes. It
+  exists for human ratings; nothing on this page says a correction *looks* closer.
 - The remaining plan is in [`plan.md`](plan.md#11-tone-work).

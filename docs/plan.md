@@ -275,6 +275,8 @@ Done:
       13 sources × 3 seeds: the loop helps in 35 of 39 pairs, and the regrade's worst colour
       overshoot fell from +41 to +1 (`v0.8.0`, `docs/tone.md` attempt 7).
 - [x] Code review of the release (`review.md`); all six findings fixed.
+- [x] Describing colourfulness in the prompt's tone line: measured on 13 sources × 2 seeds, no
+      gain (colourfulness error 7.9 → 8.2), rejected (`docs/tone.md` attempt 8).
 - [x] Found and documented that the recorded saturation (mean HSV) overstates colour in dark
       images; checked against Hasler–Süsstrunk colourfulness (`docs/colourfulness-check.json`).
 
@@ -286,8 +288,7 @@ Left, in order:
       output that it costs a second render.
 - [ ] If the regrade wins, damp its global warmth shift, which still casts the keyboard cat and the
       food cool, and re-measure.
-- [ ] The prompt's tone line still quotes mean HSV saturation; decide whether to describe
-      colourfulness instead (it changes every prompt, so it needs a fresh render comparison).
+
 - [ ] Try the `observer` register with the loop; the two are independent levers.
 - [ ] Repeat the encoder-wording test over several re-encodes before judging it again.
 

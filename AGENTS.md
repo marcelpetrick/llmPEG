@@ -192,4 +192,4 @@ Established scopes: `codec` (encoder/artifact/providers), `survey`, `architectur
   near-perfectly on tone by construction, so never quote its tone error as evidence.
 - `tone.saturation` (mean HSV saturation) overstates colour in dark images (`docs/tone.md`,
   correction). Quote `tone.colourfulness` (format 1.2) for perceived colour, never `saturation`;
-  the prompt's tone line still quotes the old figure.
+  the prompt's tone line still quotes the old figure, and rewording it was measured and rejected.
