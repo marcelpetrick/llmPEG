@@ -47,7 +47,9 @@ def transcribe(image: Path, host: str, model: str, timeout: float) -> str:
         "model": model,
         "stream": False,
         "keep_alive": 0,
-        "options": {"temperature": 0, "seed": 42},
+        "think": False,
+        # A cap stops a reply that repeats itself from running into the timeout.
+        "options": {"temperature": 0, "seed": 42, "num_predict": 512},
         "messages": [
             {
                 "role": "user",
@@ -63,7 +65,12 @@ def transcribe(image: Path, host: str, model: str, timeout: float) -> str:
     )
     with urllib.request.urlopen(request, timeout=timeout) as response:
         reply = json.loads(response.read())
-    return str(reply["message"]["content"]).strip()
+    message = reply["message"]
+    # This Qwen build sometimes answers in `thinking` despite think=false (see providers.py).
+    text = str(message.get("content") or message.get("thinking") or "").strip()
+    if not text:
+        raise SystemExit(f"{image}: the reader returned an empty reply; nothing was scored")
+    return text
 
 
 def main() -> None:
