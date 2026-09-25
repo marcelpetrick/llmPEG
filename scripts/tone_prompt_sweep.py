@@ -94,6 +94,21 @@ def _observer(artifact: Artifact) -> str:
     )
 
 
+# Longer or multi-line entries are malformed lists the vision model wrote, not visible text.
+MAX_TEXT = 60
+
+
+def _observer_text(artifact: Artifact) -> str:
+    """The observer paragraph plus the critical text, quoted the way the rewriter does."""
+    texts = []
+    for entry in artifact.critical_text:
+        text = entry.strip().strip('"').strip()
+        if text and "\n" not in text and len(text) <= MAX_TEXT:
+            texts.append(f'"{text}"')
+    base = _observer(artifact)
+    return f"{base} The visible text reads {', '.join(texts)}." if texts else base
+
+
 PROMPTS: dict[str, Callable[[Artifact], str]] = {
     "control": render_generation_prompt,
     "no-tone": _no_tone,
@@ -102,6 +117,7 @@ PROMPTS: dict[str, Callable[[Artifact], str]] = {
     "words-first": _words_first,
     "snapshot": _snapshot,
     "observer": _observer,
+    "observer-text": _observer_text,
 }
 
 

@@ -122,7 +122,7 @@ def main() -> None:
     parser.add_argument(
         "--prompt",
         default="control",
-        choices=["control", "observer"],
+        choices=["control", "observer", "observer-text"],
         help="prompt variant from tone_prompt_sweep.py; control is the pipeline's own prompt",
     )
     parser.add_argument(
